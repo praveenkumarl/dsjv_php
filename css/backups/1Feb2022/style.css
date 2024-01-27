@@ -1,0 +1,70 @@
+/*normal mode*/
+#desk-table {
+    display: block;
+}
+#phone-table {
+    display: none;
+}
+
+/*mobile mode*/
+@media only screen and (max-width: 500px) { // max-width is the size of the web broswer in mobile 
+    #desk-table {
+        display: none;
+    }
+    #phone-table {
+        display: block;
+    }
+}
+
+mark {
+  background-color: white;
+  color: black;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.menu {
+  float: left;
+  width: 20%;
+  text-align: center;
+}
+
+.menuRight {
+  float: right;
+  width: 20%;
+  text-align: center;
+}
+
+.menu a {
+  background-color: #ff9933;
+  padding: 8px;
+  margin-top: 7px;
+  display: block;
+  width: 100%;
+  color: black;
+}
+
+.main {
+  float: left;
+  width: 60%;
+  padding: 0 20px;
+}
+
+.right {
+  background-color: #ff9933;
+  float: left;
+  width: 20%;
+  padding: 15px;
+  margin-top: 7px;
+  text-align: center;
+  color: black;
+}
+
+@media only screen and (max-width: 620px) {
+  /* For mobile phones: */
+  .menu, .main, .right {
+    width: 100%;
+  }
+}
