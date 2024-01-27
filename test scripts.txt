@@ -1,0 +1,16 @@
+http://127.0.0.1/pkastro_test/athenticate_mobile.php?key=21593275
+
+http://127.0.0.1/pkastro_test/index.php?key=21593275&Name=PRAVEEN&Phone=9445321790
+
+
+http://192.168.29.78/pkastro_test/athenticate_mobile.php?key=958905
+
+http://127.0.0.1/pkastro_test/index.php?key=863731&Name='Praveen'&Phone='9445321790'
+
+http://192.168.29.78/pkastro_test/index.php?key=863731&Name=Praveen&Phone=9445321790
+
+http://test.pkastro.com/index.php?key=299696&Name=%22%22&phone=%22%22
+
+http://127.0.0.1/pkastro_test/index.php?key=2996961&Name=%22%22&phone=%22%22
+
+863731046813842

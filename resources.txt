@@ -1,0 +1,193 @@
+https://www.astrologicalassociation.com/resources/#tools
+
+https://www.astroaura.net/hora-calculator.html#:~:text=An%20hour%20contains%2060%20minutes,sub%2Dhoras%20in%20an%20hour.
+
+
+Code convertor AI site
+https://www.codeconvert.ai/r-to-php-converter
+
+Generate QR code
+https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=http%3A%2F%2Fwww.google.com%2F&choe=UTF-8
+https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=<Your text or URL here>&choe=UTF-8
+
+https://shrifreedom.org/vedic-astrology/navatara-chakra/
+
+Panchang calculation
+https://rpubs.com/prajwalpatil/VedicDateTime
+https://python.hotexamples.com/examples/swisseph/-/get_ayanamsa_ut/python-get_ayanamsa_ut-function-examples.html
+
+https://astrobix.com/learn/category/27-Calculations
+
+https://multifaiths.com/pdf/Panchang.pdf
+
+https://www.icesi.edu.co/CRAN/web/packages/VedicDateTime/vignettes/VedicDateTime.pdf
+
+PHP Get Timezone for lat/long
+https://stackoverflow.com/questions/3126878/get-php-timezone-name-from-latitude-and-longitude
+
+lat long data for a location
+https://www.latlong.net/
+https://public.opendatasoft.com/explore/dataset/geonames-all-cities-with-a-population-1000/export/?disjunctive.cou_name_en&sort=name
+
+panchang calculation
+https://medium.com/@rajeshkumar_4076/elements-of-panchang-beb9d4af17c1
+
+Google drive Download URL bypassing virus scan page
+https://docs.google.com/uc?id=1NuGcn-A7AsAAF5E3ZoAoPWpXxM6JX5KV&export=download&confirm=yTib
+
+Panchang calculation formula
+https://horoanalysis.wordpress.com/2017/02/20/how-to-calculate-tithi-and-nakshatra-its-pada-manually-an-article-written-by-vishal-aksh/
+
+Panchang calculator
+https://github.com/santhoshn/panchanga
+
+above one is ported from https://github.com/santhoshn/panchanga/blob/master/plib.c
+
+-------icons------
+https://icons8.com/icons/set/info
+
+(((((((((This site has all the calculation formulaes for astrology )))))))
+https://www.saravali.de/articles/calc_ephemfiles.html
+https://www.saravali.de/articles/hora_calculation.html
+https://www.saravali.de/download.html - Software is free
+https://www.sanatanveda.com/astrology/calculation-of-vimshottari-dasha-system// - dasa bukthi calculation
+
+----------------Website design input----------------
+https://github.com/alvarotrigo/fullPage.js/#fullpagejs
+https://alvarotrigo.com/contact/
+
+
+----------------html codes for astrology symbols----------------
+https://www.quackit.com/character_sets/unicode/
+https://unicode-table.com/en/html-entities/
+https://dev.w3.org/html5/html-author/charref
+https://www.htmlsymbols.xyz/
+http://cactus.io/resources/toolbox/html-symbol-codes
+https://www.alt-codes.net/planet-symbols.php
+https://www.mymathtables.com/html-symbols/zodiac-symbols-in-ASCII-HEX-CSS-Unicode.html
+http://cactus.io/resources/toolbox/html-arrow-symbol-codes
+
+
+https://sunrise-sunset.org/api
+
+----------------lat/long data----------------
+http://www.geonames.org
+http://www.geonames.org/data-sources.html
+
+select convert_tz(now(),'Asia/Kolkata','US/Eastern');
+
+
+https://www.tutorialrepublic.com/php-tutorial/php-mysql-ajax-live-search.php
+
+http://www.joeyrivera.com/2009/01/27/using-mysql-stored-procedures-with-php-mysqlmysqlipdo/
+
+transit data downloaded from 
+https://www.drikpanchang.com/planet/transit/planets-transit.html
+
+----------------Free API----------------
+https://github.com/astrologyapi/astro-api-client#-basic-panchang/planet_panchang
+
+---------------------SWISS ephemeris-----------------------------
+https://www.astrowin.org/php_scripts/index.html
+
+https://www.astro.com/cgi/swetest.cgi?arg=-h&p=0 - swetest.exe manual
+
+C:\Users\praveenkumarl\OneDrive - HCL Technologies Ltd\Desktop\master_wheel>swetest -edir./sweph -b2.2.2022 -ut14:40 -p0123456789mt -n1 -sid1 -eswe -fPls -g, -head
+Sun            , 289.5617206,  1.0150508
+Moon           , 308.0251635, 14.2538313
+Mercury        , 270.3734699, -0.2066330
+Venus          , 257.2706122,  0.1649265
+Mars           , 252.4456228,  0.7307064
+Jupiter        , 313.4219232,  0.2315934
+Saturn         , 291.5157012,  0.1199218
+Uranus         , 16.7542717,  0.0130365
+Neptune        , 327.3194973,  0.0314552
+Pluto          , 272.8390927,  0.0318844
+mean Node      , 33.6421108, -0.0529920
+true Node      , 34.3000433, -0.1964716
+
+C:\Users\praveenkumarl\OneDrive - HCL Technologies Ltd\Desktop\php-swiss-ephemeris-master\php-swiss-ephemeris-master>swetest -edir./sweph -b2.2.2022 -ut14:40 -p0123456789mt -n1 -sid1 -eswe -fPls -g, -head
+Sun            , 289.5617204,  1.0150508
+Moon           , 308.0251655, 14.2538313
+Mercury        , 270.3734701, -0.2066331
+Venus          , 257.2706116,  0.1649265
+Mars           , 252.4456227,  0.7307064
+Jupiter        , 313.4219138,  0.2315934
+Saturn         , 291.5156960,  0.1199218
+Uranus         , 16.7542233,  0.0130365
+Neptune        , 327.3195442,  0.0314552
+Pluto          , 272.8389908,  0.0318843
+mean Node      , 33.6421108, -0.0529920
+true Node      , 34.3000478, -0.1964716
+
+https://github.com/chapagain/php-swiss-ephemeris
+https://github.com/chapagain/php-swiss-ephemeris/blob/master/README.md
+
+
+./swetest  -house12.59,41.54,E -ut -p0123456toq -sid1 -fPZ -ut8:15
+
+Date ?25.6.1947
+
+which will give you tabular form of the Vedic chart:
+
+date (dmy) 25.6.1947 greg.   8:15:00 UT
+UT: 2432361.843750     delta t: 28.006588 sec
+ET: 2432361.844074   ayanamsa =   23 7'24.6714
+Nutation           0 0' 0.0000    0 0' 0.0000
+Houses system E for long=  12 35'23.9999, lat=  41 32'23.9999
+Sun              9 ge 49'10.4664   
+Moon             7 vi 39'44.1162
+Mercury          2 cn 36'47.0523
+Venus           20 ta 46'43.9041
+Mars             2 ta 44' 8.3062
+Jupiter         25 li 12'29.7825
+Saturn          14 cn 12' 2.3894
+true Node        9 ta  3'29.4020
+Ecl. Obl.       23 ar 26'46.0351
+Delta T         28 ar  0'23.7189
+house  1         4 le 44' 2.5646
+house  2         4 vi 44' 2.5646
+house  3         4 li 44' 2.5646
+house  4         4 sc 44' 2.5646
+house  5         4 sa 44' 2.5646
+house  6         4 cp 44' 2.5646
+house  7         4 aq 44' 2.5646
+house  8         4 pi 44' 2.5646
+house  9         4 ar 44' 2.5646
+house 10         4 ta 44' 2.5646
+house 11         4 ge 44' 2.5646
+house 12         4 cn 44' 2.5646
+Ascendant        4 le 44' 2.5646
+MC              28 ar 16'40.6964
+ARMC            18 ta 58'10.4969
+Vertex          27 sa 11'23.6268
+
+---------------------SWISS ephemeris-----------------------------
+
+https://groups.io/g/swisseph/topic/swetest_exe_versus_swetest/27498579?p=
+
+https://www.astro.com/cgi/swetest.cgi?arg=-h&p=0
+
+Swiss ephemeris through PHP
+https://github.com/rogergerecke/SwissEphemeris/blob/master/public/index.php
+
+Swiss ephemeris
+https://www.npmjs.com/package/swisseph
+
+Swiss ephemeris perl
+https://sckool.org/swiss-ephemeris-programming-interface-to-the-swiss-ephemeris-c.html?page=14
+
+Python Swiss ephemeris
+https://github.com/astrorigin/pyswisseph
+https://pypi.org/project/pyswisseph/
+
+Swiss Ephemeris C library
+https://community.linuxmint.com/software/view/libswe0
+
+http://www.th-mack.de/international/download/
+
+
+----------------Other astro sites----------------
+https://www.ubuntupit.com/best-linux-astrology-software/
+https://www.saravali.de/maitreya.html
+
