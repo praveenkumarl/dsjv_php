@@ -8,6 +8,7 @@ $error="";
 
 //for birthchart
 $name = isset($_GET["name"]) ? $_GET["name"] : "";
+$sex = isset($_GET["sex"]) ? $_GET["sex"] : "";
 $savemode = isset($_GET["savemode"]) ? $_GET["savemode"] : "";
 $savemode = intval($savemode);
 $g_rowid = isset($_GET["rowid"]) ? $_GET["rowid"] : "-1";
@@ -73,6 +74,7 @@ $charttype = $_GET["charttype"];
 <form id="hiddenViewBirthChart" action="Birth_Input.php" method="post" style="display:none;">
   <input type="hidden" id="place" name="place" required/>
   <input type="hidden" id="name" name="name" required/>
+  <input type="hidden" id="sex" name="sex" required/>
   <input type="hidden" id="in_date" name="in_date" required/>
   <input type="hidden" id="in_time" name="in_time" required/>
   <input type="hidden" id="lang" name="lang" required/>
@@ -93,7 +95,7 @@ $charttype = $_GET["charttype"];
 
 function saveBirthChartToDB($in_savemode)
 {
-	global $conn,$place,$date,$time,$phone,$name,$g_notes,$g_rowid;
+	global $conn,$place,$date,$time,$phone,$name,$g_notes,$g_rowid,$sex;
 	
 	$db_date=date("Y-m-d",strtotime($date));
 	
@@ -103,7 +105,7 @@ function saveBirthChartToDB($in_savemode)
 
 	try {	
 		if($in_savemode==0){ //insert
-			$sql = "INSERT INTO birth_chart (phone,name,place,birth_date,birth_time,notes) VALUES ('$phone','$name','$place','$date','$time','$g_notes')";
+			$sql = "INSERT INTO birth_chart (phone,name,sex,place,birth_date,birth_time,notes) VALUES ('$phone','$name','$sex','$place','$date','$time','$g_notes')";
 		}
 		else{ //update existing record
 			$sql = "UPDATE birth_chart SET notes='$g_notes' where rowid='$g_rowid'";

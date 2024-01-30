@@ -5,6 +5,7 @@ $phone = isset($_COOKIE["phone"]) ? $_COOKIE["phone"] : 1;
 
 $in_place = isset($_POST["place"]) ? $_POST["place"] : $_POST["nPlace"];
 $in_name = isset($_POST["name"]) ? $_POST["name"] : $_POST["nName"];
+$in_sex = isset($_POST["sex"]) ? $_POST["sex"] : $_POST["nSex"];
 
 $place=strtok($in_place,"|");
 $TZ=strtok("|");
@@ -15,7 +16,7 @@ if(isset($_POST["nRowid"])){
 	$g_rowid = isset($_POST["rowid"]) ? $_POST["rowid"] : $_POST["nRowid"]; //rowid will be posted in case it's called from birthChartDisplay or transit changed
 }
 else{
-	$g_rowid = isset($_POST["rowid"]) ? $_POST["rowid"] : -1;
+	$g_rowid = isset($_POST["rowid"]) ? $_POST["rowid"] : "Not saved";
 }
 
 //disabling this place cookie. This interferes with Jamakol place whenever we generate birth chart
@@ -95,6 +96,7 @@ $saveBtnTxt='Save';
 $g_planetKaranaLord=array();
 $g_thithi_idx=-1;
 $otherPanchangDetails = array();
+$g_dasa_arr = array();
 
 if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_input.php')==false){
 	$saveMode=1;
@@ -116,7 +118,7 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-	<script src="html2canvas.js" type="text/javascript"></script>
+	<script src="html2pdf.bundle.min.js" type="text/javascript"></script>
 
     <script src="script.js"></script>
 	
@@ -336,13 +338,14 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 		function saveChart()
 		{
 			var name = document.getElementById("nName").value;
+			var sex = document.getElementById("nSex").value;
 			var place = document.getElementById("nPlace").value;
 			var date = document.getElementById("nDate").value;
 			var time = document.getElementById("nTime").value;
 			var notes = document.getElementById("notesTxt").innerHTML;
 			
 			//var url = 'saveChartMultiple.php?name=' + name + '&place=' + place + '&date=' + date + '&time=' + time + '&phone=' +'<?php echo $phone; ?>' + '&charttype=b' + '&savemode=' +'<?php echo $saveMode;?>' + '&rowid=' +'<?php echo $g_rowid;?>' + '&notes=' + notes;
-			var url = 'saveChartMultiple.php?name=' + name + '&place=' + place + '&date=' + date + '&time=' + time + '&phone=' +'<?php echo $phone; ?>' + '&charttype=b' + '&savemode=' +'<?php echo $saveMode;?>' + '&rowid=' +'<?php echo $g_rowid;?>';
+			var url = 'saveChartMultiple.php?name=' + name + '&place=' + place + '&date=' + date + '&time=' + time + '&phone=' +'<?php echo $phone; ?>' + '&charttype=b' + '&savemode=' +'<?php echo $saveMode;?>' + '&rowid=' +'<?php echo $g_rowid;?>' + '&sex=' + sex;
 			document.getElementById('saveForm').action = url;
 			document.getElementById('hNotesTxt').value = notes;
 		
@@ -383,19 +386,19 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 		
 		function generatePDF() {
 			// hide unncessary elements
-			var ele = document.getElementById('menu');
+			var ele = document.getElementById('column-menu');
 			ele.style.display = 'none';
 			
 			displayAll();
 			
 			// Choose the element that our invoice is rendered in.
-			const element = document.getElementById('section0');
+			const element = document.getElementById('chart');
 			
 			var opt = {
 			  margin:       1,
 			  filename:     'pkastro.pdf',
 			  image:        { type: 'png', quality: 2.0 },
-			  html2canvas:  { scale: 2 },
+			  html2canvas:  { scale: 1 },
 			  jsPDF:        { unit: 'in', format: 'A4', orientation: 'portrait' }
 			};
 			
@@ -1070,7 +1073,7 @@ function getOtherPanchangamDetails()
 function displayHoroDetails()
 {
 	global $panchang, $in_name, $chart_date, $chart_time, $g_dasaBalance, $place, $g_thithi_soonyam_matching_arr,$g_dasaCurrent, $transit_date, $lagna_house, $country,$yogi_arr, 
-		$g_pancha_pakshi, $g_thithi, $g_paksham, $moon_house, $today_sunrise, $today_sunset, $otherPanchangDetails, $city,$g_nak, $g_thithi_idx, $g_yoga_idx, $in_place;
+		$g_pancha_pakshi, $g_thithi, $g_paksham, $moon_house, $today_sunrise, $today_sunset, $otherPanchangDetails, $city,$g_nak, $g_thithi_idx, $g_yoga_idx, $in_place, $g_rowid;
 	
 	echo "<div class='divTable blueTable' style='height:40px;width:360px;'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
@@ -1083,12 +1086,8 @@ function displayHoroDetails()
 	//display panchang table 
 	echo "<div class='divTable blueTable' style='height:40px;width:360px;'>"; 
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>தேதி</div>";
-			echo "<div class='divPanchang'>".$chart_date."</div>";
-		echo "</div>";
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>நேரம்</div>";
-			echo "<div class='divPanchang'>".date('h:i:s a',strtotime($chart_time))."</div>";
+			echo "<div class='divPanchangHeading'>ஜாதகர் பெயர்</div>";
+			echo "<div class='divPanchang' style='font-weight:bold'>".$in_name."(id=$g_rowid)</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			$age = round((strtotime($transit_date)-strtotime($chart_date))/(365*60*60*24),1);
@@ -1101,6 +1100,11 @@ function displayHoroDetails()
 			echo "<div class='divPanchangHeading'>பிறந்த தேதி</div>";
 			echo "<div class='divPanchang' style='font-weight:bold'>".date('d/M/Y',strtotime($chart_date))."<BR>($age years)[$vayadhotta_rasi]</div>";
 		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>பிறந்த நேரம்</div>";
+			echo "<div class='divPanchang'>".date('h:i:s a',strtotime($chart_time))."</div>";
+		echo "</div>";
+		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
 			echo "<div class='divPanchang'>".explode('/',$panchang['nak'])[1]."<BR>".$panchang['nak-end-time']." வரை</div>";
@@ -1196,6 +1200,14 @@ function displayHoroDetails()
 			echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house-1,6))."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>பிறப்பு தசா இருப்பு</div>";
+			echo "<div class='divPanchang'>".$g_dasaBalance[0]."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>தற்போதைய தசா புக்தி</div>";
+			echo "<div class='divPanchang'>".$g_dasaCurrent[0]."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பிறப்பு ஜாமக்கோள்</div>";
 echo <<<EOL
 <form id="hiddenViewJamaChart" action="Jamakol_Chart.php" method="post" style="display:none;">
@@ -1239,19 +1251,28 @@ function prepareWallpaper()
 	
 	$pancha_pakshi = "images/pancha_pakshi/".$g_pancha_pakshi.".jpg";
 	
-	if(strpos("தேய்",$g_paksham)===0){
+	if($g_paksham==""){
+		echo "inside else";
+		$thithi_god = "images/thithi_god/".$g_thithi . ".jpg";
+	}
+	elseif(strpos("தேய்",$g_paksham)===0){
 		$thithi_god = "images/thithi_god/".$g_thithi."_தேய்.jpg";
 	}
 	else{
 		$thithi_god = "images/thithi_god/".$g_thithi."_வளர்.jpg";
 	}
 	
-	if(strpos("தேய்",$g_paksham)===0){
+	if($g_paksham==""){
+		echo "inside else";
+		$thithi_devi = "images/thithi_devi/".$g_thithi.".jpg";
+	}
+	elseif(strpos("தேய்",$g_paksham)===0){
 		$thithi_devi = "images/thithi_devi/".$g_thithi."_தேய்.jpg";
 	}
 	else{
 		$thithi_devi = "images/thithi_devi/".$g_thithi."_வளர்.jpg";
 	}
+	
 	
 	if(isMobileDevice())
 		$requestor = "mobile";
@@ -1262,18 +1283,21 @@ echo <<<EOL
 	
   
 	<div class="wallpaper" id='wallpaper' style="display:none;position:fixed;margin:0px;top:0px;left:0px;background-color:white;z-index:99;width:100%;height:98%">
-		<div class="x medium" style="z-index:100;text-align:right;color:blue;font-weight:bold"><A href="javascript:downloadWallpaper('$in_name')">&nbsp;Download&nbsp;</a><A href="javascript:closeWallpaper()">&nbsp;CLOSE (X)&nbsp;</A></div>
-			<div class="wallpaper_container" id="wallpaper_container">
-				<div class="wallpaper_item b">நட் குறியீடு<img class="wallpaper_img" src="$nak_sym" /></div>
-				<div class="wallpaper_item b">நட் கோவில்<img class="wallpaper_img" src="$nak_temple" /></div>
-				<div class="wallpaper_item b">நட் மரம்<img class="wallpaper_img" src="$nak_tree" /></div>
-				<div class="wallpaper_item b">கரண தெய்வம் <img class="wallpaper_img" src="$karanam_god" /></div>
-				<div class="wallpaper_item b">கரண விலங்கு <img class="wallpaper_img" src="$karanam_animal" /></div>
-				<div class="wallpaper_item b">யோகி ($yogi_nak)<img class="wallpaper_img" src="$yogi_planet" /></div>
-				<div class="wallpaper_item b">பஞ்ச பக்ஷி ($g_pancha_pakshi)<img class="wallpaper_img" src="$pancha_pakshi" /></div>
-				<div class="wallpaper_item b">திதி தேவதை<img class="wallpaper_img" src="$thithi_god" /></div>
-				<div class="wallpaper_item b">திதி நித்யா தேவி<img class="wallpaper_img" src="$thithi_devi" /></div>
-			  </div>
+		<div class="x medium" style="z-index:100;text-align:right;color:blue;font-weight:bold">
+			<!-- <A href="javascript:downloadWallpaper('$in_name')">&nbsp;Download&nbsp;</a> -->
+			<A href="javascript:closeWallpaper()">&nbsp;CLOSE (X)&nbsp;</A>
+		</div>
+		<div class="wallpaper_container" id="wallpaper_container">
+			<div class="wallpaper_item b">$nak குறியீடு<img class="wallpaper_img" src="$nak_sym" /></div>
+			<div class="wallpaper_item b">$nak கோவில்<img class="wallpaper_img" src="$nak_temple" /></div>
+			<div class="wallpaper_item b">$nak மரம்<img class="wallpaper_img" src="$nak_tree" /></div>
+			<div class="wallpaper_item b">$karanam கரண தெய்வம் <img class="wallpaper_img" src="$karanam_god" /></div>
+			<div class="wallpaper_item b">$karanam கரண விலங்கு <img class="wallpaper_img" src="$karanam_animal" /></div>
+			<div class="wallpaper_item b">யோகி $yogi ($yogi_nak)<img class="wallpaper_img" src="$yogi_planet" /></div>
+			<div class="wallpaper_item b">பஞ்ச பக்ஷி ($g_pancha_pakshi)<img class="wallpaper_img" src="$pancha_pakshi" /></div>
+			<div class="wallpaper_item b">$g_thithi தேவதை<img class="wallpaper_img" src="$thithi_god" /></div>
+			<div class="wallpaper_item b">$g_thithi நித்யா தேவி<img class="wallpaper_img" src="$thithi_devi" /></div>
+		  </div>
 	</div>
 EOL;
 
@@ -2054,7 +2078,7 @@ $thithi_soonyam_arr = updateThithiSoonyam($panchang["thithi"]);
 
 echo <<<EOL
 	<div class="title"></div>
-		<div class='column-menu'>
+		<div class='column-menu' id='column-menu'>
 			<div class='desktop'>
 EOL;
 			displayUserInfo($_SESSION['userinfo']);
@@ -2081,15 +2105,17 @@ echo <<<EOL
 										<form name='updateChart' action='Birth_Chart.php' method='post'>
 											<input type='hidden' id='nPlace' name='nPlace' value='$in_place'>
 											<input type='hidden' id='nName' name='nName' value='$in_name'>
+											<input type='hidden' id='nSex' name='nSex' value='$in_sex'>
 											<input type='hidden' id='nNotes' name='hNotes' value='$g_notes'>
 											<input type='hidden' id='nRowid' name='nRowid' value='$g_rowid'>
-											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Birth Date: <input type='date' id='nDate' name='nDate' readonly style="background-color:#FDE966;color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$chart_date > Birth Time: <input type='time' id='nTime' name='nTime' readonly style="background-color:#FDE966;color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$chart_time></H4>
+											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Birth Date: <input type='date' id='nDate' name='nDate' readonly style="background-color:var(--chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$chart_date > Birth Time: <input type='time' id='nTime' name='nTime' readonly style="background-color:var(--chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$chart_time></H4>
 											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Transit Date: <input type='date' id='nTrDate' name='nTrDate' style="background-color:#FFFFFF;color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$transit_date> Transit Time: <input type='time' id='nTrTime' name='nTrTime' style="background-color:#FFFFFF;color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$transit_time></H4>
 											<BR>
 											<input type='button' class='actionBtn' id='submit1' value='Submit' onClick='return genChart(this.form);'>
 											</form>
 											
 											<!-- <button style="background-color:gold;color:#660000;font-weight:bold;font-size:10px;" onclick="generatePDF()">Download</button> -->
+											<button style="background-color:gold;color:#660000;font-weight:bold;font-size:10px;" onclick="window.open('onepage_birthchart.php');">Download</button>
 										<!-- </form> -->
 										
 										
@@ -2192,7 +2218,7 @@ EOL;
 					//calculateBirthThithiSoonyam($panchang["thithi"]);
 					calculateVimDasaBalance($moon_degree,$moon_house,$chart_time,$chart_time,$panchang['nak'],$nak_pad_idx, true);
 					displayButtons(true); //this will calculate star lord as well 
-					displayCurrentDasaBukthi(true);
+					calculateCurrentDasaBukthi(true);
 					displayTransitStartLordButton(); //starlord dasa buttons for transit planets
 					
 					echo "<div class='html2pdf__page-break'></div>";
@@ -2244,6 +2270,18 @@ $_SESSION["planet_degree"]=$Planet_degree;
 $_SESSION["transit_planet_degree"]=$Transit_Planet_degree;
 $_SESSION["transit_date"]=$transit_date;
 $_SESSION["transit_time"]=$transit_time;
+$_SESSION["thithi_soonyam_arr"]=$g_thithi_soonyam_arr;
+$_SESSION["navamsam_arr"] = $g_navamsam_arr;
+$_SESSION["starlord_arr"] = $planet_starlord;
+
+$_SESSION["planetKaranaLord"] = $g_planetKaranaLord;
+$_SESSION["dasa"] = $g_dasa_arr;
+$_SESSION["birth_date"] = date('d/M/Y',strtotime($chart_date));
+$_SESSION["birth_time"] = date('h:i:s a',strtotime($chart_time));
+$_SESSION["name"] = $in_name;
+$_SESSION["sex"] = $in_sex;
+$_SESSION["panchang"] = $panchang;
+
 
 prepareWallpaper();
 ?>

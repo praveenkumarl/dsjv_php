@@ -55,9 +55,9 @@ function displayChart($sw_planet,$outside,$chart_date,$chart_time,$place)
 	$time = date('h:i A',strtotime($chart_time));
 
 	echo <<<EOL
-			<center>
+			
 			<div class="$requestor">
-				<div class="divTable blueTable" id="chart" OnClick='window.location.reload();'>
+			<div class="divTable blueTable" id="chart" OnClick='window.location.reload();'>
 				<div class="divTableBody">
 					<div class="divTableRow">
 							<div class="divTableOuterCell">$outside[11]</div>
@@ -109,7 +109,6 @@ function displayChart($sw_planet,$outside,$chart_date,$chart_time,$place)
 					</div>
 				</div>	
 			</div>
-			</center>
 		</div>
 		<div id='dummy'></div>
 EOL;
@@ -154,7 +153,7 @@ else{
 	$panchang = $_SESSION['panchang'];
 	$thithi_soonyam_arr = updateThithiSoonyam($panchang["thithi"]);
 	
-	echo "<div style='display: flex;justify-content: center; margin-top: 10%;'>";
+	echo "<div style='display: flex;justify-content: center; margin-top: 10%;'><center>";
 		displayChart($_SESSION['jamadata'][0],$_SESSION['jamadata'][1],$chart_date,$chart_time,$_COOKIE['place']);
 	echo "</div>";
 	unset($_SESSION['jamadata']);

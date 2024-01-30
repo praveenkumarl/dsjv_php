@@ -202,10 +202,10 @@ getChartDetails();
 <?php
 					echo "<div class='divTable blueTable' style='height:40px;width:95%'>";
 						echo "<div class='divTableRow'>";
-								echo "<div class='divPanchangHeading'>Rowid</div>";
-								echo "<div class='divPanchangHeading'>Girl Name</div>";
-								echo "<div class='divPanchangHeading'>BoyName</div>";
-								echo "<div class='divPanchangHeading'>Action</div>";
+								echo "<div class='divChartHistoryHeading'>Rowid</div>";
+								echo "<div class='divChartHistoryHeading'>Girl Name</div>";
+								echo "<div class='divChartHistoryHeading'>BoyName</div>";
+								echo "<div class='divChartHistoryHeading'>Action</div>";
 						echo "</div>";
 						
 						if(isset($chartInfo['rowid'])){
@@ -214,16 +214,16 @@ getChartDetails();
 								$x=$chartInfo['rowid'][$i];
 								
 								echo "<div class='divTableRow' id='row$x' onClick='showChart($x)' OnMouseOver='highlightRow($x);' OnMouseOut='removeHighlightRow($x);'>";
-									echo "<div class='divPanchang' id='col1$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['rowid'][$i]."</div>";
-									echo "<div class='divPanchang' id='col2$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['g_name'][$i]."</div>";
-									echo "<div class='divHidden' id='col3$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['g_place'][$i]."</div>";
-									echo "<div class='divHidden' id='col4$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['g_birth_date'][$i]."</div>";
-									echo "<div class='divHidden' id='col5$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['g_birth_time'][$i]."</div>";
-									echo "<div class='divPanchang' id='col6$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['b_name'][$i]."</div>";
-									echo "<div class='divHidden' id='col7$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['b_place'][$i]."</div>";
-									echo "<div class='divHidden' id='col8$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['b_birth_date'][$i]."</div>";
-									echo "<div class='divHidden' id='col9$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['b_birth_time'][$i]."</div>";
-									echo "<div class='divPanchang' id='col11$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'><input type='button' id='delButton' onClick='deleteRecord($x)' style='color:black;font-size:10px;font-weight:bold;width:40px;background: url(images/delete.png);background-size:60%;background-repeat: no-repeat;background-position: center;color:#660000;background-color:#ffffff;'></div>";
+									echo "<div class='divChartHistory' id='col1$x'>".$chartInfo['rowid'][$i]."</div>";
+									echo "<div class='divChartHistory' id='col2$x'>".$chartInfo['g_name'][$i]."</div>";
+									echo "<div class='divHidden' id='col3$x'>".$chartInfo['g_place'][$i]."</div>";
+									echo "<div class='divHidden' id='col4$x'>".$chartInfo['g_birth_date'][$i]."</div>";
+									echo "<div class='divHidden' id='col5$x'>".$chartInfo['g_birth_time'][$i]."</div>";
+									echo "<div class='divChartHistory' id='col6$x'>".$chartInfo['b_name'][$i]."</div>";
+									echo "<div class='divHidden' id='col7$x'>".$chartInfo['b_place'][$i]."</div>";
+									echo "<div class='divHidden' id='col8$x'>".$chartInfo['b_birth_date'][$i]."</div>";
+									echo "<div class='divHidden' id='col9$x'>".$chartInfo['b_birth_time'][$i]."</div>";
+									echo "<div class='divChartHistory' id='col11$x'><input type='button' id='delButton' onClick='deleteRecord($x)' style='color:black;font-size:10px;font-weight:bold;width:40px;background: url(images/delete.png);background-size:60%;background-repeat: no-repeat;background-position: center;color:#660000;background-color:#ffffff;'></div>";
 								echo "</div>";
 							}
 

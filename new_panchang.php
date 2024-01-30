@@ -66,7 +66,7 @@ $planetDeg_default = array();
 $mandhi_degree=0;
 $mandhi_degree_transit=0;
 $panchang = array();
-$nak_pad_idx = 0;
+$g_nak_pad_idx = 0;
 $dasa_balance = array(null,null,null); // years, months, days
 $birth_dasa_athipathi="";
 $g_dasaCurrent=array();
@@ -82,6 +82,8 @@ $g_nak="";
 $g_thithi_idx=-1;
 $g_yoga_idx=-1;
 $g_nak_idx=-1;
+$g_dasaBalance=array();
+$g_dasaCurrent=array();
 ?>
 <!DOCTYPE html>
 <html lang="en" class="no-js">
@@ -847,6 +849,14 @@ function displayHoroDetails()
 			//echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house,6)-1)."</div>";
 			echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house-1,6))."</div>";
 		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>பிறப்பு தசா இருப்பு</div>";
+			echo "<div class='divPanchang'>".$g_dasaBalance[0]."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>தற்போதைய தசா புக்தி</div>";
+			echo "<div class='divPanchang'>".$g_dasaCurrent[0]."</div>";
+		echo "</div>";
 	echo "</div>";
 }
 
@@ -1158,8 +1168,10 @@ EOL;
 					include "panchangMenu_mobile.php";
 echo <<<EOL
 			</div>
+		</div>
 		<div class='column-body'>
 		
+			<center>
 			<form name='updatePanchang' action='new_panchang.php?debug=$DEBUG' method='post' style='width:300px;margin-left:20px'>
 			
 
@@ -1191,20 +1203,24 @@ EOL;
     
 					//displayPanchang();
 					calculateBirthPanchang();
-
+					calculateVimDasaBalance($moon_degree,$moon_house,$chart_time,$chart_time,$panchang['nak'],$g_nak_pad_idx, true);
+					calculateVimDasa();
+					calculateCurrentDasaBukthi(true);
+					
 					//$panchang = getPanchangFromDB();
 					
 					calculateBirthThithiSoonyam($panchang["thithi"]);
+				
 					getOtherPanchangamDetails();
 					displayHoroDetails();
 					
 					$thithi_soonyam_arr = updateThithiSoonyam($panchang["thithi"]);
+					
 					displayTransitChart();
+					displayDisclaimer();
 					
 
 echo <<<EOL
-			
-					</div>
 					<BR><BR><BR>
 					</div></center>
 					<div id='dummy'></div>

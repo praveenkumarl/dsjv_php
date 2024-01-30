@@ -121,7 +121,7 @@ function init(){
 						<td><input type="text" name="kaaragam" id="kaaragam" autocomplete="off" style="border:1px solid lightgray;font-size:14px;font-weight:bold;color:black;background:#FDE966;" placeholder="Enter kaaragam/காரகம்..." /></td>
 					</tr>
 					<tr style="background:none">
-						<td colspan="2" align="center"><input type="submit" value="Add" class="primary wide" style="text-align:center; font-weight:bold; background:#660000" onclick="return validateForm();"></td>
+						<td colspan="2" align="center"><input type="submit" value="Add" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();"></td>
 					</tr>
 					
 					<tr style="background:none">

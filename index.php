@@ -155,12 +155,11 @@ EOL;
 		if(!isFreeUser($_SESSION['user_type'])){
 			echo <<<EOL
 			
-			<div class='current-jama' id='current-jama' onClick='window.open("Jamakol_input.php","_self");' style='cursor: pointer;'>
+			<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">தற்போதய  ஜாமக்கோள்</P>
 			<DIV id='msg'>Please wait, jamakol chart is loading</DIV>
+			<div class='current-jama' id='current-jama' onClick='window.open("Jamakol_input.php","_self");' style='cursor: pointer;margin-top:-10px'>
 EOL;
-				//echo '<div style="margin-top:-10%">';
-					include "live_jamakol_chart.php";
-				//echo '</div>';
+				include "live_jamakol_chart.php";
 				
 			echo <<<EOL
 				</div>

@@ -3217,7 +3217,7 @@ function displayGirlBoyDetails()
 	global $g_panchang_boy, $g_panchang_girl, $in_girlname, $in_boyname, $chart_date, $chart_time, $g_dasaBalance, 
 		$transit_date, $transit_time, $in_place_girl, $in_place_boy, $g_thithi_soonyam_matching_arr,$g_dasaCurrent;
 	
-	echo "<div class='divTable blueTable' style='height:40px;width:95%;'>";
+	echo "<div class='divTable blueTable' style='height:40px'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
 				echo "<div class='divPanchangHeading' colspan='3'>";
 					echo "<H6 style='font-weight:bold;color:black'>விவரங்கள்*</H6>";
@@ -3226,7 +3226,7 @@ function displayGirlBoyDetails()
 	echo "</div>";
 	
 	//display panchang table 
-	echo "<center><div class='divTable blueTable' style='height:40px;width:95%;'>"; 
+	echo "<center><div class='divTable blueTable' style='height:40px;'>"; 
 		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'></div>";
@@ -3822,7 +3822,7 @@ echo <<<EOL
 					<IMG SRC='images/ganpati2.jpg' width='10%' height='10%' />
 					<P style="color:#660000;font-weight:bold; font-size:10px; text-align:center; background-color:white;width:200px;line-height: 20px;">பெரியநாயகி துணை</P>
 					<BR>
-					<P style="color:#660000;font-weight:bold; font-size:14px; text-align:center; background-color:white;width:200px;line-height: 20px;">திருமண பொருத்த</P>
+					<P style="color:#660000;font-weight:bold; font-size:14px; text-align:center; background-color:white;width:200px;line-height: 20px;">மணமகள்/மணமகன் ஜாதகம்</P>
 					<!-- <P style="color:#660000;font-weight:bold; font-size:12px; text-align:center; background-color:gold;width:360px;line-height:30px">திருமண பொருத்த</P> -->
 					<BR>
 					
@@ -3838,8 +3838,8 @@ echo <<<EOL
 											<input type='hidden' id='nGirlTime' name='nGirlTime' value='$chart_time'>
 											<input type='hidden' id='nBoyDate' name='nGirlDate' value='$transit_date'>
 											<input type='hidden' id='nBoyTime' name='nBoyTime' value='$transit_time'>
-											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Girl BD: <input type='date' id='nDate' name='nDate' style="background-color:lightpink;color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$chart_date > Girl BT: <input type='time' id='nTime' name='nTime' style="background-color:lightpink;color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$chart_time></H4>
-											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Boy BD: <input type='date' id='in_date_boy' name='in_date_boy' style="background-color:#B2FCE4;color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$transit_date> Boy BT: <input type='time' id='in_time_boy' name='in_time_boy' style="background-color:#B2FCE4;color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$transit_time></H4>
+											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Girl BD: <input type='date' id='nDate' name='nDate' style="background-color:var(--girl-chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$chart_date > Girl BT: <input type='time' id='nTime' name='nTime' style="background-color:var(--girl-chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$chart_time></H4>
+											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Boy BD: <input type='date' id='in_date_boy' name='in_date_boy' style="background-color:var(--boy-chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$transit_date> Boy BT: <input type='time' id='in_time_boy' name='in_time_boy' style="background-color:var(--boy-chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$transit_time></H4>
 											<BR>
 											<input type='submit' class='actionBtnDefault' id='submit' value='Submit'>
 											<input type='button' class='actionBtnDefault' id='save' value='Save' onClick='saveChart();'>
@@ -3850,7 +3850,7 @@ echo <<<EOL
 							</div>
 				<div class="container" id="container" style="horizontal-align:center;">
 					
-					<div class="divTable blueTable" id="chart" style="width:95%">
+					<div class="divTable blueTable" id="chart">
 						
 						<div class="divTableBody">
 							<div class="divTableRow">
@@ -3945,14 +3945,14 @@ EOL;
 					calculateVimDasaBalance($transit_moon_degree,$transit_moon_house,$transit_date,$transit_time,$g_panchang_boy['nak'],$g_boy_nak_pad_idx,false);
 					displayButtons(true); //starlord dasa buttons for girl
 					displayButtons(false); //starlord dasa buttons for boy
-					displayCurrentDasaBukthi(true); //for girl
-					displayCurrentDasaBukthi(false); //for boy
+					calculateCurrentDasaBukthi(true); //for girl
+					calculateCurrentDasaBukthi(false); //for boy
 					//displayThithiSoonyam($g_panchang_boy["thithi"],false);
 					
 					displayGirlBoyDetails();
 
 					echo <<<EOL
-					<div class="divTable blueTable" style="height:40px;width:95%;">
+					<div class="divTable blueTable" style="height:40px;">
 						<div class="divTableRow">
 							<div class="divPanchangHeading" colspan=3>
 								<H6 style='font-weight:bold;color:black'>திருமணம் பொருத்தம்*</H6>
@@ -3961,7 +3961,7 @@ EOL;
 					</div>
 EOL;
 					
-					echo "<center><div class='divTable blueTable' style='height:40px;width:95%;'>"; 
+					echo "<center><div class='divTable blueTable' style='height:40px;'>"; 
 					
 					matchingRule1();
 					matchingRule2(true);

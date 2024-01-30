@@ -1,3 +1,9 @@
+:root {
+    --girl-chart-background: #ffe6f2;
+	--boy-chart-background: #ccffff;
+	--girl-chart-font-size: 14px;
+}
+
 /*normal mode*/
 #desk-table {
     display: block;
@@ -37,7 +43,7 @@ div.blueTable {
 
 }
 .divTable.blueTable .divTableBody .divTableCell {
-  font-size: 12px;
+  font-size: var(--girl-chart-font-size);
 }
 .blueTable .tableFootStyle {
   font-size: 12px;
@@ -70,10 +76,10 @@ div.blueTable {
 	vertical-align:middle;
 	border:solid 1px #660000;
 
-	background-color: #ffc0cb;
+	background-color: var(--girl-chart-background);
 	font-size: 12px;
 	line-height: 15px;
-	font-weight: bold;
+	font-weight: normal;
 	color: #660000;
 	width: 20%;
 	height: 20%;
@@ -85,11 +91,11 @@ div.blueTable {
 { 
 	display: table-cell; 
 	border: none;
-	background-color: #B2FCE4;
+	background-color: var(--boy-chart-background);
 	text-align:center;
 	vertical-align:middle;
 	font-size: 12px;
-	font-weight: bold;
+	font-weight: normal;
 	color: #660000;
 	width: 10%;
 	height: 10%;
@@ -317,8 +323,8 @@ div.blueTable {
 	vertical-align:middle;
 	border:solid 1px #660000;
 
-	background-color: lightpink;
-	font-size: 12px;
+	background-color: var(--girl-chart-background);
+	font-size: 11px;
 	color: black;
 	width: 20%;
 	height: 20%;
@@ -335,7 +341,7 @@ div.blueTable {
 	border:solid 1px #660000;
 
 	background-color: #ffffff;
-	font-size: 12px;
+	font-size: 11px;
 	color: black;
 	width: 20%;
 	height: 20%;
@@ -349,8 +355,8 @@ div.blueTable {
 	vertical-align:middle;
 	border:solid 1px #660000;
 
-	background-color: #B2FCE4;
-	font-size: 12px;
+	background-color: var(--boy-chart-background);
+	font-size: 11px;
 	color: black;
 	width: 20%;
 	height: 20%;
@@ -367,7 +373,7 @@ div.blueTable {
 	border:solid 1px #660000;
 
 	background-color: #ffffff;
-	font-size: 12px;
+	font-size: 11px;
 	color: black;
 	width: 20%;
 	height: 20%;
@@ -495,7 +501,7 @@ div.blueTable {
 }
 
 .actionBtn{
-	background-color: #ffc0cb !important;
+	background-color: var(--girl-chart-background) !important;
 	color:black;
 	font-weight:bold;
 	font-size:10px;
@@ -504,7 +510,7 @@ div.blueTable {
 }
 
 .actionBtnBoy{
-	background-color: #B2FCE4 !important;
+	background-color: var(--boy-chart-background) !important;
 	color:black;
 	font-weight:bold;
 	font-size:10px;

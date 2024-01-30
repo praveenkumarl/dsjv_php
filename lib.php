@@ -1188,16 +1188,6 @@ function calculateVimDasaBalance($in_moon_degree, $in_moon_house, $in_birth_date
 			else
 				$dasa_balance_boy = array($years,$months,$days);
 			
-			echo "<center><div class='divTable blueTable' style='height:40px;width:360px;'>"; 
-				echo "<div class='divTableRow'>";
-					echo "<div class='divTableCell' colspan=3>";
-							echo "<H6 style='font-weight:bold'>தசை இருப்பு</H6>";
-							echo "</div>";
-				echo "</div>";
-				echo "<div class='divTableRow'>";
-					echo "<div class='divPanchang'>$years years $months months $days days</div>";
-				echo "</div>";
-			echo "</div></center>";
 			break;
 	}
 	
@@ -1226,7 +1216,7 @@ function calculateVimDasaBalance($in_moon_degree, $in_moon_house, $in_birth_date
 	*/
 }
 
-function displayCurrentDasaBukthi($inner)
+function calculateCurrentDasaBukthi($inner)
 {
 	global $current_dasa_bukthi, $current_dasa_bukthi_boy, $g_dasaCurrent;
 	
@@ -1477,7 +1467,7 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 
 function calculateVimDasa()
 {
-	global $dasa_balance, $birth_dasa_athipathi, $chart_date;
+	global $dasa_balance, $birth_dasa_athipathi, $chart_date, $g_dasa_arr;
 	
 	$dasa_lord_arr = array('ket'=>7,'ven'=>20,'sun'=>6,'moo'=>10,'mar'=>7,'rah'=>18,'jup'=>16,'sat'=>19,'mer'=>17);
 	$dasa_lord_order = array('ket','ven','sun','moo','mar','rah','jup','sat','mer');
@@ -1526,6 +1516,8 @@ function calculateVimDasa()
 				echo "<div class='divDasa'>$curr_dasa_end_date</div>";
 			echo "</div>";
 			
+			$g_dasa_arr[$dasa_lord_order_tamil[$i]] = array($curr_dasa_start_date,$curr_dasa_end_date);
+			
 			$curr_dasa_start_date=date('d-m-Y',strtotime($curr_dasa_end_date. '+ 1 day'));
 			
 			calculateVimBukthi($i,$dasa_lord,$dasa_start_date,$curr_dasa_end_date);
@@ -1545,6 +1537,8 @@ function calculateVimDasa()
 			echo "<div class='divDasa'>$curr_dasa_start_date</div>";
 			echo "<div class='divDasa'>$curr_dasa_end_date</div>";
 		echo "</div>";
+		
+		$g_dasa_arr[$dasa_lord_order_tamil[$i]] = array($curr_dasa_start_date,$curr_dasa_end_date);
 		
 		$curr_dasa_start_date=date('d-m-Y',strtotime($curr_dasa_end_date. '+ 1 day'));
 		
@@ -2377,7 +2371,7 @@ function displayButtons($inner)
 		$dasa_function = 'showDasaTable_boy()';
 	}
 
-	echo "<center><div class='divTable blueTable' style='height:auto;width:95%;' id='buttons'>"; 
+	echo "<center><div class='divTable blueTable' style='height:auto;' id='buttons'>"; 
 		echo "<div class='divTableRow'>";
 			echo <<<EOL
 				<div class="divMenu" style="width:50%">
@@ -2388,7 +2382,7 @@ function displayButtons($inner)
 				</div>
 EOL;
 		echo "</div>";
-	echo "</div>";
+	echo "</div></center>";
 
 
 	if($inner == true){
@@ -4207,13 +4201,10 @@ function displayDetailsDiv($in_dataType,$in_data){
 function displayDisclaimer()
 {
 echo <<<EOL
-	<div class="divTable blueTable" style="height:40px;width:95%;">
-		<div class="divTableRow">
-			<div class="divPanchangHeading" colspan=3>
+	
+			<div class="divDisclaimer" colspan=3>
 				<H6 style='font-weight;color:red'>*இந்த தளத்தில்/மொபைல் ஆப்பில் கொடுக்கப்பட்டுள்ள ஆய்வுகள் மற்றும் மதிப்பென்கள் இறுதியானது கிடையாது, இதனுடன் நீங்கள் தங்கள் விரிவான ஆய்வுகளையும் மேற்க்கொண்டு இருதி முடிவு எடுக்கவும்</H6>
 			</div>
-		</div>
-	</div>
 EOL;
 }
 
@@ -4226,6 +4217,19 @@ function starCount($star1_idx, $star2_idx)
 	else{
 		return $star2_idx - $star1_idx+1;
 	}	
+}
+
+function getSex($in_sex,$lang=1) //tamil
+{
+	switch((int)$in_sex)
+	{
+		case 1: 
+			return "ஆண்";
+		case 2:
+			return "பெண்";
+		case 3:
+			return "மூன்றாம்";
+	}
 }
 
 ?>

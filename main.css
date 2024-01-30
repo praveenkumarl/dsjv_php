@@ -3583,6 +3583,70 @@ div.error {
 	padding:5px;
 }
 
+.divChartHistoryHeading 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px #660000;
+
+	background-color: gold;
+	font-size: 8px;
+	color: black;
+	width: 20%;
+	height: 20%;
+	padding:5px;
+	
+	font-weight: bold;
+}
+
+.divChartHistory 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px #660000;
+
+	background-color: #ffffff;
+	font-size: 8px;
+	color: black;
+	width: 20%;
+	height: 20%;
+	padding:5px;
+}
+
+.divMatchingResultRed 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px #660000;
+
+	background-color: #ff8080;
+	font-size: 16px;
+	font-weight: 1000;
+	color: white;
+	width: 20%;
+	height: 20%;
+	padding:5px;
+}
+
+.divMatchingResultGreen 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px #660000;
+
+	background-color: #90ee90;
+	font-size: 16px;
+	font-weight: 1000;
+	color: black;
+	width: 20%;
+	height: 20%;
+	padding:5px;
+}
+
 .help_heading
 {
 	font-size: 24px;
@@ -3823,7 +3887,7 @@ div.error {
 
 	.column-body {
 		display: block;
-		width:100%;
+		width:95%;
 		text-align:center;
 	}
 	.desktop
@@ -4054,7 +4118,7 @@ div.error {
 
 
 /***************** for loading animation **************/
-#loader {
+#loader{
 	/* border: 12px solid #f3f3f3; */
 	border-top: 12px solid #FFC300;
 	border-right: 12px solid #FF5733;
@@ -4065,8 +4129,9 @@ div.error {
 	height: 100px;
 	animation: spin 1s ease infinite alternate;
 	z-index:9;
+	content: test;
 }
-  
+
 @keyframes spin {
 	100% {
 		transform: rotate(360deg);
@@ -4248,10 +4313,10 @@ textarea {
   display: block;
 }
 
-.detailsDiv{
+.nakDetailsDiv{
 	display: none;
 	position:absolute;
-	padding:5px;
+	padding:10px;
 	width:fit;
 	height:fit;
 	border: solid 1px;
@@ -4262,9 +4327,190 @@ textarea {
 	background:#fafad2;
 }
 
+.thithiDetailsDiv{
+	display: none;
+	position:absolute;
+	padding:10px;
+	width:fit;
+	height:fit;
+	border: solid 1px;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	z-index: 9;
+	background:#fafad2;
+}
 
-.parigaraDiv{
-	font-size:14pt;
+.karanaDetailsDiv{
+	display: none;
+	position:absolute;
+	padding:10px;
+	width:fit;
+	height:fit;
+	border: solid 1px;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	z-index: 9;
+	background:#fafad2;
+}
+
+.yogiDetailsDiv{
+	display: none;
+	position:absolute;
+	padding:5px;
+	width:fit;
+	height:fit;
+	border: solid 1px;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	z-index: 9;
+	background:#D8FF54;
+}
+
+.ayogiDetailsDiv
+{
+	display: none;
+	position:absolute;
+	padding:10px;
+	width:fit;
+	height:fit;
+	border: solid 1px;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	z-index: 9;
+	background:#ffb3b3;
+}
+
+#labelParigaraDiv {
+    position: absolute;
+    top: -10px;
+    left: 20px;
+	padding: 2px;
+    height: fit;
+    width: fit;
+	font-size: 10px;
+	align-items: center;
+	background: white;
+    border: 1px solid blue;
+    text-align: center;
+}
+
+
+parigaraDiv{
+	font-size:12pt;
 	color: blue;
+	font-weight:bold;
+}
+
+.divStarMatch 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 8px;
+	color: black;
+	width: 20%;
+	height: 20%;
+	padding:5px;
+}
+
+.divThaaraPalanHeading 
+{ 
+	display: table-cell;
+	text-align:justify-content;
+	vertical-align:middle;
+	border:solid 1px #660000;
+
+	background-color: Gold;
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: bold;
+	color: black;
+	width: auto;
+	height: 20%;
+	padding:5px;
+	font-weight:bold;
+}
+
+.divThaaraPalanWhite 
+{ 
+	display: table-cell;
+	text-align:justify-content;
+	vertical-align:middle;
+	border:solid 1px #660000;
+	line-height: 16px;
+	background-color: White;
+	font-size: 11px;
+	color: black;
+	width: auto;
+	height: 20%;
+	padding:5px;
+	font-weight:500;
+}
+
+.divThaaraPalanRed 
+{ 
+	display: table-cell;
+	text-align:justify-content;
+	vertical-align:middle;
+	border:solid 1px #660000;
+	line-height: 16px;
+	background-color: #FD8383;
+	font-size: 11px;
+	color: black;
+	width: auto;
+	height: auto;
+	padding:5px;
+	font-weight:500;
+}
+
+.divThaaraPalanGreen 
+{ 
+	display: table-cell;
+	text-align:justify-content;
+	vertical-align:middle;
+	border:solid 1px #660000;
+	line-height: 16px;
+	background-color: #8AFD83;
+	font-size: 11px;
+	color: black;
+	width: auto;
+	height: 20%;
+	padding:5px;
+	font-weight:500;
+}
+
+.divThaaraPalanRedBright 
+{ 
+	display: table-cell;
+	text-align:justify-content;
+	vertical-align:middle;
+	border:solid 1px #660000;
+	line-height: 16px;
+	background-color: #FC0000;
+	font-size: 11px;
+	color: white;
+	width: auto;
+	height: 20%;
+	padding:5px;
+	font-weight:bold;
+}
+
+.divThaaraPalanGreenBright 
+{ 
+	display: table-cell;
+	text-align:justify-content;
+	vertical-align:middle;
+	border:solid 1px #660000;
+	line-height: 16px;
+	background-color: #0FFC00;
+	font-size: 11px;
+	color: black;
+	width: auto;
+	height: 20%;
+	padding:5px;
 	font-weight:bold;
 }

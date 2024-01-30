@@ -211,14 +211,14 @@ getChartDetails();
 								$place = $chartInfo['place'][$i];
 								
 								echo "<div class='divTableRow' id='row$x' onClick='showChart($x,\"$place\")' OnMouseOver='highlightRow($x);' OnMouseOut='removeHighlightRow($x);'>";
-									echo "<div class='divChartHistory' id='col1$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['rowid'][$i]."</div>";
-									echo "<div class='divChartHistory' id='col3$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['question'][$i]."</div>";
-									echo "<div class='divChartHistory' id='col31$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['analysis'][$i]."</div>";
+									echo "<div class='divChartHistory' id='col1$x'>".$chartInfo['rowid'][$i]."</div>";
+									echo "<div class='divChartHistory' id='col3$x'>".$chartInfo['question'][$i]."</div>";
+									echo "<div class='divChartHistory' id='col31$x'>".$chartInfo['analysis'][$i]."</div>";
 									$city = explode('|',$chartInfo['place'][$i])[0];
-									echo "<div class='divChartHistory' id='col4$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$city."</div>";
-									echo "<div class='divChartHistory' id='col5$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['birth_date'][$i]."</div>";
-									echo "<div class='divChartHistory' id='col6$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['birth_time'][$i]."</div>";
-									echo "<div class='divChartHistory' id='col7$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'><input type='button' id='delButton' onClick='deleteRecord($x)' style='color:black;font-size:10px;font-weight:bold;width:40px;background: url(images/delete.png);background-size:60%;background-repeat: no-repeat;background-position: center;color:#660000;background-color:#ffffff;'></div>";
+									echo "<div class='divChartHistory' id='col4$x'>".$city."</div>";
+									echo "<div class='divChartHistory' id='col5$x'>".$chartInfo['birth_date'][$i]."</div>";
+									echo "<div class='divChartHistory' id='col6$x'>".$chartInfo['birth_time'][$i]."</div>";
+									echo "<div class='divChartHistory' id='col7$x'><input type='button' id='delButton' onClick='deleteRecord($x)' style='color:black;font-size:10px;font-weight:bold;width:40px;background: url(images/delete.png);background-size:60%;background-repeat: no-repeat;background-position: center;color:#660000;background-color:#ffffff;'></div>";
 								echo "</div>";
 							}
 

@@ -363,6 +363,16 @@ function updateNow() {
 						</td>
 					</tr>
 					<tr style="background-color: #FFFFFF">
+						<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px">*Sex:</H5></td>
+						<td>
+							<select name="sex" id="sex" style="width:auto;font-size:16px;">
+								<option value="1" selected>ஆண்</option>
+								  <option value="2">பெண்</option>
+								  <option value="3">மூன்றாம்</option>
+							</select>
+						</td>
+					</tr>
+					<tr style="background-color: #FFFFFF">
 						<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px">*Birth place:</H5></td>
 						<td><div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" /><div class="result"></div>
 						</td>
@@ -390,7 +400,7 @@ function updateNow() {
 						<td colspan="2" align="center"><div id="error" style="color:red;"></div></td>
 					</tr>
 					<tr  style="background-color: #FFFFFF">
-						<td colspan="2" align="center"><input type="submit" value="Submit" class="primary wide" style="text-align:center; font-weight:bold; background:#660000" onclick="return validateForm();"></td>
+						<td colspan="2" align="center"><input type="submit" value="Submit" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();"></td>
 					</tr>
 					
 				</table>

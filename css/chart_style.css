@@ -1,3 +1,11 @@
+:root {
+    /*--chart-background: url(../images/square5.jpg); */
+	--chart-background: gold;
+	--chart-outer-background: #ccfff2;
+	--details-background: #FFFFFF;
+	--chart-inner-font-size: 14px;
+}
+
 /*normal mode*/
 #desk-table {
     display: block;
@@ -36,7 +44,7 @@ div.blueTable {
 
 }
 .divTable.blueTable .divTableBody .divTableCell {
-  font-size: 12px;
+  font-size: var(--chart-inner-font-size);
 }
 .blueTable .tableFootStyle {
   font-size: 12px;
@@ -72,13 +80,14 @@ div.blueTable {
 	background-color: #FFEFBF;
 	font-size: 12px;
 	line-height: 15px;
-	font-weight: bold;
+	font-weight: normal;
 	color: #660000;
 	width: 20%;
 	height: 20%;
 	padding:5px;
 
-	background-image: url(../images/square5.jpg);
+	//background-image: url(../images/square5.jpg);
+	background-image: var(--chart-background);
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: center;
@@ -90,7 +99,7 @@ div.blueTable {
 { 
 	display: table-cell; 
 	border: none;
-	background-color: #D8FF54;
+	background-color: var(--chart-outer-background);
 	text-align:center;
 	vertical-align:middle;
 	font-size: 11px;

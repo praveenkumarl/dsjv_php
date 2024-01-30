@@ -84,7 +84,7 @@ elseif(strcmp($usertype,"ADMIN")==0){
               <a href="Birth_input.php">பிறப்பு ஜாதகம்</a>
               <a href="Matching_input.php">திருமண பொருத்தம்</div</a>
               <a href="planet_kaaragam.php">கிரக காரகம்</a>
-              <a href="hora.php">ஓரை</a>`
+              <a href="hora.php">ஓரை</a>
 			  <a href="new_panchang.php">பஞ்சாங்கம்</a>
               <a href="admin.php">ADMIN</a>
             </div>

@@ -7,7 +7,7 @@ if(strcmp($usertype,"FREE")==0){
     <div class="menu-container">
         <div class="navbar">
 			<a href="index.php">HOME</a>
-			<a href="Jamakol_input.php">New Chart</a>
+			<a href="Birth_input.php">New Chart</a>
           <div class="dropdown1">
             </div>
           </div> 
@@ -22,7 +22,7 @@ elseif(strcmp($usertype,"PAID")==0){
     <div class="menu-container">
         <div class="navbar">
 			<a href="index.php">HOME</a>
-			<a href="Jamakol_input.php">New Chart</a>
+			<a href="Birth_input.php">New Chart</a>
           <div class="dropdown1">
             </div>
           </div> 
@@ -36,7 +36,7 @@ elseif(strcmp($usertype,"SUPER")==0){
     <div class="menu-container">
         <div class="navbar">
 			<a href="index.php">HOME</a>
-			<a href="Jamakol_input.php">New Chart</a>
+			<a href="Birth_input.php">New Chart</a>
           <div class="dropdown1">
             </div>
           </div> 
@@ -49,7 +49,7 @@ elseif(strcmp($usertype,"ADMIN")==0){
     <div class="menu-container">
         <div class="navbar">
 			<a href="index.php">HOME</a>
-			<a href="Jamakol_input.php">New Chart</a>
+			<a href="Birth_input.php">New Chart</a>
           <div class="dropdown1">
             </div>
           </div> 
