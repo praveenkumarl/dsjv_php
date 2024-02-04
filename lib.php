@@ -633,8 +633,8 @@ function sortDegree($inArray) // new function
 			if($house<=5)
 			{
 				if(strpos($inArray[$house],$planet)===0 || strpos($inArray[$house],$planet)>0){	
-					if(strpos($inArray[$house],'red">'.$planet)>0 || strpos($inArray[$house],'red">'.$planet)===0){
-						$outArray[$house] = $outArray[$house] . " " . "<span style='color:red'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+					if(strpos($inArray[$house],'retro">'.$planet)>0 || strpos($inArray[$house],'retro">'.$planet)===0){
+						$outArray[$house] = $outArray[$house] . " " . "<span class='retro'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
 						
 					}
 					else{
@@ -701,8 +701,8 @@ function sortDegree($inArray) // new function
 			//arrange planets by degree from bottom to top within these houses (Virichigam to Meenam)
 			else{
 				if(strpos($inArray[$house],$planet)===0 || strpos($inArray[$house],$planet)>0){	
-					if(strpos($inArray[$house],'red">'.$planet)>0 || strpos($inArray[$house],'red">'.$planet)===0){
-						$outArray[$house] = "<span style='color:red'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house];
+					if(strpos($inArray[$house],'retro">'.$planet)>0 || strpos($inArray[$house],'retro">'.$planet)===0){
+						$outArray[$house] = "<span class='retro'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house];
 						
 					}
 					else{
@@ -788,9 +788,9 @@ function sortDegree_transit($inArray) // new function
 			//$inArray[$house] = str_replace($planet, $planet. " " . $planetDeg_transit[$planet],$inArray[$house]);
 			
 			if(strpos($inArray[$house],$planet)===0 || strpos($inArray[$house],$planet)>0){	
-				if(strpos($inArray[$house],'red">'.$planet)>0 || strpos($inArray[$house],'red">'.$planet)===0){
+				if(strpos($inArray[$house],'retro">'.$planet)>0 || strpos($inArray[$house],'retro">'.$planet)===0){
 					//$outArray[$house] = $outArray[$house] . " " . "<span style='color:red'>$planet</span>" . "-". DECtoDMS($planetDeg_transit[$planet]);
-					$outArray[$house] = $outArray[$house] . " " . "<span style='color:red'>$planet</span>";
+					$outArray[$house] = $outArray[$house] . " " . "<span class='retro'>$planet</span>";
 				}
 				else{
 					//$outArray[$house] = $outArray[$house] . " " . $planet . "-". $planetDeg_transit[$planet];
@@ -1247,7 +1247,7 @@ function calculateCurrentDasaBukthi($inner)
 
 function calculateVimBukthi($curr_dasa_lord, $bukthi_lord, $bukthi_start_date, $dasa_end_date)
 {
-	global $chart_date,$current_dasa_bukthi;
+	global $chart_date,$current_dasa_bukthi, $g_bukthi_arr, $g_current_dasa_lord;
 	
 	$bukthi_lord_arr = array('ket'=>7,'ven'=>20,'sun'=>6,'moo'=>10,'mar'=>7,'rah'=>18,'jup'=>16,'sat'=>19,'mer'=>17);
 	$bukthi_lord_order = array('ket','ven','sun','moo','mar','rah','jup','sat','mer');
@@ -1280,6 +1280,8 @@ function calculateVimBukthi($curr_dasa_lord, $bukthi_lord, $bukthi_start_date, $
 				$current_dasa_bukthi['bukthi'] = $bukthi_lord_order_tamil[$i];
 				$current_dasa_bukthi['start_date'] = $curr_bukthi_start_date;
 				$current_dasa_bukthi['end_date'] = $curr_bukthi_end_date;
+				
+				$g_current_dasa_lord = $bukthi_lord_order_tamil[$curr_dasa_lord];
 			}
 			elseif(strtotime($chart_date) >= strtotime($curr_bukthi_start_date) and strtotime($chart_date) <= strtotime($curr_bukthi_end_date)){
 				echo "<div class='divTableRow'>";
@@ -1287,7 +1289,7 @@ function calculateVimBukthi($curr_dasa_lord, $bukthi_lord, $bukthi_start_date, $
 					echo "<div class='divBirthBukthi'>$curr_bukthi_start_date</div>";
 					echo "<div class='divBirthBukthi'>$curr_bukthi_end_date</div>";
 				echo "</div>";
-		}
+			}
 			else{
 				echo "<div class='divTableRow'>";
 					echo "<div class='divBukthiHeading'  onClick='displayAnthara(\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\",\"$curr_bukthi_start_date\", \"$curr_bukthi_end_date\");'>".$bukthi_lord_order_tamil[$curr_dasa_lord]."&#8594;".$bukthi_lord_order_tamil[$i]."</div>";
@@ -1295,6 +1297,8 @@ function calculateVimBukthi($curr_dasa_lord, $bukthi_lord, $bukthi_start_date, $
 					echo "<div class='divBukthi'>$curr_bukthi_end_date</div>";
 				echo "</div>";
 			}
+			
+			$g_bukthi_arr[$bukthi_lord_order_tamil[$curr_dasa_lord]."&#8594;".$bukthi_lord_order_tamil[$i]] = array($bukthi_lord_order_tamil[$i],$curr_bukthi_start_date,$curr_bukthi_end_date);
 			
 			//$curr_bukthi_start_date=date('d-m-Y',strtotime($curr_bukthi_end_date. '+ 1 day'));
 			$curr_bukthi_start_date = $curr_bukthi_end_date;
@@ -1349,6 +1353,8 @@ function calculateVimBukthi($curr_dasa_lord, $bukthi_lord, $bukthi_start_date, $
 				}
 			echo "</div>";
 		}
+		
+		$g_bukthi_arr[$bukthi_lord_order_tamil[$curr_dasa_lord]."&#8594;".$bukthi_lord_order_tamil[$i]] = array($bukthi_lord_order_tamil[$i],$curr_bukthi_start_date,$curr_bukthi_end_date);
 		
 		//$curr_bukthi_start_date=date('d-m-Y',strtotime($curr_bukthi_end_date. '+ 1 day'));
 		$curr_bukthi_start_date = $curr_bukthi_end_date;
@@ -1775,12 +1781,12 @@ function displayStarLard()
 
 	echo "<center><div class='divTable blueTable' id='starlordBodyMutable' style='height:100%;width:360px;display:none'>"; 
 	echo "<div class='divTableRow'>";
-				echo "<div class='divPanchangHeading'>Planet</div>";
-				echo "<div class='divPanchangHeading'>Star Padam</div>";
-				echo "<div class='divPanchangHeading'>Star lord</div>";
-				echo "<div class='divPanchangHeading'>Degree</div>";
+				echo "<div class='divTableCell'>Planet</div>";
+				echo "<div class='divTableCell'>Star Padam</div>";
+				echo "<div class='divTableCell'>Star lord</div>";
+				echo "<div class='divTableCell'>Degree</div>";
 				//echo "<div class='divPanchangHeading'>Rasi degree</div>";
-				echo "<div class='divPanchangHeading'>Karanam</div>";
+				echo "<div class='divTableCell'>Karanam</div>";
 		echo "</div>";
 	
 	foreach($planet_starlord as $planet => $data)
@@ -3235,7 +3241,7 @@ function updateIndhuLagna()
 	
 	debug($indhu_lagna_house);
 	
-	$sw_planet[$indhu_lagna_house-1] = $sw_planet[$indhu_lagna_house-1] . " " . "<span style='background-color:green;color:white;font-size:10px;font-weight:bold'>இந்</span>" ;
+	$sw_planet[$indhu_lagna_house-1] = $sw_planet[$indhu_lagna_house-1] . " " . "<span class='indhu'>இந்</span>" ;
 }
 
 function findKethuPos($pos)
@@ -3310,31 +3316,31 @@ function updatePlanet(array $planets,array $retro, $in_ragu_house)
 	if($retro[4]==1){
 		$out = str_replace('Mars','செ',$out);
 	}else{
-		$out = str_replace('Mars','<span style="color:red">செ</span>',$out);
+		$out = str_replace('Mars','<span class="retro">செ</span>',$out);
 	}
 	
 	if($retro[3]==1){
 		$out = str_replace('Venus','சுக்',$out);
 	}else{
-		$out = str_replace('Venus','<span style="color:red">சுக்</span>',$out);
+		$out = str_replace('Venus','<span class="retro">சுக்</span>',$out);
 	}
 	
 	if($retro[2]==1){
 		$out = str_replace('Mercury','புத',$out);
 	}else{
-		$out = str_replace('Mercury','<span style="color:red">புத</span>',$out);
+		$out = str_replace('Mercury','<span class="retro">புத</span>',$out);
 	}
 	
 	if($retro[5]==1){
 		$out = str_replace('Jupiter','குரு',$out);
 	}else{
-		$out = str_replace('Jupiter','<span style="color:red">குரு</span>',$out);
+		$out = str_replace('Jupiter','<span class="retro">குரு</span>',$out);
 	}
 	
 	if($retro[6]==1){
 		$out = str_replace('Saturn','சனி',$out);
 	}else{
-		$out = str_replace('Saturn','<span style="color:red">சனி</span>',$out);
+		$out = str_replace('Saturn','<span class="retro">சனி</span>',$out);
 	}
 	
 	//$out = str_replace('true Node','ரா',$out);
@@ -4230,6 +4236,41 @@ function getSex($in_sex,$lang=1) //tamil
 		case 3:
 			return "மூன்றாம்";
 	}
+}
+
+function getStr($str, $lang)
+{
+	$out = "";
+	$temp = preg_split('/[\/\[\]]/', $str,-1, PREG_SPLIT_NO_EMPTY);
+
+	if($lang==1){ //tamil
+		switch(sizeof($temp)){
+			case 1:   //eg அதி கண்டம்
+				$out = $str;
+				break;
+			case 2:  //eg Uthra bhadrapada 3/உத்திரட்டாதி 3
+				$out = $temp[1];
+				break;
+			case 4: //eg Shrashti/சஷ்டி[krishna/தேய்]
+				$out = $temp[1]."(".$temp[3].")";
+				break;
+		}		
+	}
+	elseif($lang==2) {  // english
+		switch(sizeof($temp)){
+			case 1:   //eg அதி கண்டம்
+				$out = $str;
+				break;
+			case 2:  //eg Uthra bhadrapada 3/உத்திரட்டாதி 3
+				$out = $temp[0];
+				break;
+			case 4: //eg Shrashti/சஷ்டி[krishna/தேய்]
+				$out = $temp[0]."(".$temp[2].")";
+				break;
+		}		
+	}
+	
+	return $out;
 }
 
 ?>

@@ -105,7 +105,7 @@ EOL;
 						echo "<div class='divTableRow' id='row$x' onClick='showChart($x,\"$place\")' OnMouseOver='highlightRow($x);' OnMouseOut='removeHighlightRow($x);'>";
 							echo "<div class='divChartHistory' id='col1$x'>".$chartInfo['rowid'][$i]."</div>";
 							echo "<div class='divChartHistory' id='col3$x'>".$chartInfo['name'][$i]."</div>";
-							echo "<div class='divChartHistory' id='col31$x'>".getSex($chartInfo['sex'][$i],1)."</div>";
+							echo "<div class='divChartHistory' id='col31$x'>".$chartInfo['sex'][$i]."</div>";
 							$city = explode('|',$chartInfo['place'][$i])[0];
 							echo "<div class='divChartHistory' id='col4$x'>".$city."</div>";
 							echo "<div class='divChartHistory' id='col5$x'>".$chartInfo['birth_date'][$i]."</div>";

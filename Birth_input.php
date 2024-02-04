@@ -366,9 +366,9 @@ function updateNow() {
 						<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px">*Sex:</H5></td>
 						<td>
 							<select name="sex" id="sex" style="width:auto;font-size:16px;">
-								<option value="1" selected>ஆண்</option>
-								  <option value="2">பெண்</option>
-								  <option value="3">மூன்றாம்</option>
+								<option value="ஆண்" selected>ஆண்</option>
+								  <option value="பெண்">பெண்</option>
+								  <option value="மூன்றாம்">மூன்றாம்</option>
 							</select>
 						</td>
 					</tr>

@@ -1,6 +1,6 @@
  <?php 
 session_start();
-include "db.php"; 
+include "lib.php"; 
 
 $DEBUG= 1;//(int) isset($_SESSION['debug']) ? $_SESSION['debug'] : 0;
 $conn="";

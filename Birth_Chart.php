@@ -97,6 +97,10 @@ $g_planetKaranaLord=array();
 $g_thithi_idx=-1;
 $otherPanchangDetails = array();
 $g_dasa_arr = array();
+$g_bukthi_arr = array();
+$g_current_dasa_lord = "";
+$g_lagnam="";
+$g_rasi="";
 
 if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_input.php')==false){
 	$saveMode=1;
@@ -420,15 +424,27 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 			switch(type){
 				case 1:
 					divName = "thithiDetailsDiv";
+					document.getElementById("karanaDetailsDiv").style.display = "none";
+					document.getElementById("yogiDetailsDiv").style.display = "none";
+					document.getElementById("ayogiDetailsDiv").style.display = "none";
 					break;
 				case 2:
 					divName = "karanaDetailsDiv";
+					document.getElementById("thithiDetailsDiv").style.display = "none";
+					document.getElementById("yogiDetailsDiv").style.display = "none";
+					document.getElementById("ayogiDetailsDiv").style.display = "none";
 					break;
 				case 3:
 					divName = "yogiDetailsDiv";
+					document.getElementById("thithiDetailsDiv").style.display = "none";
+					document.getElementById("karanaDetailsDiv").style.display = "none";
+					document.getElementById("ayogiDetailsDiv").style.display = "none";
 					break;
 				case 4:
 					divName = "ayogiDetailsDiv";
+					document.getElementById("thithiDetailsDiv").style.display = "none";
+					document.getElementById("karanaDetailsDiv").style.display = "none";
+					document.getElementById("yogiDetailsDiv").style.display = "none";
 					break;
 			}
 			
@@ -641,31 +657,31 @@ function updatePlanet_transit(array $planets,array $retro, $in_ragu_house)
 	if($retro[4]==1){
 		$out = str_replace('Mars','செ',$out);
 	}else{
-		$out = str_replace('Mars','<span style="color:red">செ</span>',$out);
+		$out = str_replace('Mars','<span class="retro">செ</span>',$out);
 	}
 	
 	if($retro[3]==1){
 		$out = str_replace('Venus','சுக்',$out);
 	}else{
-		$out = str_replace('Venus','<span style="color:red">சுக்</span>',$out);
+		$out = str_replace('Venus','<span class="retro">சுக்</span>',$out);
 	}
 	
 	if($retro[2]==1){
 		$out = str_replace('Mercury','புத',$out);
 	}else{
-		$out = str_replace('Mercury','<span style="color:red">புத</span>',$out);
+		$out = str_replace('Mercury','<span class="retro">புத</span>',$out);
 	}
 	
 	if($retro[5]==1){
 		$out = str_replace('Jupiter','குரு',$out);
 	}else{
-		$out = str_replace('Jupiter','<span style="color:red">குரு</span>',$out);
+		$out = str_replace('Jupiter','<span class="retro">குரு</span>',$out);
 	}
 	
 	if($retro[6]==1){
 		$out = str_replace('Saturn','சனி',$out);
 	}else{
-		$out = str_replace('Saturn','<span style="color:red">சனி</span>',$out);
+		$out = str_replace('Saturn','<span class="retro">சனி</span>',$out);
 	}
 	
 	//$out = str_replace('true Node','ரா',$out);
@@ -1073,11 +1089,12 @@ function getOtherPanchangamDetails()
 function displayHoroDetails()
 {
 	global $panchang, $in_name, $chart_date, $chart_time, $g_dasaBalance, $place, $g_thithi_soonyam_matching_arr,$g_dasaCurrent, $transit_date, $lagna_house, $country,$yogi_arr, 
-		$g_pancha_pakshi, $g_thithi, $g_paksham, $moon_house, $today_sunrise, $today_sunset, $otherPanchangDetails, $city,$g_nak, $g_thithi_idx, $g_yoga_idx, $in_place, $g_rowid;
+		$g_pancha_pakshi, $g_thithi, $g_paksham, $moon_house, $today_sunrise, $today_sunset, $otherPanchangDetails, $city,$g_nak, $g_thithi_idx, $g_yoga_idx, $in_place, $g_rowid, $in_sex,
+		$g_lagnam, $g_rasi;
 	
 	echo "<div class='divTable blueTable' style='height:40px;width:360px;'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
-				echo "<div class='divPanchangHeading' colspan='3'>";
+				echo "<div class='divTableCell' colspan='3'>";
 					echo "<H6 style='font-weight:bold;color:black'>விவரங்கள்</H6>";
 				echo "</div>";
 			echo "</div>";
@@ -1088,6 +1105,10 @@ function displayHoroDetails()
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>ஜாதகர் பெயர்</div>";
 			echo "<div class='divPanchang' style='font-weight:bold'>".$in_name."(id=$g_rowid)</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>பாலினம்</div>";
+			echo "<div class='divPanchang' style='font-weight:bold'>".$in_sex."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			$age = round((strtotime($transit_date)-strtotime($chart_date))/(365*60*60*24),1);
@@ -1104,7 +1125,10 @@ function displayHoroDetails()
 			echo "<div class='divPanchangHeading'>பிறந்த நேரம்</div>";
 			echo "<div class='divPanchang'>".date('h:i:s a',strtotime($chart_time))."</div>";
 		echo "</div>";
-		
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>பிறந்த இடம்</div>";
+			echo "<div class='divPanchang'>".$place."</div>";
+		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
 			echo "<div class='divPanchang'>".explode('/',$panchang['nak'])[1]."<BR>".$panchang['nak-end-time']." வரை</div>";
@@ -1140,11 +1164,13 @@ function displayHoroDetails()
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>லக்கினம்</div>";
-			echo "<div class='divPanchang'>".getRasi($lagna_house-1)."</div>";
+			$g_lagnam = getRasi($lagna_house-1);
+			echo "<div class='divPanchang'>".$g_lagnam."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
+			$g_rasi = getRasi($moon_house-1);
 			echo "<div class='divPanchangHeading'>ராசி</div>";
-			echo "<div class='divPanchang'>".getRasi($moon_house-1)."</div>";
+			echo "<div class='divPanchang'>".$g_rasi."</div>";
 		echo "</div>";
 		$yogi_arr = getYogi($panchang['yoga']);
 		echo "<div class='divTableRow'>";
@@ -1431,11 +1457,11 @@ function displayStarLard_transit()
 
 	echo "<center><div class='divTable blueTable' id='starlordBodyMutable_boy' style='height:100%;width:360px;display:none'>"; 
 	echo "<div class='divTableRow'>";
-				echo "<div class='divPanchangHeading'>Planet</div>";
-				echo "<div class='divPanchangHeading'>Star Padam</div>";
-				echo "<div class='divPanchangHeading'>Star lord</div>";
-				echo "<div class='divPanchangHeading'>Full degree</div>";
-				echo "<div class='divPanchangHeading'>Rasi degree</div>";
+				echo "<div class='divTableCell'>Planet</div>";
+				echo "<div class='divTableCell'>Star Padam</div>";
+				echo "<div class='divTableCell'>Star lord</div>";
+				echo "<div class='divTableCell'>Full degree</div>";
+				echo "<div class='divTableCell'>Rasi degree</div>";
 		echo "</div>";
 	
 	foreach($planet_starlord_transit as $planet => $data)
@@ -1520,7 +1546,7 @@ function calculateNavamsam()
 				];
 	
 $planet_padam = explode('(',$planet_starlord["லக்"][1])[0] . explode(' ',$planet_starlord["லக்"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " <span style='background-color:blue;color:white'>லக்</span>";
+	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " <span class='lagna'>லக்</span>";
 	
 	$planet_padam = explode('(',$planet_starlord["சூரி"][1])[0] . explode(' ',$planet_starlord["சூரி"][0])[1];
 	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " சூரி";
@@ -2111,11 +2137,11 @@ echo <<<EOL
 											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Birth Date: <input type='date' id='nDate' name='nDate' readonly style="background-color:var(--chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$chart_date > Birth Time: <input type='time' id='nTime' name='nTime' readonly style="background-color:var(--chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$chart_time></H4>
 											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Transit Date: <input type='date' id='nTrDate' name='nTrDate' style="background-color:#FFFFFF;color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$transit_date> Transit Time: <input type='time' id='nTrTime' name='nTrTime' style="background-color:#FFFFFF;color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$transit_time></H4>
 											<BR>
-											<input type='button' class='actionBtn' id='submit1' value='Submit' onClick='return genChart(this.form);'>
+											<button type='button' class='actionBtn' id='submit1' value='Submit' onClick='return genChart(this.form);'>Submit</button><button class='actionBtn' onclick="window.open('onepage_birthchart.php');">Download</button>
 											</form>
 											
 											<!-- <button style="background-color:gold;color:#660000;font-weight:bold;font-size:10px;" onclick="generatePDF()">Download</button> -->
-											<button style="background-color:gold;color:#660000;font-weight:bold;font-size:10px;" onclick="window.open('onepage_birthchart.php');">Download</button>
+											
 										<!-- </form> -->
 										
 										
@@ -2232,7 +2258,7 @@ echo <<<EOL
 			
 						<div class='divTable blueTable' style='height:auto;width:360px;' id='buttons'>
 							<div class='divTableRow'>
-								<div class="divPanchangHeading" colspan='2'>
+								<div class="divTableCell" colspan='2'>
 									<H6 style='font-weight:bold;color:black'>குறிப்புகள்</H6>
 								</div>
 							</div>
@@ -2281,9 +2307,39 @@ $_SESSION["birth_time"] = date('h:i:s a',strtotime($chart_time));
 $_SESSION["name"] = $in_name;
 $_SESSION["sex"] = $in_sex;
 $_SESSION["panchang"] = $panchang;
-
+$_SESSION["karan"] = $g_karan;
+$_SESSION["yogi"] = $yogi_arr[1]."(".$yogi_arr[0].")";
+$_SESSION["ayogi"] = $yogi_arr[3]."(".$yogi_arr[2].")";
+$_SESSION["bukthi"] = $g_bukthi_arr;
+$_SESSION["curr_dasa"] = $current_dasa_bukthi['dasa'];
+$_SESSION["bukthi_table"] = prepareBukthiTable();
+$_SESSION["lagnam"] = $g_lagnam;
+$_SESSION["rasi"] = $g_rasi;
+$_SESSION["ppakshi"] = $g_pancha_pakshi;
+$_SESSION["thithi_soonyam"] = $g_thithi_soonyam_matching_arr[0];
+$_SESSION["dasa_balance"] = $g_dasaBalance[0];
+$_SESSION["current_dasa"] = $g_dasaCurrent[0];
+$_SESSION["sunrise"] = explode(' ',$today_sunrise)[1];
+$_SESSION["sunset"] = explode(' ',$today_sunset)[1];
+$_SESSION["in_place"] = $place;
 
 prepareWallpaper();
+
+function prepareBukthiTable(){
+	global $dasa_lord, $g_dasaCurrent, $g_bukthi_arr;
+	$bukthi_arr = array();
+	
+	$dasa_lord = explode('-',$g_dasaCurrent[0])[0];
+	$dasa_lord = $dasa_lord . "&#8594;";
+
+	foreach($g_bukthi_arr as $bukthi => $data){
+	if(mb_strpos($bukthi,$dasa_lord)===0){
+			$bukthi_arr[$bukthi] = $data;
+		}
+	}
+	
+	return $bukthi_arr;
+}
 ?>
 
 

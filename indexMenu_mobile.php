@@ -50,7 +50,7 @@ elseif(strcmp($usertype,"SUPER")==0){
     echo <<<EOL
     <div class="MENU-container">
         <div class="navbar">
-          <a href="javascript:location.reload();">REFRESH</a>
+          
           <div class="dropdown1">
             <button class="dropbtn">MENU 
               <i class="fa fa-caret-down"></i>
@@ -65,6 +65,7 @@ elseif(strcmp($usertype,"SUPER")==0){
               <a href="new_panchang.php">பஞ்சாங்கம்</a>
             </div>
           </div> 
+		  <a href="javascript:location.reload();">REFRESH</a>
         </div>
         </div>
 EOL;

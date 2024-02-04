@@ -5,8 +5,8 @@ $usertype = $_SESSION['user_type'];
 if(strcmp($usertype,"FREE")==0){
     echo <<<EOL
     <div class="menu-container">
-		<a href="index.php">HOME</a>
         <div class="navbar">
+		<a href="index.php">HOME</a>
 			<a href="index.php">HOME</a>
         </div>
         </div>
@@ -17,9 +17,9 @@ elseif(strcmp($usertype,"PAID")==0){
     
     echo <<<EOL
     <div class="menu-container">
-		<a href="index.php">HOME</a>
+		
         <div class="navbar">
-			
+			<a href="index.php">HOME</a>
 			<a href="Matching_input.php">New Matching Chart</a>
 			<a href="matchingChartDisplay.php">History</a>
         </div>
@@ -30,13 +30,11 @@ EOL;
 elseif(strcmp($usertype,"SUPER")==0){
     echo <<<EOL
     <div class="menu-container">
-		<a href="index.php">HOME</a>
+		
         <div class="navbar">
-			
+			<a href="index.php">HOME</a>
 			<a href="Matching_input.php">New Matching Chart</a>
 			<a href="matchingChartDisplay.php">History</a>
-        </div>
-        </div>
         </div>
         </div>
 EOL;
