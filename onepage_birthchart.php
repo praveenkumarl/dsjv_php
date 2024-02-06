@@ -26,6 +26,7 @@ $g_dasaCurrent = $_SESSION["current_dasa"];
 $g_sunrise = $_SESSION["sunrise"];
 $g_sunset = $_SESSION["sunset"];
 $place = $_SESSION["in_place"];
+
 ?>
 
 <!doctype html>
@@ -41,44 +42,76 @@ $place = $_SESSION["in_place"];
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/onepage_birth_style.css?<?php echo date('ymdhis'); ?>">
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+   <script src="html2pdf.bundle.min.js" type="text/javascript"></script>
+   
+   <script>
+   
+			function generatePDF() {
+				// Choose the element that our invoice is rendered in.
+				const element = document.getElementById('onepage');
+				
+				const pdfname = '<?php echo $name."_".$birth_date."_".$birth_time."_".$place.".pdf"; ?>'
+				
+				var opt = {
+				  margin:       0,
+				  filename:     pdfname,
+				  image:        { type: 'png', quality: 1.0 },
+				  html2canvas:  { scale: 1 },
+				  jsPDF:        { unit: 'in', format: 'A4', orientation: 'portrait' }
+				};
+				
+				// Choose the element and save the PDF for our user.
+				html2pdf().from(element).set(opt).save();
+			}
+			
+		
+		/*window.addEventListener('load', function () {
+			setTimeOut(window.close(),5000);
+		});*/
+		
+   </script>
+
 </head>
 
+
 <body>
-
-<div class="header-parent">
-  <div class="header-child1"><img src='images/dsjv_title.png'></div>
-  <div class="header-child2"><img src='images/pkastro_title.png'></div>
-</div>
-
-<center>
-<div class="divTableBody">
-	<div class="divTableRow">
-		<div class="divHoroDetailCell" style="border:none;"><?php displayDetailsCol1(); ?></div>
-		<div class="divHoroDetailCell" style="border:none;"><?php displayDetailsCol2(); ?></div>
-	</div>
-</div>	
-	
-<div class="divTable blueTable" id="onepage">
-	<div class="divTableBody">
-		<div class="divTableRow">
-			<div class="divTableCell" style="border:none; padding:15px"><?php displayChart(); ?></div>
-			<div class="divTableCell" style="border:none; padding:15px"><?php displayNavamsam(); ?></div>
+<!-- <div style='width:100px;height:20px'><button class='actionBtn' onClick="generatePDF();">Download</button></div>  -->
+<div id='container-fluid'>
+	<div id='onepage'>
+		<div class="header-parent">
+		  <div class="header-child1"><img src='images/dsjv_title.png'></div>
+		  <div class="header-child2"><img src='images/pkastro_title.png'></div>
 		</div>
-	</div>	
-</div>
 
-<div class="divTableBody">
-	<div class="divTableRow">
-		<div class="divStarDetailCell" style="border:none;"><?php displayStarLord(); ?></div>
-		<div class="divStarDetailCell" style="border:none;"><?php displayDasa(); ?></div>
-		<div class="divStarDetailCell" style="border:none;"><?php displayBukthi(); ?></div>
+		<center>
+		<div class="divTableBody">
+			<div class="divTableRow">
+				<div class="divHoroDetailCell" style="border:none;"><?php displayDetailsCol1(); ?></div>
+				<div class="divHoroDetailCell" style="border:none;"><?php displayDetailsCol2(); ?></div>
+			</div>
+		</div>	
+			
+		<div class="divTable blueTable" id="onepage">
+			<div class="divTableBody">
+				<div class="divTableRow">
+					<div class="divTableCell" style="border:none; padding:15px"><?php displayChart(); ?></div>
+					<div class="divTableCell" style="border:none; padding:15px"><?php displayNavamsam(); ?></div>
+				</div>
+			</div>	
+		</div>
+
+		<div class="divTableBody">
+			<div class="divTableRow">
+				<div class="divStarDetailCell" style="border:none;"><?php displayStarLord(); ?></div>
+				<div class="divStarDetailCell" style="border:none;"><?php displayDasa(); ?></div>
+				<div class="divStarDetailCell" style="border:none;"><?php displayBukthi(); ?></div>
+			</div>
+		</div>	
+		</center>
 	</div>
-</div>	
-</center>
-
+</div>
 
 <?php
-
 
 function displayDetailsCol1()
 {
@@ -306,28 +339,28 @@ echo <<<EOL
 						
 		<div class="divTableBody">
 			<div class="divTableRow">
-					<div class="divTableCell">$sw_planet[11] $g_thithi_soonyam_arr[11]</div>
-					<div class="divTableCell">$sw_planet[0] $g_thithi_soonyam_arr[0]</div>
-					<div class="divTableCell">$sw_planet[1] $g_thithi_soonyam_arr[1]</div>
-					<div class="divTableCell">$sw_planet[2] $g_thithi_soonyam_arr[2]</div>
+					<div class="divTableCell" style='border-right:0px; border-bottom:0px'>$sw_planet[11] $g_thithi_soonyam_arr[11]</div>
+					<div class="divTableCell"  style='border-right:0px;border-bottom:0px'>$sw_planet[0] $g_thithi_soonyam_arr[0]</div>
+					<div class="divTableCell"  style='border-right:0px;border-bottom:0px'>$sw_planet[1] $g_thithi_soonyam_arr[1]</div>
+					<div class="divTableCell" style='border-bottom:0px;'>$sw_planet[2] $g_thithi_soonyam_arr[2]</div>
 			</div>
 			<div class="divTableRow">
-					<div class="divTableCell">$sw_planet[10] $g_thithi_soonyam_arr[10]</div>
-					<div class="divTableCenterCell">ராசி</div>
-					<div class="divTableCenterCell"></div>
-					<div class="divTableCell">$sw_planet[3] $g_thithi_soonyam_arr[3]</div>
+					<div class="divTableCell" style='border-bottom:0px;border-right:0px'>$sw_planet[10] $g_thithi_soonyam_arr[10]</div>
+					<div class="divTableCenterCell" style='border-left:1px solid;border-top:1px solid'>ராசி</div>
+					<div class="divTableCenterCell" style='border-top:1px solid;border-right:0px'></div>
+					<div class="divTableCell" style='border-left:1px solid;border-bottom:0px'>$sw_planet[3] $g_thithi_soonyam_arr[3]</div>
 			</div>
 			<div class="divTableRow">
-					<div class="divTableCell">$sw_planet[9] $g_thithi_soonyam_arr[9]</div>
-					<div class="divTableCenterCell"></div>
-					<div class="divTableCenterCell">D1</div>
-					<div class="divTableCell">$sw_planet[4] $g_thithi_soonyam_arr[4]</div>
+					<div class="divTableCell" style='border-bottom:0px;border-right:0px'>$sw_planet[9] $g_thithi_soonyam_arr[9]</div>
+					<div class="divTableCenterCell" style='border-left:1px solid;border-bottom:0px'></div>
+					<div class="divTableCenterCell" style='border-right:0px;border-bottom:0px'>D1</div>
+					<div class="divTableCell" style='border-bottom:0px; border-left:1px solid'>$sw_planet[4] $g_thithi_soonyam_arr[4]</div>
 			</div>
 			<div class="divTableRow">
-					<div class="divTableCell">$sw_planet[8] $g_thithi_soonyam_arr[8]</div>
-					<div class="divTableCell">$sw_planet[7] $g_thithi_soonyam_arr[7]</div>
-					<div class="divTableCell">$sw_planet[6] $g_thithi_soonyam_arr[6]</div>
-					<div class="divTableCell">$sw_planet[5] $g_thithi_soonyam_arr[5]</div>
+					<div class="divTableCell" style='border-right:0px'>$sw_planet[8] $g_thithi_soonyam_arr[8]</div>
+					<div class="divTableCell" style='border-right:0px;border-top:1px solid'>$sw_planet[7] $g_thithi_soonyam_arr[7]</div>
+					<div class="divTableCell" style='border-right:0px;border-top:1px solid'>$sw_planet[6] $g_thithi_soonyam_arr[6]</div>
+					<div class="divTableCell" style='border-left:1px solid'>$sw_planet[5] $g_thithi_soonyam_arr[5]</div>
 			</div>
 		</div>	
 	</div>
@@ -343,28 +376,28 @@ echo <<<EOL
 		
 		<div class="divTableBody">
 			<div class="divTableRow">
-					<div class="divTableCell">$g_navamsam_arr[11]</div>
-					<div class="divTableCell">$g_navamsam_arr[0]</div>
-					<div class="divTableCell">$g_navamsam_arr[1]</div>
-					<div class="divTableCell">$g_navamsam_arr[2]</div>
+					<div class="divTableCell" style='border-right:0px; border-bottom:0px'>$g_navamsam_arr[11]</div>
+					<div class="divTableCell" style='border-right:0px;border-bottom:0px'>$g_navamsam_arr[0]</div>
+					<div class="divTableCell" style='border-right:0px;border-bottom:0px'>$g_navamsam_arr[1]</div>
+					<div class="divTableCell" style='border-bottom:0px;'>$g_navamsam_arr[2]</div>
 			</div>
 			<div class="divTableRow">
-					<div class="divTableCell">$g_navamsam_arr[10]</div>
-					<div class="divTableCenterCell">நவாம்சம்</div>
-					<div class="divTableCenterCell"></div>
-					<div class="divTableCell">$g_navamsam_arr[3]</div>
+					<div class="divTableCell" style='border-bottom:0px;border-right:0px'>$g_navamsam_arr[10]</div>
+					<div class="divTableCenterCell" style='border-left:1px solid;border-top:1px solid'>நவாம்சம்</div>
+					<div class="divTableCenterCell" style='border-top:1px solid;border-right:0px'></div>
+					<div class="divTableCell" style='border-left:1px solid;border-bottom:0px'>$g_navamsam_arr[3]</div>
 			</div>
 			<div class="divTableRow">
-					<div class="divTableCell">$g_navamsam_arr[9]</div>
-					<div class="divTableCenterCell"></div>
-					<div class="divTableCenterCell">D9</div>
-					<div class="divTableCell">$g_navamsam_arr[4]</div>
+					<div class="divTableCell" style='border-bottom:0px;border-right:0px'>$g_navamsam_arr[9]</div>
+					<div class="divTableCenterCell" style='border-left:1px solid;border-bottom:0px'></div>
+					<div class="divTableCenterCell" style='border-right:0px;border-bottom:0px'>D9</div>
+					<div class="divTableCell" style='border-bottom:0px; border-left:1px solid'>$g_navamsam_arr[4]</div>
 			</div>
 			<div class="divTableRow">
-					<div class="divTableCell">$g_navamsam_arr[8]</div>
-					<div class="divTableCell">$g_navamsam_arr[7]</div>
-					<div class="divTableCell">$g_navamsam_arr[6]</div>
-					<div class="divTableCell">$g_navamsam_arr[5]</div>
+					<div class="divTableCell" style='border-right:0px'>$g_navamsam_arr[8]</div>
+					<div class="divTableCell" style='border-right:0px;border-top:1px solid'>$g_navamsam_arr[7]</div>
+					<div class="divTableCell" style='border-right:0px;border-top:1px solid'>$g_navamsam_arr[6]</div>
+					<div class="divTableCell" style='border-left:1px solid'>$g_navamsam_arr[5]</div>
 			</div>
 		</div>	
 	</div>

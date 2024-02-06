@@ -5,7 +5,8 @@
 	--menu-background: SaddleBrown;
 	--menu-text-color: white;
 	--menu-sel-background: gold;
-	--historytableHead-background: SaddleBrown;
+	--historytableHead-background: var(--menu-background);
+	--historytableHead-color: var(--menu-text-color);
 }
 
 /*
@@ -90,7 +91,7 @@ input, select, textarea {
 	}
 
 	body {
-		background: #fff2cc;
+		background: white;
 	}
 
 		body.is-preload *, body.is-preload *:before, body.is-preload *:after {
@@ -3600,10 +3601,11 @@ div.error {
 
 	background-color: var(--historytableHead-background);
 	font-size: 10px;
-	color: black;
+	color: var(--historytableHead-color);
 	width: 20%;
 	height: 20%;
 	padding:5px;
+	
 	font-weight: bold;
 }
 

@@ -4,6 +4,7 @@
 	--chart-outer-background: #ccfff2;
 	--details-background: #FFFFFF;
 	--chart-inner-font-size: 14px;
+	--chart-inner-font-weight: 600;
 }
 
 /*normal mode*/
@@ -80,7 +81,7 @@ div.blueTable {
 	background-color: #FFEFBF;
 	font-size: 12px;
 	line-height: 15px;
-	font-weight: normal;
+	font-weight: var(--chart-inner-font-weight);
 	color: #660000;
 	width: 20%;
 	height: 20%;
@@ -408,7 +409,7 @@ div.blueTable {
 .mandhi
 {
 	color:red;
-	font-weight: normal;
+	font-weight: var(--chart-inner-font-weight);
 }
 
 .moon
@@ -438,11 +439,11 @@ div.blueTable {
 .emma_kantam
 {
 	color:red;
-	font-weight: normal;
+	font-weight: var(--chart-inner-font-weight);
 }
 
 .rahu_kaalam
 {
 	color:red;
-	font-weight: normal;
+	font-weight: var(--chart-inner-font-weight);
 }

@@ -1,8 +1,11 @@
-function doStayAlive() {
-  var request = new XMLHttpRequest();
-
-  request.open('GET', 'stayalive.php', true);
-  request.send();
-}
-
-timerStayAlive = setInterval(doStayAlive, 300000);  // 5 minutes
+//to avoid session timout, send a msg to server
+var refreshTime = 600000; // every 10 minutes in milliseconds
+window.setInterval( function() {
+$.ajax({
+	cache: false,
+	type: "GET",
+	url: "refreshSession.php",
+	success: function(data) {
+	}
+});
+}, refreshTime );

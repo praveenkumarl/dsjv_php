@@ -160,6 +160,12 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 
 		var timestamp_flag = 0;
 		
+		function loadOnePage(){
+			window.open("onepage_birthchart.php");
+			//location.href = "onepage_birthchart.php";
+			return false;
+		}
+		
 		function init(){
 			
 		} 
@@ -581,8 +587,6 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 		document.getElementById("divNotes").style.display = "block";
 		window.scrollTo(0, document.body.scrollHeight);
 	}
-	
-	
 				
 	</script>
 </head>
@@ -608,7 +612,6 @@ $dayofweek = date('w', strtotime($chart_date));
 <body onLoad="init();">
 <div id="karanamDiv" onclick="hide ()"><img src='images/karanam.png' width='100%' /></div>
 <div id="loader" class="center"></div>
-
 
 <?php
 
@@ -1641,6 +1644,22 @@ echo <<<EOL
 EOL;
 }
 
+function prepareBukthiTable(){
+	global $dasa_lord, $g_dasaCurrent, $g_bukthi_arr;
+	$bukthi_arr = array();
+	
+	$dasa_lord = explode('-',$g_dasaCurrent[0])[0];
+	$dasa_lord = $dasa_lord . "&#8594;";
+
+	foreach($g_bukthi_arr as $bukthi => $data){
+	if(mb_strpos($bukthi,$dasa_lord)===0){
+			$bukthi_arr[$bukthi] = $data;
+		}
+	}
+	
+	return $bukthi_arr;
+}
+
 $conn = dbConnect($conn);
 
 startSqlTxn($conn);
@@ -2137,7 +2156,7 @@ echo <<<EOL
 											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Birth Date: <input type='date' id='nDate' name='nDate' readonly style="background-color:var(--chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$chart_date > Birth Time: <input type='time' id='nTime' name='nTime' readonly style="background-color:var(--chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$chart_time></H4>
 											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Transit Date: <input type='date' id='nTrDate' name='nTrDate' style="background-color:#FFFFFF;color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$transit_date> Transit Time: <input type='time' id='nTrTime' name='nTrTime' style="background-color:#FFFFFF;color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$transit_time></H4>
 											<BR>
-											<button type='button' class='actionBtn' id='submit1' value='Submit' onClick='return genChart(this.form);'>Submit</button><button class='actionBtn' onclick="window.open('onepage_birthchart.php');">Download</button>
+											<button type='button' class='actionBtn' id='submit1' value='Submit' onClick='return genChart(this.form);'>Submit</button><button class='actionBtn' value='Download' onClick="loadOnePage();">Download</button>
 											</form>
 											
 											<!-- <button style="background-color:gold;color:#660000;font-weight:bold;font-size:10px;" onclick="generatePDF()">Download</button> -->
@@ -2324,22 +2343,6 @@ $_SESSION["sunset"] = explode(' ',$today_sunset)[1];
 $_SESSION["in_place"] = $place;
 
 prepareWallpaper();
-
-function prepareBukthiTable(){
-	global $dasa_lord, $g_dasaCurrent, $g_bukthi_arr;
-	$bukthi_arr = array();
-	
-	$dasa_lord = explode('-',$g_dasaCurrent[0])[0];
-	$dasa_lord = $dasa_lord . "&#8594;";
-
-	foreach($g_bukthi_arr as $bukthi => $data){
-	if(mb_strpos($bukthi,$dasa_lord)===0){
-			$bukthi_arr[$bukthi] = $data;
-		}
-	}
-	
-	return $bukthi_arr;
-}
 ?>
 
 
