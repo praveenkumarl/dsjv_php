@@ -61,7 +61,8 @@ function calculateThaaraPalan($inStar){
 	$thaarapalan = array();
 	
 	$star_arr = array("dummy","Aswini","Bharani","Krithika","Rohini","Mrigashirsha","Arudra", "Punarvasu","Pushyami","Ashlesha","Magha","Poorva Phalguni","Uthra phalguni","Hastha","Chitra","Swaathi","Vishaakha","Anuraadha","Jyeshta","Moola","Poorva Ashaada","Uthra Ashaada","Shraavan","Dhanishta","Shathabhisha","Poorva bhadrapada","Uthra bhadrapada","Revathi");
-	$star_arr_result = array("dummy","Aswini/அசுவினி","Bharani/பரணி","Krithika/கிருத்திகை","Rohini/ரோகிணி","Mrigashirsha/மிருகசிரீஷம்","Arudra/திருவாதிரை","Punarvasu/புனர்பூசம்","Pushyami/பூசம்","Ashlesha/ஆயில்யம்","Magha/மகம்","Poorva Phalguni/பூரம்","Uthra phalguni/உத்திரம்","Hastha/ஹஸ்தம்","Chitra/சித்திரை","Swaathi/சுவாதி","Vishaakha/விசாகம்","Anuraadha/அனுஷம்","Jyeshta/கேட்டை","Moola/மூலம்","Poorva Ashaada/பூராடம்","Uthra Ashaada/உத்திராடம்","Shraavan/திருவோணம்","Dhanishta/அவிட்டம்","Shathabhisha/சதயம்","Poorva bhadrapada/பூரட்டாதி","Uthra bhadrapada/உத்திரட்டாதி","Revathi/ரேவதி");
+	//$star_arr_result = array("dummy","Aswini/அசுவினி","Bharani/பரணி","Krithika/கிருத்திகை","Rohini/ரோகிணி","Mrigashirsha/மிருகசிரீஷம்","Arudra/திருவாதிரை","Punarvasu/புனர்பூசம்","Pushyami/பூசம்","Ashlesha/ஆயில்யம்","Magha/மகம்","Poorva Phalguni/பூரம்","Uthra phalguni/உத்திரம்","Hastha/ஹஸ்தம்","Chitra/சித்திரை","Swaathi/சுவாதி","Vishaakha/விசாகம்","Anuraadha/அனுஷம்","Jyeshta/கேட்டை","Moola/மூலம்","Poorva Ashaada/பூராடம்","Uthra Ashaada/உத்திராடம்","Shraavan/திருவோணம்","Dhanishta/அவிட்டம்","Shathabhisha/சதயம்","Poorva bhadrapada/பூரட்டாதி","Uthra bhadrapada/உத்திரட்டாதி","Revathi/ரேவதி");
+	$star_arr_result = array("dummy","அசுவினி","பரணி","கிருத்திகை","ரோகிணி","மிருகசிரீஷம்","திருவாதிரை","புனர்பூசம்","பூசம்","ஆயில்யம்","மகம்","பூரம்","உத்திரம்","ஹஸ்தம்","சித்திரை","சுவாதி","விசாகம்","அனுஷம்","கேட்டை","மூலம்","பூராடம்","உத்திராடம்","திருவோணம்","அவிட்டம்","சதயம்","பூரட்டாதி","உத்திரட்டாதி","ரேவதி");
 	foreach ($star_arr as $key => $value){
 		if($key==0) {continue;}
 		
@@ -227,10 +228,9 @@ function formSubmitDropdown(){
 	</div>
 	</div>
 	<div class='column-body'>
-				<div class="heading">*தாரா பலன்/Thaara palan</div>
-				<div class="bodytext">Get Thaara plan for any star/நட்சத்திர தாரா பலன் </div>
-				<div style="font-size:14px;text-align:left;margin-left:15px"><u>NOTE:</u> Choose different star to check it's thaara palan</div>
-				
+				<BR>
+				<div class="heading">*தாரா பலன்</div>
+				<BR>
 				<form name="thaaraForm" action="star_thaara_palan.php" method="post">
 				<table width="95%">
 				
@@ -251,10 +251,10 @@ function formSubmitDropdown(){
 					
 					<tr style="background:none;">
 						<td  style="vertical-align:middle">
-							<H5 style="color:#660000; font-family: 'Arial'; font-weight:bold; font-size:14px;background:#FFFFFF;text-align:left">*உங்கள் நட்சத்திரம்/ <BR>Your Star:</H5>
+							<DIV class='divPanchangHeading' style='border:none'>*உங்கள் நட்சத்திரம்</div>
 						</td>
 						<td style="vertical-align:middle">
-								<select name="star" id="star" style="width:fit;font-size:12px;background:#FDE966;font-weight:bold" onChange="formSubmitDropdown()">
+								<!-- <select name="star" id="star" style="width:fit;font-size:12px;background:#FDE966;font-weight:bold" onChange="formSubmitDropdown()">
 										<option value="Aswini" <?php if(strcmp($star,'Aswini')==0){echo 'selected';} ?> >Aswini/அசுவினி</option>
 										<option value="Bharani" <?php if(strcmp($star,'Bharani')==0){echo 'selected';} ?> >Bharani/பரணி</option>
 										<option value="Krithika" <?php if(strcmp($star,'Krithika')==0){echo 'selected';} ?> >Krithika/கிருத்திகை</option>
@@ -282,7 +282,39 @@ function formSubmitDropdown(){
 										<option value="Poorva bhadrapada" <?php if(strcmp($star,'Poorva bhadrapada')==0){echo 'selected';} ?> >Poorva bhadrapada/பூரட்டாதி</option>
 										<option value="Uthra bhadrapada" <?php if(strcmp($star,'Uthra bhadrapada')==0){echo 'selected';} ?> >Uthra bhadrapada/உத்திரட்டாதி</option>
 										<option value="Revathi" <?php if(strcmp($star,'Revathi')==0){echo 'selected';} ?> >Revathi/ரேவதி</option>
-									</select></td>
+									</select> -->
+									
+							<select name="star" id="star" style="width:fit;font-size:12px;background:#FDE966;font-weight:bold" onChange="formSubmitDropdown()">
+										<option value="Aswini" <?php if(strcmp($star,'Aswini')==0){echo 'selected';} ?> >அசுவினி</option>
+										<option value="Bharani" <?php if(strcmp($star,'Bharani')==0){echo 'selected';} ?> >பரணி</option>
+										<option value="Krithika" <?php if(strcmp($star,'Krithika')==0){echo 'selected';} ?> >கிருத்திகை</option>
+										<option value="Rohini" <?php if(strcmp($star,'Rohini')==0){echo 'selected';} ?> >ரோகிணி</option>
+										<option value="Mrigashirsha" <?php if(strcmp($star,'Mrigashirsha')==0){echo 'selected';} ?> >மிருகசிரீஷம்</option>
+										<option value="Arudra" <?php if(strcmp($star,'Arudra')==0){echo 'selected';} ?> >திருவாதிரை</option>
+										<option value="Punarvasu" <?php if(strcmp($star,'Punarvasu')==0){echo 'selected';} ?> >புனர்பூசம்</option>
+										<option value="Pushyami" <?php if(strcmp($star,'Pushyami')==0){echo 'selected';} ?> >பூசம்</option>
+										<option value="Ashlesha" <?php if(strcmp($star,'Ashlesha')==0){echo 'selected';} ?> >ஆயில்யம்</option>
+										<option value="Magha" <?php if(strcmp($star,'Magha')==0){echo 'selected';} ?> >மகம்</option>
+										<option value="Poorva Phalguni" <?php if(strcmp($star,'Poorva Phalguni')==0){echo 'selected';} ?> >பூரம்</option>
+										<option value="Uthra phalguni" <?php if(strcmp($star,'Uthra phalguni')==0){echo 'selected';} ?> >உத்திரம்</option>
+										<option value="Hastha" <?php if(strcmp($star,'Hastha')==0){echo 'selected';} ?> >ஹஸ்தம்</option>
+										<option value="Chitra" <?php if(strcmp($star,'Chitra')==0){echo 'selected';} ?> >சித்திரை</option>
+										<option value="Swaathi" <?php if(strcmp($star,'Swaathi')==0){echo 'selected';} ?> >சுவாதி</option>
+										<option value="Vishaakha" <?php if(strcmp($star,'Vishaakha')==0){echo 'selected';} ?> >விசாகம்</option>
+										<option value="Anuraadha" <?php if(strcmp($star,'Anuraadha')==0){echo 'selected';} ?> >அனுஷம்</option>
+										<option value="Jyeshta" <?php if(strcmp($star,'Jyeshta')==0){echo 'selected';} ?> >கேட்டை</option>
+										<option value="Moola" <?php if(strcmp($star,'Moola')==0){echo 'selected';} ?> >மூலம்</option>
+										<option value="Poorva Ashaada" <?php if(strcmp($star,'Poorva Ashaada')==0){echo 'selected';} ?> >பூராடம்</option>
+										<option value="Uthra Ashaada" <?php if(strcmp($star,'Uthra Ashaada')==0){echo 'selected';} ?> >உத்திராடம்</option>
+										<option value="Shraavan" <?php if(strcmp($star,'Shraavan')==0){echo 'selected';} ?> >திருவோணம்</option>
+										<option value="Dhanishta" <?php if(strcmp($star,'Dhanishta')==0){echo 'selected';} ?> >அவிட்டம்</option>
+										<option value="Shathabhisha" <?php if(strcmp($star,'Shathabhisha')==0){echo 'selected';} ?> >சதயம்</option>
+										<option value="Poorva bhadrapada" <?php if(strcmp($star,'Poorva bhadrapada')==0){echo 'selected';} ?> >பூரட்டாதி</option>
+										<option value="Uthra bhadrapada" <?php if(strcmp($star,'Uthra bhadrapada')==0){echo 'selected';} ?> >உத்திரட்டாதி</option>
+										<option value="Revathi" <?php if(strcmp($star,'Revathi')==0){echo 'selected';} ?> >ரேவதி</option>
+									</select>
+									
+						</td>
 					</tr>
 					<tr style="background:none">
 						<td colspan="2" align="center">

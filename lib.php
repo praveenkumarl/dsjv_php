@@ -3890,6 +3890,13 @@ function getAvaYogiParigaaram($ayogi_idx)
 	return $details;
 }
 
+function getNakParigaaram($nak_idx)
+{
+	$details = "<DIV class='parigaraDiv'><div id='labelParigaraDiv'>நட் பரிகாரம்</div><img src='images/nak_parigaaram/$nak_idx.png' /></DIV>";
+					
+	return $details;
+}
+
 function calculateBirthPanchang(){
 	global $moon_degree, $moon_house, $sun_house, $sun_degree, $dayofweek, $g_nak, $g_karan, $panchang,$g_nak_pad_idx, $g_thithi_idx, $g_yoga_idx, $g_nak_idx;
 	
@@ -4183,7 +4190,7 @@ function displayDetailsDiv($in_dataType,$in_data){
 			echo "<DIV class='thithiDetailsDiv' id='thithiDetailsDiv' onclick='hideDetailsDiv()'>$details</DIV>";
 			break;
 		case "nak":
-			$details = getNakParigaaram($g_nak_idx);
+			$details = getNakParigaaram(ceil($g_nak_idx/4));
 			echo "<DIV class='nakDetailsDiv' id='nakDetailsDiv' onclick='hideDetailsDiv()'>$details</DIV>";
 			break;
 		case "kar":

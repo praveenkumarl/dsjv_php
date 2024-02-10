@@ -120,6 +120,7 @@ $dayofweek = date('w', strtotime($chart_date));
 	<link rel="stylesheet" href="css/matching_chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">    
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="script.js"></script>
@@ -1100,24 +1101,37 @@ function checkRaasiAthipathiMatching()
 function displayMatchingResult()
 {
 	global $g_matching_mark;
+	
 	$matching_percent = ceil($g_matching_mark/TOTAL_MATCH_RULES * 100);
 	
-	if($matching_percent >70) //possible good match
+	if($matching_percent >=70) //possible good match
 	{
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading' style='text-align:left'>பொருத்த மதிப்பு</div>";
 			echo "<div class='divMatchingResultGreen'>$matching_percent%</div>";
 		echo "</div>";
 	}
-	else{
+	elseif($matching_percent >=50 && $matching_percent <70) //average match
+	{
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading' style='text-align:left'>பொருத்த மதிப்பு</div>";
+			echo "<div class='divMatchingResultOrange'>$matching_percent%</div>";
+		echo "</div>";
+	}
+	else{   //bad match
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading' style='text-align:left'>பொருத்த மதிப்பு</div>";
 			echo "<div class='divMatchingResultRed'>$matching_percent%</div>";
 		echo "</div>";
 	}
 	
-	
-	
+	echo "<div class='divTableRow'>";
+		echo "<div class='divPanchangHeading' style='text-align:left'>மதிப்பு விவரம்</div>";
+		echo "<div class='divPanchang' style='text-align:left;line-height:15px'><span id='boot-icon' class='bi bi-square-fill' style='color: #ff8080;'></span> தவிர்க்க (0-50)<BR>
+		<span id='boot-icon' class='bi bi-square-fill' style='color: #FFBF00;'></span> சராசரி (51-69)<BR>
+		<span id='boot-icon' class='bi bi-square-fill' style='color: #90ee90;'></span> உத்தமம் (70-100)
+		</div>";
+	echo "</div>";
 }
 
 // The house where Mars placed should not have Rahu, Sani in matching chart and viz versa
@@ -1418,6 +1432,8 @@ function matchingRule4()
 			echo "<div class='divPanchangHeading' style='text-align:left'>4. ஆண்/பெண்<BR>(லக்/செவ்/சுக்/2/7)</div>";
 			echo "<div class='divPanchang'>&#x2705; <div class='divStarMatch'>$reason</div></div>";
 		echo "</div>";
+		
+		$g_matching_mark++;
 	}
 	else{
 		//echo "---Lagna lord rule failed";
@@ -1425,8 +1441,6 @@ function matchingRule4()
 			echo "<div class='divPanchangHeading' style='text-align:left'>4. ஆண்/பெண்<BR>(லக்/செவ்/சுக்/2/7)</div>";
 			echo "<div class='divPanchang'>&#x274C; <div class='divStarMatch'>$reason</div></div>";
 		echo "</div>";
-		
-		$g_matching_mark++;
 	}
 }
 

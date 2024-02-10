@@ -101,6 +101,7 @@ $g_bukthi_arr = array();
 $g_current_dasa_lord = "";
 $g_lagnam="";
 $g_rasi="";
+$g_nak_idx=-1;
 
 if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_input.php')==false){
 	$saveMode=1;
@@ -431,24 +432,35 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 			switch(type){
 				case 1:
 					divName = "thithiDetailsDiv";
+					document.getElementById("nakDetailsDiv").style.display = "none";
 					document.getElementById("karanaDetailsDiv").style.display = "none";
 					document.getElementById("yogiDetailsDiv").style.display = "none";
 					document.getElementById("ayogiDetailsDiv").style.display = "none";
 					break;
 				case 2:
 					divName = "karanaDetailsDiv";
+					document.getElementById("nakDetailsDiv").style.display = "none";
 					document.getElementById("thithiDetailsDiv").style.display = "none";
 					document.getElementById("yogiDetailsDiv").style.display = "none";
 					document.getElementById("ayogiDetailsDiv").style.display = "none";
 					break;
 				case 3:
 					divName = "yogiDetailsDiv";
+					document.getElementById("nakDetailsDiv").style.display = "none";
 					document.getElementById("thithiDetailsDiv").style.display = "none";
 					document.getElementById("karanaDetailsDiv").style.display = "none";
 					document.getElementById("ayogiDetailsDiv").style.display = "none";
 					break;
 				case 4:
 					divName = "ayogiDetailsDiv";
+					document.getElementById("nakDetailsDiv").style.display = "none";
+					document.getElementById("thithiDetailsDiv").style.display = "none";
+					document.getElementById("karanaDetailsDiv").style.display = "none";
+					document.getElementById("yogiDetailsDiv").style.display = "none";
+					break;
+				case 5:
+					divName = "nakDetailsDiv";
+					document.getElementById("ayogiDetailsDiv").style.display = "none";
 					document.getElementById("thithiDetailsDiv").style.display = "none";
 					document.getElementById("karanaDetailsDiv").style.display = "none";
 					document.getElementById("yogiDetailsDiv").style.display = "none";
@@ -478,10 +490,11 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 		}
 
 		function hideDetailsDiv() {
-		  document.getElementById("thithiDetailsDiv").style.display = "none";
-		  document.getElementById("karanaDetailsDiv").style.display = "none";
-		  document.getElementById("yogiDetailsDiv").style.display = "none";
-		  document.getElementById("ayogiDetailsDiv").style.display = "none";
+			document.getElementById("nakDetailsDiv").style.display = "none";
+			document.getElementById("thithiDetailsDiv").style.display = "none";
+			document.getElementById("karanaDetailsDiv").style.display = "none";
+			document.getElementById("yogiDetailsDiv").style.display = "none";
+			document.getElementById("ayogiDetailsDiv").style.display = "none";
 		}
 		
 		document.onreadystatechange = function() {
@@ -1094,7 +1107,7 @@ function displayHoroDetails()
 {
 	global $panchang, $in_name, $chart_date, $chart_time, $g_dasaBalance, $place, $g_thithi_soonyam_matching_arr,$g_dasaCurrent, $transit_date, $lagna_house, $country,$yogi_arr, 
 		$g_pancha_pakshi, $g_thithi, $g_paksham, $moon_house, $today_sunrise, $today_sunset, $otherPanchangDetails, $city,$g_nak, $g_thithi_idx, $g_yoga_idx, $in_place, $g_rowid, $in_sex,
-		$g_lagnam, $g_rasi;
+		$g_lagnam, $g_rasi, $nak_pad_idx ;
 	
 	echo "<div class='divTable blueTable' style='height:40px;'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
@@ -1133,9 +1146,10 @@ function displayHoroDetails()
 			echo "<div class='divPanchangHeading'>பிறந்த இடம்</div>";
 			echo "<div class='divPanchang'>".$place."</div>";
 		echo "</div>";
+		displayDetailsDiv('nak',ceil($nak_pad_idx)/4);
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
-			echo "<div class='divPanchang'>".explode('/',$panchang['nak'])[1]."<BR>".$panchang['nak-end-time']." வரை</div>";
+			echo "<div class='divPanchang' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'>".explode('/',$panchang['nak'])[1]."<BR>".$panchang['nak-end-time']." வரை</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>நக்ஷத்ர நாம எழுத்து </div>";
