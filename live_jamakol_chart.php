@@ -55,60 +55,62 @@ function displayChart($sw_planet,$outside,$chart_date,$chart_time,$place)
 	$time = date('h:i A',strtotime($chart_time));
 
 	echo <<<EOL
-			
 			<div class="$requestor">
-			<div class="divTable blueTable" id="chart" OnClick='window.location.reload();'>
-				<div class="divTableBody">
-					<div class="divTableRow">
-							<div class="divTableOuterCell">$outside[11]</div>
-							<div class="divTableDummyCell"></div>
-							<div class="divTableOuterCell">$outside[0]</div>
-							<div class="divTableDummyCell"></div>
-							<div class="divTableDummyCell"></div>
-							<div class="divTableOuterCell">$outside[2]</div>
-					</div>
-					<div class="divTableRow">
-							<div class="divTableDummyCell"></div>
-							<div class="divTableCell">$sw_planet[11]<span class='kathir'>$g_kathir_data[11]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[11]</span></div>
-							<div class="divTableCell">$sw_planet[0]<span class='kathir'>$g_kathir_data[0]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[0]</span></div>
-							<div class="divTableCell">$sw_planet[1]<span class='kathir'>$g_kathir_data[1]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[1]</span></div>
-							<div class="divTableCell">$sw_planet[2]<span class='kathir'>$g_kathir_data[2]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[2]</span></div>
-							<div class="divTableDummyCell"></div>
-					</div>
-					<div class="divTableRow">
-							<div class="divTableDummyCell"></div>
-							<div class="divTableCell">$sw_planet[10]<span class='kathir'>$g_kathir_data[10]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[10]</span></div>
-							<div class="divTableCenterCell1">$chart_date</div>
-							<div class="divTableCenterCell2">$time</div>
-							<div class="divTableCell">$sw_planet[3]<span class='kathir'>$g_kathir_data[3]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[3]</span></div>
-							<div class="divTableOuterCell">$outside[3]</div>
-					</div>
-					<div class="divTableRow">
-							<div class="divTableOuterCell">$outside[9]</div>
-							<div class="divTableCell">$sw_planet[9]<span class='kathir'>$g_kathir_data[9]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[9]</span></div>
-							<div class="divTableCenterCell3">$place_left_part</div>
-							<div class="divTableCenterCell4">$place_right_part</div>
-							<div class="divTableCell">$sw_planet[4]<span class='kathir'>$g_kathir_data[4]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[4]</span></div>
-							<div class="divTableDummyCell"></div>
-					</div>
-					<div class="divTableRow">
-							<div class="divTableDummyCell"></div>
-							<div class="divTableCell">$sw_planet[8]<span class='kathir'>$g_kathir_data[8]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[8]</span></div>
-							<div class="divTableCell">$sw_planet[7]<span class='kathir'>$g_kathir_data[7]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[7]</span></div>
-							<div class="divTableCell">$sw_planet[6]<span class='kathir'>$g_kathir_data[6]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[6]</span></div>
-							<div class="divTableCell">$sw_planet[5]<span class='kathir'>$g_kathir_data[5]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[5]</span></div>
-							<div class="divTableDummyCell"></div>
-					</div>
-					<div class="divTableRow">
-							<div class="divTableOuterCell">$outside[8]</div>
-							<div class="divTableDummyCell"></div>
-							<div class="divTableDummyCell"></div>
-							<div class="divTableOuterCell">$outside[6]</div>
-							<div class="divTableDummyCell"></div>
-							<div class="divTableOuterCell">$outside[5]</div>
-					</div>
-				</div>	
-			</div>
+				<!-- <div class="divTable blueTable" id="chart" OnClick='window.location.reload();' style='margin-left:5px;width:100%'> -->
+				<center>
+				<div class="divTable blueTable" id="chart" style='margin-left:5px'>
+					<div class="divTableBody">
+						<div class="divTableRow">
+								<div class="divTableOuterCell">$outside[11]</div>
+								<div class="divTableDummyCell"></div>
+								<div class="divTableOuterCell">$outside[0]</div>
+								<div class="divTableDummyCell"></div>
+								<div class="divTableDummyCell"></div>
+								<div class="divTableOuterCell">$outside[2]</div>
+						</div>
+						<div class="divTableRow">
+								<div class="divTableDummyCell"></div>
+								<div class="divTableCell">$sw_planet[11]<span class='kathir'>$g_kathir_data[11]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[11]</span></div>
+								<div class="divTableCell">$sw_planet[0]<span class='kathir'>$g_kathir_data[0]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[0]</span></div>
+								<div class="divTableCell">$sw_planet[1]<span class='kathir'>$g_kathir_data[1]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[1]</span></div>
+								<div class="divTableCell">$sw_planet[2]<span class='kathir'>$g_kathir_data[2]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[2]</span></div>
+								<div class="divTableDummyCell"></div>
+						</div>
+						<div class="divTableRow">
+								<div class="divTableDummyCell"></div>
+								<div class="divTableCell">$sw_planet[10]<span class='kathir'>$g_kathir_data[10]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[10]</span></div>
+								<div class="divTableCenterCell1">$chart_date</div>
+								<div class="divTableCenterCell2">$time</div>
+								<div class="divTableCell">$sw_planet[3]<span class='kathir'>$g_kathir_data[3]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[3]</span></div>
+								<div class="divTableOuterCell">$outside[3]</div>
+						</div>
+						<div class="divTableRow">
+								<div class="divTableOuterCell">$outside[9]</div>
+								<div class="divTableCell">$sw_planet[9]<span class='kathir'>$g_kathir_data[9]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[9]</span></div>
+								<div class="divTableCenterCell3">$place_left_part</div>
+								<div class="divTableCenterCell4">$place_right_part</div>
+								<div class="divTableCell">$sw_planet[4]<span class='kathir'>$g_kathir_data[4]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[4]</span></div>
+								<div class="divTableDummyCell"></div>
+						</div>
+						<div class="divTableRow">
+								<div class="divTableDummyCell"></div>
+								<div class="divTableCell">$sw_planet[8]<span class='kathir'>$g_kathir_data[8]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[8]</span></div>
+								<div class="divTableCell">$sw_planet[7]<span class='kathir'>$g_kathir_data[7]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[7]</span></div>
+								<div class="divTableCell">$sw_planet[6]<span class='kathir'>$g_kathir_data[6]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[6]</span></div>
+								<div class="divTableCell">$sw_planet[5]<span class='kathir'>$g_kathir_data[5]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[5]</span></div>
+								<div class="divTableDummyCell"></div>
+						</div>
+						<div class="divTableRow">
+								<div class="divTableOuterCell">$outside[8]</div>
+								<div class="divTableDummyCell"></div>
+								<div class="divTableDummyCell"></div>
+								<div class="divTableOuterCell">$outside[6]</div>
+								<div class="divTableDummyCell"></div>
+								<div class="divTableOuterCell">$outside[5]</div>
+						</div>
+					</div>	
+				</div>
+				</center>
 		</div>
 		<div id='dummy'></div>
 EOL;
@@ -126,7 +128,8 @@ $place = explode("|",$in_place)[0];
 date_default_timezone_set($TZ);
 
 $chart_date= date("Y-m-d");
-$chart_time= date("H:i:s");
+//$chart_time= date("H:i:s");
+$chart_time=date("H:i:s",strtotime(' +2 minutes 31 seconds')); // to adjust server time for live chart only
 $chartNow=1;
 
 $nQuestion="";
@@ -153,7 +156,7 @@ else{
 	$panchang = $_SESSION['panchang'];
 	$thithi_soonyam_arr = updateThithiSoonyam($panchang["thithi"]);
 	
-	echo "<div style='display: flex;justify-content: center; margin-top: 10%;'><center>";
+	echo "<div style='display: flex;justify-content: center;'>";
 		displayChart($_SESSION['jamadata'][0],$_SESSION['jamadata'][1],$chart_date,$chart_time,$_COOKIE['place']);
 	echo "</div>";
 	unset($_SESSION['jamadata']);

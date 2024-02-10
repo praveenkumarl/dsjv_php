@@ -213,6 +213,7 @@ getTopActivityDetails();
 	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	<link href='https://fonts.googleapis.com/css?family=Julius Sans One' rel='stylesheet'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
@@ -291,7 +292,6 @@ function openUserInfo(rowid){
 		</div>
 	</div>
 	<div class='column-body'>
-	        <A href='https://drive.google.com/file/d/1NLOCNi0QmmCwouSb3b7gRjrA4n9_M7lh/view?usp=sharing'>Download</A>
 			<center><div class="divTable blueTable" id="chart" style="width:400px;margin-top:auto">
 
 			<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">App Info update</P>
@@ -305,7 +305,7 @@ function openUserInfo(rowid){
 		echo "Request from Desktop/Laptop";
 	}
 
-					echo "<div class='divTable blueTable' style='height:40px;width:360px;margin-left:10px'>";
+					echo "<div class='divTable blueTable' style='height:40px;'>";
 						echo "<div class='divTableRow'>";
 								echo "<div class='divPanchangHeading'>App Name</div>";
 								echo "<div class='divPanchangHeading'><input type='textbox' id='frmAppName' name='frmAppName' value='".$appInfo['app_name']."'></div>";

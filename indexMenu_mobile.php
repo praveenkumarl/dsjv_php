@@ -7,18 +7,21 @@ if(strcmp($usertype,"FREE")==0){
     <div class="MENU-container">
         <div class="navbar">
           <div class="dropdown1">
-            <button class="dropbtn">MENU 
-              <i class="fa fa-caret-down"></i>
-            </button>
-            <div class="dropdown1-content">
-              <a href="planet_kaaragam.php">கிரக காரகம்</a>
-              <a href="hora.php">ஓரை</a>
-              <a href="star_thaara_palan.php">தாரா பலன்</d</a>
-              <a href="new_panchang.php">பஞ்சாங்கம்</a>
-            </div>
-          </div>
-        </div>
-    </div>
+			  <button class="dropbtn" style='padding:10px; width:auto'>
+				  <i class="fa fa-caret-square-o-down fa-2x" ></i>
+				</button>
+		  
+				<div class="dropdown1-content">
+				  <a href="planet_kaaragam.php">கிரக காரகம்</a>
+				  <a href="hora.php">ஓரை</a>
+				  <a href="star_thaara_palan.php">தாரா பலன்</d</a>
+				  <a href="new_panchang.php">பஞ்சாங்கம்</a>
+				</div>
+          </div> 
+			<a href="javascript:location.reload();"><i class="fa fa-refresh fa-2x"></i></a>
+			<img src='images/dsjv_title.png' style='padding:6px;' />
+		</div>
+	</div>
 EOL;
 
 }
@@ -28,21 +31,23 @@ elseif(strcmp($usertype,"PAID")==0){
     <div class="MENU-container">
         <div class="navbar">
           <div class="dropdown1">
-            <button class="dropbtn">MENU 
-              <i class="fa fa-caret-down"></i>
-            </button>
-            <div class="dropdown1-content">
-              <a href="Jamakol_input.php">ஜாமக்கோள்</a>
-              <a href="Birth_input.php">பிறப்பு ஜாதகம்</a>
-              <a href="planet_kaaragam.php">கிரக காரகம்</a>
-              <a href="hora.php">ஓரை</a>
-              <a href="star_thaara_palan.php">தாரா பலன்</d</a>
-              <a href="new_panchang.php">பஞ்சாங்கம்</a>
-            </div>
+			  <button class="dropbtn" style='padding:10px; width:auto'>
+				  <i class="fa fa-caret-square-o-down fa-2x" ></i>
+				</button>
+				<div class="dropdown1-content">
+				  <a href="Jamakol_input.php">ஜாமக்கோள்</a>
+				  <a href="Birth_input.php">பிறப்பு ஜாதகம்</a>
+				  <a href="Matching_input.php">திருமண பொருத்தம்</div</a>
+				  <a href="planet_kaaragam.php">கிரக காரகம்</a>
+				  <a href="hora.php">ஓரை</a>
+				  <a href="star_thaara_palan.php">தாரா பலன்</d</a>
+				  <a href="new_panchang.php">பஞ்சாங்கம்</a>
+				</div>
           </div> 
-		  <a href="javascript:location.reload();">REFRESH</a>
-        </div>
-    </div>
+			<a href="javascript:location.reload();"><i class="fa fa-refresh fa-2x"></i></a>
+			<img src='images/dsjv_title.png' style='padding:6px;' />
+		</div>
+	</div>
 EOL;
     
 }
@@ -50,24 +55,25 @@ elseif(strcmp($usertype,"SUPER")==0){
     echo <<<EOL
     <div class="MENU-container">
         <div class="navbar">
-          
           <div class="dropdown1">
-            <button class="dropbtn">MENU 
-              <i class="fa fa-caret-down"></i>
-            </button>
-            <div class="dropdown1-content">
-              <a href="Jamakol_input.php">ஜாமக்கோள்</a>
-              <a href="Birth_input.php">பிறப்பு ஜாதகம்</a>
-              <a href="Matching_input.php">திருமண பொருத்தம்</div</a>
-              <a href="planet_kaaragam.php">கிரக காரகம்</a>
-              <a href="hora.php">ஓரை</a>
-              <a href="star_thaara_palan.php">தாரா பலன்</d</a>
-              <a href="new_panchang.php">பஞ்சாங்கம்</a>
-            </div>
+			  <button class="dropbtn" style='padding:10px; width:auto'>
+				  <i class="fa fa-caret-square-o-down fa-2x" ></i>
+				</button>
+		  
+				<div class="dropdown1-content">
+				  <a href="Jamakol_input.php">ஜாமக்கோள்</a>
+				  <a href="Birth_input.php">பிறப்பு ஜாதகம்</a>
+				  <a href="Matching_input.php">திருமண பொருத்தம்</div</a>
+				  <a href="planet_kaaragam.php">கிரக காரகம்</a>
+				  <a href="hora.php">ஓரை</a>
+				  <a href="star_thaara_palan.php">தாரா பலன்</d</a>
+				  <a href="new_panchang.php">பஞ்சாங்கம்</a>
+				</div>
           </div> 
-		  <a href="javascript:location.reload();">REFRESH</a>
-        </div>
-        </div>
+			<a href="javascript:location.reload();"><i class="fa fa-refresh fa-2x"></i></a>
+			<img src='images/dsjv_title.png' style='padding:6px;' />
+		</div>
+	</div>
 EOL;
 }
 elseif(strcmp($usertype,"ADMIN")==0){
@@ -75,9 +81,10 @@ elseif(strcmp($usertype,"ADMIN")==0){
     <div class="MENU-container">
         <div class="navbar">
           <div class="dropdown1">
-            <button class="dropbtn">MENU 
-              <i class="fa fa-caret-down"></i>
+		  <button class="dropbtn" style='padding:10px; width:auto'>
+              <i class="fa fa-caret-square-o-down fa-2x" ></i>
             </button>
+            
             <div class="dropdown1-content">
               <a href="Jamakol_input.php">ஜாமக்கோள்</a>
               <a href="Birth_input.php">பிறப்பு ஜாதகம்</a>
@@ -86,12 +93,15 @@ elseif(strcmp($usertype,"ADMIN")==0){
               <a href="hora.php">ஓரை</a>
               <a href="star_thaara_palan.php">தாரா பலன்</d</a>
               <a href="new_panchang.php">பஞ்சாங்கம்</a>
-              <a href="admin.php">ADMIN</a>
+			  <a href="admin.php">ADMIN</a>
             </div>
           </div> 
-		  <a href="javascript:location.reload();">REFRESH</a>
-        </div>
-    </div>
+		<a href="javascript:location.reload();"><i class="fa fa-refresh fa-2x"></i></a>
+		<a href="admin.php"><i class="fa fa-cog fa-2x"></i></a>
+		<img src='images/dsjv_title.png' style='padding:6px;' />
+		</div>
+	</div>
+
 EOL;
 
 }

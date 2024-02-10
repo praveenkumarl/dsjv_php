@@ -145,6 +145,7 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Jamakol_i
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<script src="html2pdf.bundle.min.js"></script>
 	
     <script src="script.js"></script>
@@ -1628,7 +1629,7 @@ echo <<<EOL
 							<form id='analysisData' method='post'>
 							<textarea rows = 5 cols = "60" name="analysis" id="analysis" autocomplete="off" style="background:#ffffff; font-size:10px;" placeholder="Enter analysis here..." />$in_analysis</textarea>
 							<input type='button' class='actionBtn' id='save' value='$saveBtnTxt' OnClick="return saveChart(this.form);" />
-							<input type='button' class='actionBtn' id='saveToPdf' value='Download' OnClick="GeneratePdf('$filename');" />
+							<!-- <input type='button' class='actionBtn' id='saveToPdf' value='Download' OnClick="GeneratePdf('$filename');" /> -->
 							</form>
 EOL;
 							/*if($autoAnalysisMenu==1){

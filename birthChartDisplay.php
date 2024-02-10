@@ -141,9 +141,11 @@ EOL;
 	<link rel="stylesheet" href="css/birth_chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	<link href='https://fonts.googleapis.com/css?family=Julius Sans One' rel='stylesheet'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+	
  
 
     <script src="script.js"></script>
@@ -198,8 +200,7 @@ EOL;
 			document.getElementById("charttype").value = 'b';
 
 			var url = 'deleteChart.php?rowid=' + rownum + '&charttype=b';
-			//alert(url);
-			//window.open(url);
+			//window.open(url,'_self');
 			window.location.replace(url);
 			window.refresh();
 			//document.getElementById("hiddenDeleteChart").submit();

@@ -21,8 +21,22 @@ elseif(strcmp($usertype,"PAID")==0){
     echo <<<EOL
     <div class="menu-container">
         <div class="navbar">
-			<a href="index.php">HOME</a>
-			<a href="Birth_input.php">New Chart</a>
+			<div class="dropdown1">
+				<button class="dropbtn" style='padding:10px; width:auto'>
+				  <i class="fa fa-caret-square-o-down fa-2x" ></i>
+				</button>
+				<div class="dropdown1-content">
+				  <a href="Jamakol_input.php">ஜாமக்கோள்</a>
+				  <a href="Matching_input.php">திருமண பொருத்தம்</div</a>
+				  <a href="planet_kaaragam.php">கிரக காரகம்</a>
+				  <a href="hora.php">ஓரை</a>
+				  <a href="star_thaara_palan.php">தாரா பலன்</d</a>
+				  <a href="new_panchang.php">பஞ்சாங்கம்</a>
+				</div>
+			</div> 
+			<a href="index.php"><i class="fa fa-home fa-2x"></i></a>
+			<a href="Birth_input.php"><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></a>
+			<div class='menuHeading'>பிறப்பு ஜாதகம்</div>
           <div class="dropdown1">
             </div>
           </div> 
@@ -35,8 +49,22 @@ elseif(strcmp($usertype,"SUPER")==0){
     echo <<<EOL
     <div class="menu-container">
         <div class="navbar">
-			<a href="index.php">HOME</a>
-			<a href="Birth_input.php">New Chart</a>
+			<div class="dropdown1">
+				<button class="dropbtn" style='padding:10px; width:auto'>
+				  <i class="fa fa-caret-square-o-down fa-2x" ></i>
+				</button>
+				<div class="dropdown1-content">
+				  <a href="Jamakol_input.php">ஜாமக்கோள்</a>
+				  <a href="Matching_input.php">திருமண பொருத்தம்</div</a>
+				  <a href="planet_kaaragam.php">கிரக காரகம்</a>
+				  <a href="hora.php">ஓரை</a>
+				  <a href="star_thaara_palan.php">தாரா பலன்</d</a>
+				  <a href="new_panchang.php">பஞ்சாங்கம்</a>
+				</div>
+			</div> 
+			<a href="index.php"><i class="fa fa-home fa-2x"></i></a>
+			<a href="Birth_input.php"><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></a>
+			<div class='menuHeading'>பிறப்பு ஜாதகம்</div>
           <div class="dropdown1">
             </div>
           </div> 
@@ -48,8 +76,22 @@ elseif(strcmp($usertype,"ADMIN")==0){
     echo <<<EOL
     <div class="menu-container">
         <div class="navbar">
-			<a href="index.php">HOME</a>
-			<a href="Birth_input.php">New Chart</a>
+			<div class="dropdown1">
+				<button class="dropbtn" style='padding:10px; width:auto'>
+				  <i class="fa fa-caret-square-o-down fa-2x" ></i>
+				</button>
+				<div class="dropdown1-content">
+				  <a href="Jamakol_input.php">ஜாமக்கோள்</a>
+				  <a href="Matching_input.php">திருமண பொருத்தம்</div</a>
+				  <a href="planet_kaaragam.php">கிரக காரகம்</a>
+				  <a href="hora.php">ஓரை</a>
+				  <a href="star_thaara_palan.php">தாரா பலன்</d</a>
+				  <a href="new_panchang.php">பஞ்சாங்கம்</a>
+				</div>
+			</div> 
+			<a href="index.php"><i class="fa fa-home fa-2x"></i></a>
+			<a href="Birth_input.php"><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></a>
+			<div class='menuHeading'>பிறப்பு ஜாதகம்</div>
           <div class="dropdown1">
             </div>
           </div> 

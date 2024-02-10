@@ -35,8 +35,6 @@ div.blueTable {
   text-align: center;
   border-collapse: collapse;
   /* box-shadow: 1px 2px 5px #FF6a40; */
-  margin-left: 10px;
- 
 }
 .divTable.blueTable, .divTable.blueTable .divTableHead {
   border: 0px solid #AAAAAA;

@@ -105,18 +105,21 @@ switch($charttype)
 {
 	case 'b':
 		deleteBirthChart();
+		header( "Refresh:0; url=birthChartDisplay.php", true, 303);
 		break;
 	case 'j':
 		deleteJamaChart();
+		header( "Refresh:0; url=jamaChartDisplay.php", true, 303);
 		break;
 	case 'm':
 		deleteMatchingChart();
+		header( "Refresh:0; url=matchingChartDisplay.php", true, 303);
 		break;
 	default:
 		break;
 }
 
-header( "Refresh:0; url=".$_SERVER['HTTP_REFERER'], true, 303);
+//header( "Refresh:0; url=".$_SERVER['HTTP_REFERER'], true, 303);
 ?>
 
 

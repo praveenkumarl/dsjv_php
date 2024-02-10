@@ -122,6 +122,7 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<script src="html2pdf.bundle.min.js" type="text/javascript"></script>
 
     <script src="script.js"></script>
@@ -488,12 +489,12 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 		if(document.getElementById('chart') != null){	//chart not loaded
 			document.querySelector("#loader").style.display = "none";
 			//document.querySelector("body").style.visibility = "visible";
-			document.getElementById("msg").style.visibility = "hidden";
+			//document.getElementById("msg").style.visibility = "hidden";
 		}
 		else{
 			//document.querySelector("body").style.visibility = "hidden";
 			document.querySelector("#loader").style.visibility = "visible";
-			document.getElementById("msg").style.visibility = "visible";
+			//document.getElementById("msg").style.visibility = "visible";
 		}
 	};
 	
@@ -628,7 +629,7 @@ function isFilled($str)
 
 function isPushkara($patham)
 {	
-	echo "<center><div class='divTable blueTable' style='height:40px;width:360px;'>"; 
+	echo "<center><div class='divTable blueTable' style='height:40px;'>"; 
 		echo "<div class='divTableRow'>";
 			echo "<div class='divTableCell' colspan=3>";
 					echo "<H6 style='font-weight:bold'>Thithi Soonyam/திதி சூன்யம்</H6>";
@@ -1095,7 +1096,7 @@ function displayHoroDetails()
 		$g_pancha_pakshi, $g_thithi, $g_paksham, $moon_house, $today_sunrise, $today_sunset, $otherPanchangDetails, $city,$g_nak, $g_thithi_idx, $g_yoga_idx, $in_place, $g_rowid, $in_sex,
 		$g_lagnam, $g_rasi;
 	
-	echo "<div class='divTable blueTable' style='height:40px;width:360px;'>";
+	echo "<div class='divTable blueTable' style='height:40px;'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
 				echo "<div class='divTableCell' colspan='3'>";
 					echo "<H6 style='font-weight:bold;color:black'>விவரங்கள்</H6>";
@@ -1104,7 +1105,7 @@ function displayHoroDetails()
 	echo "</div>";
 	
 	//display panchang table 
-	echo "<div class='divTable blueTable' style='height:40px;width:360px;'>"; 
+	echo "<div class='divTable blueTable' style='height:40px;'>"; 
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>ஜாதகர் பெயர்</div>";
 			echo "<div class='divPanchang' style='font-weight:bold'>".$in_name."(id=$g_rowid)</div>";
@@ -1339,7 +1340,7 @@ function displayTransitStartLordButton()
 	$class_name = 'actionBtnTransit';
 	$starlord_function = 'showStarLordTable_transit()';
 
-	echo "<center><div class='divTable blueTable' style='height:auto;width:360px;' id='buttons'>"; 
+	echo "<center><div class='divTable blueTable' style='height:auto;' id='buttons'>"; 
 		echo "<div class='divTableRow'>";
 			echo <<<EOL
 				<div class="divMenu" style="width:50%">
@@ -1450,7 +1451,7 @@ function displayStarLard_transit()
 		}
 	}
 
-	echo "<center><div class='divTable blueTable' id='starlordHeadMutable_boy' style='height:32px;width:360px;display:none'>"; 
+	echo "<center><div class='divTable blueTable' id='starlordHeadMutable_boy' style='height:32px;display:none'>"; 
 		echo "<div class='divTableRow'>";
 			echo "<div class='divTableCell' colspan=3>";
 					echo "<H6 style='font-weight:bold;color:black'>கோட் நட் சாரம்</H6>";
@@ -2156,7 +2157,7 @@ echo <<<EOL
 											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Birth Date: <input type='date' id='nDate' name='nDate' readonly style="background-color:var(--chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$chart_date > Birth Time: <input type='time' id='nTime' name='nTime' readonly style="background-color:var(--chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$chart_time></H4>
 											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Transit Date: <input type='date' id='nTrDate' name='nTrDate' style="background-color:#FFFFFF;color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$transit_date> Transit Time: <input type='time' id='nTrTime' name='nTrTime' style="background-color:#FFFFFF;color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$transit_time></H4>
 											<BR>
-											<button type='button' class='actionBtn' id='submit1' value='Submit' onClick='return genChart(this.form);'>Submit</button><button class='actionBtn' value='Download' onClick="loadOnePage();">Download</button>
+											<button type='button' class='actionBtn' id='submit1' value='Submit' onClick='return genChart(this.form);'>Submit</button><button class='actionBtn' value='Download' onClick='loadOnePage();'>Download</button>
 											</form>
 											
 											<!-- <button style="background-color:gold;color:#660000;font-weight:bold;font-size:10px;" onclick="generatePDF()">Download</button> -->
@@ -2343,9 +2344,8 @@ $_SESSION["sunset"] = explode(' ',$today_sunset)[1];
 $_SESSION["in_place"] = $place;
 
 prepareWallpaper();
+
 ?>
-
-
 
 </body>
 </html>

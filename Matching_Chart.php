@@ -119,6 +119,7 @@ $dayofweek = date('w', strtotime($chart_date));
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/matching_chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="script.js"></script>
@@ -3818,7 +3819,7 @@ echo <<<EOL
 
 			<div class="intro">
 					<center>
-					<div class="divTable blueTable" style="height:70px;width:360px;">
+					<div class="divTable blueTable" style="height:70px;">
 					<IMG SRC='images/ganpati2.jpg' width='10%' height='10%' />
 					<P style="color:#660000;font-weight:bold; font-size:10px; text-align:center; background-color:white;width:200px;line-height: 20px;">பெரியநாயகி துணை</P>
 					<BR>
