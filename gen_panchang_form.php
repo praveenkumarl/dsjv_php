@@ -125,7 +125,7 @@ $curr_month = date('m');
 							<DIV class='divPanchangHeading' style='border:none'>*இடம்</div>
 						</td>
 						<td style="text-align:left">
-							<div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="width:200px;height: 2.75em;font-size:12px;background:#FDE966;font-weight:bold; text-align:center" placeholder="Search place..." onfocus=this.value='' /><div class="result"></div>
+							<div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="width:200px;height: 2.75em;font-size:12px;background:#FDE966;font-weight:bold; text-align:center" placeholder="Search place..." value="Chennai|Asia/Kolkata" readonly /><div class="result"></div>
 						</td>
 					</tr>
 					<tr style="background:none;">

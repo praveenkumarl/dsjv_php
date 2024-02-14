@@ -354,7 +354,7 @@ $g_dasaCurrent=array();
 	};
 	
 	function genPanchang(){
-			window.open("gen_panchang.php");
+			window.open("gen_panchang_form.php");
 			return false;
 		}
 				

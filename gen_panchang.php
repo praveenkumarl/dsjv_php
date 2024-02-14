@@ -38,7 +38,7 @@ function getMonthName($month,$lang) //1 - tamil
 
 <div class="header-parent">
   <!-- <div class="header-child1"><img src='images/dsjv_title.png'></div> -->
-  <div class="header-child1"><H2>பஞ்சாங்கம் (<?php echo "$monthName/$year"; ?>)</H2></div>
+  <div class="header-child1"><H2>பஞ்சாங்கம் (<?php echo "$monthName/$year/$place"; ?>)</H2></div>
   
   <div class="header-child2"><img src='images/pkastro_title.png'></div>
 </div>
