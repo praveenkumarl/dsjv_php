@@ -38,7 +38,7 @@ function getMonthName($month,$lang) //1 - tamil
 
 <div class="header-parent">
   <!-- <div class="header-child1"><img src='images/dsjv_title.png'></div> -->
-  <div class="header-child1"><H2>பஞ்சாங்கம் (<?php echo "$monthName/$year/$place"; ?>)</H2></div>
+  <div class="header-child1"><div style="font-family: Verdana, Raavi, sans-serif;font-size:14;padding-top:20px">பஞ்சாங்கம் (<?php echo "$monthName/$year/$place"; ?>)</div></div>
   
   <div class="header-child2"><img src='images/pkastro_title.png'></div>
 </div>
@@ -112,8 +112,10 @@ function getMonthName($month,$lang) //1 - tamil
 						document.writeln('<div class="divTablePanchangMedium" style="width:50px">'+panchang.Day.name+'</div>');
 						document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Nakshatra.name+" "+formatDateTime(panchang.Nakshatra.end)+' வரை'+displayNextNak(newdate,panchang.Nakshatra)+'</div>');
 						document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Tithi.name+' '+formatDateTime(panchang.Tithi.end)+' வரை'+displayNextThithi(newdate,panchang.Tithi)+'</div>');
-						document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Karna.name+' '+formatDateTime(panchang.Karna.end)+' வரை'+displayNextKar(newdate,panchang.Karna)+'</div>');
-						document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Yoga.name+' '+formatDateTime(panchang.Yoga.end)+' வரை'+displayNextYoga(newdate,panchang.Yoga)+'</div>');
+						//document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Karna.name+' '+formatDateTime(panchang.Karna.end)+' வரை'+displayNextKar(newdate,panchang.Karna)+'</div>');
+						document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Karna.name+' '+formatDateTime(panchang.Karna.start)+"-"+formatDateTime(panchang.Karna.end)+displayNextKar(newdate,panchang.Karna)+'</div>');
+						//document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Yoga.name+' '+formatDateTime(panchang.Yoga.end)+' வரை'+displayNextYoga(newdate,panchang.Yoga)+'</div>');
+						document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Yoga.name+' '+formatDateTime(panchang.Yoga.start)+"-"+formatDateTime(panchang.Yoga.end)+' வரை'+displayNextYoga(newdate,panchang.Yoga)+'</div>');
 					document.writeln('</div>');
 
 			  });
