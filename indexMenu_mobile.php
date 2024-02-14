@@ -19,7 +19,7 @@ if(strcmp($usertype,"FREE")==0){
 				</div>
           </div> 
 			<a href="javascript:location.reload();"><i class="fa fa-refresh fa-2x"></i></a>
-			<img src='images/dsjv_title.png' style='padding:6px;' />
+			<img src='images/dsjv_title.png' style='padding:10px;width:40%' />
 		</div>
 	</div>
 EOL;
@@ -45,7 +45,7 @@ elseif(strcmp($usertype,"PAID")==0){
 				</div>
           </div> 
 			<a href="javascript:location.reload();"><i class="fa fa-refresh fa-2x"></i></a>
-			<img src='images/dsjv_title.png' style='padding:6px;' />
+			<img src='images/dsjv_title.png' style='padding:10px;width:40%' />
 		</div>
 	</div>
 EOL;
@@ -71,7 +71,7 @@ elseif(strcmp($usertype,"SUPER")==0){
 				</div>
           </div> 
 			<a href="javascript:location.reload();"><i class="fa fa-refresh fa-2x"></i></a>
-			<img src='images/dsjv_title.png' style='padding:6px;' />
+			<img src='images/dsjv_title.png' style='padding:10px;width:40%' />
 		</div>
 	</div>
 EOL;
@@ -98,7 +98,7 @@ elseif(strcmp($usertype,"ADMIN")==0){
           </div> 
 		<a href="javascript:location.reload();"><i class="fa fa-refresh fa-2x"></i></a>
 		<a href="admin.php"><i class="fa fa-cog fa-2x"></i></a>
-		<img src='images/dsjv_title.png' style='padding:6px;' />
+		<img src='images/dsjv_title.png' style='padding:10px;width:40%' />
 		</div>
 	</div>
 

@@ -3,11 +3,7 @@ require "lib.php";
 
 $devInfo = $_GET;
 
-var_dump($_SESSION['user_info']);
-
-function displayUserDetails(){
-    
-}
+displayUserInfo($_SESSION['userinfo']);
 
 ?>
 

@@ -29,7 +29,6 @@ elseif(strcmp($usertype,"PAID")==0){
     echo <<<EOL
     <div class="menu-container">
         <div class="navbar">
-		<a href="index.php">HOME</a>
           <div class="dropdown1">
 			<button class="dropbtn" style='padding:10px; width:auto'>
 			  <i class="fa fa-caret-square-o-down fa-2x" ></i>
@@ -53,7 +52,6 @@ elseif(strcmp($usertype,"SUPER")==0){
     echo <<<EOL
     <div class="menu-container">
         <div class="navbar">
-		<a href="index.php">HOME</a>
           <div class="dropdown1">
             <button class="dropbtn" style='padding:10px; width:auto'>
 			  <i class="fa fa-caret-square-o-down fa-2x" ></i>

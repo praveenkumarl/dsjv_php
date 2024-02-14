@@ -34,7 +34,7 @@ elseif(strcmp($usertype,"PAID")==0){
 			<a href="index.php"><i class="fa fa-home fa-2x"></i></a>
 			<a href="Birth_input.php"><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></a>
 			<a href="birthChartDisplay.php"><i class="fa fa-history fa-2x"></i></a>
-			<div class='menuHeading'>பிறப்பு ஜாதகம்</div>
+			<div class='menuHeading'>ஜாதகம்</div>
         </div>
         </div>
 EOL;
@@ -60,7 +60,7 @@ elseif(strcmp($usertype,"SUPER")==0){
 			<a href="index.php"><i class="fa fa-home fa-2x"></i></a>
 			<a href="Birth_input.php"><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></a>
 			<a href="birthChartDisplay.php"><i class="fa fa-history fa-2x"></i></a>
-			<div class='menuHeading'>பிறப்பு ஜாதகம்</div>
+			<div class='menuHeading'>ஜாதகம்</div>
         </div>
     </div>
 EOL;
@@ -86,7 +86,7 @@ elseif(strcmp($usertype,"ADMIN")==0){
 			<a href="index.php"><i class="fa fa-home fa-2x"></i></a>
 			<a href="Birth_input.php"><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></a>
 			<a href="birthChartDisplay.php"><i class="fa fa-history fa-2x"></i></a>
-			<div class='menuHeading'>பிறப்பு ஜாதகம்</div>
+			<div class='menuHeading'>ஜாதகம்</div>
         </div>
     </div>
 EOL;
@@ -113,7 +113,7 @@ elseif(strcmp($usertype,"PAID")==0){
 	echo <<<EOL
 	<div class="menu-container">
 		<div class='menuBtn' onClick="window.open('Jamakol_input.php','_self')">ஜாமக்கோள்</div>
-		<div class='menuBtn' onClick="window.open('Birth_input.php','_self')">பிறப்பு ஜாதகம்</div>
+		<div class='menuBtn' onClick="window.open('Birth_input.php','_self')">ஜாதகம்</div>
 		<div class='menuBtn' onClick="window.open('planet_kaaragam.php','_self')">கிரக காரகம்</div>
 		<div class='menuBtn' onClick="window.open('raasi_kaaragam.php','_self')">ராசி காரகம்</div>
 		<div class='menuBtn' onClick="window.open('hora.php','_self')">ஓரை</div>
@@ -126,7 +126,7 @@ elseif(strcmp($usertype,"SUPER")==0){
 	echo <<<EOL
 	<div class="menu-container">
 		<div class='menuBtn' onClick="window.open('Jamakol_input.php','_self')">ஜாமக்கோள்</div>
-		<div class='menuBtn' onClick="window.open('Birth_input.php','_self')">பிறப்பு ஜாதகம்</div>
+		<div class='menuBtn' onClick="window.open('Birth_input.php','_self')">ஜாதகம்</div>
 		<div class='menuBtn' onClick="window.open('Matching_input.php','_self')">திருமண பொருத்தம்</div>
 		<div class='menuBtn' onClick="window.open('planet_kaaragam.php','_self')">கிரக காரகம்</div>
 		<div class='menuBtn' onClick="window.open('raasi_kaaragam.php','_self')">ராசி காரகம்</div>
@@ -140,7 +140,7 @@ elseif(strcmp($usertype,"ADMIN")==0){
 /*	echo <<<EOL
 	<div class="menu-container">
 		<div class='menuBtn' onClick="window.open('Jamakol_input.php','_self')">ஜாமக்கோள்</div>
-		<div class='menuBtn' onClick="window.open('Birth_input.php','_self')">பிறப்பு ஜாதகம்</div>
+		<div class='menuBtn' onClick="window.open('Birth_input.php','_self')">ஜாதகம்</div>
 		<div class='menuBtn' onClick="window.open('Matching_input.php','_self')">திருமண பொருத்தம்</div>
 		<div class='menuBtn' onClick="window.open('planet_kaaragam.php','_self')">கிரக காரகம்</div>
 		<div class='menuBtn' onClick="window.open('raasi_kaaragam.php','_self')">ராசி காரகம்</div>
@@ -162,7 +162,7 @@ EOL;
             </button>
             <div class="dropdown1-content">
               <a href="Jamakol_input.php">ஜாமக்கோள்</a>
-              <a href="Birth_input.php">பிறப்பு ஜாதகம்</a>
+              <a href="Birth_input.php">ஜாதகம்</a>
               <a href="Matching_input.php">திருமண பொருத்தம்</div</a>
               <a href="planet_kaaragam.php">கிரக காரகம்</a>
               <a href="hora.php">ஓரை</a>

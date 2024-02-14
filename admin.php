@@ -214,6 +214,7 @@ getTopActivityDetails();
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	<link href='https://fonts.googleapis.com/css?family=Julius Sans One' rel='stylesheet'>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">    
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
@@ -292,7 +293,7 @@ function openUserInfo(rowid){
 		</div>
 	</div>
 	<div class='column-body'>
-			<center><div class="divTable blueTable" id="chart" style="width:400px;margin-top:auto">
+			<center><div class="divTable blueTable" id="chart">
 
 			<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">App Info update</P>
 				<form name="adminAppInfo" action="AppInfoUpdate.php" method="post">
@@ -350,7 +351,7 @@ function openUserInfo(rowid){
 				
 				
 <?php
-					echo "<div class='divTable blueTable' style='height:40px;width:360px;margin-left:10px'>";
+					echo "<div class='divTable blueTable' style='height:40px;'>";
 						echo "<div class='divTableRow'>";
 							echo "<div class='divPanchangHeading'>Rowid</div>";
 							echo "<div class='divPanchangHeading'>Name</div>";
@@ -391,7 +392,7 @@ function openUserInfo(rowid){
 					echo '<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">Activity log</P>';
 					echo '<BR><BR>';
 				
-					echo "<div class='divTable blueTable' style='height:40px;width:460px;margin-left:10px'>";
+					echo "<div class='divTable blueTable' style='height:40px;'>";
 						echo "<div class='divTableRow'>";
 								echo "<div class='divPanchangHeading' style='width:30%'>Activity Time</div>";
 								echo "<div class='divPanchangHeading' style='width:5%'>Name</div>";

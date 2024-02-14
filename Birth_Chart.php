@@ -1280,14 +1280,17 @@ function prepareWallpaper()
 	global $panchang,$yogi_arr, $g_pancha_pakshi, $g_thithi, $g_paksham, $in_name;
 	
 	$nak = explode(' ',explode('/',$panchang['nak'])[1])[0];
+	
+	$target_nak = getTargetNak($nak,6); //sambaththu thaarai
+	
 	$karanam = explode('/',$panchang['karan'])[1];
 	$yogi = $yogi_arr[1];
 	$yogi_nak = $yogi_arr[0];
 	
 	
-	$nak_sym = "images/star_symbols/".$nak.".jpg";
-	$nak_temple = "images/star_temples/".$nak.".jpg";
-	$nak_tree = "images/star_trees/".$nak.".jpg";
+	$nak_sym = "images/star_symbols/".$target_nak.".jpg";
+	$nak_temple = "images/star_temples/".$target_nak.".jpg";
+	$nak_tree = "images/star_trees/".$target_nak.".jpg";
 	
 	$karanam_animal = "images/karanam_animals/".$karanam.".jpg";
 	$karanam_god = "images/karanam_gods/".$karanam.".jpg";
@@ -1296,7 +1299,6 @@ function prepareWallpaper()
 	$pancha_pakshi = "images/pancha_pakshi/".$g_pancha_pakshi.".jpg";
 	
 	if($g_paksham==""){
-		echo "inside else";
 		$thithi_god = "images/thithi_god/".$g_thithi . ".jpg";
 	}
 	elseif(strpos("தேய்",$g_paksham)===0){
@@ -1307,7 +1309,6 @@ function prepareWallpaper()
 	}
 	
 	if($g_paksham==""){
-		echo "inside else";
 		$thithi_devi = "images/thithi_devi/".$g_thithi.".jpg";
 	}
 	elseif(strpos("தேய்",$g_paksham)===0){
@@ -1332,9 +1333,9 @@ echo <<<EOL
 			<A href="javascript:closeWallpaper()">&nbsp;CLOSE (X)&nbsp;</A>
 		</div>
 		<div class="wallpaper_container" id="wallpaper_container">
-			<div class="wallpaper_item b">$nak குறியீடு<img class="wallpaper_img" src="$nak_sym" /></div>
-			<div class="wallpaper_item b">$nak கோவில்<img class="wallpaper_img" src="$nak_temple" /></div>
-			<div class="wallpaper_item b">$nak மரம்<img class="wallpaper_img" src="$nak_tree" /></div>
+			<div class="wallpaper_item b">$target_nak குறியீடு<img class="wallpaper_img" src="$nak_sym" /></div>
+			<div class="wallpaper_item b">$target_nak கோவில்<img class="wallpaper_img" src="$nak_temple" /></div>
+			<div class="wallpaper_item b">$target_nak மரம்<img class="wallpaper_img" src="$nak_tree" /></div>
 			<div class="wallpaper_item b">$karanam கரண தெய்வம் <img class="wallpaper_img" src="$karanam_god" /></div>
 			<div class="wallpaper_item b">$karanam கரண விலங்கு <img class="wallpaper_img" src="$karanam_animal" /></div>
 			<div class="wallpaper_item b">யோகி $yogi ($yogi_nak)<img class="wallpaper_img" src="$yogi_planet" /></div>
@@ -1346,6 +1347,32 @@ echo <<<EOL
 EOL;
 
 	echo '<script type="text/javascript">updateChartPicture("'.$karanam_animal.'","'.$karanam_god.'","'.$yogi_planet.'","'.$pancha_pakshi.'");</script>';
+}
+
+function getTargetNak($inStar, $in_count){		
+	$star_arr = array("அசுவினி","பரணி","கிருத்திகை","ரோகிணி","மிருகசிரீஷம்","திருவாதிரை","புனர்பூசம்","பூசம்","ஆயில்யம்","மகம்","பூரம்","உத்திரம்","ஹஸ்தம்","சித்திரை","சுவாதி","விசாகம்","அனுஷம்","கேட்டை","மூலம்","பூராடம்","உத்திராடம்","திருவோணம்","அவிட்டம்","சதயம்","பூரட்டாதி","உத்திரட்டாதி","ரேவதி");
+		
+	$start_pos = array_search($inStar,$star_arr);
+	$target_pos = $start_pos+$in_count;
+	
+	/*
+	if($start_pos > 1 && $start_pos>$target_pos){
+		$target_star = $star_arr[27-$start_pos+$target_pos+1];
+	}
+	else{
+		$target_star = $star_arr[$target_pos-$start_pos+1];
+	}*/
+	
+	if($target_pos > 27){
+		$final_pos = $target_pos - 27 - 1;
+	}
+	else{
+		$final_pos = $target_pos - 1 ;
+	}
+	
+	debug("start_pos=$start_pos   target_pos=$target_pos   final_pos=$final_pos");
+	
+	return $star_arr[$final_pos];
 }
 
 //This displays star lord button for transit planets

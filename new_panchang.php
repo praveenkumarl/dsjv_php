@@ -100,6 +100,11 @@ $g_dasaCurrent=array();
 	<link rel="stylesheet" href="css/birth_chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	
+	
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <script src="script.js"></script>
@@ -332,14 +337,10 @@ $g_dasaCurrent=array();
 		
 		if(document.getElementById('dummy') != null){	//chart not loaded
 			document.querySelector("#loader").style.display = "none";
-			document.getElementById("msg").style.visibility = "hidden";
-			document.getElementById("intro2").style.display = "block";
 		}
 		else{
 			//document.querySelector("body").style.visibility = "hidden";
 			document.querySelector("#loader").style.visibility = "visible";
-			document.getElementById("msg").style.visibility = "visible";
-			document.getElementById("intro2").style.display = "none";
 		}
 		
 		/*if (document.readyState != "complete") {
@@ -351,6 +352,11 @@ $g_dasaCurrent=array();
 			document.getElementById("msg").style.visibility = "none";
 		}*/
 	};
+	
+	function genPanchang(){
+			window.open("gen_panchang.php");
+			return false;
+		}
 				
 	</script>
 </head>
@@ -1195,7 +1201,8 @@ echo <<<EOL
 						</TR>
 						</TABLE>
 					</H4>
-				<input type='button' id='sub_button' value='Submit' onClick="formSubmitButton();" style="background-color:gold;color:#660000;font-weight:bold;font-size:12px;width:100px">
+				<input type='button' id='sub_button' class='actionBtn' value='Submit' onClick="formSubmitButton();">
+				<input type='button' id='downloadPanchang' class='actionBtn' value='Generate' onClick="genPanchang();" />
 				<BR><BR>
 			</form>
 
