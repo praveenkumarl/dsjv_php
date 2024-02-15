@@ -1,7 +1,22 @@
 :root {
-    /*--chart-background: url(../images/square5.jpg); */
-	--chart-background: gold;
+	
+	/* Theme one - original 
+	--chart-background: url(../images/square5.jpg);
+	--chart-outer-background: #7FFFD4;
+	--details-background: #FFFFFF;
+	--chart-inner-font-size: 14px;
+	--chart-inner-font-weight: 600;*/
+	
+	/* Theme two - gold 
+	--chart-background: #ffe44d;
 	--chart-outer-background: #ccfff2;
+	--details-background: #FFFFFF;
+	--chart-inner-font-size: 14px;
+	--chart-inner-font-weight: 600; */
+	
+	/* Theme two - blue/pink */
+	--chart-background: radial-gradient(at center, #FFFFFF, #EEFDFF);
+	--chart-outer-background:  #ffe6ff;
 	--details-background: #FFFFFF;
 	--chart-inner-font-size: 14px;
 	--chart-inner-font-weight: 600;
@@ -78,7 +93,7 @@ div.blueTable {
 	vertical-align:middle;
 	border:solid 1px #660000;
 
-	background-color: #FFEFBF;
+	background-color: var(--chart-background);
 	font-size: 12px;
 	line-height: 15px;
 	font-weight: var(--chart-inner-font-weight);
@@ -403,6 +418,7 @@ div.blueTable {
 .lagna
 {
 	#background-color:blue;
+	#color:white;
 	color:black;
 }
 
@@ -414,7 +430,7 @@ div.blueTable {
 
 .moon
 {
-	#background-color:#00ffff;
+	background-color:#00ffff;
 	color:black;
 }
 

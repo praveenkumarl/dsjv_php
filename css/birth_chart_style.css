@@ -1,6 +1,16 @@
+
+/* Theme one
 :root {
     --chart-background: #F9EBEA;
 	--details-background: #FFFFFF;
+	--chart-font-size: 14px;
+	--chart-inner-font-weight: 600;
+}
+*/
+
+/* Theme Two golden */
+:root {
+    --chart-background: #ffe44d;
 	--chart-font-size: 14px;
 	--chart-inner-font-weight: 600;
 }

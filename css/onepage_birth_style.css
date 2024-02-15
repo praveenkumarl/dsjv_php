@@ -3,7 +3,7 @@
 	--header-background: url(../images/OnePageHeader.png);
 	--chart-background: rgba(255,255,255,0.5);
 	--chart-outer-background: #FFFFFF;
-	--details-background: MistyRose;
+	--details-background: #ffe44d;
 	--chart-inner-font-size: 12px;
 }
 
@@ -602,7 +602,7 @@ div.blueTable {
 	vertical-align: bottom;
 	color: black;
 	font-size: 10px;
-	margin: 20px;
+	margin: 10px;
 	height:50px;
 	border-bottom:3px double;
 	border-color: black;
@@ -679,4 +679,46 @@ page[size="A4"] {
 
 .retro::after {
     content: "(வ)";
+}
+
+.divTablePanchangHeading 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid .1px black;
+	background-color: var(--details-background);
+	font-size: 10px;
+	color: black;
+	padding:2px;
+	font-weight: 800;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.divTablePanchangMedium 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid .1px black;
+	background-color: #ffffff;
+	font-size: 8px;
+	color: black;
+	padding:2px;
+	font-family: Verdana, Raavi, sans-serif;
+	line-height: 12px;
+}
+
+.divTablePanchangBig
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid .1px black;
+	background-color: #ffffff;
+	font-size: 10px;
+	color: black;
+	padding:2px;
+	font-family: Verdana, Raavi, sans-serif;
+	line-height: 12px;
 }
