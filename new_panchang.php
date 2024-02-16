@@ -1202,7 +1202,7 @@ echo <<<EOL
 						</TABLE>
 					</H4>
 				<input type='button' id='sub_button' class='actionBtn' value='Submit' onClick="formSubmitButton();">
-				<input type='button' id='downloadPanchang' class='actionBtn' value='Generate' onClick="genPanchang();" />
+				<!-- <input type='button' id='downloadPanchang' class='actionBtn' value='Generate' onClick="genPanchang();" /> -->
 				<BR><BR>
 			</form>
 
