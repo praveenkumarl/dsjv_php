@@ -3843,7 +3843,7 @@ function getThithiParigaaram($thithi_idx)
 					"மதுரை மீனாட்சி அம்மன்",
 					"சாரங்கபானி பெருமாள்",
 					"திருக்கண்டியூர் ப்ரம்மன்",
-					"திருபுவனம் சரவெஸ்வரர்",
+					"திருபுவனம் சரபேஸ்வரர்",
 					"மகேந்திரப்பள்ளி",      //பௌர்ணமி
 					"திருக்காட்டுகப்பள்ளி",  //16-30
 					"காலஹஸ்தி சிவன்",
@@ -4213,12 +4213,13 @@ function displayDetailsDiv($in_dataType,$in_data){
 //disclaimer to avoid any issues
 function displayDisclaimer()
 {
-echo <<<EOL
-	
-			<div class="divDisclaimer" colspan=3>
-				<H6 style='font-weight;color:red'>*இந்த தளத்தில்/மொபைல் ஆப்பில் கொடுக்கப்பட்டுள்ள ஆய்வுகள் மற்றும் மதிப்பென்கள் இறுதியானது கிடையாது, இதனுடன் நீங்கள் தங்கள் விரிவான ஆய்வுகளையும் மேற்க்கொண்டு இருதி முடிவு எடுக்கவும்</H6>
-			</div>
+	echo "<BR>";
+/*echo <<<EOL
+		<div class="divDisclaimer" colspan=3>
+			<H6 style='font-weight;color:red'>*இந்த தளத்தில்/மொபைல் ஆப்பில் கொடுக்கப்பட்டுள்ள ஆய்வுகள் மற்றும் மதிப்பென்கள் இறுதியானது கிடையாது, இதனுடன் நீங்கள் தங்கள் விரிவான ஆய்வுகளையும் மேற்க்கொண்டு இருதி முடிவு எடுக்கவும்</H6>
+		</div>
 EOL;
+*/
 }
 
 function starCount($star1_idx, $star2_idx)

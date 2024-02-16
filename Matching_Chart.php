@@ -3834,11 +3834,12 @@ echo <<<EOL
 			<div class="intro">
 					<center>
 					<div class="divTable blueTable" style="height:70px;">
-					<IMG SRC='images/ganpati2.jpg' width='10%' height='10%' />
+					<!-- <IMG SRC='images/ganpati2.jpg' width='10%' height='10%' />
 					<P style="color:#660000;font-weight:bold; font-size:10px; text-align:center; background-color:white;width:200px;line-height: 20px;">பெரியநாயகி துணை</P>
 					<BR>
-					<P style="color:#660000;font-weight:bold; font-size:14px; text-align:center; background-color:white;width:200px;line-height: 20px;">மணமகள்/மணமகன் ஜாதகம்</P>
-					<!-- <P style="color:#660000;font-weight:bold; font-size:12px; text-align:center; background-color:gold;width:360px;line-height:30px">திருமண பொருத்த</P> -->
+					<P style="color:#660000;font-weight:bold; font-size:14px; text-align:center; background-color:white;width:200px;line-height: 20px;">மணமகள்/மணமகன் ஜாதகம்</P> -->
+					<BR>
+					<P style="color:#660000;font-weight:bold; font-size:12px; text-align:center; background-color:white;width:200px;line-height: 20px;">திருமண பொருத்த</P>
 					<BR>
 					
 								<div class="divTableRow" style="background-color:rgba(0,0,0,0)">

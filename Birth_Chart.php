@@ -162,8 +162,9 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 
 		var timestamp_flag = 0;
 		
-		function loadOnePage(){
-			window.open("onepage_birthchart.php");
+		function loadOnePage(url){
+			//window.open("onepage_birthchart.php");
+			window.open(url);
 			//location.href = "onepage_birthchart.php";
 			return false;
 		}
@@ -620,6 +621,8 @@ $_SESSION["date"] = date("d-m-Y",strtotime($chart_date));
 $_SESSION["time"] = $chart_time;
 
 $dayofweek = date('w', strtotime($chart_date));
+
+$onePageURL="onepage_birthchart.php?place=".$in_place."&name=".$in_name."&sex=".$in_sex.'&rowid='.$g_rowid.'&nDate='.$chart_date.'&nTime='.$chart_time;
 
 ?>
 
@@ -1136,7 +1139,11 @@ function displayHoroDetails()
 			}
 			
 			echo "<div class='divPanchangHeading'>பிறந்த தேதி</div>";
-			echo "<div class='divPanchang' style='font-weight:bold'>".date('d/M/Y',strtotime($chart_date))."<BR>($age years)[$vayadhotta_rasi]</div>";
+			echo "<div class='divPanchang' style='font-weight:bold'>".date('d/M/Y',strtotime($chart_date))."<BR>($age வயது)</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>வயதோட்ட லக்கினம்</div>";
+			echo "<div class='divPanchang' style='font-weight:bold'>".getRasi(targetHouse($lagna_house,$vayadhotta_rasi-1))."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பிறந்த நேரம்</div>";
@@ -2185,8 +2192,8 @@ echo <<<EOL
 					<center><P style="color:#660000;font-weight:bold; font-size:16px; text-align:center; background-color:white;width:200px;line-height: 30px;">பிறப்பு ஜாதகம்</P></center>
 					
 					<center id="pdf"><div class="divTable blueTable" style="height:70px;width:360px;">
-						<IMG SRC='images/ganpati2.jpg' width='10%' height='10%' />
-						<center><P style="color:#660000;font-weight:bold; font-size:10px; text-align:center; background-color:white;width:200px;line-height: 20px;">பெரியநாயகி துணை</P></center>
+						<!-- <IMG SRC='images/ganpati2.jpg' width='10%' height='10%' />
+						<center><P style="color:#660000;font-weight:bold; font-size:10px; text-align:center; background-color:white;width:200px;line-height: 20px;">பெரியநாயகி துணை</P></center> -->
 								<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
 									<div class="divTableDummyCell" colspan=3 style="border-radius: 20px 20px 0 0;">		
 										<form name='updateChart' action='Birth_Chart.php' method='post'>
@@ -2198,7 +2205,8 @@ echo <<<EOL
 											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Birth Date: <input type='date' id='nDate' name='nDate' readonly style="background-color:var(--chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$chart_date > Birth Time: <input type='time' id='nTime' name='nTime' readonly style="background-color:var(--chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$chart_time></H4>
 											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Transit Date: <input type='date' id='nTrDate' name='nTrDate' style="background-color:#FFFFFF;color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$transit_date> Transit Time: <input type='time' id='nTrTime' name='nTrTime' style="background-color:#FFFFFF;color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$transit_time></H4>
 											<BR>
-											<button type='button' class='actionBtn' id='submit1' value='Submit' onClick='return genChart(this.form);'>Submit</button><button class='actionBtn' value='Download' onClick='loadOnePage();'>Download</button>
+											<button type='button' class='actionBtn' id='submit1' value='Submit' onClick='return genChart(this.form);'>Submit</button>
+											<button class='actionBtn' value='Download' onClick='loadOnePage("$onePageURL");'>Download</button>
 											</form>
 											
 											<!-- <button style="background-color:gold;color:#660000;font-weight:bold;font-size:10px;" onclick="generatePDF()">Download</button> -->
@@ -2360,7 +2368,6 @@ $_SESSION["transit_time"]=$transit_time;
 $_SESSION["thithi_soonyam_arr"]=$g_thithi_soonyam_arr;
 $_SESSION["navamsam_arr"] = $g_navamsam_arr;
 $_SESSION["starlord_arr"] = $planet_starlord;
-
 $_SESSION["planetKaranaLord"] = $g_planetKaranaLord;
 $_SESSION["dasa"] = $g_dasa_arr;
 $_SESSION["birth_date"] = date('d/M/Y',strtotime($chart_date));
@@ -2385,6 +2392,7 @@ $_SESSION["sunset"] = explode(' ',$today_sunset)[1];
 $_SESSION["in_place"] = $place;
 
 prepareWallpaper();
+
 
 ?>
 
