@@ -15,8 +15,9 @@ if(strcmp($usertype,"ADMIN")==0){
 				  <a href="Birth_input.php">பிறப்பு ஜாதகம்</a>
 				  <a href="planet_kaaragam.php">கிரக காரகம்</a>
 				  <a href="hora.php">ஓரை</a>
-				  <a href="star_thaara_palan.php">தாரா பலன்</d</a>
+				  <a href="star_thaara_palan.php">தாரா பலன்</a>
 				  <a href="new_panchang.php">பஞ்சாங்கம்</a>
+				  <a href="maintenance.php">Manage</a>
 				</div>
 			</div> 
 			<a href="index.php"><i class="fa fa-home fa-2x"></i></a>

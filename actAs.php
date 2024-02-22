@@ -51,7 +51,7 @@ var_dump($userInfo);
 
 session_destroy();
 
-header('Location: index.php?key='.$userInfo[imei][0]);
+header('Location: index.php?key='.$userInfo['imei'][0]);
 
 ?>
 

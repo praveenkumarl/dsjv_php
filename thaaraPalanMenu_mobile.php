@@ -63,6 +63,7 @@ elseif(strcmp($usertype,"SUPER")==0){
               <a href="planet_kaaragam.php">கிரக காரகம்</a>
               <a href="hora.php">ஓரை</a>
 			  <a href="new_panchang.php">பஞ்சாங்கம்</a>
+			  <a href="maintenance.php">Manage</a>
             </div>
           </div> 
 		  <a href="index.php"><i class="fa fa-home fa-2x"></i></a>

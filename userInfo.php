@@ -23,7 +23,7 @@ $userInfo=array();
 
 function getUserDetails()
 {
-	global $conn,$userInfo, $rowid,$sql;
+	global $conn,$userInfo, $rowid,$sql, $old_usertype;
 	
 	$cnt=0;
 	
@@ -32,7 +32,6 @@ function getUserDetails()
 	try {
 		
 		//$sql = "SELECT name,phone,imei,last_login,user_type,registered_date from user where name='$user_name'";
-		echo $sql;
 	
 		if(($result = mysqli_query($conn, $sql))){
 			$count = mysqli_num_rows($result);
@@ -46,6 +45,8 @@ function getUserDetails()
 					$userInfo["last_login"][$cnt] = $row["last_login"];
 					$userInfo["user_type"][$cnt] = $row["user_type"];
 					$userInfo["registered_date"][$cnt] = $row["registered_date"];
+					
+					$old_usertype = $row["user_type"];
 					
 					$cnt = $cnt + 1;
 				  }
@@ -79,11 +80,12 @@ getUserDetails();
 	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	<link href='https://fonts.googleapis.com/css?family=Julius Sans One' rel='stylesheet'>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">    
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
-    
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7102258981747108" crossorigin="anonymous"></script>
+ 
 
     <script src="script.js"></script>
     <script type="text/javascript">
@@ -141,87 +143,80 @@ function deleteUser(in_phone){
 <body onLoad="init();">
 
 	
-
 <div class="title"></div>
-
-<div id="fullpage">
-    <div class="section" id="section0">
-
-		<div class="intro">
 		
-			<div class="container">
+	<div class="column-menu">
+	<?php displayUserInfo($_SESSION['userinfo']); ?>
+		<div class='desktop'>
 			<button class="menu" onClick="window.open('index.php','_self')">Home</button>
-				<center><div class="divTable blueTable" id="chart" style="width:400px;margin-top:-30px">
-				<BR><BR><BR>
-						<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">User update</P>
-					<BR><BR>
-					
-					
-<?php
-						echo "<div class='divTable blueTable' style='height:40px;width:360px;margin-left:10px'>";
-						echo "<form name='userUpdate' id='userUpdate' action='userUpdate.php' method='post'>";
-							
-							for($i=0; $i<sizeof($userInfo['Name']); $i++){
-									echo "<div class='divTableRow'>";
-										echo "<div class='divPanchangHeading'>Name</div>";
-										echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'><input type='textbox' name='Name' value='".$userInfo['Name'][$i]."' ></div>";
-									echo "</div>";
-									echo "<div class='divTableRow'>";
-										echo "<div class='divPanchangHeading'>phone</div>";
-										echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'><input type='textbox' name='phone' value='".$userInfo['phone'][$i]."' ></div>";
-										$phone = $userInfo['phone'][$i];
-									echo "</div>";
-									echo "<div class='divTableRow'>";
-										echo "<div class='divPanchangHeading'>imei</div>";
-										echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'><input type='textbox' name='imei' value='".$userInfo['imei'][$i]."' ></div>";
-									echo "</div>";
-									echo "<div class='divTableRow'>";
-										echo "<div class='divPanchangHeading'>user_type</div>";
-										echo "<select name='usertype' id='usertype' style='background-color:white;border:solid 1px black;color:black;font-weight:bold;border-radius:0'>";
-											if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],'FREE')==0){
-												echo "<option value='FREE' selected>FREE</option>";
-											}
-											else{
-												echo "<option value='FREE'>FREE</option>";
-											}
-											if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],'PAID')==0){
-												echo "<option value='PAID' selected>PAID</option>";
-											}
-											else{
-												echo "<option value='PAID'>PAID</option>";
-											}
-											if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],'SUPER')==0){
-												echo "<option value='SUPER' selected>SUPER</option>";
-											}
-											else{
-												echo "<option value='SUPER'>SUPER</option>";
-											}
-											if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],'ADMIN')==0){
-												echo "<option value='ADMIN' selected>ADMIN</option>";
-											}
-											else{
-												echo "<option value='ADMIN'>ADMIN</option>";
-											}
-											
-										echo "</select>";
-									echo "</div>";
-									echo "<div class='divTableRow'>";
-										echo "<div class='divPanchang'><input type='Button' id='btDelete' value='Delete' style='background-color:gold;color:#660000;font-weight:bold;font-size:10px;' onClick='deleteUser($phone);'></div>";
-										echo "<div class='divPanchang'><input type='Button' id='btSubmit' value='Submit' style='background-color:gold;color:#660000;font-weight:bold;font-size:10px;' onClick='updateUser();'></div>";
-										
-									echo "</div>";
-									
-									
-							}
-							echo "<form>";
-?>
-					<BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR>
-				</div></center>
-		  </div>
+		</div>
+		<div class='mobile'>
+			<?php include "maintainMenu_mobile.php"; ?>
 		</div>
 	</div>
-	
-</div>
+	<div class='column-body'>
+		
+<?php
+	echo "<center>";
+	echo "<P style='color:#660000;font-weight:bold; font-size:20px; text-align:center'>User update</P>";
+	echo "<div class='divTable blueTable' style='height:40px;width:360px;margin-left:10px'>";
+	echo "<form name='userUpdate' id='userUpdate' action='userUpdate.php' method='post'>";
+		for($i=0; $i<sizeof($userInfo['Name']); $i++){
+				echo "<div class='divTableRow'>";
+					echo "<div class='divPanchangHeading'>Name</div>";
+					echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'><input type='textbox' name='Name' value='".$userInfo['Name'][$i]."' ></div>";
+				echo "</div>";
+				echo "<div class='divTableRow'>";
+					echo "<div class='divPanchangHeading'>phone</div>";
+					echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'><input type='textbox' name='phone' value='".$userInfo['phone'][$i]."' ></div>";
+					$phone = $userInfo['phone'][$i];
+				echo "</div>";
+				echo "<div class='divTableRow'>";
+					echo "<div class='divPanchangHeading'>imei</div>";
+					echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'><input type='textbox' name='imei' value='".$userInfo['imei'][$i]."' ></div>";
+				echo "</div>";
+				echo "<div class='divTableRow'>";
+					echo "<div class='divPanchangHeading'>user_type</div>";
+					echo "<select name='usertype' id='usertype' style='background-color:white;border:solid 1px black;color:black;font-weight:bold;border-radius:0'>";
+						if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],'FREE')==0){
+							echo "<option value='FREE' selected>FREE</option>";
+						}
+						else{
+							echo "<option value='FREE'>FREE</option>";
+						}
+						if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],'PAID')==0){
+							echo "<option value='PAID' selected>PAID</option>";
+						}
+						else{
+							echo "<option value='PAID'>PAID</option>";
+						}
+						if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],'SUPER')==0){
+							echo "<option value='SUPER' selected>SUPER</option>";
+						}
+						else{
+							echo "<option value='SUPER'>SUPER</option>";
+						}
+						if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],'ADMIN')==0){
+							echo "<option value='ADMIN' selected>ADMIN</option>";
+						}
+						else{
+							echo "<option value='ADMIN'>ADMIN</option>";
+						}
+						
+					echo "</select>";
+				echo "</div>";
+				echo "<div class='divTableRow'>";
+					echo "<div class='divPanchang'><input type='Button' class='actionBtn' id='btDelete' value='Delete' style='background-color:red !important' onClick='deleteUser($phone);'></div>";
+					echo "<div class='divPanchang'><input type='Button' class='actionBtn' id='btSubmit' value='Submit' onClick='updateUser();'></div>";
+				echo "</div>";
+				
+				
+		}
+		
+		echo '<input type="hidden" id="old_usertype" name="old_usertype" value="'.$old_usertype.'" required/>';
+		echo "<form>";
+?>
+	</div></center>
 
 </body>
 

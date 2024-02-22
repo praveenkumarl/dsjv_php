@@ -68,6 +68,7 @@ elseif(strcmp($usertype,"SUPER")==0){
 				  <a href="hora.php">ஓரை</a>
 				  <a href="star_thaara_palan.php">தாரா பலன்</d</a>
 				  <a href="new_panchang.php">பஞ்சாங்கம்</a>
+				  <a href="maintenance.php">Manage</a>
 				</div>
           </div> 
 			<a href="javascript:location.reload();"><i class="fa fa-refresh fa-2x"></i></a>
@@ -94,6 +95,7 @@ elseif(strcmp($usertype,"ADMIN")==0){
               <a href="star_thaara_palan.php">தாரா பலன்</d</a>
               <a href="new_panchang.php">பஞ்சாங்கம்</a>
 			  <a href="admin.php">ADMIN</a>
+			  <a href="maintenance.php">Manage</a>
             </div>
           </div> 
 		<a href="javascript:location.reload();"><i class="fa fa-refresh fa-2x"></i></a>

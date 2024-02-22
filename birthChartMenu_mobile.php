@@ -24,13 +24,13 @@ elseif(strcmp($usertype,"PAID")==0){
 				</button>
 				<div class="dropdown1-content">
 				  <a href="Jamakol_input.php">ஜாமக்கோள்</a>
-				  <a href="Matching_input.php">திருமண பொருத்தம்</div</a>
+				  <a href="Matching_input.php">திருமண பொருத்தம்</a>
 				  <a href="planet_kaaragam.php">கிரக காரகம்</a>
 				  <a href="hora.php">ஓரை</a>
-				  <a href="star_thaara_palan.php">தாரா பலன்</d</a>
+				  <a href="star_thaara_palan.php">தாரா பலன்</a>
 				  <a href="new_panchang.php">பஞ்சாங்கம்</a>
 				</div>
-			  </div> 
+			</div> 
 			<a href="index.php"><i class="fa fa-home fa-2x"></i></a>
 			<a href="Birth_input.php"><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></a>
 			<a href="birthChartDisplay.php"><i class="fa fa-history fa-2x"></i></a>
@@ -50,11 +50,12 @@ elseif(strcmp($usertype,"SUPER")==0){
 				</button>
 				<div class="dropdown1-content">
 				  <a href="Jamakol_input.php">ஜாமக்கோள்</a>
-				  <a href="Matching_input.php">திருமண பொருத்தம்</div</a>
+				  <a href="Matching_input.php">திருமண பொருத்தம்</a>
 				  <a href="planet_kaaragam.php">கிரக காரகம்</a>
 				  <a href="hora.php">ஓரை</a>
-				  <a href="star_thaara_palan.php">தாரா பலன்</d</a>
+				  <a href="star_thaara_palan.php">தாரா பலன்</a>
 				  <a href="new_panchang.php">பஞ்சாங்கம்</a>
+				  <a href="maintenance.php">Manage</a>
 				</div>
 			</div> 
 			<a href="index.php"><i class="fa fa-home fa-2x"></i></a>
@@ -76,11 +77,12 @@ elseif(strcmp($usertype,"ADMIN")==0){
 				</button>
 				<div class="dropdown1-content">
 				  <a href="Jamakol_input.php">ஜாமக்கோள்</a>
-				  <a href="Matching_input.php">திருமண பொருத்தம்</div</a>
+				  <a href="Matching_input.php">திருமண பொருத்தம்</a>
 				  <a href="planet_kaaragam.php">கிரக காரகம்</a>
 				  <a href="hora.php">ஓரை</a>
-				  <a href="star_thaara_palan.php">தாரா பலன்</d</a>
+				  <a href="star_thaara_palan.php">தாரா பலன்</a>
 				  <a href="new_panchang.php">பஞ்சாங்கம்</a>
+				  <a href="maintenance.php">Manage</a>
 				</div>
 			</div> 
 			<a href="index.php"><i class="fa fa-home fa-2x"></i></a>

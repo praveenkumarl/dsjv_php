@@ -1262,14 +1262,14 @@ function displayHoroDetails()
 			echo "<div class='divPanchangHeading'>பிறப்பு ஜாமக்கோள்</div>";
 echo <<<EOL
 <form id="hiddenViewJamaChart" action="Jamakol_Chart.php" method="post" style="display:none;">
-				  <input type="hidden" id="place" name="place" value="$in_place" required/>
-				  <input type="hidden" id="question" name="question" value="$in_name Birth chart" required/>
-				  <input type="hidden" id="analysis" name="analysis" value=" " required/>
-				  <input type="hidden" id="in_date" name="in_date" value="$chart_date" required/>
-				  <input type="hidden" id="in_time" name="in_time" value="$chart_time" required/>
-				  <input type="hidden" id="lang" name="lang" required/>
-				  <input type="hidden" id="in_degree" name="in_degree" required/>
-				</form>
+		  <input type="hidden" id="place" name="place" value="$in_place" required/>
+		  <input type="hidden" id="question" name="question" value="$in_name Birth chart" required/>
+		  <input type="hidden" id="analysis" name="analysis" value=" " required/>
+		  <input type="hidden" id="in_date" name="in_date" value="$chart_date" required/>
+		  <input type="hidden" id="in_time" name="in_time" value="$chart_time" required/>
+		  <input type="hidden" id="lang" name="lang" required/>
+		  <input type="hidden" id="in_degree" name="in_degree" required/>
+		</form>
 EOL;
 			echo "<div class='divPanchang' OnClick='showJamakolChart();' style='color:blue;font-weight:bold;cursor:pointer'>Generate</div>";
 		echo "</div>";
