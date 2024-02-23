@@ -132,16 +132,12 @@ getCountries();
     <title>PK Astro admin page</title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
 	
-	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	<link href='https://fonts.googleapis.com/css?family=Julius Sans One' rel='stylesheet'>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">    
-	
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
    
 
     <script src="script.js"></script>
@@ -176,7 +172,7 @@ function updatePostValues(){
 				<button class="menu" onClick="window.open('admin.php','_self')">Admin Home</button>
 			</div>
 			<div class='mobile'>
-				<?php include "addplaceMenu_mobile.php"; ?>
+				<?php include "addplaceMenu_mobile.php";  ?>
 			</div>
 	</div>
 	<div class='column-body'>

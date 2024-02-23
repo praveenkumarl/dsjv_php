@@ -55,7 +55,7 @@ $cookie_value = $in_degree;
 setcookie($cookie_name, $cookie_value, $in_degree); //storing the degree display choice to default it in the jamakol input page
 
 $in_question = isset($_POST["question"]) ? $_POST["question"] : $_POST["nQuestion"];
-$_SESSION['orig_question']=isset($_POST["question"]) ? $_POST["question"] : $_SESSION['orig_question'];
+$_SESSION['orig_question']=isset($_POST["question"]) ? $_POST["question"] : $_POST["nQuestion"];
 $orig_question = $_SESSION['orig_question'];
 
 $in_analysis = isset($_POST["analysis"]) ? $_POST["analysis"] : $_SESSION['orig_analysis'];

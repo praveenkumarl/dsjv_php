@@ -9,15 +9,23 @@ function dbConnect($conn)
 	/* Tell mysqli to throw an exception if an error occurs */
 	mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 	
-	// Create connection
-	$conn = new mysqli($servername, $username, $password, $db);
-
-	// Check connection
-	if ($conn->connect_error) {
-  	die("Connection failed: " . $conn->connect_error);
-	}
+	try{
+		// Create connection
+		$conn = new mysqli($servername, $username, $password, $db);
 	
-	mysqli_set_charset($conn, 'utf8');
+		// Check connection
+		if ($conn->connect_error) {
+			die("Connection failed: " . $conn->connect_error);
+		}
+	
+		mysqli_set_charset($conn, 'utf8');
+	}
+	catch(Exception $e) {
+		echo $e->getMessage();
+	}
+	catch (InvalidArgumentException $e) {
+		echo $e->getMessage();
+	}
 	
 	return $conn;
 }

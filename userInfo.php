@@ -89,14 +89,6 @@ getUserDetails();
 
     <script src="script.js"></script>
     <script type="text/javascript">
-        $(document).ready(function() {
-            $('#fullpage').fullpage({
-              //sectionsColor: ['#1bbc9b', '#4BBFC3', '#7BAABE', 'whitesmoke', '#ccddff'],
-			  sectionsColor: ['#FF8360', '#FFe6df', '#FFe6df', 'whitesmoke', '#ccddff'],
-              anchors: ['firstPage', 'secondPage', '3rdPage', '4thpage', 'lastPage'],
-			  responsiveHeight: 700
-            });
-        });
 
 		$(document).ready(function(){
     $('.search-box input[type="text"]').on("keyup input", function(){
@@ -130,7 +122,18 @@ function placeOnBlur() {
 }
 
 function updateUser(){
-	document.getElementById("userUpdate").submit();
+	if(<?php if(strcmp($old_usertype,"ADMIN")==0){echo 1;} else {echo 0;} ?> == 1){
+		alert("You cannot update ADMIN user");
+		return false;
+	}
+	else{
+		document.getElementById("userUpdate").submit();
+	}
+}
+
+function goBack(){
+	window.open('maintenance.php','_self');
+	return false;
 }
 
 function deleteUser(in_phone){
@@ -191,23 +194,41 @@ function deleteUser(in_phone){
 							echo "<option value='PAID'>PAID</option>";
 						}
 						if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],'SUPER')==0){
-							echo "<option value='SUPER' selected>SUPER</option>";
+							if(strcmp($usertype,'ADMIN')==0){
+								echo "<option value='SUPER' selected>SUPER</option>";
+							}
 						}
 						else{
-							echo "<option value='SUPER'>SUPER</option>";
+							if(strcmp($usertype,'ADMIN')==0){
+								echo "<option value='SUPER'>SUPER</option>";
+							}
 						}
 						if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],'ADMIN')==0){
-							echo "<option value='ADMIN' selected>ADMIN</option>";
+							if(strcmp($usertype,'ADMIN')==0){
+								echo "<option value='ADMIN' selected>ADMIN</option>";
+							}
 						}
 						else{
-							echo "<option value='ADMIN'>ADMIN</option>";
+							if(strcmp($usertype,'ADMIN')==0){
+								echo "<option value='ADMIN'>ADMIN</option>";
+							}
 						}
 						
 					echo "</select>";
 				echo "</div>";
 				echo "<div class='divTableRow'>";
-					echo "<div class='divPanchang'><input type='Button' class='actionBtn' id='btDelete' value='Delete' style='background-color:red !important' onClick='deleteUser($phone);'></div>";
-					echo "<div class='divPanchang'><input type='Button' class='actionBtn' id='btSubmit' value='Submit' onClick='updateUser();'></div>";
+					if(strcmp($usertype,'ADMIN')==0){
+						echo "<div class='divPanchang'><input type='Button' class='actionBtn' id='btDelete' value='Delete' style='background-color:red !important' onClick='deleteUser($phone);'></div>";
+					}
+					
+					if(strcmp($old_usertype,'ADMIN')==0 && !strcmp($_SESSION['user_type'],"ADMIN")==0){
+						echo "<div class='divPanchang'><input type='Button' class='actionBtn' id='btBack' value='Back' OnClick='goBack();'></div>";
+						echo "<div class='divPanchang'><input type='Button' class='actionBtn' id='btSubmit' value='Submit' disabled></div>";
+					}
+					else{
+						echo "<div class='divPanchang'><input type='Button' class='actionBtn' id='btBack' value='Back' OnClick='goBack();'></div>";
+						echo "<div class='divPanchang'><input type='Button' class='actionBtn' id='btSubmit' value='Submit' OnClick='updateUser();'></div>";
+					}
 				echo "</div>";
 				
 				

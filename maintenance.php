@@ -141,14 +141,6 @@ getUserDetails();
 
     <script src="script.js"></script>
     <script type="text/javascript">
-        $(document).ready(function() {
-            $('#fullpage').fullpage({
-              //sectionsColor: ['#1bbc9b', '#4BBFC3', '#7BAABE', 'whitesmoke', '#ccddff'],
-			  sectionsColor: ['#FF8360', '#FFe6df', '#FFe6df', 'whitesmoke', '#ccddff'],
-              anchors: ['firstPage', 'secondPage', '3rdPage', '4thpage', 'lastPage'],
-			  responsiveHeight: 700
-            });
-        });
 
 		$(document).ready(function(){
     $('.search-box input[type="text"]').on("keyup input", function(){
@@ -231,14 +223,29 @@ function openUserInfo(rowid){
 								$rowid = $userInfo['rowid'][$i];
 								
 								echo "<div class='divTableRow'>";
-									echo "<div class='divPanchang' style='color:blue;font-size:10px;font-weight:bold;width:40px;cursor:pointer' onClick='openUserInfo($rowid);'>".$rowid."</div>";
+									if(strcmp($_SESSION['userinfo']['user_type'],'ADMIN')==0){
+										echo "<div class='divPanchang' style='color:blue;font-size:10px;font-weight:bold;width:40px;cursor:pointer' onClick='openUserInfo($rowid);'>".$rowid."</div>";
+									}
+									else{
+										if(strcmp($userInfo['user_type'][$i],'ADMIN')==0){
+											echo "<div class='divPanchang' style='color:gray;font-size:10px;font-weight:bold;width:40px;'>".$rowid."</div>";
+										}
+										else{
+											echo "<div class='divPanchang' style='color:blue;font-size:10px;font-weight:bold;width:40px;cursor:pointer' onClick='openUserInfo($rowid);'>".$rowid."</div>";
+										}
+										
+									}
+									
 									echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$userInfo['Name'][$i]."</div>";
 									echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$userInfo['phone'][$i]."</div>";
 									echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$userInfo['imei'][$i]."</div>";
 									echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$userInfo['last_login'][$i]."</div>";
 									echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$userInfo['user_type'][$i]."</div>";
 									echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$userInfo['registered_date'][$i]."</div>";
-									echo "<div class='divPanchang' style='color:blue;font-size:10px;font-weight:bold;width:40px;cursor:pointer' onClick='actAs($rowid)'>Act As</div>";
+									if(strcmp($_SESSION['userinfo']['user_type'],'ADMIN')==0){
+										echo "<div class='divPanchang' style='color:blue;font-size:10px;font-weight:bold;width:40px;cursor:pointer' onClick='actAs($rowid)'>Act As</div>";
+									}
+									
 								echo "</div>";
 								
 						}

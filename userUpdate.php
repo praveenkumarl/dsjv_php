@@ -10,8 +10,6 @@ $imei = $_POST['imei'];
 $usertype = $_POST['usertype'];
 $old_usertype = $_POST['old_usertype'];
 
-echo $usertype;
-
 function updateUser()
 {
 	global $conn, $user_name, $phone, $imei, $usertype, $old_usertype;
@@ -43,8 +41,7 @@ function updateUser()
 	
 	//Log user acitivity
 	if(isset($_COOKIE["phone"])) {
-		$activity = 'User Update|'.$phone."|".$user_name."|".$imei."|".$old_usertype."|".$usertype;
-		echo $activity;
+		$activity = 'User Update|'.$_SESSION['imei']."|".$user_name."|".$imei."|".$old_usertype."|".$usertype;
 		logActivity($conn,$_COOKIE["phone"],$activity);
 	}
 	
@@ -55,6 +52,11 @@ function updateUser()
 
 updateUser();
 
-header( "Refresh:0; url=admin.php", true, 303);
+if(strcmp($_SESSION['user_type'],"ADMIN")==0){
+	header( "Refresh:0; url=admin.php", true, 303);
+}
+else{
+	header( "Refresh:0; url=maintenance.php", true, 303);
+}
 
 ?>

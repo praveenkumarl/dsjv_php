@@ -150130,7 +150130,7 @@ ALTER TABLE `kaaragam`
 -- AUTO_INCREMENT for table `matching_chart`
 --
 ALTER TABLE `matching_chart`
-  MODIFY `rowid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `rowid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1000;
 
 --
 -- AUTO_INCREMENT for table `tz`

@@ -21,7 +21,7 @@ if(strcmp($usertype,"SUPER")==0){
 			</div> 
 			<a href="index.php"><i class="fa fa-home fa-2x"></i></a>
 			<a href="addPlace.php"><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></a>
-			<a href="javascript:location.reload();"><i class="fa fa-refresh fa-2x"></i></a>
+			<div class='menuHeading'>Manage</div>
         </div>
     </div>    
 EOL;
@@ -47,8 +47,7 @@ elseif(strcmp($usertype,"ADMIN")==0){
 			</div> 
 			<a href="index.php"><i class="fa fa-home fa-2x"></i></a>
 			<a href="addPlace.php"><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></a>
-			<a href="javascript:location.reload();"><i class="fa fa-refresh fa-2x"></i></a>
-			<img src='images/dsjv_title.png' style='padding:10px;width:40%' />
+			<div class='menuHeading'>Manage</div>
         </div>
     </div>    
 EOL;

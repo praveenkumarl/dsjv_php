@@ -55,7 +55,7 @@ function register()
 	
 		if(($result = mysqli_query($conn, $sql))){
 				echo "<script>alert('Successfully registered');</script>";
-				add_userExpiry_data($validity_days);
+				//add_userExpiry_data($validity_days);
 				header( "Refresh:2; url=new_loginPage.php", true, 303);
 		} else{
 				echo "<script>alert('Error: Server error');</script>";
@@ -104,6 +104,7 @@ function register_mobile()
 				$_SESSION['phone']=$phone;
 				$_SESSION['user_type']="FREE";
 				//add_userExpiry_data($validity_days);
+				header( "Refresh:2; url=index.php", true, 303);
 				
 		} else{
 				echo "<script>alert('Error: Server error');</script>";
