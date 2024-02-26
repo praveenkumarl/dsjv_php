@@ -10,7 +10,7 @@ $moon_longitude_data=array();
 //constants
 
 const MIN_STAR_MATCH_COUNT = 7; //minimum matching
-const TOTAL_STAR_MATCH_COUNT = 10; //max matching
+const TOTAL_STAR_MATCH_COUNT = 11; //max matching
 const TOTAL_MATCH_RULES = 12; //total matching rules
 
 $DEBUG= isset($_SESSION['debug']) ? $_SESSION['debug'] : 0;

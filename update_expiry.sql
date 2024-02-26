@@ -1,0 +1,22 @@
+CREATE TRIGGER `update_expiry` AFTER UPDATE ON `user`
+ FOR EACH ROW BEGIN
+
+declare end_date DATETIME;
+
+IF STRCMP(OLD.user_type,NEW.user_type)!=0 THEN 
+	IF STRCMP(NEW.user_type,"FREE")=0 THEN 
+		SET end_date = CONVERT_TZ(DATE_ADD(LOCALTIMESTAMP(),INTERVAL 1 DAY),'+00:00','+05:30');
+	ELSEIF STRCMP(NEW.user_type,"PAID")=0 THEN
+		SET end_date = CONVERT_TZ(DATE_ADD(LOCALTIMESTAMP(),INTERVAL 1 YEAR),'+00:00','+05:30');
+	ELSEIF STRCMP(NEW.user_type,"SUPER")=0 THEN
+		SET end_date = CONVERT_TZ(DATE_ADD(LOCALTIMESTAMP(),INTERVAL 1 YEAR),'+00:00','+05:30');
+	ELSEIF STRCMP(NEW.user_type,"ADMIN")=0 THEN
+		SET end_date = CONVERT_TZ(DATE_ADD(LOCALTIMESTAMP(),INTERVAL 10 YEAR),'+00:00','+05:30');
+	ELSE
+		SET end_date = CONVERT_TZ(DATE_ADD(LOCALTIMESTAMP(),INTERVAL 1 DAY),'+00:00','+05:30');
+	END IF;
+
+	UPDATE user_trial SET expiry_date = end_date WHERE imei = NEW.imei;
+END IF;
+                             
+END

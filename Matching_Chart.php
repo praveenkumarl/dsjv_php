@@ -988,6 +988,40 @@ function naadiMatching(){
 	
 }
 
+//Girl/boy Sun/Sat/Rah/Kethu/Mars in 7th house, warning
+function matchingRule13(){
+	global $sw_planet, $tr_sw_planet,$g_matching_mark;
+	
+	$result=false;
+	$reason="";
+	
+	$girl_sun = countHouses(findHouse($sw_planet,"லக்"),findHouse($sw_planet,"சூரி"));
+	$girl_sat = countHouses(findHouse($sw_planet,"லக்"),findHouse($sw_planet,"சனி"));
+	$girl_rah = countHouses(findHouse($sw_planet,"லக்"),findHouse($sw_planet,"ரா"));
+	$girl_ket = countHouses(findHouse($sw_planet,"லக்"),findHouse($sw_planet,"கே"));
+	$girl_mar = countHouses(findHouse($sw_planet,"லக்"),findHouse($sw_planet,"செ"));
+	
+	$boy_sun = countHouses(findHouse($tr_sw_planet,"லக்"),findHouse($tr_sw_planet,"சூரி"));
+	$boy_sat = countHouses(findHouse($tr_sw_planet,"லக்"),findHouse($tr_sw_planet,"சனி"));
+	$boy_rah = countHouses(findHouse($tr_sw_planet,"லக்"),findHouse($tr_sw_planet,"ரா"));
+	$boy_ket = countHouses(findHouse($tr_sw_planet,"லக்"),findHouse($tr_sw_planet,"கே"));
+	$boy_mar = countHouses(findHouse($tr_sw_planet,"லக்"),findHouse($tr_sw_planet,"செ"));
+	
+	if($girl_sun == 7 || $girl_sat == 7 || $girl_rah == 7 || $girl_ket == 7 || $girl_mar == 7
+		|| $boy_sun == 7 || $boy_sat == 7 || $boy_rah == 7 || $boy_ket == 7 || $boy_mar == 7){
+		$result = false;
+		$reason = "7ஆம் இடத்தில் சுரி/சனி/ரா/கே/செ, மிக கவனமாக பொருத்தம் பார்த்து முடிவு எடுக்கவும்";
+	}
+	
+	if($result == false){
+		echo <<<EOL
+		<div class="divDisclaimer" colspan=3>
+			<H6 style='font-weight;color:red'>*$reason</H6>
+		</div>
+EOL;
+	}
+}
+
 
 function vasiyaMatching()
 {
@@ -3995,6 +4029,7 @@ EOL;
 					displayMatchingResult();
 					
 					echo "</div></center>";
+					matchingRule13();
 					displayDisclaimer();
 					
 					

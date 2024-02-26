@@ -1,0 +1,20 @@
+CREATE TRIGGER `add_expiry` AFTER INSERT ON `user`
+ FOR EACH ROW BEGIN
+ 
+declare end_date DATETIME;
+
+IF STRCMP(NEW.user_type,"FREE")=0 THEN 
+	SET end_date = CONVERT_TZ(DATE_ADD(LOCALTIMESTAMP(),INTERVAL 1 DAY),'+00:00','+05:30');
+ELSEIF STRCMP(NEW.user_type,"PAID")=0 THEN
+	SET end_date = CONVERT_TZ(DATE_ADD(LOCALTIMESTAMP(),INTERVAL 1 YEAR),'+00:00','+05:30');
+ELSEIF STRCMP(NEW.user_type,"SUPER")=0 THEN
+	SET end_date = CONVERT_TZ(DATE_ADD(LOCALTIMESTAMP(),INTERVAL 1 YEAR),'+00:00','+05:30');
+ELSEIF STRCMP(NEW.user_type,"ADMIN")=0 THEN
+	SET end_date = CONVERT_TZ(DATE_ADD(LOCALTIMESTAMP(),INTERVAL 10 YEAR),'+00:00','+05:30');
+ELSE
+	SET end_date = CONVERT_TZ(DATE_ADD(LOCALTIMESTAMP(),INTERVAL 1 DAY),'+00:00','+05:30');
+END IF;
+ 
+INSERT into user_trial (phone,imei,expiry_date) values(NEW.phone, NEW.imei, end_date);
+                              
+END

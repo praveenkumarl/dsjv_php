@@ -132,6 +132,7 @@ $curr_month = date('m');
 						<td></td>
 						<td  style="text-align:left">
 							<input class="actionBtn" type="submit" value="Submit">
+							<button class="actionBtn" onclick="history.back()">Back</button>
 						</td>
 					</tr>
 				</table>

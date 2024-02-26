@@ -38,9 +38,8 @@ $place_boy = isset($_GET["place_boy"]) ? $_GET["place_boy"] : "";
 $date_boy = isset($_GET["in_date_boy"]) ? $_GET["in_date_boy"] : "";
 $time_boy = isset($_GET["in_time_boy"]) ? $_GET["in_time_boy"] : "";
 
-$phone = isset($_COOKIE["phone"]) ? $_COOKIE["phone"] : 1;
+$phone = isset($_COOKIE["phone"]) ? $_COOKIE["phone"] : $_SESSION['userinfo']['phone'];
 $charttype = $_GET["charttype"];
-
 ?>
 
 <!doctype html>

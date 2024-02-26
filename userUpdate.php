@@ -9,17 +9,18 @@ $phone = $_POST['phone'];
 $imei = $_POST['imei'];
 $usertype = $_POST['usertype'];
 $old_usertype = $_POST['old_usertype'];
+$id = $_POST['id'];
 
 function updateUser()
 {
-	global $conn, $user_name, $phone, $imei, $usertype, $old_usertype;
+	global $conn, $user_name, $phone, $imei, $usertype, $old_usertype, $id;
 	
 	$conn = dbConnect($conn);
 	
 	startSqlTxn($conn);
 
 	try {
-		$sql = "UPDATE user SET name = '$user_name', phone = '$phone', imei='$imei', user_type='$usertype' where name='$user_name'";
+		$sql = "UPDATE user SET name = '$user_name', phone = '$phone', imei='$imei', user_type='$usertype' where rowid='$id'";
 		
 		debug($sql);
 	
@@ -41,7 +42,7 @@ function updateUser()
 	
 	//Log user acitivity
 	if(isset($_COOKIE["phone"])) {
-		$activity = 'User Update|'.$_SESSION['imei']."|".$user_name."|".$imei."|".$old_usertype."|".$usertype;
+		$activity = 'User Update|'.$user_name."|".$imei."|".$old_usertype."|".$usertype;
 		logActivity($conn,$_COOKIE["phone"],$activity);
 	}
 	

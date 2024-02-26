@@ -10,11 +10,11 @@ if(isset($_POST['name'])){
 	//$user_name=isset($_POST['name']) ? $_POST['name'] : $_GET['name'];
 	$user_name=isset($_POST['name']) ? explode('|',$_POST['name'])[1] : explode('|',$_GET['name'])[1];
 	//$sql = "SELECT name,phone,imei,last_login,user_type,registered_date from user where name='$user_name'";
-	$sql = "SELECT name,phone,imei,last_login,user_type,registered_date from user where (name LIKE '%$user_name%') OR (phone LIKE '%$user_name%')";
+	$sql = "SELECT rowid,name,phone,imei,last_login,user_type,registered_date from user where (name LIKE '%$user_name%') OR (phone LIKE '%$user_name%')";
 }
 elseif(isset($_GET['rowid'])){
 	$rowid=isset($_POST['rowid']) ? $_POST['rowid'] : $_GET['rowid'];
-	$sql = "SELECT name,phone,imei,last_login,user_type,registered_date from user where rowid='$rowid'";
+	$sql = "SELECT rowid,name,phone,imei,last_login,user_type,registered_date from user where rowid='$rowid'";
 }
 
 $usertype=isset($_SESSION['usertype']) ? $_SESSION['usertype'] : "";
@@ -39,6 +39,7 @@ function getUserDetails()
 			if($count>0){
 				
 				 while($row = $result->fetch_assoc()) {
+					$userInfo["rowid"][$cnt] = $row["rowid"];
 					$userInfo["Name"][$cnt] = $row["name"];
 					$userInfo["phone"][$cnt] = $row["phone"];
 					$userInfo["imei"][$cnt]= $row["imei"];
@@ -122,13 +123,7 @@ function placeOnBlur() {
 }
 
 function updateUser(){
-	if(<?php if(strcmp($old_usertype,"ADMIN")==0){echo 1;} else {echo 0;} ?> == 1){
-		alert("You cannot update ADMIN user");
-		return false;
-	}
-	else{
 		document.getElementById("userUpdate").submit();
-	}
 }
 
 function goBack(){
@@ -165,6 +160,11 @@ function deleteUser(in_phone){
 	echo "<div class='divTable blueTable' style='height:40px;width:360px;margin-left:10px'>";
 	echo "<form name='userUpdate' id='userUpdate' action='userUpdate.php' method='post'>";
 		for($i=0; $i<sizeof($userInfo['Name']); $i++){
+			$id = $userInfo['rowid'][$i];
+				echo "<div class='divTableRow'>";
+					echo "<div class='divPanchangHeading'>ID</div>";
+					echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'><input type='textbox' name='Name' value='".$userInfo['rowid'][$i]."' readonly></div>";
+				echo "</div>";
 				echo "<div class='divTableRow'>";
 					echo "<div class='divPanchangHeading'>Name</div>";
 					echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'><input type='textbox' name='Name' value='".$userInfo['Name'][$i]."' ></div>";
@@ -235,6 +235,7 @@ function deleteUser(in_phone){
 		}
 		
 		echo '<input type="hidden" id="old_usertype" name="old_usertype" value="'.$old_usertype.'" required/>';
+		echo '<input type="hidden" id="id" name="id" value="'.$id.'" required/>';
 		echo "<form>";
 ?>
 	</div></center>
