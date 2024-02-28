@@ -4057,7 +4057,7 @@ if($cricketMenu==1){
 
 //Log user acitivity
 if(isset($_COOKIE["phone"])) {
-$activity = 'Matching|'.$place_girl."|".$chart_date."|".$chart_time. "|" . $place_boy."|".$transit_date."|".$transit_time;
+$activity = 'Matching|'.$in_girlname."|".$place_girl."|".$chart_date."|".$chart_time. "|" . $in_boyname. "|". $place_boy."|".$transit_date."|".$transit_time;
 	logActivity($conn,$_COOKIE["phone"],$activity);
 }
 

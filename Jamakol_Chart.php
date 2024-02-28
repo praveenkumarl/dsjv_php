@@ -140,9 +140,9 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Jamakol_i
     <title>PK Astro Jamakol</title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
 	
-	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/chart_style.css">
-	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="style.css">
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">

@@ -1153,6 +1153,10 @@ function displayHoroDetails()
 			echo "<div class='divPanchangHeading'>பிறந்த இடம்</div>";
 			echo "<div class='divPanchang'>".$place."</div>";
 		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>வாரம்</div>";
+			echo "<div class='divPanchang'>".explode('/',$panchang['vaaram'])[1]."</div>";
+		echo "</div>";
 		displayDetailsDiv('nak',ceil($nak_pad_idx)/4);
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
@@ -1248,7 +1252,7 @@ function displayHoroDetails()
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>சந்திராஷ்டம ராசி</div>";
 			//echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house,6)-1)."</div>";
-			echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house-1,6))."</div>";
+			echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house-1,8))."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பிறப்பு தசா இருப்பு</div>";

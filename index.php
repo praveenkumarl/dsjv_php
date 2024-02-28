@@ -157,7 +157,7 @@ EOL;
 			
 			<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">தற்போதய  ஜாமக்கோள்</P>
 			<DIV id='msg'>Please wait, jamakol chart is loading</DIV>
-			<div class='current-jama' id='current-jama' onClick='window.open("Jamakol_input.php","_self");' style='cursor: pointer;margin-top:-10px'>
+			<div class='current-jama' id='current-jama' onClick='window.open("Jamakol_input.php","_self");' style='cursor: pointer;'>
 EOL;
 				include "live_jamakol_chart.php";
 				
@@ -167,16 +167,13 @@ EOL;
 		}
 		else{
 			echo <<<EOL
-			<DIV class="blink_me">
-			Welcome to PkAstro software. You have free limited access only. Please find below the sample jamakol chart. You will be able to generate all these charts in realtime once activated.
 			<BR>
 			<BR>
-			To change date/time/place of the chart, please contact admin @ +91 7010996514
 			</DIV>
 			<DIV id='msg'>Please wait, jamakol chart is loading</DIV>
 EOL;
 
-				echo '<div style="margin-top:-10%">';
+				echo '<div>';
 					include "live_jamakol_chart.php";
 				echo '</div>';
 
