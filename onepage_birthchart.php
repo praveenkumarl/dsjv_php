@@ -1622,7 +1622,7 @@ calculateNavamsam();
 
 
 $LANG = 1; //1 tamil  2 english
-$sw_planet = $_SESSION["inside"];
+//$sw_planet = $_SESSION["inside"];
 $g_thithi_soonyam_arr = $g_thithi_soonyam_arr;
 $starlord_arr = $planet_starlord;
 $planetKaranaLord = $g_planetKaranaLord;
