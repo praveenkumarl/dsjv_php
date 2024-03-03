@@ -124,10 +124,18 @@ function displayThaaraPalan(){
 			echo "<div class='divThaaraPalanWhite'>".$key."</div>";
 			
 			if($reminder == 0){
-				//echo "<div class='divThaaraPalanGreenBright'>"."9"."</div>";
-				echo "<div class='divThaaraPalanGreenBright'>$value</div>";
-				echo "<div class='divThaaraPalanGreenBright'>".($palan[9])."</div>";
-				echo "<div class='divThaaraPalanGreenBright'>".($palan_detail[9])."</div>";
+				if($value == 18){
+					//echo "<div class='divThaaraPalanRedBright'>".($value % 9)."</div>";
+					echo "<div class='divThaaraPalanRedBright'>$value</div>";
+					echo "<div class='divThaaraPalanRedBright'>பணப்பகை நட்சத்திரம்</div>";
+					echo "<div class='divThaaraPalanRedBright'>நல்லதல்ல</div>";
+				}
+				else{
+					//echo "<div class='divThaaraPalanGreenBright'>"."9"."</div>";
+					echo "<div class='divThaaraPalanGreenBright'>$value</div>";
+					echo "<div class='divThaaraPalanGreenBright'>".($palan[9])."</div>";
+					echo "<div class='divThaaraPalanGreenBright'>".($palan_detail[9])."</div>";
+				}
 			}
 			else{
 				if($reminder % 2 == 0){
@@ -135,8 +143,8 @@ function displayThaaraPalan(){
 					if($value == 22){
 						//echo "<div class='divThaaraPalanRedBright'>".($value % 9)."</div>";
 						echo "<div class='divThaaraPalanRedBright'>$value</div>";
-						echo "<div class='divThaaraPalanRedBright'>Vainasika Star/வைநாசிக நட்சத்திரம்</div>";
-						echo "<div class='divThaaraPalanRedBright'>Not good/நல்லதல்ல</div>";
+						echo "<div class='divThaaraPalanRedBright'>வைநாசிக நட்சத்திரம்</div>";
+						echo "<div class='divThaaraPalanRedBright'>நல்லதல்ல</div>";
 					}
 					else{
 						//echo "<div class='divThaaraPalanGreen'>".($value % 9)."</div>";

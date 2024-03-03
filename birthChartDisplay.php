@@ -87,13 +87,13 @@ EOL;
 		
 			echo "<div class='divTable blueTable' style='height:40px;width:360px;margin-left:10px'>";
 				echo "<div class='divTableRow'>";
-						echo "<div class='divChartHistoryHeading'>Rowid</div>";
-						echo "<div class='divChartHistoryHeading'>Name</div>";
-						echo "<div class='divChartHistoryHeading'>Sex</div>";
-						echo "<div class='divChartHistoryHeading'>Place</div>";
-						echo "<div class='divChartHistoryHeading'>Birth Date</div>";
-						echo "<div class='divChartHistoryHeading'>Birth Time</div>";
-						echo "<div class='divChartHistoryHeading'>Action</div>";
+						echo "<div class='divChartHistoryHeading'>எண்</div>";
+						echo "<div class='divChartHistoryHeading'>பெயர்</div>";
+						echo "<div class='divChartHistoryHeading'>பாலினம்</div>";
+						echo "<div class='divChartHistoryHeading'>இடம்</div>";
+						echo "<div class='divChartHistoryHeading'>தேதி</div>";
+						echo "<div class='divChartHistoryHeading'>நேரம்</div>";
+						echo "<div class='divChartHistoryHeading'>செய்கை</div>";
 				echo "</div>";
 				
 				if(isset($chartInfo['rowid'])){
@@ -116,7 +116,7 @@ EOL;
 					}
 					
 					echo "</div>";
-					echo "<BR><P style='color:#660000;font-weight:bold; font-size:14px; text-align:center; width:100%'>Total ".sizeof($chartInfo['rowid'])." Charts (Click on it to open)</P>";
+					echo "<BR><P style='font-weight:bold; font-size:12px; text-align:center; width:100%'>மொத்தம் ".sizeof($chartInfo['rowid'])." ஜாதகங்கள்<BR>(திறக்க அதை கிளிக் செய்யவும்)</P>";
 				}
 				else{
 					echo "</div>";

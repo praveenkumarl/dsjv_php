@@ -359,12 +359,12 @@ function updateNow() {
 						<td colspan=2><P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">பிறப்பு ஜாதகம்</P></td>
 					</tr>
 					<tr style="background-color: #FFFFFF">
-						<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px">*Name:</H5></td>
+						<td><div class="divBirthInputLable">*பெயர்</div></td>
 						<td><input type="text" name="name" id="name" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Enter name..." onfocus=this.value='' onBlur="nameOnBlur();" />
 						</td>
 					</tr>
 					<tr style="background-color: #FFFFFF">
-						<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px">*Sex:</H5></td>
+						<td><div class="divBirthInputLable">*பாலினம்</div></td>
 						<td>
 							<select name="sex" id="sex" style="width:auto;font-size:16px;">
 								<option value="ஆண்" selected>ஆண்</option>
@@ -374,16 +374,16 @@ function updateNow() {
 						</td>
 					</tr>
 					<tr style="background-color: #FFFFFF">
-						<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px">*Birth place:</H5></td>
+						<td><div class="divBirthInputLable">*பி.இடம்</div></td>
 						<td><div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" /><div class="result"></div>
 						</td>
 					</tr>
 					<tr style="background-color: #FFFFFF">
-						<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px">*Birth Date:</H5></td>
+						<td><div class="divBirthInputLable">*பி.தேதி</div></td>
 						<td><input type="date" id="in_date" name="in_date" style="border:1px solid lightgray;font-weight:bold"></td>
 					</tr>
 					<tr style="background-color: #FFFFFF">
-						<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px">*Birth Time:</H5></td>
+						<td><div class="divBirthInputLable">*பி.நேரம்</div></td>
 						<td><input type="time" id="in_time" name="in_time" step="1" style="border:1px solid lightgray;font-weight:bold"></td>
 					</tr>
 					<!-- <tr style="background-color: #FFFFFF">

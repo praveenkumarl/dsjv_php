@@ -190,20 +190,20 @@ getChartDetails();
 				  <input type="hidden" id="charttype" name="charttype" required/>
 				</form>
 		
-					<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">Saved Jamakol charts</P>
+					<P style="color:#660000;font-weight:bold; font-size:14px; text-align:center">சேமிக்கப்பட்ட ஜாமக்கோள் ஜாதகங்கள்</P>
 					 <!-- <input type='button' class='actionBtn' id='Download' value='download' onClick='exportJamaCharts();'>  -->
 					
 				
 <?php
 					echo "<div class='divTable blueTable' style='height:40px;width:300px;margin-left:10px'>";
 						echo "<div class='divTableRow'>";
-								echo "<div class='divChartHistoryHeading'>Rowid</div>";
-								echo "<div class='divChartHistoryHeading'>Question</div>";
-								echo "<div class='divChartHistoryHeading'>Analysis</div>";
-								echo "<div class='divChartHistoryHeading'>Place</div>";
-								echo "<div class='divChartHistoryHeading'>Q Date</div>";
-								echo "<div class='divChartHistoryHeading'>Q Time</div>";
-								echo "<div class='divChartHistoryHeading'>Action</div>";
+								echo "<div class='divChartHistoryHeading'>எண்</div>";
+								echo "<div class='divChartHistoryHeading'>கேள்வி</div>";
+								echo "<div class='divChartHistoryHeading'>கணிப்பு</div>";
+								echo "<div class='divChartHistoryHeading'>இடம்</div>";
+								echo "<div class='divChartHistoryHeading'>கே.தேதி</div>";
+								echo "<div class='divChartHistoryHeading'>கே.நேரம்</div>";
+								echo "<div class='divChartHistoryHeading'>செய்கை</div>";
 						echo "</div>";
 						
 						if(isset($chartInfo['rowid'])){
@@ -225,11 +225,11 @@ getChartDetails();
 
 
 							echo "</div>";
-							echo "<BR><P style='color:#660000;font-weight:bold; font-size:14px; text-align:center'>Total ".sizeof($chartInfo['rowid'])." Charts</P>";
+							echo "<BR><P style='color:#660000;font-weight:bold; font-size:12px; text-align:center'>மொத்தம் ".sizeof($chartInfo['rowid'])." ஜாதகங்கள்<BR>(திறக்க அதை கிளிக் செய்யவும்)</P>";
 						}
 						else{
 							echo "</div>";
-							echo "<BR><P style='color:#660000;font-weight:bold; font-size:14px; text-align:center; width:100%'>Total 0 Charts (Click on it to open)</P>";
+							echo "<BR><P style='color:#660000;font-weight:bold; font-size:14px; text-align:center; width:100%'>ஜாதகங்கள் இல்லை</P>";
 						}
 ?>
 				

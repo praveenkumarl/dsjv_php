@@ -3543,9 +3543,26 @@ div.error {
 	vertical-align:middle;
 	border:solid 1px #660000;
 
-	background-color: var(--details-background);;
+	background-color: var(--details-background);
 	font-size: 12px;
 	color: black;
+	width: 20%;
+	height: 20%;
+	padding:5px;
+	
+	font-weight: bold;
+}
+
+.divPanchangHeadingRed
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px #660000;
+
+	background-color: var(--details-background);
+	font-size: 12px;
+	color: Red;
 	width: 20%;
 	height: 20%;
 	padding:5px;
@@ -3895,7 +3912,7 @@ div.error {
 		height:auto;
 	}
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 800px) {
 	.column-menu {
 		width: 100%;
 		height: auto;
@@ -4405,6 +4422,21 @@ textarea {
 	background:#ffb3b3;
 }
 
+.mudakkuDetailsDiv
+{
+	display: none;
+	position:absolute;
+	padding:10px;
+	width:fit;
+	height:fit;
+	border: solid 1px;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	z-index: 9;
+	background:#ffb3b3;
+}
+
 #labelParigaraDiv {
     position: absolute;
     top: -10px;
@@ -4479,7 +4511,7 @@ parigaraDiv{
 	vertical-align:middle;
 	border:solid 1px #660000;
 	line-height: 16px;
-	background-color: #FD8383;
+	background-color: #FADBD8;
 	font-size: 11px;
 	color: black;
 	width: auto;
@@ -4495,7 +4527,7 @@ parigaraDiv{
 	vertical-align:middle;
 	border:solid 1px #660000;
 	line-height: 16px;
-	background-color: #8AFD83;
+	background-color: #D5F5E3;
 	font-size: 11px;
 	color: black;
 	width: auto;
@@ -4570,4 +4602,34 @@ parigaraDiv{
 	text-align: center;
 	margin-top: 15px;
 	box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+
+.divBirthInputLable
+{ 
+	display: table-cell;
+	text-align:left;
+	vertical-align:middle;
+	#border:solid 1px #660000;
+
+	background-color: var(--details-background);
+	font-size: 12px;
+	color: black;
+	padding:5px;
+	width:40%;
+	font-weight: bold;
+}
+
+.divBirthInput
+{ 
+	display: table-cell;
+	vertical-align:middle;
+	#border:solid 1px #660000;
+
+	background-color: var(--details-background);
+	font-size: 12px;
+	color: black;
+	padding:5px;
+	width:60%;
+	font-weight: bold;
 }

@@ -31,6 +31,27 @@
 }
 
 /*mobile mode*/
+@media screen and (max-width: 490px){
+    #desk-table {
+        display: none;
+    }
+    #phone-table {
+        display: block;
+    }
+	
+	div.blueTable {
+	  border: 0px solid #660000;
+	  background-color: none;
+	  width: 95% !important;
+	  height: 400px;
+	  text-align: center;
+	  border-collapse: collapse;
+	  /* box-shadow: 1px 2px 5px #FF6a40; */
+	 
+	}
+}
+
+/*mobile mode*/
 @media only screen and (max-width: 400px) { // max-width is the size of the web broswer in mobile 
     #desk-table {
         display: none;
@@ -38,6 +59,16 @@
     #phone-table {
         display: block;
     }
+	
+	div.blueTable {
+	  border: 0px solid #660000;
+	  background-color: none;
+	  width: 95% !important;
+	  height: 400px;
+	  text-align: center;
+	  border-collapse: collapse;
+	  /* box-shadow: 1px 2px 5px #FF6a40; */
+	}
 }
 
 mark {
@@ -54,6 +85,7 @@ div.blueTable {
   /* box-shadow: 1px 2px 5px #FF6a40; */
  
 }
+	
 .divTable.blueTable, .divTable.blueTable .divTableHead {
   border: 0px solid #AAAAAA;
   padding: 3px 2px;

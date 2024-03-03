@@ -160,6 +160,72 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
         }   
 ****** this code is to take screenshot of the chart ***************/
 
+		$(document).ready(function(){
+			$('.search-box input[type="text"]').on("keyup input", function(){
+				/* Get input value on change */
+				var inputVal = $(this).val();
+				var resultDropdown = $(this).siblings(".result");
+				if(inputVal.length>2){
+					$.get("backend-search.php", {term: inputVal}).done(function(data){
+						// Display the returned data in browser
+					   resultDropdown.html(data);
+					});
+				} else{
+					resultDropdown.empty();
+				}
+			});
+			
+		// Set search input value on click of result item
+			//$(document).on("click", ".result p", function(){
+			$(document).on("click", ".result div", function(){
+			//$(document).on("change", ".result select", function(){
+				$(this).parents(".search-box").find('input[type="text"]').val($(this).text());		
+				//$(this).parents(".search-box").find('input[type="text"]').val($('option:selected', this).val());
+				
+				$(this).parent(".result").empty();
+				$(this).parent("#lplace").hide();
+			});
+		});
+		
+		function validateForm() {
+		  let d = document.getElementById("in_date").value;
+		  let t = document.getElementById("in_time").value;
+		  
+		  if (d == "" || t == "") {
+				updateNow();
+		  }
+		  
+		  p = document.getElementById("place").value;
+		  if (p == "") {
+			document.getElementById("error").innerHTML = "Place must be filled out";
+			document.getElementById('place').style.borderColor = "red";
+			return false;
+		  }
+		  
+		  n = document.getElementById("name").value;
+		  if (n == "") {
+			document.getElementById("error").innerHTML = "Name must be filled out";
+			document.getElementById('name').style.borderColor = "red";
+			return false;
+		  }
+		}
+
+		function placeOnBlur() {
+			let place = document.getElementById("place").value;
+			
+			if(place==""){
+				document.getElementById('place').value = '<?php echo $place; ?>';
+			}
+		}
+
+		function nameOnBlur() {
+			let name = document.getElementById("name").value;
+			
+			if(name==""){
+				document.getElementById('name').value = '<?php echo $in_name; ?>';
+			}
+		}
+
 		var timestamp_flag = 0;
 		
 		function loadOnePage(url){
@@ -350,8 +416,8 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 		
 		function saveChart()
 		{
-			var name = document.getElementById("nName").value;
-			var sex = document.getElementById("nSex").value;
+			var name = document.getElementById("name").value;
+			var sex = document.getElementById("sex").value;
 			var place = document.getElementById("nPlace").value;
 			var date = document.getElementById("nDate").value;
 			var time = document.getElementById("nTime").value;
@@ -430,6 +496,8 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 		}
 		
 		function showDetailsDiv(e,type) {
+			var divName="";
+			
 			switch(type){
 				case 1:
 					divName = "thithiDetailsDiv";
@@ -437,6 +505,7 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 					document.getElementById("karanaDetailsDiv").style.display = "none";
 					document.getElementById("yogiDetailsDiv").style.display = "none";
 					document.getElementById("ayogiDetailsDiv").style.display = "none";
+					document.getElementById("mudakkuDetailsDiv").style.display = "none";
 					break;
 				case 2:
 					divName = "karanaDetailsDiv";
@@ -444,6 +513,7 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 					document.getElementById("thithiDetailsDiv").style.display = "none";
 					document.getElementById("yogiDetailsDiv").style.display = "none";
 					document.getElementById("ayogiDetailsDiv").style.display = "none";
+					document.getElementById("mudakkuDetailsDiv").style.display = "none";
 					break;
 				case 3:
 					divName = "yogiDetailsDiv";
@@ -451,6 +521,7 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 					document.getElementById("thithiDetailsDiv").style.display = "none";
 					document.getElementById("karanaDetailsDiv").style.display = "none";
 					document.getElementById("ayogiDetailsDiv").style.display = "none";
+					document.getElementById("mudakkuDetailsDiv").style.display = "none";
 					break;
 				case 4:
 					divName = "ayogiDetailsDiv";
@@ -458,9 +529,19 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 					document.getElementById("thithiDetailsDiv").style.display = "none";
 					document.getElementById("karanaDetailsDiv").style.display = "none";
 					document.getElementById("yogiDetailsDiv").style.display = "none";
+					document.getElementById("mudakkuDetailsDiv").style.display = "none";
 					break;
 				case 5:
 					divName = "nakDetailsDiv";
+					document.getElementById("ayogiDetailsDiv").style.display = "none";
+					document.getElementById("thithiDetailsDiv").style.display = "none";
+					document.getElementById("karanaDetailsDiv").style.display = "none";
+					document.getElementById("yogiDetailsDiv").style.display = "none";
+					document.getElementById("mudakkuDetailsDiv").style.display = "none";
+					break;
+				case 6:
+					divName = "mudakkuDetailsDiv";
+					document.getElementById("nakDetailsDiv").style.display = "none";
 					document.getElementById("ayogiDetailsDiv").style.display = "none";
 					document.getElementById("thithiDetailsDiv").style.display = "none";
 					document.getElementById("karanaDetailsDiv").style.display = "none";
@@ -481,7 +562,6 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 
 			div.style.left = left;
 			div.style.top = top;
-			div.style.position = fixed;
 			//div.style.left = (e.screenX + window.scrolLeft);
 			//div.style.top = (e.screenY + window.scrolTop);
 		  
@@ -496,6 +576,7 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 			document.getElementById("karanaDetailsDiv").style.display = "none";
 			document.getElementById("yogiDetailsDiv").style.display = "none";
 			document.getElementById("ayogiDetailsDiv").style.display = "none";
+			document.getElementById("mudakkuDetailsDiv").style.display = "none";
 		}
 		
 		document.onreadystatechange = function() {
@@ -1142,8 +1223,14 @@ function displayHoroDetails()
 			echo "<div class='divPanchang' style='font-weight:bold'>".date('d/M/Y',strtotime($chart_date))."<BR>($age வயது)</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
+			if($age >= 0){
+				$temp = getRasi(targetHouse($lagna_house,$vayadhotta_rasi-1));
+			}
+			else{
+				$temp = "சாத்தியம் இல்லை";
+			}
 			echo "<div class='divPanchangHeading'>வயதோட்ட லக்கினம்</div>";
-			echo "<div class='divPanchang' style='font-weight:bold'>".getRasi(targetHouse($lagna_house,$vayadhotta_rasi-1))."</div>";
+			echo "<div class='divPanchang' style='font-weight:bold'>".$temp."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பிறந்த நேரம்</div>";
@@ -1160,7 +1247,7 @@ function displayHoroDetails()
 		displayDetailsDiv('nak',ceil($nak_pad_idx)/4);
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
-			echo "<div class='divPanchang' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'>".explode('/',$panchang['nak'])[1]."<BR>".$panchang['nak-end-time']." வரை</div>";
+			echo "<div class='divPanchang' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'>".explode('/',$panchang['nak'])[1]."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>நக்ஷத்ர நாம எழுத்து </div>";
@@ -1208,13 +1295,22 @@ function displayHoroDetails()
 		echo "</div>";
 		displayDetailsDiv('yogi',$g_yoga_idx);
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>அவயோகி</div>";
+			echo "<div class='divPanchangHeadingRed'>அவயோகி</div>";
 			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 4)' style='color:blue;cursor:pointer'>".$yogi_arr[3]."(".$yogi_arr[2].")</div>";
 		echo "</div>";
 		displayDetailsDiv('ayogi',$g_yoga_idx);
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>திதி சூன்யம்</div>";
+			echo "<div class='divPanchangHeadingRed'>திதி சூன்யம்</div>";
 			echo "<div class='divPanchang'>".$g_thithi_soonyam_matching_arr[0]."</div>";
+		echo "</div>";
+		    $mudakku_star = getMudakku(1);
+			$mudakku_rasi = getMudakku(2);
+			
+			$mudakku_baavam = getBavam(getMudakku(2));
+		displayDetailsDiv('mudakku',$mudakku_rasi.$mudakku_baavam);
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeadingRed'>முடக்கு</div>";
+			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 6)' style='color:blue;cursor:pointer'>".$mudakku_star." (".$mudakku_rasi.")<BR>".$mudakku_baavam."ஆம் வீடு</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பஞ்ச பக்ஷி</div>";
@@ -1250,7 +1346,7 @@ function displayHoroDetails()
 			echo "<div class='divPanchang'>".$otherPanchangDetails[4]."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>சந்திராஷ்டம ராசி</div>";
+			echo "<div class='divPanchangHeadingRed'>சந்திராஷ்டம ராசி</div>";
 			//echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house,6)-1)."</div>";
 			echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house-1,8))."</div>";
 		echo "</div>";
@@ -2189,6 +2285,28 @@ echo <<<EOL
 EOL;
 			//displayUserInfoMobile($_SESSION['userinfo']);
 			include "birthChartMenu_mobile.php";
+			
+			if(strcmp($in_sex,"ஆண்")==0){
+				$m_selection="selected";
+				$f_selection="";
+				$o_selection="";
+			}
+			elseif(strcmp($in_sex,"பெண்")==0){
+				$f_selection="selected";
+				$m_selection="";
+				$o_selection="";
+			}
+			elseif(strcmp($in_sex,"மூன்றாம்")==0){
+				$f_selection="";
+				$m_selection="";
+				$o_selection="selected";
+			}
+			else{
+				$m_selection="selected";
+				$o_selection="";
+				$f_selection="";
+			}
+			
 echo <<<EOL
 			</div>
 		</div>
@@ -2206,11 +2324,57 @@ echo <<<EOL
 											<input type='hidden' id='nSex' name='nSex' value='$in_sex'>
 											<input type='hidden' id='nNotes' name='hNotes' value='$g_notes'>
 											<input type='hidden' id='nRowid' name='nRowid' value='$g_rowid'>
-											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Birth Date: <input type='date' id='nDate' name='nDate' readonly style="background-color:var(--chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$chart_date > Birth Time: <input type='time' id='nTime' name='nTime' readonly style="background-color:var(--chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$chart_time></H4>
-											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Transit Date: <input type='date' id='nTrDate' name='nTrDate' style="background-color:#FFFFFF;color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$transit_date> Transit Time: <input type='time' id='nTrTime' name='nTrTime' style="background-color:#FFFFFF;color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$transit_time></H4>
-											<BR>
+											
+											<div class='divTable blueTable' style='height:30px;'>
+												<div class='divTableRow'>
+													<div class='divBirthInputLable'>*பெயர்</div>
+													<div class='divBirthInput' style='font-weight:bold'><input type="text" name="name" id="name" autocomplete="off" style="background-color:var(--chart-background);font-size:14px;font-weight:bold;height:fill_parent;width:fill_parent;display:inline" placeholder="Enter name..." onfocus=this.value='$in_name' onBlur="nameOnBlur();" value='$in_name' /></div>
+												</div>
+												<div class='divTableRow'>
+													<div class='divBirthInputLable'>*பாலினம்</div>
+													<div class='divBirthInput'>
+														<select name="sex" id="sex" style="background-color:var(--chart-background);font-size:14px;font-weight:bold;width:100%;">
+															<option value="ஆண்" $m_selection>ஆண்</option>
+															<option value="பெண்" $f_selection>பெண்</option>
+															<option value="மூன்றாம்" $o_selection>மூன்றாம்</option>
+														</select>
+													</div>
+												</div>
+												<div class='divTableRow'>
+													<div class='divBirthInputLable'>*பி.தேதி</div>
+													<div class='divBirthInput'>
+														<input type='date' id='nDate' name='nDate' style="background-color:var(--chart-background);font-size:14px;font-weight:bold;width:100%" value=$chart_date>
+													</div>
+												</div>
+												<div class='divTableRow'>
+													<div class='divBirthInputLable'>*பி.நேரம்</div>
+													<div class='divBirthInput'>
+														<input type='time' id='nTime' name='nTime' style="background-color:var(--chart-background);font-size:14px;font-weight:bold;width:100%;" step='1' value=$chart_time>
+													</div>
+												</div>
+												<div class='divTableRow'>
+													<div class='divBirthInputLable'>*பி.இடம்</div>
+													<div class='divBirthInput'>
+														<div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="background-color:var(--chart-background);font-weight:bold" placeholder="Search place..." onfocus=this.value='' value='$in_place' onBlur="placeOnBlur();" /><div class="result"></div></div>
+													</div>
+												</div>
+												<div class='divTableRow'>
+													<div class='divBirthInputLable'>*கோ.தேதி</div>
+													<div class='divBirthInput' style='font-weight:bold'>
+														<input type='date' id='nTrDate' name='nTrDate' style="background-color:#FFFFFF;font-size:14px;font-weight:bold;width:100%;" value=$transit_date>
+													</div>
+												</div>
+												<div class='divTableRow'>
+													<div class='divBirthInputLable'>*கோ.நேரம்</div>
+													<div class='divBirthInput' style='font-weight:bold'>
+														<input type='time' id='nTrTime' name='nTrTime' style="background-color:#FFFFFF;font-size:14px;font-weight:bold;width:100%;" step='1' value=$transit_time>
+													</div>
+												</div>
+											</div>
+											
 											<button type='button' class='actionBtn' id='submit1' value='Submit' onClick='return genChart(this.form);'>Submit</button>
 											<button class='actionBtn' value='Download' onClick='loadOnePage("$onePageURL");'>Download</button>
+											
 											</form>
 											
 											<!-- <button style="background-color:gold;color:#660000;font-weight:bold;font-size:10px;" onclick="generatePDF()">Download</button> -->

@@ -40,6 +40,7 @@ $time_boy = isset($_GET["in_time_boy"]) ? $_GET["in_time_boy"] : "";
 
 $phone = isset($_COOKIE["phone"]) ? $_COOKIE["phone"] : $_SESSION['userinfo']['phone'];
 $charttype = $_GET["charttype"];
+
 ?>
 
 <!doctype html>
@@ -107,7 +108,7 @@ function saveBirthChartToDB($in_savemode)
 			$sql = "INSERT INTO birth_chart (phone,name,sex,place,birth_date,birth_time,notes) VALUES ('$phone','$name','$sex','$place','$date','$time','$g_notes')";
 		}
 		else{ //update existing record
-			$sql = "UPDATE birth_chart SET notes='$g_notes' where rowid='$g_rowid'";
+			$sql = "UPDATE birth_chart SET phone='$phone',name='$name',sex='$sex',place='$place',birth_date='$date',birth_time='$time',notes='$g_notes' where rowid='$g_rowid'";
 		}
 		
 	

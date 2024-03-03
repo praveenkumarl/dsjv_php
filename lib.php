@@ -3135,13 +3135,22 @@ function getKaranaPlanet($karan)
 	return $karana_planet_array[$karan];
 }
 
+//returns the rasi house from the start house
 function targetHouse($start_house,$number_of_houses)
 {
-	debug($start_house);
-	debug($number_of_houses);
+	debug("TARGETHOUSE:$start_house");
+	debug("TARGETHOUSE:$number_of_houses");
 	
 	if($start_house+$number_of_houses > 12){
+		$temp = $start_house - 1 + $number_of_houses-12;
+		
 		return $start_house - 1 + $number_of_houses-12;
+		/*if($temp==0){
+			return 12;
+		}	
+		else{
+			return $temp;
+		}*/
 	}
 	else {
 		return $number_of_houses + $start_house - 1;
@@ -3164,7 +3173,15 @@ function updateIndhuLagna()
 						"குரு" =>10,
 						"சனி" =>1); */
 	
-	switch(targetHouse($lagna_house,9)){
+	debug("LAGNA 9TH HOUSE=".targetHouse($lagna_house,9));
+	
+	$lagna_9th_house = targetHouse($lagna_house,9);
+	
+	if($lagna_9th_house==0){
+		$lagna_9th_house = 12;
+	}
+	
+	switch($lagna_9th_house){
 	//switch($lagna_house){
 		case 1:
 		case 8:
@@ -3196,7 +3213,15 @@ function updateIndhuLagna()
 			break;
 	}
 	
-	switch(targetHouse($moon_house,9)){
+	debug("MOON 9TH HOUSE=".targetHouse($moon_house,9));
+	
+	$moon_9th_house = targetHouse($moon_house,9);
+	
+	if($moon_9th_house==0){
+		$moon_9th_house = 12;
+	}
+	
+	switch($moon_9th_house){
 	//switch($moon_house){
 		case 1:
 		case 8:
@@ -3233,7 +3258,7 @@ function updateIndhuLagna()
 	
 	$indhu_lagna_house = targetHouse($moon_house,$count);
 	
-	debug("COUNT=".$count." MOON_HOUSE=".$moon_house." LAGNA House=".$lagna_house." INDHU HOUSE=".$indhu_lagna_house);
+	debug("LAGNA_RAY=$lagna_ray MOON_RAY=$moon_ray"."COUNT=".$count." MOON_HOUSE=".$moon_house." LAGNA House=".$lagna_house." INDHU HOUSE=".$indhu_lagna_house);
 	
 	if($indhu_lagna_house == 0){
 		$indhu_lagna_house=12;
@@ -3897,6 +3922,13 @@ function getNakParigaaram($nak_idx)
 	return $details;
 }
 
+function getMudakkuParigaaram($mudakku_idx)
+{
+	$details = "<DIV class='parigaraDiv'><div id='labelParigaraDiv'>முடக்கு பரிகாரம்</div><img src='images/mudakku_parigaaram/$mudakku_idx.png' /></DIV>";
+					
+	return $details;
+}
+
 function calculateBirthPanchang(){
 	global $moon_degree, $moon_house, $sun_house, $sun_degree, $dayofweek, $g_nak, $g_karan, $panchang,$g_nak_pad_idx, $g_thithi_idx, $g_yoga_idx, $g_nak_idx;
 	
@@ -4206,6 +4238,10 @@ function displayDetailsDiv($in_dataType,$in_data){
 			$details = getAvaYogiParigaaram($g_yoga_idx);
 			echo "<DIV class='ayogiDetailsDiv' id='ayogiDetailsDiv' onclick='hideDetailsDiv()'>$details</DIV>";
 			break;
+		case "mudakku":
+			$details = getMudakkuParigaaram($in_data);
+			echo "<DIV class='mudakkuDetailsDiv' id='mudakkuDetailsDiv' onclick='hideDetailsDiv()'>$details</DIV>";
+			break;
 		
 	}
 }
@@ -4281,4 +4317,67 @@ function getStr($str, $lang)
 	return $out;
 }
 
+function getMudakku($flag)  //flag=1 star, flag=2 rasi
+{
+	global $planet_starlord;
+	
+	$star = explode(' ',$planet_starlord['சூரி'][0])[0];
+	
+	$mutakku_arr = array("அசுவினி" => array("பூரம்", "சிம்மம்"),
+						"பரணி" => array("மகம்", "சிம்மம்"),
+						"கிருத்திகை" => array("ஆயில்யம்", "கடகம்"),
+						"ரோகிணி" => array("பூசம்", "கடகம்"),
+						"மிருகசிரீஷம்" => array("புனர்பூசம்", "மிதுனம்"),
+						"திருவாதிரை" => array("திருவாதிரை", "மிதுனம்"),
+						"புனர்பூசம்" => array("மிருகசிரீஷம்", "ரிஷபம்"),
+						"பூசம்" => array("ரோகிணி", "ரிஷபம்"),
+						"ஆயில்யம்" => array("கிருத்திகை", "மேஷம்"),
+						"மகம்" => array("பரணி", "மேஷம்"),
+						"பூரம்" => array("அசுவினி", "மேஷம்"),
+						"உத்திரம்" => array("ரேவதி", "மீனம்"),
+						"ஹஸ்தம்" => array("உத்திரட்டாதி", "மீனம்"),
+						"சித்திரை" => array("பூரட்டாதி", "கும்பம்"),
+						"சுவாதி" => array("சதயம்", "கும்பம்"),
+						"விசாகம்" => array("அவிட்டம்", "மகரம்"),
+						"அனுஷம்" => array("திருவோணம்", "மகரம்"),
+						"கேட்டை" => array("உத்திராடம்", "தனுசு"),
+						"மூலம்" => array("பூராடம்", "தனுசு"),
+						"பூராடம்" => array("மூலம்" , "தனுசு"),
+						"உத்திராடம்" => array("கேட்டை", "விருச்சிகம்"),
+						"திருவோணம்" => array("அனுஷம்", "விருச்சிகம்"),
+						"அவிட்டம்" => array("விசாகம்", "துலாம்"),
+						"சதயம்" => array("சுவாதி", "துலாம்"),
+						"பூரட்டாதி" => array("சித்திரை", "கன்னி"),
+						"உத்திரட்டாதி" => array("ஹஸ்தம்", "கன்னி"),
+						"ரேவதி" => array("உத்திரம்", "சிம்மம்")
+						);
+
+	
+	if($flag==1){ //star
+		return $mutakku_arr[$star][0];
+	}
+	else{  //rasi
+		return $mutakku_arr[$star][1];
+	}
+}
+
+function getBavam($rasi)
+{
+	global $lagna_house;
+	
+	$rasi_arr = ["dummy","மேஷம்", "ரிஷபம்", "மிதுனம்", "கடகம்", "சிம்மம்", "கன்னி", "துலாம்", "விருச்சிகம்", "தனுசு", "மகரம்", "கும்பம்", "மீனம்"];
+	
+	return countHouses($lagna_house,array_search($rasi,$rasi_arr));
+}
+
+//this is used as a unique code when registered from browser. This will be set as cookie in the customer mobile
+function get19DigitRandomNumber()
+{
+	return date("YmdHis").rand(11111,99999);
+}
+
+function getSessionId()
+{
+	return session_id();
+}
 ?>

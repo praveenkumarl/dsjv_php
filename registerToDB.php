@@ -45,6 +45,8 @@ function register()
 	
 	startSqlTxn($conn);
 	
+	$key = get19DigitRandomNumber();
+	
 	//$phone = $_POST['phone'];
 	//$pin = $_POST['pin']; 
 
