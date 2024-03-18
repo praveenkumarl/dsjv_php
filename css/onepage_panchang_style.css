@@ -1,0 +1,757 @@
+:root {
+    /*--chart-background: url(../images/square5.jpg); */
+	--header-background: url(../images/OnePageHeader.png);
+	--chart-background: rgba(255,255,255,0.5);
+	--chart-outer-background: #FFFFFF;
+	--details-background: #ffe44d;
+	--chart-inner-font-size: 12px;
+}
+
+
+body {
+  width: 230mm;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0;
+  font-size: 12pt;
+  /*background-image: url('../images/watermark.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%; */
+}
+* {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+.main-page {
+  width: 210mm !important; 
+  min-height: 297mm !important;
+  margin: 10mm auto;
+  background: white;
+  box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+}
+.sub-page {
+  padding: 1cm;
+  height: 297mm;
+}
+@page {
+  size: A4;
+  margin: 0;
+}
+@media print {
+  html, body {
+    width: 210mm; 
+    height: auto;        
+  }
+  .main-page {
+    margin: 0;
+    border: initial;
+    border-radius: initial;
+    width: initial;
+    min-height: initial;
+    box-shadow: initial;
+    background: initial;
+    page-break-after: always;
+  }
+}
+
+
+/*normal mode*/
+#desk-table {
+    display: block;
+}
+#phone-table {
+    display: none;
+}
+
+/*mobile mode*/
+@media only screen and (max-width: 400px) { // max-width is the size of the web broswer in mobile 
+    #desk-table {
+        display: none;
+    }
+    #phone-table {
+        display: block;
+    }
+}
+
+mark {
+  color: black;
+}
+
+div.blueTable {
+  border: 0px solid black;
+  background-color: none;
+  width: 80mm;
+  height: 80mm;
+  text-align: center;
+  border-collapse: collapse;
+  /* box-shadow: 1px 2px 5px #FF6a40; */
+ 
+}
+.divTable.blueTable, .divTable.blueTable .divTableHead {
+  border: 0px solid #AAAAAA;
+  padding: 3px 2px;
+
+}
+.divTable.blueTable .divTableBody .divTableCell {
+  font-size: var(--chart-inner-font-size);
+}
+.blueTable .tableFootStyle {
+  font-size: 12px;
+}
+.blueTable .tableFootStyle .links {
+	 text-align: center;
+
+}
+.blueTable .tableFootStyle .links a{
+  display: inline-block;
+  background: #1C6EA4;
+  color: #FFFFFF;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+.blueTable.outerTableFooter {
+  border-top: none;
+}
+.blueTable.outerTableFooter .tableFootStyle {
+  padding: 3px 5px; 
+}
+/* DivTable.com */
+.divTable{ display: table; }
+.divTableRow { display: table-row;}
+.divTableHeading { display: table-header-group;}
+.divTableCell, .divTableHead 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px black;
+	border-collapse: collapse;
+
+	background-color: var(--chart-background);
+	font-size: 12px;
+	line-height: 14px;
+	font-weight: normal;
+	color: black;
+	width: 20%;
+	height: 20%;
+	padding:5px;
+
+	//background-image: url(../images/square5.jpg);
+	background-image: var(--chart-background);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+	
+	position:relative;
+}
+
+.divTableOuterCell 
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: var(--chart-outer-background);
+	text-align:center;
+	vertical-align:middle;
+	font-size: 10px;
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	border:solid 2px black;
+	
+	position:relative;
+}
+
+.divTableDummyCell 
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #FFFFFF;
+	text-align:center;
+	vertical-align:middle;
+	width: 5%;
+	height: 5%;
+	font-size: 12px;
+	font-weight: bold;
+	color: black;
+}
+
+.divTableCenterCell 
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: none;
+	text-align:center;
+	vertical-align:middle;
+	/*font-size: calc(1.7vw-8px);*/
+	font-size: 12px;
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:5px;
+	
+}
+
+
+.divTableHeading { display: table-header-group;}
+.divTableFoot { display: table-footer-group;}
+.divTableBody { display: table-row-group;}
+
+ .overlay {
+		position:absolute;
+		top:178px;
+        z-index: 9;
+        margin-left: 107px;
+        background: #FFFFFF;
+		width:145px;
+		height:145px;
+		border:solid 1px black;
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 60%;
+		background-position: center;
+		font-size:8px;
+		font-weight: bold;
+		color:black;
+}
+
+ .overlay1 {
+		position:absolute;
+		top:108px;
+        z-index: 9;
+        margin-left: 108px;
+        background: #FFFFFF;
+		width:145px;
+		height:145px;
+		border:solid 1px black;
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 60%;
+		background-position: center;
+		font-size:8px;
+		font-weight: bold;
+		color:black;
+      }	
+
+.overlay2 {
+		position:absolute;
+		top:108px;
+        z-index: 9;
+        margin-left: 107px;
+        background: #FFFFFF;
+		width:145px;
+		height:145px;
+		border:solid 1px black;
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 60%;
+		background-position: center;
+		font-size:8px;
+		font-weight: bold;
+		color:black;
+      }	  
+	  
+.kathir {
+	font-size:8px;
+	font-weight:normal;
+	color: black;
+	/* color: transparent; */
+	/* background-color: black; */
+	position: absolute;
+	top: 0px;
+	right: 3px;
+	width: 10px;
+}
+
+.jama_info {
+	font-size:8px;
+	font-weight:normal;
+}
+
+::-webkit-calendar-picker-indicator{
+    margin-left: 0px;
+}
+
+.divTableDegreeCell 
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #FFFFFF;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 11px;
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	border:solid 1px black;
+	
+	position:relative;
+}
+
+.header
+{
+	color:black; 
+	font-family: 'Source Sans Pro', Helvetica, sans-serif;
+	font-weight:bold; 
+	font-size:15px;
+}
+
+.footer
+{
+	color:black; 
+	font-family: 'Source Sans Pro', Helvetica, sans-serif;
+	font-weight:bold; 
+	font-size:18px;
+	animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+#section1{
+		/*background:  linear-gradient(90deg,rgba(147,13,36,1),rgba(147,13,36,.5), rgba(147,13,36,.5),rgba(147,13,36,1)), url(../images/background1.jpg);*/
+		background-size: cover;
+		background-repeat: no-repeat;
+		
+		/* animation-name: rightToLeft;
+		animation-duration: .3s; */
+	}
+	
+#section0{
+		/*background:  linear-gradient(90deg,rgba(255, 250, 250,0.8),rgba(255, 250, 250,0.8), rgba(255, 250, 250,0.8),rgba(255, 250, 250,0.8)), url(../images/background1.jpg);*/
+		background-color: #F2F4F4;
+		background-size: cover;
+		background-repeat: no-repeat;
+		
+		/* animation-name: rightToLeft;
+		animation-duration: .3s; */
+	}
+	
+	@keyframes leftToRight {
+  25%  {left:-1000px; top:0px;}
+  100% {left:0px; top:0px;}
+	}
+  
+  	@keyframes rightToLeft {
+  50%  {right:-1000px; top:0px;}
+  100% {right:0px; top:0px;}
+	}
+	
+#container
+	{
+	/* animation-name: rightToLeft;
+	animation-duration: .5s; */
+	}
+#search
+{
+	font-size: 20px;
+	color: black;
+}
+
+#search_err
+{
+	font-size: 12px;
+	color: red;
+}
+
+
+.divTableCenterCell1
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: white;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 10px;
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:0px;
+	
+	/*
+	background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 150%;
+		background-position: left -50% top -10%;
+	*/
+}
+
+.divTableCenterCell2
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: white;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 10px;
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:0px;
+	
+	/*
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 150%;
+		background-position: right -50% top -10%;
+	*/
+	
+}
+
+.divTableCenterCell3
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: white;
+	text-align:right;
+	vertical-align:middle;
+	font-size: 10px;
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:0px;
+	
+	/*
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 150%;
+		background-position: left -50% bottom -15%;
+	*/
+}
+
+.divTableCenterCell4
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: white;
+	text-align:left;
+	vertical-align:middle;
+	font-size: 10px;
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:0px;
+	
+	/*
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 150%;
+		background-position: right -50% bottom -15%;
+	*/
+}
+
+.lagna
+{
+	#background-color:blue;
+	#color:white;
+	color:black;
+	border: 1px solid;
+}
+
+.mandhi
+{
+	#color:red;
+	font-weight: normal;
+}
+
+.moon
+{
+	#background-color:#00ffff;
+	color:black;
+}
+
+.udh
+{
+	background-color:#7cfc00;
+	color:black;
+}
+
+.aar
+{
+	background-color:#7cfc00;
+	color:black;
+}
+
+.kav
+{
+	background-color:red;
+	color:white;
+}
+
+.emma_kantam
+{
+	color:red;
+	font-weight: normal;
+}
+
+.rahu_kaalam
+{
+	color:red;
+	font-weight: normal;
+}
+
+
+.divTableTextHeading 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid .1px black;
+	background-color: var(--details-background);
+	font-size: 12px;
+	color: black;
+	padding:5px;
+	font-weight: 800;
+}
+
+.divTableTextMainHeading 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 12px;
+	color: black;
+	padding:5px;
+	font-weight: 800;
+}
+
+.divTableTextMedium 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid .1px black;
+	background-color: #ffffff;
+	font-size: 10px;
+	color: black;
+	padding:5px;
+}
+
+.divTableTextBig
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid .1px black;
+	background-color: #ffffff;
+	font-size: 12px;
+	color: black;
+	padding:5px;
+}
+
+
+
+
+.divHoroDetailCell
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:top;
+	font-size: 10px;
+	line-height: 15px;
+	font-weight: normal;
+	height:match_parent;
+	padding:2px;
+	
+	background-repeat: no-repeat;
+	
+	position:relative;
+}
+
+.divStarDetailCell
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:top;
+	font-size: 10px;
+	line-height: 15px;
+	font-weight: normal;
+	padding:2px;
+	background-repeat: no-repeat;
+	width:inherit;
+	height:100%;
+	position:relative;
+}
+
+.PageHeader
+{
+	display: inline-block;
+	text-align: right;
+	vertical-align: middle;
+	color: black;
+	font-size: 10px;
+	height:60px;
+	border-bottom:3px double;
+	border-color: black;
+	justify-content: center;
+}
+
+.header-parent { 
+    display: flow;
+	text-align: center;
+	vertical-align: bottom;
+	color: black;
+	font-size: 10px;
+	margin-left: 5px;
+	margin-right: 5px;
+	height:50px;
+	border-bottom:3px double;
+	border-width: 100%;
+	border-color: black;
+	justify-content: center;
+	width:210mm;
+} 
+.header-left { 
+    float: left; 
+	padding-top:10px;
+	margin-left:2px;
+}
+
+.header-right { 
+    float: right; 
+	padding-top:10px;
+	margin-right:5px;
+}
+
+.header-center { 
+    float: left;
+    width: 500px;
+	height: 25px;
+	padding-top:10px;
+    text-align: -webkit-center;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.divTableTextOfficeName 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 8px;
+	color: var(--officename-text-color);
+	padding:10px;
+	font-weight: 800;
+	line-height: 8px;
+	font-family: Verdana, Raavi, sans-serif;
+	
+}
+
+.PageFooter
+{
+	text-align: center;
+	vertical-align: middle;
+	color: black;
+	font-size: 10px;
+	height: 10px;
+	line-height: 10px;
+	border-top:1px solid;
+	border-color: black;
+	font-family: Verdana, Raavi, sans-serif;
+	width:210mm;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+
+.thithi_soonyam {
+	font-size:9px;
+	font-weight:normal;
+	color: black !important;
+	/* color: transparent; */
+	/* background-color: #FFFFFF; */
+}
+
+.thithi_soonyam_main {
+	font-size:9px;
+	font-weight:bold;	
+	background-color: white !important;
+	color: black !important;
+	/* color: transparent; */
+	/* background-color: #FFFFFF; */
+}
+
+.thithi_soonyam_main_txt {
+	font-size: 10px;
+	font-weight:bold;
+	background:white !important;
+	color: black !important;
+	/*border: 1px solid; */
+	/* color: transparent; */
+	/* background-color: #FFFFFF; */
+}
+
+.thithi_soonyam_main_txt::after {
+	content: "*";
+}
+
+.indhu{
+	background-color:white !important;
+	color:black;
+	font-size:10px;
+	font-weight:bold
+}
+
+page[size="A4"] {  
+  width: 21cm;
+  height: 29.7cm; 
+}
+
+.retro{
+	color:red;
+}
+
+.retro::after {
+    content: "(வ)";
+}
+
+.divTablePanchangHeading 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid .1px black;
+	background-color: var(--details-background);
+	font-size: 10px;
+	color: black;
+	padding:2px;
+	font-weight: 800;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.divTablePanchangMedium 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid .1px black;
+	background-color: #ffffff;
+	font-size: 8px;
+	color: black;
+	padding:2px;
+	font-family: Verdana, Raavi, sans-serif;
+	line-height: 10px;
+}
+
+.divTablePanchangBig
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid .1px black;
+	background-color: #ffffff;
+	font-size: 10px;
+	color: black;
+	padding:2px;
+	font-family: Verdana, Raavi, sans-serif;
+	line-height: 12px;
+}

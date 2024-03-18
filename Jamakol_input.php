@@ -163,9 +163,15 @@ function validateForm() {
   
   p = document.getElementById("place").value;
   if (p == "") {
-    document.getElementById("error").innerHTML = "Place must be filled out";
+    document.getElementById("error").innerHTML = "இடம் கொடுக்கவில்லை";
 	document.getElementById('place').style.borderColor = "red";
     return false;
+  }
+  
+  if (p.includes("|")==false || p.includes("/")==false || p.length<10){
+	  alert('நீங்கள் இடத்தை கீழ் வரும் பட்டியலில் தேர்ந்தெடுக்கவில்லை');
+	  document.getElementById('place').style.borderColor = "red";
+	  return false;
   }
   
 /*  p = document.getElementById("place").value;

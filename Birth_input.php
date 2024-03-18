@@ -70,71 +70,6 @@ function getChartDetails()
 }
 
 
-function displayHistory()
-{
-	global $chartInfo;
-	
-	getChartDetails();
-	
-echo <<<EOL
-	<div class="divTable blueTable" id="chart" style="width:400px;">
-
-		<!-- (A) HIDDEN HTML FORM -->
-		<form id="hiddenViewBirthChart" action="Birth_Chart.php" method="post" style="display:none;">
-		  <input type="hidden" id="place" name="place" required/>
-		  <input type="hidden" id="name" name="name" required/>
-		  <input type="hidden" id="in_date" name="in_date" required/>
-		  <input type="hidden" id="in_time" name="in_time" required/>
-		  <input type="hidden" id="lang" name="lang" required/>
-		</form>
-		<!-- (A) HIDDEN HTML FORM -->
-		<form id="hiddenDeleteChart" action="deleteChart.php" method="post" style="display:none;">
-		  <input type="hidden" id="rowid" name="rowid" required/>
-		  <input type="hidden" id="charttype" name="charttype" required/>
-		</form>
-	
-		<BR>
-			<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">Saved Birth charts</P>
-		<BR><BR>	
-EOL;
-		
-			echo "<div class='divTable blueTable' style='height:40px;width:360px;margin-left:10px'>";
-				echo "<div class='divTableRow'>";
-						echo "<div class='divPanchangHeading'>Rowid</div>";
-						echo "<div class='divPanchangHeading'>Phone</div>";
-						echo "<div class='divPanchangHeading'>Name</div>";
-						echo "<div class='divPanchangHeading'>Place</div>";
-						echo "<div class='divPanchangHeading'>Birth Date</div>";
-						echo "<div class='divPanchangHeading'>Birth Time</div>";
-						echo "<div class='divPanchangHeading'>Action</div>";
-				echo "</div>";
-				
-				if(isset($chartInfo['rowid'])){
-					for($i=0; $i<sizeof($chartInfo['rowid']); $i++){
-						$x=$chartInfo['rowid'][$i];
-						
-						echo "<div class='divTableRow' id='row$x' onClick='showChart($x)' OnMouseOver='highlightRow($x);' OnMouseOut='removeHighlightRow($x);'>";
-							echo "<div class='divPanchang' id='col1$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['rowid'][$i]."</div>";
-							echo "<div class='divPanchang' id='col2$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['phone'][$i]."</div>";
-							echo "<div class='divPanchang' id='col3$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['name'][$i]."</div>";
-							echo "<div class='divPanchang' id='col4$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['place'][$i]."</div>";
-							echo "<div class='divPanchang' id='col5$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['birth_date'][$i]."</div>";
-							echo "<div class='divPanchang' id='col6$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$chartInfo['birth_time'][$i]."</div>";
-							echo "<div class='divPanchang' id='col7$x' style='color:black;font-size:10px;font-weight:bold;width:40px;'><input type='button' id='delButton' onClick='deleteRecord($x)' style='color:black;font-size:10px;font-weight:bold;width:40px;background: url(images/delete.png);background-size:60%;background-repeat: no-repeat;background-position: center;color:#660000;background-color:#ffffff;'></div>";
-						echo "</div>";
-					}
-					
-					echo "</div>";
-					echo "<BR><P style='color:#660000;font-weight:bold; font-size:14px; text-align:center; width:100%'>Total ".sizeof($chartInfo['rowid'])." Charts (Click on it to open)</P>";
-				}
-				else{
-					echo "</div>";
-					echo "<BR><P style='color:#660000;font-weight:bold; font-size:14px; text-align:center; width:100%'>Total 0 Charts (Click on it to open)</P>";
-				}
-	echo "</div>";
-}
-
-
 ?>
 
 <!doctype html>
@@ -200,14 +135,22 @@ function validateForm() {
   
   p = document.getElementById("place").value;
   if (p == "") {
-    document.getElementById("error").innerHTML = "Place must be filled out";
+	alert('பிறந்த இடம் கொடுல்லவில்லை');
+	//document.getElementById("error").innerHTML = "பிறந்த இடம் கொடுல்லவில்லை";
 	document.getElementById('place').style.borderColor = "red";
     return false;
   }
   
+  if (p.includes("|")==false || p.includes("/")==false || p.length<10){
+	  alert('நீங்கள் இடத்தை கீழ் வரும் பட்டியலில் தேர்ந்தெடுக்கவில்லை');
+	  document.getElementById('place').style.borderColor = "red";
+	  return false;
+  }
+  
   n = document.getElementById("name").value;
   if (n == "") {
-    document.getElementById("error").innerHTML = "Name must be filled out";
+    //document.getElementById("error").innerHTML = "பெயர் கொடுக்கவில்லை";
+	alert('பெயர் கொடுக்கவில்லை');
 	document.getElementById('name').style.borderColor = "red";
     return false;
   }
@@ -270,63 +213,6 @@ function updateNow() {
   document.getElementById('in_time').value= time ; 
 }
 
-
-	function highlightRow(rownum)
-	{
-		document.getElementById("col1"+rownum).style.backgroundColor="#fff4b3";
-		document.getElementById("col2"+rownum).style.backgroundColor="#fff4b3";
-		document.getElementById("col3"+rownum).style.backgroundColor="#fff4b3";
-		document.getElementById("col4"+rownum).style.backgroundColor="#fff4b3";
-		document.getElementById("col5"+rownum).style.backgroundColor="#fff4b3";
-		document.getElementById("col6"+rownum).style.backgroundColor="#fff4b3";
-		
-		document.getElementById("row"+rownum).style.cursor = 'pointer';
-	}
-	
-	function removeHighlightRow(rownum)
-	{
-		document.getElementById("col1"+rownum).style.backgroundColor="#ffffff";
-		document.getElementById("col2"+rownum).style.backgroundColor="#ffffff";
-		document.getElementById("col3"+rownum).style.backgroundColor="#ffffff";
-		document.getElementById("col4"+rownum).style.backgroundColor="#ffffff";
-		document.getElementById("col5"+rownum).style.backgroundColor="#ffffff";
-		document.getElementById("col6"+rownum).style.backgroundColor="#ffffff";
-	}
-	
-	function showChart(rownum)
-	{	
-		document.getElementById("place").value = document.getElementById("col4"+rownum).innerHTML;
-		document.getElementById("name").value = document.getElementById("col3"+rownum).innerHTML;
-		document.getElementById("in_date").value = document.getElementById("col5"+rownum).innerHTML;
-		document.getElementById("in_time").value = document.getElementById("col6"+rownum).innerHTML;
-		document.getElementById("lang").value = 'Tamil';
-	
-		document.getElementById("chartInput").submit();
-	}
-	
-	function deleteRecord(rownum)
-	{
-		event.stopPropagation();
-		
-		let text = "Do you want to delete this chart?\nEither OK or Cancel.";
-		  if (confirm(text) == true) {
-			document.getElementById("rowid").value = rownum;
-			document.getElementById("charttype").value = 'b';
-
-			var url = 'deleteChart.php?rowid=' + rownum + '&charttype=b';
-			//alert(url);
-			//window.open(url);
-			window.location.replace(url);
-			window.refresh();
-			//document.getElementById("hiddenDeleteChart").submit();
-		  } else {
-			return;
-		  }
-	}
-	
-	$('.confirmation').on('click', function () {
-        return confirm('Are you sure?');
-    });
 	
 	function openLoader() {
 		document.getElementById("loader").style.display = "block";
@@ -407,7 +293,6 @@ function updateNow() {
 				</table>
 			</form>	
 		</div>
-		<?php //displayHistory() ?>
 		
 		</div>
 	</center>

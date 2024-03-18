@@ -89,6 +89,18 @@ $g_planet_asp_girl = array();
 $g_planet_asp_boy = array();
 
 $g_matching_mark = 0;
+$full_sun_deg=0;
+$full_sun_deg_boy=0;
+$g_planetKaranaLord=array();
+$g_planetKaranaLord_boy=array();
+$planet_starlord = array();
+$planet_starlord_boy = array();
+
+$g_girlage=0;
+$g_boyage=0;
+$g_mudakku_detail="";
+$vayadhotta_rasi_girl=0;
+$vayadhotta_rasi_boy=0;
 
 // ------- Swiss ephemeris // ------- 
 $libPath = './sweph/';
@@ -169,8 +181,9 @@ $dayofweek = date('w', strtotime($chart_date));
 			var girltime = document.getElementById("nGirlTime").value;
 			var boydate = document.getElementById("nBoyDate").value;
 			var boytime = document.getElementById("nBoyTime").value;
+			var mark = document.getElementById("matching_mark").innerHTML;
 			
-			var url = 'saveChartMultiple.php?girlname=' + girlname + '&place_girl=' + place_girl + '&in_date_girl=' + girldate + '&in_time_girl=' + girltime + '&boyname=' + boyname + '&place_boy=' + place_boy + '&in_date_boy=' + boydate + '&in_time_boy=' + boytime + '&phone=' +'<?php echo $phone; ?>' + '&charttype=m';
+			var url = 'saveChartMultiple.php?girlname=' + girlname + '&place_girl=' + place_girl + '&in_date_girl=' + girldate + '&in_time_girl=' + girltime + '&boyname=' + boyname + '&place_boy=' + place_boy + '&in_date_boy=' + boydate + '&in_time_boy=' + boytime + '&mark=' +mark + '&phone=' +'<?php echo $phone; ?>' + '&charttype=m';
 			//alert(url);
 			window.open(url,'_self');
 		}
@@ -327,36 +340,36 @@ function updatePlanet_transit(array $planets,array $retro, $in_ragu_house)
 	if($retro[4]==1){
 		$out = str_replace('Mars','செ',$out);
 	}else{
-		$out = str_replace('Mars','<span style="color:red">செ</span>',$out);
+		$out = str_replace('Mars','<span class="retro">செ</span>',$out);
 	}
 	
 	if($retro[3]==1){
 		$out = str_replace('Venus','சுக்',$out);
 	}else{
-		$out = str_replace('Venus','<span style="color:red">சுக்</span>',$out);
+		$out = str_replace('Venus','<span class="retro">சுக்</span>',$out);
 	}
 	
 	if($retro[2]==1){
 		$out = str_replace('Mercury','புத',$out);
 	}else{
-		$out = str_replace('Mercury','<span style="color:red">புத</span>',$out);
+		$out = str_replace('Mercury','<span class="retro">புத</span>',$out);
 	}
 	
 	if($retro[5]==1){
 		$out = str_replace('Jupiter','குரு',$out);
 	}else{
-		$out = str_replace('Jupiter','<span style="color:red">குரு</span>',$out);
+		$out = str_replace('Jupiter','<span class="retro">குரு</span>',$out);
 	}
 	
 	if($retro[6]==1){
 		$out = str_replace('Saturn','சனி',$out);
 	}else{
-		$out = str_replace('Saturn','<span style="color:red">சனி</span>',$out);
+		$out = str_replace('Saturn','<span class="retro">சனி</span>',$out);
 	}
 	
 	//$out = str_replace('true Node','ரா',$out);
 	$out = str_replace('mean Node','ரா',$out);
-	$out = str_replace('Ascendant','<span style="background-color:blue;color:white">லக்</span>',$out);
+	$out = str_replace('Ascendant','<span class="lagna">லக்</span>',$out);
 	
 	//trim spaces
 	$out = array_map('trim', $out);
@@ -1145,7 +1158,7 @@ function displayMatchingResult()
 			echo "<div class='divMatchingResultGreen'>$matching_percent%</div>";
 		echo "</div>";
 	}
-	elseif($matching_percent >=50 && $matching_percent <70) //average match
+	elseif($matching_percent >50 && $matching_percent <70) //average match
 	{
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading' style='text-align:left'>பொருத்த மதிப்பு</div>";
@@ -1162,10 +1175,12 @@ function displayMatchingResult()
 	echo "<div class='divTableRow'>";
 		echo "<div class='divPanchangHeading' style='text-align:left'>மதிப்பு விவரம்</div>";
 		echo "<div class='divPanchang' style='text-align:left;line-height:15px'><span id='boot-icon' class='bi bi-square-fill' style='color: #ff8080;'></span> தவிர்க்க (0-50)<BR>
-		<span id='boot-icon' class='bi bi-square-fill' style='color: #FFBF00;'></span> சராசரி (51-69)<BR>
+		<span id='boot-icon' class='bi bi-square-fill' style='color: #FFBF00;'></span> சராசரி (50-69)<BR>
 		<span id='boot-icon' class='bi bi-square-fill' style='color: #90ee90;'></span> உத்தமம் (70-100)
 		</div>";
 	echo "</div>";
+	
+	echo "<div style='display:none' id='matching_mark'>$matching_percent%</div>";
 }
 
 // The house where Mars placed should not have Rahu, Sani in matching chart and viz versa
@@ -2688,7 +2703,7 @@ function matchingRule111($in_thithi_girl, $in_thithi_boy)
 }
 
 function calculateGirlPanchang(){
-	global $moon_degree, $moon_house, $sun_house, $sun_degree, $dayofweek, $g_girl_nak, $g_girl_karan, $g_panchang_girl,$g_girl_nak_pad_idx;
+	global $moon_degree, $moon_house, $sun_house, $sun_degree, $dayofweek, $g_girl_nak, $g_girl_karan, $g_panchang_girl,$g_girl_nak_pad_idx, $full_sun_deg ;
 	
 	$tithi = array("Prathame/பிரதமை","Dwithiya/துவிதியை","Thrithiya/திருதியை","Chathurthi/சதுர்த்தி","Panchami/பஞ்சமி","Shrashti/சஷ்டி","Saptami/சப்தமி","Ashtami/அஷ்டமி","Navami/நவமி","Dashami/தசமி","Ekadashi/ஏகாதசி","Dwadashi/துவாதசி","Thrayodashi/திரயோதசி","Chaturdashi/சதுர்த்தசி","Poornima/பௌர்ணமி","Prathame/பிரதமை","Dwithiya/துவிதியை","Thrithiya/திருதியை","Chathurthi/சதுர்த்தி","Panchami/பஞ்சமி","Shrashti/சஷ்டி","Saptami/சப்தமி","Ashtami/அஷ்டமி","Navami/நவமி","Dashami/தசமி","Ekadashi/ஏகாதசி","Dwadashi/துவாதசி","Thrayodashi/திரயோதசி","Chaturdashi/சதுர்த்தசி","Amavasya/அமாவாசை");
 	
@@ -2974,7 +2989,7 @@ function calculateGirlPanchang(){
 }
 
 function calculateBoyPanchang(){
-	global $transit_moon_degree, $transit_moon_house, $transit_sun_house, $transit_sun_degree, $transit_dayofweek, $g_boy_nak, $g_boy_karan, $g_panchang_boy, $g_boy_nak_pad_idx;
+	global $transit_moon_degree, $transit_moon_house, $transit_sun_house, $transit_sun_degree, $transit_dayofweek, $g_boy_nak, $g_boy_karan, $g_panchang_boy, $g_boy_nak_pad_idx, $full_sun_deg_boy;
 	
 	$tithi = array("Prathame/பிரதமை","Dwithiya/துவிதியை","Thrithiya/திருதியை","Chathurthi/சதுர்த்தி","Panchami/பஞ்சமி","Shrashti/சஷ்டி","Saptami/சப்தமி","Ashtami/அஷ்டமி","Navami/நவமி","Dashami/தசமி","Ekadashi/ஏகாதசி","Dwadashi/துவாதசி","Thrayodashi/திரயோதசி","Chaturdashi/சதுர்த்தசி","Poornima/பௌர்ணமி","Prathame/பிரதமை","Dwithiya/துவிதியை","Thrithiya/திருதியை","Chathurthi/சதுர்த்தி","Panchami/பஞ்சமி","Shrashti/சஷ்டி","Saptami/சப்தமி","Ashtami/அஷ்டமி","Navami/நவமி","Dashami/தசமி","Ekadashi/ஏகாதசி","Dwadashi/துவாதசி","Thrayodashi/திரயோதசி","Chaturdashi/சதுர்த்தசி","Amavasya/அமாவாசை");
 	
@@ -3057,7 +3072,9 @@ function calculateBoyPanchang(){
 	$g_boy_nak = explode(' ',explode('/',$nak_array[$nak_idx])[1])[0];
 	
 	//thithi calculation
-	$full_sun_deg = ($transit_sun_house-1)*30+$transit_sun_degree;
+	$full_sun_deg_boy = ($transit_sun_house-1)*30+$transit_sun_degree;
+	
+	$full_sun_deg = $full_sun_deg_boy; //just to avoid renaming in the below codes. Should be fixed in future.
 	
 	if($full_moon_deg - $full_sun_deg < 180){
 		if($full_moon_deg - $full_sun_deg < 0){
@@ -3259,12 +3276,15 @@ function calculateBoyPanchang(){
 	*/
 	
 	$g_panchang_boy = $panchang;
+	$full_sun_deg_boy = $full_sun_deg; //reassign the value to global variable
 }
 
 function displayGirlBoyDetails()
 {
 	global $g_panchang_boy, $g_panchang_girl, $in_girlname, $in_boyname, $chart_date, $chart_time, $g_dasaBalance, 
-		$transit_date, $transit_time, $in_place_girl, $in_place_boy, $g_thithi_soonyam_matching_arr,$g_dasaCurrent;
+		$transit_date, $transit_time, $in_place_girl, $in_place_boy, $g_thithi_soonyam_matching_arr,$g_dasaCurrent, 
+		$lagna_house, $transit_lagna_house, $today_sunrise, $g_girlage, $g_boyage,
+		$g_vayadhotta_rasi_girl,$g_vayadhotta_rasi_boy, $moon_house, $transit_moon_house ;
 	
 	echo "<div class='divTable blueTable' style='height:40px'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
@@ -3289,8 +3309,20 @@ function displayGirlBoyDetails()
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பிறந்த தேதி</div>";
-			echo "<div class='divGirlPanchang'>".date('d/M/Y',strtotime($chart_date))."</div>";
-			echo "<div class='divBoyPanchang'>".date('d/M/Y',strtotime($transit_date))."</div>";
+			$g_girlage = round((strtotime(date('d-M-Y'))-strtotime($chart_date))/(365*60*60*24),1);
+			$g_vayadhotta_rasi_girl = ceil($g_girlage) % 12;
+			
+			if($g_vayadhotta_rasi_girl == 0){
+				$g_vayadhotta_rasi_girl = 12;
+			}
+			echo "<div class='divGirlPanchang'>".date('d-M-Y',strtotime($chart_date))."<BR>($g_girlage வயது)</div>";
+			$g_boyage = round((strtotime(date('d-M-Y'))-strtotime($transit_date))/(365*60*60*24),1);
+			$g_vayadhotta_rasi_boy = ceil($g_boyage) % 12;
+			
+			if($g_vayadhotta_rasi_boy == 0){
+				$g_vayadhotta_rasi_boy = 12;
+			}
+			echo "<div class='divBoyPanchang'>".date('d-M-Y',strtotime($transit_date))."<BR>($g_boyage வயது)</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பிறந்த நேரம்</div>";
@@ -3308,11 +3340,6 @@ function displayGirlBoyDetails()
 			echo "<div class='divBoyPanchang'>".explode('/',$g_panchang_boy['vaaram'])[1]."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
-			echo "<div class='divGirlPanchang'>".explode('/',$g_panchang_girl['nak'])[1]."</div>";
-			echo "<div class='divBoyPanchang'>".explode('/',$g_panchang_boy['nak'])[1]."</div>";
-		echo "</div>";
-		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>திதி</div>";
 			$thithi_arr = explode('/',$g_panchang_girl['thithi']);
 			$thithi_txt = explode("[",$thithi_arr[1])[0]."(".explode("]",$thithi_arr[2])[0].")";
@@ -3323,9 +3350,9 @@ function displayGirlBoyDetails()
 			echo "<div class='divBoyPanchang'>".$thithi_txt."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>கரணம்</div>";
-			echo "<div class='divGirlPanchang'>".$g_panchang_girl['karan']."</div>";
-			echo "<div class='divBoyPanchang'>".$g_panchang_boy['karan']."</div>";
+			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
+			echo "<div class='divGirlPanchang'>".explode('/',$g_panchang_girl['nak'])[1]."</div>";
+			echo "<div class='divBoyPanchang'>".explode('/',$g_panchang_boy['nak'])[1]."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>யோகம்</div>";
@@ -3333,10 +3360,52 @@ function displayGirlBoyDetails()
 			echo "<div class='divBoyPanchang'>".$g_panchang_boy['yoga']."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>கரணம்</div>";
+			$karan = explode('/',$g_panchang_girl['karan'])[1];
+			echo "<div class='divGirlPanchang'>".$karan."(".getKaranaPlanet($karan).")</div>";
+			$karan = explode('/',$g_panchang_boy['karan'])[1];
+			echo "<div class='divBoyPanchang'>".$karan."(".getKaranaPlanet($karan).")</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>லக்னம்</div>";
+			$g_lagnam = getRasi($lagna_house-1);
+			echo "<div class='divGirlPanchang'>".$g_lagnam."</div>";
+			$g_lagnam = getRasi($transit_lagna_house-1);
+			echo "<div class='divBoyPanchang'>".$g_lagnam."</div>";
+		echo "</div>";
+		
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>வயதோட்ட லக்னம்</div>";
+			if($g_girlage >= 0){
+				$g_vayadhotta_lagna = getRasi(targetHouse($lagna_house,$g_vayadhotta_rasi_girl-1));
+			}
+			else{
+				$g_vayadhotta_lagna = "சாத்தியம் இல்லை";
+			}
+			echo "<div class='divGirlPanchang'>".$g_vayadhotta_lagna."</div>";
+			if($g_boyage >= 0){
+				$g_vayadhotta_lagna = getRasi(targetHouse($transit_lagna_house,$g_vayadhotta_rasi_boy-1));
+			}
+			else{
+				$g_vayadhotta_lagna = "சாத்தியம் இல்லை";
+			}
+			echo "<div class='divBoyPanchang'>".$g_vayadhotta_lagna."</div>";
+		echo "</div>";
+		
+		echo "<div class='divTableRow'>";
+			$g_rasi = getRasi($moon_house-1);
+			echo "<div class='divPanchangHeading'>ராசி</div>";
+			echo "<div class='divGirlPanchang'>".$g_rasi."</div>";
+			$g_rasi = getRasi($transit_moon_house-1);
+			echo "<div class='divBoyPanchang'>".$g_rasi."</div>";
+		echo "</div>";
+	
+		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>திதி சூன்யம்</div>";
 			echo "<div class='divGirlPanchang'>".$g_thithi_soonyam_matching_arr[0]."</div>";
 			echo "<div class='divBoyPanchang'>".$g_thithi_soonyam_matching_arr[1]."</div>";
-		echo "</div>";
+		echo "</div>";		
+		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பிறப்பு தசா இருப்பு</div>";
 			echo "<div class='divGirlPanchang'>".$g_dasaBalance[0]."</div>";

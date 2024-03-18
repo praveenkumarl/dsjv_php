@@ -12,6 +12,11 @@ $TZ=strtok("|");
 
 $g_rowid = $_GET["rowid"];
 
+$father_name=$_POST['father'];
+$mother_name=$_POST['mother'];
+$caste=$_POST['caste'];
+$office_name=$_POST['office_name'];
+
 $DEBUG= (int) isset($_SESSION['debug']) ? $_SESSION['debug'] : 0;
 $conn="";
 $lat="";
@@ -89,6 +94,9 @@ $g_current_dasa_lord = "";
 $g_lagnam="";
 $g_rasi="";
 $g_nak_idx=-1;
+$g_ucha_details="";
+$g_neecha_details="";
+$g_mudakku_detail="";
 ?>
 
 <!DOCTYPE html>
@@ -821,93 +829,106 @@ function prepareBukthiTable(){
 	return $bukthi_arr;
 }
 
+
 function displayDetailsCol1()
 {
-	global $name, $birth_date, $birth_time, $sex, $g_lagnam, $g_rasi, $g_dasaBalance, $g_dasaCurrent, $g_sunrise, $g_sunset, $place;
+	global $name, $birth_date, $birth_time, $sex, $g_lagnam, $g_rasi, $g_dasaBalance, $g_dasaCurrent, $place, $father_name,
+			$mother_name,$caste,$g_age, $g_vayadhotta_lagna, $g_rowid;
 	
 	echo <<<EOL
 	
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>பெயர்</div><div class='divTableTextBig'>$name</div>
+				<div class='divTableTextHeading'>பெயர்</div><div class='divTableTextMedium'>$name ($g_rowid)</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>பாலினம்</div><div class='divTableTextBig'>$sex</div>
+				<div class='divTableTextHeading'>தந்தை பெயர்</div><div class='divTableTextMedium'>$father_name</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>பிறந்த தேதி</div><div class='divTableTextBig'>$birth_date</div>
+				<div class='divTableTextHeading'>தாய் பெயர்</div><div class='divTableTextMedium'>$mother_name</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>பிறந்த நேரம்</div><div class='divTableTextBig'>$birth_time</div>
+				<div class='divTableTextHeading'>பிரிவு</div><div class='divTableTextMedium'>$caste</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>பிறந்த இடம்</div><div class='divTableTextBig'>$place</div>
+				<div class='divTableTextHeading'>பாலினம்</div><div class='divTableTextMedium'>$sex</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>லக்கினம்</div><div class='divTableTextBig'>$g_lagnam </div>
+				<div class='divTableTextHeading'>பிறந்த தேதி</div><div class='divTableTextMedium'>$birth_date</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>ராசி</div><div class='divTableTextBig'>$g_rasi</div>
+				<div class='divTableTextHeading'>பிறந்த நேரம்</div><div class='divTableTextMedium'>$birth_time</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>சூரிய உதயம்</div><div class='divTableTextBig'>$g_sunrise</div>
+				<div class='divTableTextHeading'>பிறந்த இடம்</div><div class='divTableTextMedium'>$place</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>சூரிய அஸ்தமனம்</div><div class='divTableTextBig'>$g_sunset</div>
+				<div class='divTableTextHeading'>வயது</div><div class='divTableTextMedium'>$g_age</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>பிறப்பு தசா இருப்பு</div><div class='divTableTextMedium'>$g_dasaBalance</div>
-			</div>
-	
-EOL;
-}
-
-function displayDetailsCol2()
-{
-	global $panchang, $LANG, $karan, $yogi, $ayogi, $g_thithi_soonyam , $g_pancha_pakshi, $g_dasaBalance, $g_dasaCurrent;
-	
-	$vaaram = getStr($panchang['vaaram'],$LANG);
-	$nak = getStr($panchang['nak'],$LANG);
-	$thithi = getStr($panchang['thithi'],$LANG);
-	$yogam	= getStr($panchang['yoga'],$LANG);
-	$karan = getStr($karan,$LANG);
-	
-	echo <<<EOL
-			<div class="divTableRow">
-				<div class='divTableTextHeading'>வாரம்</div><div class='divTableTextMedium'>$vaaram</div>
+				<div class='divTableTextHeading'>லக்னம்</div><div class='divTableTextMedium'>$g_lagnam </div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>நட்சத்திரம்</div><div class='divTableTextMedium'>$nak</div>
+				<div class='divTableTextHeading'>வயதோட்ட லக்னம்</div><div class='divTableTextMedium'>$g_vayadhotta_lagna</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>திதி</div><div class='divTableTextMedium'>$thithi</div>
-			</div>
-			<div class="divTableRow">
-				<div class='divTableTextHeading'>கரணம்</div><div class='divTableTextMedium'>$karan</div>
-			</div>
-			<div class="divTableRow">
-				<div class='divTableTextHeading'>யோகம்</div><div class='divTableTextMedium'>$yogam</div>
-			</div>
-			<div class="divTableRow">
-				<div class='divTableTextHeading'>யோகி</div><div class='divTableTextMedium'>$yogi</div>
-			</div>
-			<div class="divTableRow">
-				<div class='divTableTextHeading'>அவயோகி</div><div class='divTableTextMedium'>$ayogi</div>
-			</div>
-			<div class="divTableRow">
-				<div class='divTableTextHeading'>திதி சூன்யம்</div><div class='divTableTextMedium'>$g_thithi_soonyam</div>
-			</div>
-			<div class="divTableRow">
-				<div class='divTableTextHeading'>பஞ்ச பக்ஷி</div><div class='divTableTextMedium'>$g_pancha_pakshi</div>
-			</div>
-			<div class="divTableRow">
-				<div class='divTableTextHeading'>தற்போதைய தசா புக்தி</div><div class='divTableTextMedium'>$g_dasaCurrent</div>
+				<div class='divTableTextHeading'>ராசி</div><div class='divTableTextMedium'>$g_rasi</div>
 			</div>
 EOL;
 }
 
 function displayDetailsCol3()
 {
-	global $panchang, $LANG, $karan, $yogi, $ayogi;
+	global $panchang, $LANG, $karan, $yogi, $ayogi, $g_thithi_soonyam , $g_pancha_pakshi, $g_dasaBalance, $g_dasaCurrent, $g_sunrise, $g_sunset, $moon_house,
+		$g_ucha_details, $g_neecha_details, $g_mudakku_detail,$lat, $lon, $gmt_offset, $TZ;
+	
+	$vaaram = getStr($panchang['vaaram'],$LANG);
+	$nak = getStr($panchang['nak'],$LANG);
+	$thithi = getStr($panchang['thithi'],$LANG);
+	$yogam	= getStr($panchang['yoga'],$LANG);
+	$karan = getStr($karan,$LANG);
+	
+	$chadrashtamam = getRasi(targetHouse($moon_house-1,8));
+	
+	echo <<<EOL
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>உச்சம்</div><div class='divTableTextMedium'>$g_ucha_details</div>
+		</div>
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>நீசம்</div><div class='divTableTextMedium'>$g_neecha_details</div>
+		</div>
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>உங்கள் சந்திராஷ்டம ராசி</div><div class='divTableTextMedium'>$chadrashtamam</div>
+		</div>
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>அவயோகி</div><div class='divTableTextMedium'>$ayogi</div>
+		</div>
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>திதி சூன்யம்</div><div class='divTableTextMedium'>$g_thithi_soonyam</div>
+		</div>
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>முடக்கு</div><div class='divTableTextMedium'>$g_mudakku_detail</div>
+		</div>
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>சூரிய உதயம்</div><div class='divTableTextMedium'>$g_sunrise</div>
+		</div>
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>சூரிய அஸ்தமனம்</div><div class='divTableTextMedium'>$g_sunset</div>
+		</div>
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>அட்சரேகை/தீர்க்கரேகை</div><div class='divTableTextMedium'>$lat/$lon</div>
+		</div>
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>நேரம் மண்டலம்</div><div class='divTableTextMedium'>$gmt_offset ($TZ)</div>
+		</div>
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>அயனாம்சம்</div><div class='divTableTextMedium'>லஹிரி</div>
+		</div>
+EOL;
+}
+
+function displayDetailsCol2()
+{
+	global $panchang, $LANG, $karan, $yogi, $ayogi, $g_thithi_soonyam, $g_pancha_pakshi, $g_mudakku_detail,$g_dasaBalance,$g_dasaCurrent  ;
 	
 	$vaaram = getStr($panchang['vaaram'],$LANG);
 	$nak = getStr($panchang['nak'],$LANG);
@@ -916,31 +937,42 @@ function displayDetailsCol3()
 	$karan = getStr($karan,$LANG);
 	
 	echo <<<EOL
-		<div class="divHoroDetailCell">
-			<div class="divTableRow">
-				<div class='divTableTextHeading'>வாரம்</div><div class='divTableTextMedium'>$vaaram</div>
-			</div>
-			<div class="divTableRow">
-				<div class='divTableTextHeading'>நட்சத்திரம்</div><div class='divTableTextMedium'>$nak</div>
-			</div>
-			<div class="divTableRow">
-				<div class='divTableTextHeading'>திதி</div><div class='divTableTextMedium'>$thithi</div>
-			</div>
-			<div class="divTableRow">
-				<div class='divTableTextHeading'>கரணம்</div><div class='divTableTextMedium'>$karan</div>
-			</div>
-			<div class="divTableRow">
-				<div class='divTableTextHeading'>யோகம்</div><div class='divTableTextMedium'>$yogam</div>
-			</div>
-			<div class="divTableRow">
-				<div class='divTableTextHeading'>யோகி</div><div class='divTableTextMedium'>$yogi</div>
-			</div>
-			<div class="divTableRow">
-				<div class='divTableTextHeading'>அவயோகி</div><div class='divTableTextMedium'>$ayogi</div>
-			</div>
+	
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>வாரம்</div><div class='divTableTextMedium'>$vaaram</div>
+		</div>
+		
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>திதி</div><div class='divTableTextMedium'>$thithi</div>
+		</div>
+		
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>நட்சத்திரம்</div><div class='divTableTextMedium'>$nak</div>
+		</div>
+		
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>யோகம்</div><div class='divTableTextMedium'>$yogam</div>
+		</div>
+		
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>கரணம்</div><div class='divTableTextMedium'>$karan</div>
+		</div>
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>யோகி</div><div class='divTableTextMedium'>$yogi</div>
+		</div>
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>பஞ்ச பக்ஷி</div><div class='divTableTextMedium'>$g_pancha_pakshi</div>
+		</div>
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>பிறப்பு தசா இருப்பு</div><div class='divTableTextMedium'>$g_dasaBalance</div>
+		</div>
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>தற்போதைய தசா புக்தி</div><div class='divTableTextMedium'>$g_dasaCurrent</div>
 		</div>
 EOL;
 }
+
+
 
 function displayDasa()
 {
@@ -1594,7 +1626,7 @@ if($DEBUG==1){
 //$tr_sw_planet = updateSymbols($tr_sw_planet);
 
 //Update planet strengths
-$tr_sw_planet = updateStrength($tr_sw_planet);
+//$tr_sw_planet = updateStrength($tr_sw_planet);
 
 $chartdate=date("d/m/Y",strtotime($chart_date));
 
@@ -1644,44 +1676,74 @@ $g_sunset = explode(' ',$today_sunset)[1];
 $g_lagnam = getRasi($lagna_house-1);
 $g_rasi = getRasi($moon_house-1);
 $g_pancha_pakshi = getPanchaPakshi();
+$g_age=-1;
+$g_vayadhotta_lagna=-1;
+
+$mudakku_star = getMudakku(1);
+$mudakku_rasi = getMudakku(2);
+$mudakku_baavam = getBavam(getMudakku(2));
+$g_mudakku_detail = $mudakku_star." (".$mudakku_rasi.")<BR>".$mudakku_baavam."ஆம் வீடு";
+
+$g_age = round((strtotime($transit_date)-strtotime($chart_date))/(365*60*60*24),1);
+$vayadhotta_rasi = ceil($g_age) % 12;
+
+if($vayadhotta_rasi == 0){
+	$vayadhotta_rasi = 12;
+}
+
+if($g_age >= 0){
+	$g_vayadhotta_lagna = getRasi(targetHouse($lagna_house,$vayadhotta_rasi-1));
+}
+else{
+	$g_vayadhotta_lagna = "சாத்தியம் இல்லை";
+}
 
 ?>
 
 
-<div id='container-fluid'>
-	<div id='onepage'>
-		<div class="header-parent">
-		  <div class="header-child1"><img src='images/dsjv_title.png'></div>
-		  <div class="header-child2"><img src='images/pkastro_title.png'></div>
-		</div>
 
-		<center>
-		<div class="divTableBody">
+<div id='onepage' style="width: min-content">
+	<div class="header-parent">
+	  <div class="header-left"><img src='images/dsjv_title.png' height="25px"></div>
+	  <div class="header-center"><div class='divTableTextOfficeName'>&#3059; <BR><?php echo $office_name; ?></div></div>
+	  <div class="header-right"><img src='images/pkastro_title.png' height="25px"></div>
+	</div>
+<center><div class='divTableTextSloka' style='font-family: Verdana, Raavi, sans-serif;font-size:8px;width:100%;line-height:10px'>&#2384; ஜனனி ஜன்ம சௌக்யானாம் வர்தநீ குலஸம்பதாம்
+ பதவி பூர்வ  புண்யாணாம் லிக்ய தே ஜன்ம பத்திரிகா !</div></center>
+	<center>
+		<!-- <div class="divTableBody"> -->
+		<div class='divTable blueTable' style='height:100%;width:90%'> 
 			<div class="divTableRow">
 				<div class="divHoroDetailCell" style="border:none;"><?php displayDetailsCol1(); ?></div>
 				<div class="divHoroDetailCell" style="border:none;"><?php displayDetailsCol2(); ?></div>
+				<div class="divHoroDetailCell" style="border:none;"><?php displayDetailsCol3(); ?></div>
 			</div>
 		</div>	
 			
 		<div class="divTable blueTable" id="onepage">
-			<div class="divTableBody">
 				<div class="divTableRow">
-					<div class="divTableCell" style="border:none; padding:5px"><?php displayChart1(); ?></div>
-					<div class="divTableCell" style="border:none; padding:5px"><?php displayNavamsam(); ?></div>
+					<div class="divHoroDetailCell" style="border:none; padding:5px"><?php displayChart1(); ?></div>
+					<div class="divHoroDetailCell" style="border:none; padding:5px"><?php displayNavamsam(); ?></div>
 				</div>
-			</div>	
 		</div>
 
-		<div class="divTableBody">
 			<div class="divTableRow">
 				<div class="divStarDetailCell" style="border:none;"><?php displayStarLord(); ?></div>
 				<div class="divStarDetailCell" style="border:none;"><?php displayDasa(); ?></div>
 				<div class="divStarDetailCell" style="border:none;"><?php displayBukthi(); ?></div>
 			</div>
-		</div>	
-		</center>
-	</div>
+			
+			
+	</center>
+	
 </div>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<div class="PageFooter" style="width:-webkit-fill-available">&#169; Periyanayaki Astro Solutions</div>  
+
 					
 <?php
 

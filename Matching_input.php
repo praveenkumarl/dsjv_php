@@ -87,61 +87,75 @@ function validateForm() {
   
   if (pb == "") {
     //document.getElementById("error").innerHTML = "Place must be filled out";
-	alert("Boy place missing");
+	alert("ஆண் பி.இடம் கொடுக்கவில்லை");
 	document.getElementById('place_boy').style.borderColor = "red";
     return false;
+  }
+  
+   if (pb.includes("|")==false || pb.includes("/")==false || pb.length<10){
+	  alert('நீங்கள் ஆண் இடத்தை கீழ் வரும் பட்டியலில் தேர்ந்தெடுக்கவில்லை');
+	  document.getElementById('place_boy').style.borderColor = "red";
+	  return false;
   }
   
   pg = document.getElementById("place_girl").value;
   
   if (pg == "") {
     //document.getElementById("error").innerHTML = "Place must be filled out";
-	alert("Girl place missing");
+	alert("பெண் பி.இடம் கொடுக்கவில்லை");
 	document.getElementById('place_girl').style.borderColor = "red";
     return false;
   }
   
+  if (pg.includes("|")==false || pg.includes("/")==false || pg.length<10){
+	  alert('நீங்கள் பெண் இடத்தை கீழ் வரும் பட்டியலில் தேர்ந்தெடுக்கவில்லை');
+	  document.getElementById('place_girl').style.borderColor = "red";
+	  return false;
+  }
+  
    if (gn == "") {
     //document.getElementById("error").innerHTML = "Girl name must be filled out";
-	alert("Girl name missing");
+	alert("பெண் பெயர் கொடுக்கவில்லை");
 	document.getElementById('girlname').style.borderColor = "red";
     return false;
   }
 
   if (gd == "") {
     //document.getElementById("error").innerHTML = "Date must be filled out";
-	alert("Girl date missing");
+	alert("பெண் பி.தேதி கொடுக்கவில்லை");
 	document.getElementById('in_date_girl').style.borderColor = "red";
     return false;
   }
   
    if (gt == "") {
     //document.getElementById("error").innerHTML = "Time must be filled out";
-	alert("Girl time missing");
+	alert("பெண் பி.நேரம் கொடுக்கவில்லை");
 	document.getElementById('in_time_girl').style.borderColor = "red";
     return false;
   }
   
   if (bn == "") {
     //document.getElementById("error").innerHTML = "Boy name must be filled out";
-	alert("Boy name missing");
+	alert("ஆண் பெயர் கொடுக்கவில்லை");
 	document.getElementById('boyname').style.borderColor = "red";
     return false;
   }
   
   if (bd == "") {
     //document.getElementById("error").innerHTML = "Date must be filled out";
-	alert("Boy date missing");
+	alert("ஆண் பி.தேதி கொடுக்கவில்லை");
 	document.getElementById('in_date_boy').style.borderColor = "red";
     return false;
   }
   
   if (bt == "") {
     //document.getElementById("error").innerHTML = "Time must be filled out";
-	alert("Girl time missing");
+	alert("ஆண் பி.நேரம் கொடுக்கவில்லை");
 	document.getElementById('in_time_boy').style.borderColor = "red";
     return false;
   } 
+  
+ 
 }
 
 function placeOnBlur() {
@@ -231,42 +245,42 @@ function updateNow() {
 							<form name="chartInput" action="Matching_Chart.php" method="post" onsubmit="openLoader()">
 								<table style="width:100%; text-align: left">
 									<tr>
-										<td colspan=2><P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">Marriage matching</P></td>
+										<td colspan=2><P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">திருமண பொருத்தம்</P></td>
 									</tr>
 									<tr style="background-color: #FFFFFF">
-										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px;">*Girl Name:</H5></td>
+										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px;">*பெண் பெயர்:</H5></td>
 										<td><input type="text" name="girlname" id="girlname" autocomplete="off" placeholder="Enter girl name..." onfocus=this.value='' onBlur="girlnameOnBlur();" style="color:#000000;font-size:12px;font-weight:bold;width:175px;" />
 										</td>
 									</tr>
 									<tr style="background-color: #FFFFFF">
-										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*Girl Birth place:</H5></td>
+										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*பெண் பி.இடம்:</H5></td>
 										<td><div class="search-box"><input type="text" name="place_girl" id="place_girl" autocomplete="off" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" style="color:#000000;font-size:12px;font-weight:bold;width:175px;" /><div class="result"></div>
 										</td>
 									</tr>
 									<tr style="background-color: #FFFFFF">
-										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*Girl Birth Date:</H5></td>
+										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*பெண் பி.தேதி:</H5></td>
 										<td><input type="date" id="in_date_girl" name="in_date_girl" style="color:#000000;font-size:12px;font-weight:bold;width:100px;" /></td>
 									</tr>
 									<tr style="background-color: #FFFFFF">
-										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*Girl Birth Time:</H5></td>
+										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*பெண் பி.நேரம்:</H5></td>
 										<td><input type="time" id="in_time_girl" name="in_time_girl" step="1" style="color:#000000;font-size:12px;font-weight:bold;width:100px;" /></td>
 									</tr>
 									<tr style="background-color: #FFFFFF">
-										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*Boy Name:</H5></td>
+										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*ஆண் பெயர்:</H5></td>
 										<td><input type="text" name="boyname" id="boyname" autocomplete="off" style="color:#000000;font-size:12px;font-weight:bold;width:175px;" placeholder="Enter boy name..." onfocus=this.value='' onBlur="boynameOnBlur();" />
 										</td>
 									</tr>
 									<tr style="background-color: #FFFFFF">
-										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*Boy Birth place:</H5></td>
+										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*ஆண் பி.இடம்:</H5></td>
 										<td><div class="search-box"><input type="text" name="place_boy" id="place_boy" autocomplete="off" style="color:#000000;font-size:12px;font-weight:bold;width:175px;" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" /><div class="result"></div>
 										</td>
 									</tr>
 									<tr style="background-color: #FFFFFF">
-										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*Boy Birth Date:</H5></td>
+										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*ஆண் பி.தேதி:</H5></td>
 										<td><input type="date" id="in_date_boy" name="in_date_boy" style="color:#000000;font-size:12px;font-weight:bold;width:100px;" /></td>
 									</tr>
 									<tr style="background-color: #FFFFFF">
-										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*Boy Birth Time:</H5></td>
+										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*ஆண் பி.நேரம்:</H5></td>
 										<td><input type="time" id="in_time_boy" name="in_time_boy" step="1" style="color:#000000;font-size:12px;font-weight:bold;width:100px;" /></td>
 									</tr>
 									

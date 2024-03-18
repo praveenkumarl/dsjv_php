@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400,400italic");
 
 :root {
-	/* gold brown theme */
+	/* gold brown blue theme */
 	--menu-background: SaddleBrown;
 	--menu-text-color: white;
 	--menu-sel-background: gold;
@@ -9,10 +9,12 @@
 	--menu-heading-color: black;
 	--historytableHead-background: var(--menu-background);
 	--historytableHead-color: var(--menu-text-color);
-	--dasaHead-color: #F9EBEA;
-	--bukthiHead-color: #F9EBEA;
+	--dasaHead-color: #FCD71E;
+	--bukthiHead-color: #FCD71E;
 	--currentBukthi-color: yellow;
 	--birthBukthi-color: silver;
+	--button-background: #1F45FC ;
+	--button-text-color: white;
 }
 
 /*
@@ -4098,14 +4100,14 @@ div.error {
 .userinfo
 {
 	display: table-cell;
-	background-color: #FFFEB8;
+	background-color: var(--menu-background);
 	height: 30px;
 	width: 100%;
 	line-height: 16px;
 	font-size: 12px;
 	font-family: Arial, sans-serif;
 	vertical-align: middle;
-	color: black;
+	color: var(--menu-text-color);
 	font-weight: 700;
 	padding: 2px;
 	border-bottom-left-radius: 5px;
@@ -4120,13 +4122,13 @@ div.error {
 {
 	display: table-cell;
 	float: right;
-	background-color: #FFFEB8;
+	background-color: var(--menu-background);
 	height: fit;
 	width: auto;
 	line-height: 15px;
 	font-size: 10px;
 	font-family: Arial, sans-serif;
-	color: black;
+	color: var(--menu-text-color);
 	font-weight: 700;
 	padding: 2px;
 	border-bottom-left-radius: 5px;
@@ -4147,7 +4149,7 @@ div.error {
 .envWeb
 {
 	display: block;
-	padding:1%;
+	padding:0.3%;
 }
 
 .devInfo_heading
@@ -4196,11 +4198,22 @@ div.error {
 
 .actionBtn{
 	background-color: var(--menu-background) !important;
-	color:#FFFFFF;
+	color:var(--button-text-color) !important;
+	font-weight:bold !important;
+	font-size:10px !important;
+	#width:120px;
+	width:100px;
+	text-align: center;
+}
+
+.actionBtnTransit{
+	background-color: var(--menu-background) !important;
+	color:var(--button-text-color) !important;
 	font-weight:bold;
 	font-size:10px !important;
-	width:120px;
+	width:100px;
 	text-align: center;
+	vertical-align:middle;
 }
 
 /***** This is for menu *******/
@@ -4582,15 +4595,6 @@ parigaraDiv{
 	padding:5px;
 }
 
-.actionBtnTransit{
-	background-color: var(--menu-background) !important;
-	color:var(--menu-text-color);
-	font-weight:bold;
-	font-size:10px !important;
-	width:120px;
-	text-align: center;
-}
-
 .menuHeading{
 	display: inline-block;
 	padding: 5px;
@@ -4618,6 +4622,7 @@ parigaraDiv{
 	padding:5px;
 	width:40%;
 	font-weight: bold;
+	margin-left:20px;
 }
 
 .divBirthInput

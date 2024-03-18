@@ -114,7 +114,15 @@ function updatePlace(){
 	
 	dbDisconnect($conn);
 	
-	header( "Refresh:0; url=admin.php", true, 303);
+	if (isset($_SERVER['HTTP_REFERER'])) {
+	  // Store Referral URL in a variable
+	  $refURL = $_SERVER['HTTP_REFERER'];
+	  // Display the Referral URL on web page
+	} else {
+		echo "No referer URL";
+	}
+	
+	header( "Refresh:0; url=$refURL", true, 303);
 }
 
 getTimezones();

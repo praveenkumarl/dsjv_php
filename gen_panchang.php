@@ -3,7 +3,7 @@ session_start();
 
 $month = $_POST['month'];
 $year = $_POST['year'];
-$place = $_POST['place'];
+$place = isset($_POST['place']) ? $_POST['place'] : $_COOKIE['panchang_place'];
 
 $monthName = getMonthName($month,1); //1-tamil
 
@@ -29,21 +29,25 @@ function getMonthName($month,$lang) //1 - tamil
     <meta name="description" content="One stop website for Astrology">
 	
 	<link rel="stylesheet" href="css/main.css">
-	<link rel="stylesheet" href="css/onepage_birth_style.css">
+	<link rel="stylesheet" href="css/onepage_panchang_style.css">
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
    <script src="html2pdf.bundle.min.js" type="text/javascript"></script>
 	<script src="panchang.js"></script>
 </head>
 <body>
 
+<div id='onepage' style="width: min-content">
 <div class="header-parent">
-  <!-- <div class="header-child1"><img src='images/dsjv_title.png'></div> -->
-  <div class="header-child1"><div style="font-family: Verdana, Raavi, sans-serif;font-size:14;padding-top:20px">பஞ்சாங்கம் (<?php echo "$monthName/$year/$place"; ?>)</div></div>
-  
-  <div class="header-child2"><img src='images/pkastro_title.png'></div>
+  <div class="header-left"><img src='images/dsjv_title.png' height="25px"></div>
+  <!-- <div class="header-left"><button class="actionBtn" onclick="window.open('gen_panchang_form.php','_self')">Back</button></div>  -->
+  <div class="header-center"><div class='divTableTextOfficeName'>பஞ்சாங்கம் (<?php echo "$monthName/$year/$place"; ?>)</div></div>
+  <!-- <a href='#' onClick='generatePDF();'>download</a> -->
+  <div class="header-right"><img src='images/pkastro_title.png' height="25px"></div>
 </div>
 <script>
 
+	var timezone = '<?php echo explode('|',$place)[1]; ?>';
+	
 	generatePanchang();
 
   function generatePDF() {
@@ -65,7 +69,13 @@ function getMonthName($month,$lang) //1 - tamil
 	}
 	
 	function getFirstDayOfMonth(month, year) {
-	  return new Date(year, month-1, 1);  //need to -1 to get month
+			return new Date(year, month-1, 1);
+			//return new Date(year, month-1, 1).toLocaleString('en-US', {
+			//timeZone: timezone});  //need to -1 to get month
+			//const updated_date = new Date(year, month-1, 1).toLocaleString('en-US', {
+			//timeZone: timezone});
+			
+			//return updated_date;
 	}
 	
 	function daysInMonth(month, year) {
@@ -73,56 +83,75 @@ function getMonthName($month,$lang) //1 - tamil
 	}
 	
 	function generatePanchang(){
+		document.writeln('<BR>');
+		document.writeln('<center>');
+		document.writeln('<div class="divTable blueTable" style="height:100%;width:95%">');
+			document.writeln('<div class="divTableRow">');
+				document.writeln('<div class="divTablePanchangHeading">தேதி</div>');
+				document.writeln('<div class="divTablePanchangHeading">வாரம்</div>');
+				document.writeln('<div class="divTablePanchangHeading">நட்சத்திரம்</div>');
+				document.writeln('<div class="divTablePanchangHeading">திதி</div>');
+				document.writeln('<div class="divTablePanchangHeading">கரணம்</div>');
+				document.writeln('<div class="divTablePanchangHeading">யோகம்</div>');
+			document.writeln('</div>')
 	
-	document.writeln('<center>');
-		document.writeln('<div class="divTableRow">');
-			document.writeln('<div class="divTablePanchangHeading">தேதி</div>');
-			document.writeln('<div class="divTablePanchangHeading">வாரம்</div>');
-			document.writeln('<div class="divTablePanchangHeading">நட்சத்திரம்</div>');
-			document.writeln('<div class="divTablePanchangHeading">திதி</div>');
-			document.writeln('<div class="divTablePanchangHeading">கரணம்</div>');
-			document.writeln('<div class="divTablePanchangHeading">யோகம்</div>');
-		document.writeln('</div>')
-	
-		//const year = 1976;
-		//const month = 7;  //1 - jan
-		const year = <?php echo $year; ?>;
-		const month = <?php echo $month; ?>;  //1 - jan
-		const total_days = daysInMonth(month, year);
-		
-		for(let i=0; i<total_days; i++)
-		{
+			//const year = 1976;
+			//const month = 7;  //1 - jan
+			const year = <?php echo $year; ?>;
+			const month = <?php echo $month; ?>;  //1 - jan
+			const total_days = daysInMonth(month, year);
+			
 			//var t= new getFirstDateOfMonth();
-			var t = getFirstDayOfMonth(month, year);
+			const t = getFirstDayOfMonth(month, year);
 			
-			newdate = new Date(t.getFullYear(),t.getMonth(),t.getDate()+i,t.getHours());
-			
-			  panchang.calculate(newdate, function() {
-				/*document.getElementById("day").innerHTML=panchang.Day.name;
-				document.getElementById("tithi").innerHTML=panchang.Tithi.name+"("+panchang.Tithi.end+")";
-				document.getElementById("nakshtra").innerHTML=panchang.Nakshatra.name+"("+panchang.Nakshatra.end+")";
-				document.getElementById("karna").innerHTML=panchang.Karna.name+"("+panchang.Karna.end+")";
-				document.getElementById("yoga").innerHTML=panchang.Yoga.name+"("+panchang.Yoga.end+")";
-				document.getElementById("raasi").innerHTML=panchang.Raasi.name;
-				document.getElementById("ayanamsa").innerHTML=panchang.Ayanamsa.name;*/
+			for(let i=0; i<total_days; i++)
+			{	
+				newdate = new Date(t.getFullYear(),t.getMonth(),t.getDate()+i,t.getHours());
 				
+				newdate = changeTimezone(newdate,timezone);
+				
+				  panchang.calculate(newdate, function() {
+					/*document.getElementById("day").innerHTML=panchang.Day.name;
+					document.getElementById("tithi").innerHTML=panchang.Tithi.name+"("+panchang.Tithi.end+")";
+					document.getElementById("nakshtra").innerHTML=panchang.Nakshatra.name+"("+panchang.Nakshatra.end+")";
+					document.getElementById("karna").innerHTML=panchang.Karna.name+"("+panchang.Karna.end+")";
+					document.getElementById("yoga").innerHTML=panchang.Yoga.name+"("+panchang.Yoga.end+")";
+					document.getElementById("raasi").innerHTML=panchang.Raasi.name;
+					document.getElementById("ayanamsa").innerHTML=panchang.Ayanamsa.name;*/
+					
+						document.writeln('<div class="divTableRow">');
+							document.writeln('<div class="divTablePanchangMedium" style="width:80px">'+formatDate(newdate)+'</div>');
+							document.writeln('<div class="divTablePanchangMedium" style="width:50px">'+panchang.Day.name+'</div>');
+							document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Nakshatra.name+" "+formatDateTime(panchang.Nakshatra.end)+' வரை'+displayNextNak(newdate,panchang.Nakshatra)+'</div>');
+							document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Tithi.name+' '+formatDateTime(panchang.Tithi.end)+' வரை'+displayNextThithi(newdate,panchang.Tithi)+'</div>');
+							//document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Karna.name+' '+formatDateTime(panchang.Karna.end)+' வரை'+displayNextKar(newdate,panchang.Karna)+'</div>');
+							document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Karna.name+' '+formatDateTime(panchang.Karna.start)+" முதல் "+formatDateTime(panchang.Karna.end)+' வரை'+displayNextKar(newdate,panchang.Karna)+'</div>');
+							//document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Yoga.name+' '+formatDateTime(panchang.Yoga.end)+' வரை'+displayNextYoga(newdate,panchang.Yoga)+'</div>');
+							document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Yoga.name+' '+formatDateTime(panchang.Yoga.start)+" முதல் "+formatDateTime(panchang.Yoga.end)+' வரை'+displayNextYoga(newdate,panchang.Yoga)+'</div>');
+						document.writeln('</div>');
 
-					document.writeln('<div class="divTableRow">');
-						document.writeln('<div class="divTablePanchangMedium" style="width:80px">'+formatDate(newdate)+'</div>');
-						document.writeln('<div class="divTablePanchangMedium" style="width:50px">'+panchang.Day.name+'</div>');
-						document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Nakshatra.name+" "+formatDateTime(panchang.Nakshatra.end)+' வரை'+displayNextNak(newdate,panchang.Nakshatra)+'</div>');
-						document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Tithi.name+' '+formatDateTime(panchang.Tithi.end)+' வரை'+displayNextThithi(newdate,panchang.Tithi)+'</div>');
-						//document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Karna.name+' '+formatDateTime(panchang.Karna.end)+' வரை'+displayNextKar(newdate,panchang.Karna)+'</div>');
-						document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Karna.name+' '+formatDateTime(panchang.Karna.start)+" முதல் "+formatDateTime(panchang.Karna.end)+' வரை'+displayNextKar(newdate,panchang.Karna)+'</div>');
-						//document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Yoga.name+' '+formatDateTime(panchang.Yoga.end)+' வரை'+displayNextYoga(newdate,panchang.Yoga)+'</div>');
-						document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Yoga.name+' '+formatDateTime(panchang.Yoga.start)+" முதல் "+formatDateTime(panchang.Yoga.end)+' வரை'+displayNextYoga(newdate,panchang.Yoga)+'</div>');
-					document.writeln('</div>');
-
-			  });
-			
-		}
+				  });
+				
+			}
 		
-		document.writeln('</center>');
+			document.writeln('</center>');
+			document.writeln('</div>');
+		document.writeln('</div>');
+	}
+	
+	function changeTimezone(date, ianatz) {
+	  // suppose the date is 12:00 UTC
+	  var invdate = new Date(date.toLocaleString('en-US', {
+		timeZone: ianatz
+	  }));
+
+	  // then invdate will be 07:00 in Toronto
+	  // and the diff is 5 hours
+	  var diff = date.getTime() - invdate.getTime();
+
+	  // so 12:00 in Toronto is 17:00 UTC
+	  return new Date(date.getTime() - diff); // needs to substract
+
 	}
 	
 	function displayNextNak(today,nak){
@@ -167,6 +196,7 @@ function getMonthName($month,$lang) //1 - tamil
 	}
 	
 	function formatDate(date) {
+	  date = changeTimezone(date,timezone);	
 	  const year = date.getFullYear();
 	  //const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
 	  const month = date.toLocaleString('default', { month: 'short' }); // Get full month name
@@ -178,6 +208,7 @@ function getMonthName($month,$lang) //1 - tamil
 	}
 	
 	function formatDateTime(date) {
+	    date = changeTimezone(date,timezone);	
 	  const year = date.getFullYear();
 	  //const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
 	  const month = date.toLocaleString('default', { month: 'short' }); // Get full month name
@@ -216,7 +247,7 @@ function getMonthName($month,$lang) //1 - tamil
 	}
 </script>
 
-
-
+<BR><BR>
+<div class="PageFooter" style="width:-webkit-fill-available">&#169; Periyanayaki Astro Solutions</div>  
 </body>
 </html>

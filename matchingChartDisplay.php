@@ -22,7 +22,7 @@ function getChartDetails()
 
 	try {
 		
-		$sql = "SELECT rowid,phone,g_name,g_place,g_birth_date,g_birth_time,b_name,b_place,b_birth_date,b_birth_time FROM matching_chart WHERE phone='$phone' ORDER BY rowid DESC ";
+		$sql = "SELECT rowid,phone,g_name,g_place,g_birth_date,g_birth_time,b_name,b_place,b_birth_date,b_birth_time,mark FROM matching_chart WHERE phone='$phone' ORDER BY rowid DESC ";
 	
 		if(($result = mysqli_query($conn, $sql))){
 			$count = mysqli_num_rows($result);
@@ -40,6 +40,7 @@ function getChartDetails()
 					$chartInfo["b_place"][$cnt] = $row["b_place"];
 					$chartInfo["b_birth_date"][$cnt] = $row["b_birth_date"];
 					$chartInfo["b_birth_time"][$cnt] = $row["b_birth_time"];
+					$chartInfo["mark"][$cnt] = $row["mark"];
 					
 					$cnt = $cnt + 1;
 				  }
@@ -84,6 +85,7 @@ getChartDetails();
 		document.getElementById("col1"+rownum).style.backgroundColor="#fff4b3";
 		document.getElementById("col2"+rownum).style.backgroundColor="#fff4b3";
 		document.getElementById("col6"+rownum).style.backgroundColor="#fff4b3";
+		document.getElementById("col10"+rownum).style.backgroundColor="#fff4b3";
 		document.getElementById("col11"+rownum).style.backgroundColor="#fff4b3";
 		
 		document.getElementById("row"+rownum).style.cursor = 'pointer';
@@ -94,6 +96,7 @@ getChartDetails();
 		document.getElementById("col1"+rownum).style.backgroundColor="#ffffff";
 		document.getElementById("col2"+rownum).style.backgroundColor="#ffffff";
 		document.getElementById("col6"+rownum).style.backgroundColor="#ffffff";
+		document.getElementById("col10"+rownum).style.backgroundColor="#ffffff";
 		document.getElementById("col11"+rownum).style.backgroundColor="#ffffff";
 	}
 	
@@ -108,6 +111,7 @@ getChartDetails();
 		document.getElementById("nPlace_boy").value = document.getElementById("col7"+rownum).innerHTML;
 		document.getElementById("in_date_boy").value = document.getElementById("col8"+rownum).innerHTML;
 		document.getElementById("in_time_boy").value = document.getElementById("col9"+rownum).innerHTML;
+		document.getElementById("mark").value = document.getElementById("col10"+rownum).innerHTML;
 		document.getElementById("lang").value = 'Tamil';
 		
 		//alert(document.getElementById("nPlace_girl").value);
@@ -187,6 +191,7 @@ getChartDetails();
 					<input type='hidden' id='in_time_girl' name='in_time_girl'>
 					<input type='hidden' id='in_date_boy' name='in_date_boy'>
 					<input type='hidden' id='in_time_boy' name='in_time_boy'>
+					<input type='hidden' id='mark' name='mark'>
 					<input type="hidden" id="lang" name="lang" required />
 				</form>
 				<!-- (A) HIDDEN HTML FORM -->
@@ -196,17 +201,18 @@ getChartDetails();
 				</form>
 				
 				<BR>
-					<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">Saved matching charts</P>
+					<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">சேமிக்கப்பட்ட பொருத்தங்கள்</P>
 					<!-- <input type='button' class='actionBtn' id='Download' value='download' onClick='exportMatchingCharts();'> -->
 				<BR><BR>		
 				
 <?php
 					echo "<div class='divTable blueTable' style='height:40px;width:95%'>";
 						echo "<div class='divTableRow'>";
-								echo "<div class='divChartHistoryHeading'>Rowid</div>";
-								echo "<div class='divChartHistoryHeading'>Girl Name</div>";
-								echo "<div class='divChartHistoryHeading'>BoyName</div>";
-								echo "<div class='divChartHistoryHeading'>Action</div>";
+								echo "<div class='divChartHistoryHeading'>எண்</div>";
+								echo "<div class='divChartHistoryHeading'>பெ.பெயர்</div>";
+								echo "<div class='divChartHistoryHeading'>ஆ.பெயர்</div>";
+								echo "<div class='divChartHistoryHeading'>மதிப்பெண்</div>";
+								echo "<div class='divChartHistoryHeading'>செய்கை</div>";
 						echo "</div>";
 						
 						if(isset($chartInfo['rowid'])){
@@ -224,17 +230,19 @@ getChartDetails();
 									echo "<div class='divHidden' id='col7$x'>".$chartInfo['b_place'][$i]."</div>";
 									echo "<div class='divHidden' id='col8$x'>".$chartInfo['b_birth_date'][$i]."</div>";
 									echo "<div class='divHidden' id='col9$x'>".$chartInfo['b_birth_time'][$i]."</div>";
+									echo "<div class='divChartHistory' id='col10$x'>".$chartInfo['mark'][$i]."</div>";
 									echo "<div class='divChartHistory' id='col11$x'><input type='button' id='delButton' onClick='deleteRecord($x)' style='color:black;font-size:10px;font-weight:bold;width:40px;background: url(images/delete.png);background-size:60%;background-repeat: no-repeat;background-position: center;color:#660000;background-color:#ffffff;'></div>";
 								echo "</div>";
 							}
 
 							
 							echo "</div>";
-							echo "<BR><P style='color:#660000;font-weight:bold; font-size:14px; text-align:center; width:100%'>Total ".sizeof($chartInfo['rowid'])." Charts (Click on it to open)</P>";
+							echo "<BR><P style='font-weight:bold; font-size:12px; text-align:center; width:100%'>மொத்தம் ".sizeof($chartInfo['rowid'])." ஜாதகங்கள்<BR>(திறக்க அதை தொடவும்/கிளிக் செய்யவும்)</P>";
 						}
 						else{
 							echo "</div>";
-							echo "<BR><P style='color:#660000;font-weight:bold; font-size:14px; text-align:center; width:100%'>Total 0 Charts (Click on it to open)</P>";
+							echo "<BR><P style='color:#660000;font-weight:bold; font-size:14px; text-align:center; width:100%'>ஜாதகங்கள் இல்லை</P>";
+							
 						}
 					
 

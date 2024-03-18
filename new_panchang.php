@@ -1,25 +1,25 @@
 <?php
 include_once "lib.php";
 
+$DEBUG= (int) isset($_GET['debug']) ? $_GET['debug'] : 0;
 $phone = isset($_COOKIE["phone"]) ? $_COOKIE["phone"] : 1;
 
-$place = isset($_POST['place']) ? $_POST['place'] : "Chennai|Asia/Kolkata";
+if(isset($_POST['place'])){
+	$cookie_name = "panchang_place";
+	$cookie_value = $_POST['place'];
+	setcookie($cookie_name, $cookie_value, time() + (86400 * 365), "/"); // 86400 = 1 day
+}
+
+$place = isset($_POST['place']) ? $_POST['place'] : $_COOKIE['panchang_place'];
 $lang = isset($_POST["lang"]) ? $_POST["lang"] : "Tamil";
 
 debug("PLACE=".$place);
-$_SESSION['place'] = $place;
 
 $city=strtok($place,"|");
 $TZ=strtok("|");
 
 date_default_timezone_set($TZ);
 
-$cookie_name = "place";
-$cookie_value = $place;
-setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
-
-
-$DEBUG= (int) isset($_GET['debug']) ? $_GET['debug'] : 0;
 $conn="";
 $lat="";
 $lon="";
@@ -151,7 +151,6 @@ $g_dasaCurrent=array();
 			delete_cookie(focus);
 			
 			document.getElementById('place').value = '<?php echo $place; ?>';
-			
 		} 
 		
 		function updateNow() {
@@ -252,7 +251,7 @@ $g_dasaCurrent=array();
 			
 			if(place==""){
 				/*document.getElementById('place').value = '<?php echo $place; ?>';*/
-				document.getElementById('place').value = '<?php echo $_SESSION["place"]; ?>';
+				document.getElementById('place').value = '<?php echo $place; ?>';
 			}
 		}
 		
@@ -316,7 +315,9 @@ $g_dasaCurrent=array();
 		}
 		
 		function formSubmitButton(){
-			document.forms["updatePanchang"].submit();
+			if(validateForm()==true){
+				document.forms["updatePanchang"].submit();
+			}
 		}
 		
 		function onDateChange(){
@@ -353,10 +354,31 @@ $g_dasaCurrent=array();
 		}*/
 	};
 	
-	function genPanchang(){
-			window.open("gen_panchang_form.php");
+	function genPanchang(place){
+			var url = "gen_panchang_form.php"+"?place="+place;
+			//window.open("gen_panchang_form.php","_self");
+			window.open(url,"_self");
 			return false;
 		}
+		
+	function validateForm() {
+		  p = document.getElementById("place").value;
+
+		  if (p == "") {
+			alert('பிறந்த இடம் கொடுல்லவில்லை');
+			//document.getElementById("error").innerHTML = "பிறந்த இடம் கொடுல்லவில்லை";
+			document.getElementById('place').style.borderColor = "red";
+			return false;
+		  }
+		  
+		  if (p.includes("|")==false || p.includes("/")==false || p.length<10){
+			  alert('நீங்கள் இடத்தை கீழ் வரும் பட்டியலில் தேர்ந்தெடுக்கவில்லை');
+			  document.getElementById('place').style.borderColor = "red";
+			  return false;
+		  }
+		  
+		  return true;
+	}
 				
 	</script>
 </head>
@@ -856,8 +878,8 @@ function displayHoroDetails()
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>சந்திராஷ்டம ராசி</div>";
-			//echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house,6)-1)."</div>";
-			echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house-1,8))."</div>";
+			echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house,6)-1)."</div>";
+			//echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house-1,8))."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பிறப்பு தசா இருப்பு</div>";
@@ -1206,7 +1228,7 @@ echo <<<EOL
 						</TABLE>
 					</H4>
 				<input type='button' id='sub_button' class='actionBtn' value='Submit' onClick="formSubmitButton();">
-				<!-- <input type='button' id='downloadPanchang' class='actionBtn' value='Generate' onClick="genPanchang();" /> -->
+				<input type='button' id='downloadPanchang' class='actionBtn' value='Generate' onClick="genPanchang('$place');" /> 
 				<BR><BR>
 			</form>
 
@@ -1247,6 +1269,7 @@ dbDisconnect($conn);
 //getProkeralaPunchangDetail($lat,$lon,$datetime,'ta');
 
 $_SESSION["place"] = $place;
+$_COOKIE['panchang_place']=$place;
 
 ?>
 

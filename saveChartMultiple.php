@@ -32,6 +32,7 @@ $girlname = isset($_GET["girlname"]) ? $_GET["girlname"] : "";
 $place_girl = isset($_GET["place_girl"]) ? $_GET["place_girl"] : "";
 $date_girl = isset($_GET["in_date_girl"]) ? $_GET["in_date_girl"] : "";
 $time_girl = isset($_GET["in_time_girl"]) ? $_GET["in_time_girl"] : "";
+$mark = isset($_GET["mark"]) ? $_GET["mark"] : 0;
 
 $boyname = isset($_GET["boyname"]) ? $_GET["boyname"] : "";
 $place_boy = isset($_GET["place_boy"]) ? $_GET["place_boy"] : "";
@@ -137,7 +138,7 @@ function saveBirthChartToDB($in_savemode)
 
 function saveMatchingChartToDB()
 {
-	global $conn,$phone,$girlname,$place_girl,$date_girl,$time_girl,$boyname,$place_boy,$date_boy,$time_boy;
+	global $conn,$phone,$girlname,$place_girl,$date_girl,$time_girl,$boyname,$place_boy,$date_boy,$time_boy, $mark;
 	
 	$date_girl=date("Y-m-d",strtotime($date_girl));
 	$date_boy=date("Y-m-d",strtotime($date_boy));
@@ -147,7 +148,7 @@ function saveMatchingChartToDB()
 	startSqlTxn($conn);
 
 	try {	
-		$sql = "INSERT INTO matching_chart (phone,g_name,g_place,g_birth_date,g_birth_time,b_name,b_place,b_birth_date,b_birth_time) VALUES ('$phone','$girlname','$place_girl','$date_girl','$time_girl','$boyname','$place_boy','$date_boy','$time_boy')";
+		$sql = "INSERT INTO matching_chart (phone,g_name,g_place,g_birth_date,g_birth_time,b_name,b_place,b_birth_date,b_birth_time,mark) VALUES ('$phone','$girlname','$place_girl','$date_girl','$time_girl','$boyname','$place_boy','$date_boy','$time_boy','$mark')";
 		
 		if(mysqli_query($conn, $sql)){
 			echo "<script>alert('Records inserted successfully.');showSavedMatchingCharts();</script>";

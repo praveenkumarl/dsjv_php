@@ -4,14 +4,16 @@
 	--chart-background: rgba(255,255,255,0.5);
 	--chart-outer-background: #FFFFFF;
 	--details-background: #ffe44d;
-	--chart-inner-font-size: 12px;
+	--chart-inner-font-size: 10px;
+	--officename-text-color: Blue;
+	--horoscope-sloka-color: Green;
 }
 
 
 body {
-  width: 230mm;
+  width: 210mm;
   height: 100%;
-  margin: 0 auto;
+  margin: 5mm auto;
   padding: 0;
   font-size: 12pt;
   /*background-image: url('../images/watermark.png');
@@ -26,7 +28,7 @@ body {
 .main-page {
   width: 210mm !important; 
   min-height: 297mm !important;
-  margin: 10mm auto;
+  margin: 15mm auto;
   background: white;
   box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
 }
@@ -36,12 +38,13 @@ body {
 }
 @page {
   size: A4;
-  margin: 0;
+  //size: A3;
+  margin: 5mm;
 }
 @media print {
   html, body {
     width: 210mm; 
-    height: auto;        
+    height: auto;    
   }
   .main-page {
     margin: 0;
@@ -374,6 +377,7 @@ div.blueTable {
 	width: 10%;
 	height: 10%;
 	padding:0px;
+	font-family: Verdana, Raavi, sans-serif;
 	
 	/*
 	background-image: url(../images/ganpati2.jpg);
@@ -396,6 +400,7 @@ div.blueTable {
 	width: 10%;
 	height: 10%;
 	padding:0px;
+	font-family: Verdana, Raavi, sans-serif;
 	
 	/*
 		background-image: url(../images/ganpati2.jpg);
@@ -419,6 +424,7 @@ div.blueTable {
 	width: 10%;
 	height: 10%;
 	padding:0px;
+	font-family: Verdana, Raavi, sans-serif;
 	
 	/*
 		background-image: url(../images/ganpati2.jpg);
@@ -441,6 +447,7 @@ div.blueTable {
 	width: 10%;
 	height: 10%;
 	padding:0px;
+	font-family: Verdana, Raavi, sans-serif;
 	
 	/*
 		background-image: url(../images/ganpati2.jpg);
@@ -456,18 +463,21 @@ div.blueTable {
 	#color:white;
 	color:black;
 	border: 1px solid;
+	font-family: Verdana, Raavi, sans-serif;
 }
 
 .mandhi
 {
 	#color:red;
 	font-weight: normal;
+	font-family: Verdana, Raavi, sans-serif;
 }
 
 .moon
 {
 	#background-color:#00ffff;
 	color:black;
+	font-family: Verdana, Raavi, sans-serif;
 }
 
 .udh
@@ -492,12 +502,14 @@ div.blueTable {
 {
 	color:red;
 	font-weight: normal;
+	font-family: Verdana, Raavi, sans-serif;
 }
 
 .rahu_kaalam
 {
 	color:red;
 	font-weight: normal;
+	font-family: Verdana, Raavi, sans-serif;
 }
 
 
@@ -508,10 +520,11 @@ div.blueTable {
 	vertical-align:middle;
 	border:solid .1px black;
 	background-color: var(--details-background);
-	font-size: 12px;
+	font-size: 8px;
 	color: black;
-	padding:5px;
+	padding:3px;
 	font-weight: 800;
+	font-family: Verdana, Raavi, sans-serif;
 }
 
 .divTableTextMainHeading 
@@ -519,10 +532,37 @@ div.blueTable {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	font-size: 12px;
+	font-size: 10px;
 	color: black;
+	padding:3px;
+	font-weight: 800;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.divTableTextSloka 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 12px;
+	color: var(--horoscope-sloka-color);
 	padding:5px;
 	font-weight: 800;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.divTableTextOfficeName 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 12px;
+	color: var(--officename-text-color);
+	padding:5px;
+	font-weight: 800;
+	line-height: 12px;
+	font-family: Verdana, Raavi, sans-serif;
+	width:400px;
 }
 
 .divTableTextMedium 
@@ -532,9 +572,10 @@ div.blueTable {
 	vertical-align:middle;
 	border:solid .1px black;
 	background-color: #ffffff;
-	font-size: 10px;
+	font-size: 8px;
 	color: black;
-	padding:5px;
+	padding:3px;
+	font-family: Verdana, Raavi, sans-serif;
 }
 
 .divTableTextBig
@@ -547,6 +588,7 @@ div.blueTable {
 	font-size: 12px;
 	color: black;
 	padding:5px;
+	font-family: Verdana, Raavi, sans-serif;
 }
 
 
@@ -560,11 +602,9 @@ div.blueTable {
 	font-size: 10px;
 	line-height: 15px;
 	font-weight: normal;
-	height:match_parent;
 	padding:2px;
-	
 	background-repeat: no-repeat;
-	
+	font-family: Verdana, Raavi, sans-serif;
 	position:relative;
 }
 
@@ -581,6 +621,7 @@ div.blueTable {
 	width:inherit;
 	height:100%;
 	position:relative;
+	font-family: Verdana, Raavi, sans-serif;
 }
 
 .PageHeader
@@ -602,20 +643,29 @@ div.blueTable {
 	vertical-align: bottom;
 	color: black;
 	font-size: 10px;
-	margin: 10px;
-	height:50px;
+	margin-left: 5px;
+	margin-right: 5px;
+	height:40px;
 	border-bottom:3px double;
+	border-width: 100%;
 	border-color: black;
 	justify-content: center;
+	width:210mm;
 } 
-.header-child1 { 
+.header-left { 
     float: left; 
-	margin-left: 25px;
+	margin-left:2px;
 }
 
-.header-child2 { 
+.header-right { 
     float: right; 
-	margin-right: 25px;
+	margin-right:5px;
+}
+
+.header-center { 
+    float: left;
+    width: 500px;
+    text-align: -webkit-center;
 }
 
 .PageFooter
@@ -625,8 +675,13 @@ div.blueTable {
 	color: black;
 	font-size: 10px;
 	height: 10px;
-	border-top:3px double;
+	line-height: 10px;
+	border-top:1px solid;
 	border-color: black;
+	font-family: Verdana, Raavi, sans-serif;
+	width:210mm;
+	margin-left: 5px;
+	margin-right: 5px;
 }
 
 
@@ -636,15 +691,17 @@ div.blueTable {
 	color: black !important;
 	/* color: transparent; */
 	/* background-color: #FFFFFF; */
+	font-family: Verdana, Raavi, sans-serif;
 }
 
 .thithi_soonyam_main {
-	font-size:9px;
-	font-weight:bold;	
+	font-size:8px;
+	font-weight:bold;
 	background-color: white !important;
 	color: black !important;
 	/* color: transparent; */
 	/* background-color: #FFFFFF; */
+	font-family: Verdana, Raavi, sans-serif;
 }
 
 .thithi_soonyam_main_txt {
@@ -664,8 +721,8 @@ div.blueTable {
 .indhu{
 	background-color:white !important;
 	color:black;
-	font-size:10px;
-	font-weight:bold
+	font-size:8px;
+	font-family: Verdana, Raavi, sans-serif;
 }
 
 page[size="A4"] {  

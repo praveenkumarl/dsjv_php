@@ -500,7 +500,7 @@ div.blueTable {
 	text-align: center;
 }
 
-.actionBtn{
+.actionBtnGirl{
 	background-color: var(--girl-chart-background) !important;
 	color:black;
 	font-weight:bold;
@@ -516,4 +516,16 @@ div.blueTable {
 	font-size:10px;
 	width:100px;
 	text-align: center;
+}
+
+.indhu{
+	background-color:green;
+	color:white;
+	font-size:10px;
+	font-weight:bold
+}
+
+
+.retro{
+	color:red;
 }

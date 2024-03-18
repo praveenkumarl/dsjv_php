@@ -157,7 +157,7 @@ EOL;
 			
 			<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">தற்போதய  ஜாமக்கோள்</P>
 			<DIV id='msg'>Please wait, jamakol chart is loading</DIV>
-			<div class='current-jama' id='current-jama' onClick='window.open("Jamakol_input.php","_self");' style='cursor: pointer;'>
+			<div class='current-jama' id='current-jama' onClick='window.open("Jamakol_input.php","_self");' style='cursor: pointer;margin-top:-10px'>
 EOL;
 				include "live_jamakol_chart.php";
 				
@@ -167,15 +167,16 @@ EOL;
 		}
 		else{
 			echo <<<EOL
-			<BR>
-			<BR>
-			</DIV>
+			
+			<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">தற்போதய  ஜாமக்கோள்</P>
 			<DIV id='msg'>Please wait, jamakol chart is loading</DIV>
+			<div class='current-jama' id='current-jama' style='cursor: pointer;'>
 EOL;
 
-				echo '<div>';
+				echo '<div style="margin-top:auto">';
 					include "live_jamakol_chart.php";
 				echo '</div>';
+			echo '</div>';
 
 		}
 		?>

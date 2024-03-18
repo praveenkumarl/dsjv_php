@@ -141,25 +141,25 @@ function getSubHora($start_time,$curr_time,$hora_lord,$hora_time)
 	
 	switch($hora_lord){
 		case "சூரி":
-			$subHora = "<BR>" . $sub_hora_order_sun[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
+			$subHora = $sub_hora_order_sun[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
 			break;
 		case "சுக்":
-			$subHora = "<BR>" . $sub_hora_order_ven[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
+			$subHora = $sub_hora_order_ven[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
 			break;
 		case "புத":
-			$subHora = "<BR>" . $sub_hora_order_mer[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
+			$subHora = $sub_hora_order_mer[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
 			break;
 		case "சந்":
-			$subHora = "<BR>" . $sub_hora_order_moo[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
+			$subHora = $sub_hora_order_moo[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
 			break;
 		case "சனி":
-			$subHora = "<BR>" . $sub_hora_order_sat[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
+			$subHora = $sub_hora_order_sat[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
 			break;
 		case "குரு":
-			$subHora = "<BR>" . $sub_hora_order_jup[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
+			$subHora = $sub_hora_order_jup[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
 			break;
 		case "செ":
-			$subHora = "<BR>" . $sub_hora_order_mar[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
+			$subHora = $sub_hora_order_mar[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
 			break;
 	}
 	
@@ -661,23 +661,50 @@ function placeOnBlur() {
 }
 
 function dropdownFormSubmit() {
-	document.getElementById('sub_type').value = '1';
-	document.forms["horaForm"].submit();
+	if(validateForm()==true){
+		document.getElementById('sub_type').value = '1';
+		document.forms["horaForm"].submit();
+	}
 }
 
 function formSubmitButton(){
-	document.getElementById('sub_type').value = '2';
-	document.forms["horaForm"].submit();
+	if(validateForm()==true){
+		document.getElementById('sub_type').value = '2';
+		document.forms["horaForm"].submit();
+	}
 }
 
 function onDateChange(){
-	document.getElementById('sub_type').value = '2';
-	document.forms["horaForm"].submit();
+	if(validateForm()==true){
+		document.getElementById('sub_type').value = '2';
+		document.forms["horaForm"].submit();
+	}
 }
 
 function onTimeChange(){
-	document.getElementById('sub_type').value = '2';
-	document.forms["horaForm"].submit();
+	if(validateForm()==true){
+		document.getElementById('sub_type').value = '2';
+		document.forms["horaForm"].submit();
+	}
+}
+
+function validateForm() {
+	  p = document.getElementById("place").value;
+
+	  if (p == "") {
+		alert('பிறந்த இடம் கொடுல்லவில்லை');
+		//document.getElementById("error").innerHTML = "பிறந்த இடம் கொடுல்லவில்லை";
+		document.getElementById('place').style.borderColor = "red";
+		return false;
+	  }
+	  
+	  if (p.includes("|")==false || p.includes("/")==false || p.length<10){
+		  alert('நீங்கள் இடத்தை கீழ் வரும் பட்டியலில் தேர்ந்தெடுக்கவில்லை');
+		  document.getElementById('place').style.borderColor = "red";
+		  return false;
+	  }
+	  
+	  return true;
 }
 		
     </script>

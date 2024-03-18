@@ -80,7 +80,7 @@ echo <<<EOL
 		</form>
 	
 		<BR>
-			<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">Saved Birth charts</P>
+			<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">சேமிக்கப்பட்ட ஜாதகங்கள்</P>
 			<!-- <input type='button' class='actionBtn' id='Download' value='download' onClick='exportBirthCharts();'> -->
 		<BR>
 EOL;
@@ -116,11 +116,11 @@ EOL;
 					}
 					
 					echo "</div>";
-					echo "<BR><P style='font-weight:bold; font-size:12px; text-align:center; width:100%'>மொத்தம் ".sizeof($chartInfo['rowid'])." ஜாதகங்கள்<BR>(திறக்க அதை கிளிக் செய்யவும்)</P>";
+					echo "<BR><P style='font-weight:bold; font-size:12px; text-align:center; width:100%'>மொத்தம் ".sizeof($chartInfo['rowid'])." ஜாதகங்கள்<BR>(திறக்க அதை தொடவும்/கிளிக் செய்யவும்)</P>";
 				}
 				else{
 					echo "</div>";
-					echo "<BR><P style='color:#660000;font-weight:bold; font-size:14px; text-align:center; width:100%'>Total 0 Charts (Click on it to open)</P>";
+					echo "<BR><P style='color:#660000;font-weight:bold; font-size:14px; text-align:center; width:100%'>ஜாதகங்கள் இல்லை</P>";
 				}
 	echo "</div>";
 }

@@ -1159,12 +1159,7 @@ if ($result->num_rows > 0) {
     $gmt_offset = $row["GMT_offset"];
     $gmt_offset_dst=$row["GMT_offset_dsl"];
   }
-} else {
-  //echo "<script>alert('Invalid place entered, please select from drowndown')</script>";
-  echo "<script>alert('நீங்கள் இடத்தை கீழ் வரும் பட்டியலில் தேர்ந்தெடுக்கவில்லை.')</script>";
-  echo("<script>location.href = 'Jamakol_input.php';</script>");
-  return;
-}
+} 
 
 if($DEBUG==1){
 echo "DATE: " . $_POST["in_date"]."<BR>";
