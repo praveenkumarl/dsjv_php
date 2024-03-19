@@ -4,6 +4,7 @@ session_start();
 $month = $_POST['month'];
 $year = $_POST['year'];
 $place = isset($_POST['place']) ? $_POST['place'] : $_COOKIE['panchang_place'];
+$TZ = explode('|',$place)[1];
 
 $monthName = getMonthName($month,1); //1-tamil
 
@@ -15,6 +16,8 @@ function getMonthName($month,$lang) //1 - tamil
 		return $name_tamil_arr[$month];
 	}
 }
+
+date_default_timezone_set($TZ);
 
 ?>
 
@@ -46,7 +49,7 @@ function getMonthName($month,$lang) //1 - tamil
 </div>
 <script>
 
-	var timezone = '<?php echo explode('|',$place)[1]; ?>';
+	var timezone = '<?php echo $TZ; ?>';
 	
 	generatePanchang();
 
@@ -247,7 +250,7 @@ function getMonthName($month,$lang) //1 - tamil
 	}
 </script>
 
-<BR><BR>
+<BR><BR><BR>
 <div class="PageFooter" style="width:-webkit-fill-available">&#169; Periyanayaki Astro Solutions</div>  
 </body>
 </html>

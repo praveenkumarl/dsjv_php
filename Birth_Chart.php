@@ -2400,8 +2400,8 @@ echo <<<EOL
 													<div class='divBirthInputLable'>*பாலினம்</div>
 													<div class='divBirthInput'>
 														<select name="sex" id="sex" class='divBirthInput' style="background-color:var(--chart-background);font-size:14px;font-weight:bold;width:100%;">
-															<option value="ஆண்" $m_selection>ஆண்</option>
-															<option value="பெண்" $f_selection>பெண்</option>
+															<option value="ஆண்" $m_selection>&#128104;ஆண்</option>
+															<option value="பெண்" $f_selection>&#128105;பெண்</option>
 															<option value="மூன்றாம்" $o_selection>மூன்றாம்</option>
 														</select>
 													</div>

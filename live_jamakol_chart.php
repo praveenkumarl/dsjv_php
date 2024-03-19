@@ -140,12 +140,12 @@ if(!isset($_SESSION['jamadata'])){
 	echo <<<EOL
 		<div id="chartform">
 			<form name='currentChart' action='Jamakol_Chart.php' method='post'>
-				<input type='hidden' id='place' name='place' value=$in_place>
+				<input type='hidden' id='place' name='place' value='$in_place'>
 				<input type='hidden' id='nDegree' name='nDegree' value=$in_degree>
 				<input type='hidden' id='lang' name='lang' value=$lan>
 				<input type='hidden' id='in_date' name='in_date' value=$chart_date>
 				<input type='hidden' id='in_time' name='in_time' value=$chart_time>
-				<input type='hidden' id='nQuestion' name='nQuestion' value=$nQuestion>
+				<input type='hidden' id='nQuestion' name='nQuestion' value='$nQuestion'>
 				<input type='hidden' id='chartNow' name='chartNow' value=$chartNow>
 			</form>
 		</div>
