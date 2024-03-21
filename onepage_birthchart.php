@@ -16,6 +16,7 @@ $father_name=$_POST['father'];
 $mother_name=$_POST['mother'];
 $caste=$_POST['caste'];
 $office_name=$_POST['office_name'];
+$office_phone=$_POST['office_phone'];
 
 $DEBUG= (int) isset($_SESSION['debug']) ? $_SESSION['debug'] : 0;
 $conn="";
@@ -1705,7 +1706,7 @@ else{
 <div id='onepage' style="width: min-content">
 	<div class="header-parent">
 	  <div class="header-left"><img src='images/dsjv_title.png' height="25px"></div>
-	  <div class="header-center"><div class='divTableTextOfficeName'>&#3059; <BR><?php echo $office_name; ?></div></div>
+	  <div class="header-center"><div class='divTableTextOfficeName'>&#3059; <BR><?php echo $office_name.'<BR>&#128241;'.$office_phone; ?></div></div>
 	  <div class="header-right"><img src='images/pkastro_title.png' height="25px"></div>
 	</div>
 <center><div class='divTableTextSloka' style='font-family: Verdana, Raavi, sans-serif;font-size:8px;width:100%;line-height:10px'>&#2384; ஜனனி ஜன்ம சௌக்யானாம் வர்தநீ குலஸம்பதாம்
@@ -1737,11 +1738,7 @@ else{
 	</center>
 	
 </div>
-<BR>
-<BR>
-<BR>
-<BR>
-<BR>
+<BR><BR><BR><BR>
 <div class="PageFooter" style="width:-webkit-fill-available">&#169; Periyanayaki Astro Solutions</div>  
 
 					

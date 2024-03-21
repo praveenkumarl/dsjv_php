@@ -137,8 +137,8 @@ date_default_timezone_set($TZ);
 				
 			}
 		
-			document.writeln('</center>');
 			document.writeln('</div>');
+			document.writeln('</center>');
 		document.writeln('</div>');
 	}
 	

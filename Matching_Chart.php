@@ -1174,9 +1174,10 @@ function displayMatchingResult()
 	
 	echo "<div class='divTableRow'>";
 		echo "<div class='divPanchangHeading' style='text-align:left'>மதிப்பு விவரம்</div>";
-		echo "<div class='divPanchang' style='text-align:left;line-height:15px'><span id='boot-icon' class='bi bi-square-fill' style='color: #ff8080;'></span> தவிர்க்க (0-50)<BR>
-		<span id='boot-icon' class='bi bi-square-fill' style='color: #FFBF00;'></span> சராசரி (50-69)<BR>
-		<span id='boot-icon' class='bi bi-square-fill' style='color: #90ee90;'></span> உத்தமம் (70-100)
+		echo "<div class='divPanchang' style='text-align:left;line-height:15px'>
+		<span id='boot-icon' class='bi bi-x-square-fill' style='color: #ff8080;'></span> தவிர்க்க (0-50)<BR>
+		<span id='boot-icon' class='bi bi-dash-square-fill' style='color: #FFBF00;'></span> சராசரி (50-69)<BR>
+		<span id='boot-icon' class='bi bi-check-square-fill' style='color: #00FF00;'></span> உத்தமம் (70-100)
 		</div>";
 	echo "</div>";
 	
@@ -3299,8 +3300,8 @@ function displayGirlBoyDetails()
 		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'></div>";
-			echo "<div class='divGirlPanchangHeading'>பெண்</div>";
-			echo "<div class='divBoyPanchangHeading'>ஆண்</div>";
+			echo "<div class='divGirlPanchangHeading'>&#128105;பெண்</div>";
+			echo "<div class='divBoyPanchangHeading'>&#128104;ஆண்</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பெயர்</div>";
@@ -3942,7 +3943,7 @@ echo <<<EOL
 					<BR>
 					<P style="color:#660000;font-weight:bold; font-size:14px; text-align:center; background-color:white;width:200px;line-height: 20px;">மணமகள்/மணமகன் ஜாதகம்</P> -->
 					<BR>
-					<P style="color:#660000;font-weight:bold; font-size:12px; text-align:center; background-color:white;width:200px;line-height: 20px;">திருமண பொருத்த</P>
+					<P style="color:#660000;font-weight:bold; font-size:12px; text-align:center; background-color:white;width:200px;line-height: 20px;">திருமண பொருத்தம்</P>
 					<BR>
 					
 								<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
@@ -3957,8 +3958,8 @@ echo <<<EOL
 											<input type='hidden' id='nGirlTime' name='nGirlTime' value='$chart_time'>
 											<input type='hidden' id='nBoyDate' name='nGirlDate' value='$transit_date'>
 											<input type='hidden' id='nBoyTime' name='nBoyTime' value='$transit_time'>
-											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Girl BD: <input type='date' id='nDate' name='nDate' style="background-color:var(--girl-chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$chart_date > Girl BT: <input type='time' id='nTime' name='nTime' style="background-color:var(--girl-chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$chart_time></H4>
-											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Boy BD: <input type='date' id='in_date_boy' name='in_date_boy' style="background-color:var(--boy-chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$transit_date> Boy BT: <input type='time' id='in_time_boy' name='in_time_boy' style="background-color:var(--boy-chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$transit_time></H4>
+											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">&#128105;Girl BD: <input type='date' id='nDate' name='nDate' style="background-color:var(--girl-chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$chart_date > &#128105;Girl BT: <input type='time' id='nTime' name='nTime' style="background-color:var(--girl-chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$chart_time></H4>
+											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">&#128104;Boy BD: <input type='date' id='in_date_boy' name='in_date_boy' style="background-color:var(--boy-chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$transit_date>&#128104;Boy BT: <input type='time' id='in_time_boy' name='in_time_boy' style="background-color:var(--boy-chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$transit_time></H4>
 											<BR>
 											<input type='submit' class='actionBtnDefault' id='submit' value='Submit'>
 											<input type='button' class='actionBtnDefault' id='save' value='Save' onClick='saveChart();'>

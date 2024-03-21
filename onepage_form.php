@@ -53,7 +53,7 @@ $chart_date = $_GET["nDate"];
 		<button class="menu" onClick="window.open('index.php','_self')">Home</button>
 	</div>
 	<div class='mobile'>
-		<?php include "OnePagePanchangMenu_mobile.php"; ?>
+		<?php include "birthChartMenu_mobile.php"; ?>
 	</div>
 	</div>
 	<div class='column-body'>
@@ -86,6 +86,10 @@ echo <<<EOL
 				<div class='divTableRow'>
 					<div class='divBirthInputLable'>தங்கள் ஜோதிட நிலையத்தின் பெயர்</div>
 					<div class='divBirthInput' style='font-weight:bold'><input type="text" name="office_name" id="office_name" autocomplete="off" style="background-color:var(--chart-background);font-size:14px;font-weight:bold;height:fill_parent;width:fill_parent;display:inline" placeholder="தங்கள் ஜோதிட..." /></div>
+				</div>
+				<div class='divTableRow'>
+					<div class='divBirthInputLable'>தங்கள் கைபேசி எண்</div>
+					<div class='divBirthInput' style='font-weight:bold'><input type="text" name="office_phone" id="office_phone" autocomplete="off" style="background-color:var(--chart-background);font-size:14px;font-weight:bold;height:fill_parent;width:fill_parent;display:inline" placeholder="தங்கள் கைபேசி..." /></div>
 				</div>
 			</div>
 			<input type='submit' class='actionBtn' id='submit' name='submit' value='Submit'>

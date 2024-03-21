@@ -787,14 +787,7 @@ function displayHoroDetails()
 			echo "<div class='divPanchangHeading'>வாரம்</div>";
 			echo "<div class='divPanchang'>".explode('/',$panchang['vaaram'])[1]."</div>";
 		echo "</div>";
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
-			echo "<div class='divPanchang'>".explode('/',$panchang['nak'])[1]."<BR>".$panchang['nak-end-time']." வரை</div>";
-		echo "</div>";
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>நக்ஷத்ர நாம எழுத்து </div>";
-			echo "<div class='divPanchang'>".getStarLetters($g_nak)[0][0]."<BR>".getStarLetters($g_nak)[1][0]."</div>";
-		echo "</div>";
+		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>திதி</div>";
 			$g_thithi = explode('/',explode('[',$panchang['thithi'])[0])[1];
@@ -809,6 +802,16 @@ function displayHoroDetails()
 			}
 		echo "</div>";
 		displayDetailsDiv('thi',$g_thithi_idx);
+		
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
+			echo "<div class='divPanchang'>".explode('/',$panchang['nak'])[1]."<BR>".$panchang['nak-end-time']." வரை</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>யோகம்</div>";
+			echo "<div class='divPanchang'>".$panchang['yoga']."</div>";
+		echo "</div>";
+		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>கரணம்</div>";
 			$karan = explode('/',$panchang['karan'])[1];
@@ -816,10 +819,12 @@ function displayHoroDetails()
 			echo "<div class='divPanchang' OnClick='showDetailsDiv(event,2)' style='color:blue;cursor:pointer'>".$karan."(".getKaranaPlanet($karan).")</div>";
 		echo "</div>";
 		displayDetailsDiv('kar',$karan);
+		
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>யோகம்</div>";
-			echo "<div class='divPanchang'>".$panchang['yoga']."</div>";
+			echo "<div class='divPanchangHeading'>நக்ஷத்ர நாம எழுத்து </div>";
+			echo "<div class='divPanchang'>".getStarLetters($g_nak)[0][0]."<BR>".getStarLetters($g_nak)[1][0]."</div>";
 		echo "</div>";
+		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>லக்கினம்</div>";
 			echo "<div class='divPanchang'>".getRasi($lagna_house-1)."</div>";
@@ -835,12 +840,12 @@ function displayHoroDetails()
 		echo "</div>";
 		displayDetailsDiv('yogi',$g_yoga_idx);
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>அவயோகி</div>";
+			echo "<div class='divPanchangHeadingRed'>அவயோகி</div>";
 			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 4)' style='color:blue;cursor:pointer'>".$yogi_arr[3]."(".$yogi_arr[2].")</div>";
 		echo "</div>";
 		displayDetailsDiv('ayogi',$g_yoga_idx);
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>திதி சூன்யம்</div>";
+			echo "<div class='divPanchangHeadingRed'>திதி சூன்யம்</div>";
 			echo "<div class='divPanchang'>".$g_thithi_soonyam_matching_arr[0]."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
@@ -877,7 +882,7 @@ function displayHoroDetails()
 			echo "<div class='divPanchang'>".$otherPanchangDetails[4]."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>சந்திராஷ்டம ராசி</div>";
+			echo "<div class='divPanchangHeadingRed'>சந்திராஷ்டம்</div>";
 			echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house,6)-1)."</div>";
 			//echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house-1,8))."</div>";
 		echo "</div>";
@@ -888,6 +893,10 @@ function displayHoroDetails()
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>தற்போதைய தசா புக்தி</div>";
 			echo "<div class='divPanchang'>".$g_dasaCurrent[0]."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>கணக்கீட்டு முறை</div>";
+			echo "<div class='divPanchang'>திருக்கணிதம்<BR>(லஹரி அயனாம்சம்)</div>";
 		echo "</div>";
 	echo "</div>";
 }
