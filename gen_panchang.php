@@ -250,7 +250,7 @@ date_default_timezone_set($TZ);
 	}
 </script>
 
-<BR><BR><BR>
+<BR><BR><BR><BR><BR>
 <div class="PageFooter" style="width:-webkit-fill-available">&#169; Periyanayaki Astro Solutions</div>  
 </body>
 </html>

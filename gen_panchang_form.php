@@ -1,7 +1,11 @@
 <?php session_start();
 require "lib.php";
 
-date_default_timezone_set("Asia/Kolkata");
+$TZ = isset($_SESSION['TZ']) ? $_SESSION['TZ'] : "Asia/Kolkata";
+
+$place = isset($_GET['place']) ? $_GET['place'] : $_COOKIE['panchang_place'];
+
+date_default_timezone_set($TZ);
 
 $DEBUG= (int) isset($_GET['debug']) ? $_GET['debug'] : 0;
 
@@ -16,12 +20,12 @@ $curr_month = date('m');
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="canonical" href="https://html5-templates.com/" />
-    <title>PK Astro Thaara palan</title>
+    <title>PK Monthly Panchang</title>
     <meta name="description" content="One page panchang">
 	
-	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
-	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
-	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/main.css">
+	<link rel="stylesheet" href="css/chart_style.css">
+	<link rel="stylesheet" href="style.css">
 	<link href='https://fonts.googleapis.com/css?family=Julius Sans One' rel='stylesheet'>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -65,6 +69,10 @@ $curr_month = date('m');
 			});
 		});
 		
+		function goBack(){
+			window.open('new_panchang.php','_self');
+		}
+		
     </script>
 </head>
 
@@ -73,7 +81,7 @@ $curr_month = date('m');
 	
 <div class="title"></div>
 
-	<div class='column-menu'>
+	<div class='column-menu' style="margin-left:0px">
 	<?php displayUserInfo($_SESSION['userinfo']);?>
 		<div class='desktop'>
 		<button class="menu" onClick="window.open('index.php','_self')">Home</button>
@@ -86,12 +94,12 @@ $curr_month = date('m');
 				<BR>
 				<div class="heading">*பஞ்சாங்கம் உள்ளீடு</div>
 				<BR>
-				<form name="panchangForm" action="gen_panchang.php" method="post" target="_blank">
+				<form name="panchangForm" action="gen_panchang.php" method="post" target="_self">
 				<table width="350px">
 					
 					<tr style="background:none;">
 						<td  style="vertical-align:middle">
-							<DIV class='divPanchangHeading' style='border:none'>*மாதம்</div>
+							<DIV class='divPanchang' style='border:none'>*மாதம்</div>
 						</td>
 						<td style="vertical-align:middle">
 							<select name="month" id="month" style="width:fit-content;font-size:12px;background:#FDE966;font-weight:bold" onChange="formSubmitDropdown()">
@@ -113,7 +121,7 @@ $curr_month = date('m');
 					</tr>
 					<tr style="background:none;">
 						<td  style="vertical-align:middle">
-							<DIV class='divPanchangHeading' style='border:none'>*வருடம்</div>
+							<DIV class='divPanchang' style='border:none'>*வருடம்</div>
 						</td>
 							<td style="text-align:left">
 								<input type="number" name="year" id="year" maxlength="4" autocomplete="off"style="width:80px;height: 2.75em;font-size:12px;background:#FDE966;font-weight:bold; text-align:center" placeholder="வருடம்..." onkeypress="return onlyNumberKey(event)" />
@@ -122,17 +130,17 @@ $curr_month = date('m');
 					</tr>
 					<tr style="background:none;">
 						<td  style="vertical-align:middle">
-							<DIV class='divPanchangHeading' style='border:none'>*இடம்</div>
+							<DIV class='divPanchang' style='border:none'>*இடம்</div>
 						</td>
 						<td style="text-align:left">
-							<div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="width:200px;height: 2.75em;font-size:12px;background:#FDE966;font-weight:bold; text-align:center" placeholder="Search place..."/><div class="result"></div>
-						</td>
+							<div class="search-box"><input type="text" name="place" id="place" value='<?php echo $place; ?>' onFocus="this.value=''" autocomplete="off" style="width:200px;height: 2.75em;font-size:12px;background:#FDE966;font-weight:bold; text-align:center" placeholder="Search place..."/><div class="result"></div>
+						</td>	
 					</tr>
 					<tr style="background:none;">
 						<td></td>
 						<td  style="text-align:left">
-							<input class="actionBtn" type="submit" value="Submit">
-							<button class="actionBtn" onclick="history.back()">Back</button>
+							<input type='submit' class="actionBtn" id='submit' value='Submit' />
+							<input type='button' class="actionBtn" onclick="goBack()" value="Back" />
 						</td>
 					</tr>
 				</table>

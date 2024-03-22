@@ -857,10 +857,21 @@ var z = floor(abs(fix360(Lmoon + ayanamsa))/30);
     this.Tithi.end = s_tithi.end;
 	
 	if(n_tithi < 15){
-		this.Tithi.name = this.Tithi.name+'(சுக்)';
+		if(n_tithi==14){
+			this.Tithi.name = this.Tithi.name;
+		}
+		else{
+			this.Tithi.name = this.Tithi.name+'(சுக்)';
+		}
 	}
 	else{
-		this.Tithi.name = this.Tithi.name+'(கிரு)';
+		if(n_tithi==29){
+			this.Tithi.name = this.Tithi.name;
+		}
+		else{
+			this.Tithi.name = this.Tithi.name+'(கிரு)';
+		}
+		
 	}
 	
     if (cb) { cb();}
