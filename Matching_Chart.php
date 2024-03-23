@@ -1005,7 +1005,7 @@ function naadiMatching(){
 function matchingRule13(){
 	global $sw_planet, $tr_sw_planet,$g_matching_mark;
 	
-	$result=false;
+	$result=true;
 	$reason="";
 	
 	$girl_sun = countHouses(findHouse($sw_planet,"லக்"),findHouse($sw_planet,"சூரி"));
@@ -1459,7 +1459,7 @@ function matchingRule4()
 	if($girlLagnaLordBoyVenCount == 6 || $girlLagnaLordBoyVenCount == 8){
 		$result[1] = false;
 		//echo "<br>Girl Venus-Boy lagna lord 6/8";
-		$reason = $reason . "<BR>&#x2022; லக்கினாதிபதி & சுக் 6/8";
+		$reason = $reason . "<BR>&#x2022; பெண் லக்கினாதிபதி & ஆண் சுக் 6/8";
 	}
 	else{
 		$reason = $reason  . "<BR>&#x2022; பெண் லக்கினாதிபதி & ஆண் சுக் ". "(" . $girlLagnaLordBoyVenCount . ")";
@@ -1469,7 +1469,7 @@ function matchingRule4()
 	if($boyLagnaLordGirlMarCount == 6 || $boyLagnaLordGirlMarCount == 8){
 		$result[2] = false;
 		//echo "<br>Boy Mars-Girl lagna lord 6/8";
-		$reason = $reason . "<BR>&#x2022; லக்கினாதிபதி & செ 6/8";
+		$reason = $reason . "<BR>&#x2022; ஆண் லக்கினாதிபதி & பெண் செ 6/8";
 	}
 	else{
 		$reason = $reason  . "<BR>&#x2022; ஆண் லக்கினாதிபதி & பெண் செ ". "(" . $boyLagnaLordGirlMarCount . ")";
@@ -1946,22 +1946,22 @@ function matchingRule7(){
 	$all_aspects_girl = array_merge($girl_mars_aspect,$girl_sat_aspect,$girl_rahu_aspect,$girl_kethu_aspect);
 	$all_aspects_boy = array_merge($boy_mars_aspect,$boy_sat_aspect,$boy_rahu_aspect,$boy_kethu_aspect);
 	
-	if(!empty(array_search(7,$all_aspects_girl)) 
-		and !empty(array_search(7,$all_aspects_boy)))
+	if(is_numeric(array_search(7,$all_aspects_girl))
+		and is_numeric(array_search(7,$all_aspects_boy)))
 	{
 		$result=false;
 		array_push($common_damaged_house,"7");
 	}
 	
-	if(!empty(array_search(5,$all_aspects_girl)) 
-		and !empty(array_search(5,$all_aspects_boy)))
+	if(is_numeric(array_search(5,$all_aspects_girl)) 
+		and is_numeric(array_search(5,$all_aspects_boy)))
 	{
 		$result=false;
 		array_push($common_damaged_house,"5");
 	}
 		
-	if(!empty(array_search(2,$all_aspects_girl)) 
-		and !empty(array_search(2,$all_aspects_boy)))
+	if(is_numeric(array_search(2,$all_aspects_girl)) 
+		and is_numeric(array_search(2,$all_aspects_boy)))
 	{
 		$result=false;
 		array_push($common_damaged_house,"2");
@@ -2204,7 +2204,7 @@ function matchingRule9()
 	}
 	else{
 		$result = true;
-		$reason = "பெண்-சூரி-".$girl_sun." பெண்-சந்-".$girl_moon."ஆண்-சூரி-".$boy_sun." ஆண்-சந்-".$boy_moon;
+		$reason = "பெண்-சூரி-".$girl_sun." பெண்-சந்-".$girl_moon."<BR>ஆண்-சூரி-".$boy_sun." ஆண்-சந்-".$boy_moon;
 	}
 	
 	if($result == false){
@@ -2617,9 +2617,11 @@ function matchingRule8($display)
 	else{
 		$reason = "வேறு ரஜ்ஜு";
 		$result = true;
+		
+		$details = "<BR>பெண் - $rajju_type[$girl_rajju] <BR> ஆண் - $rajju_type[$boy_rajju]";
 	}
 	
-	if(!$display){
+	if(!$display){   // Just the result returned to the called plage without displaying
 		return $result;
 	}
 	
@@ -2634,7 +2636,7 @@ function matchingRule8($display)
 		//echo "<br>Yoni rule passed";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading' style='text-align:left'>8. ரஜ்ஜு பொருத்தம் (வேதை நட்)</div>";
-			echo "<div class='divPanchang'>&#x2705; <div class='divStarMatch'>$reason</div></div>";
+			echo "<div class='divPanchang'>&#x2705; <div class='divStarMatch'>$reason  $details</div></div>";
 		echo "</div>";
 		
 		$g_matching_mark++;
@@ -2957,6 +2959,12 @@ function calculateGirlPanchang(){
 	}
 	
 	$yoga_idx = ceil($deg / 13.333333); //divide by 13 deg 20 min in decimal, we will get the index of the yoga (1-27)
+	
+	debug("yoga_idx=$yoga_idx, yogam_deg".($deg / 13.333333));
+	
+	if($yoga_idx > 27){
+		$yoga_idx = 27;
+	}
 	
 	$panchang["yoga"] = $yoga_arr[$yoga_idx];
 	

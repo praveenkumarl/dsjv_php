@@ -4274,6 +4274,11 @@ function calculateBirthPanchang(){
 	}
 	
 	$g_yoga_idx = ceil($deg / 13.333333); //divide by 13 deg 20 min in decimal, we will get the index of the yoga (1-27)
+	debug("g_yoga_idx=$g_yoga_idx, yogam_deg".($deg / 13.333333));
+	
+	if($g_yoga_idx > 27){
+		$g_yoga_idx = 27;
+	}
 	
 	$panchang["yoga"] = $yoga_arr[$g_yoga_idx];
 }

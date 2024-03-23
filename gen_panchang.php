@@ -179,8 +179,10 @@ date_default_timezone_set($TZ);
 	
 	function displayNextThithi(today,thithi){
 	var thithis = ["பிரதமை" , "துவிதியை" , "திருதியை" , "சதுர்த்தி" , "பஞ்சமி" , "சஷ்டி" , "சப்தமி" , "அஷ்டமி" , "நவமி" , "தசமி" , "ஏகாதசி" , "துவாதசி" , "திரயோதசி" , "சதுர்த்தசி", "பௌர்ணமி", "பிரதமை" , "துவிதியை" , "திருதியை" , "சதுர்த்தி" , "பஞ்சமி" , "சஷ்டி" , "சப்தமி" , "அஷ்டமி" , "நவமி" , "தசமி" , "ஏகாதசி" , "துவாதசி" , "திரயோதசி" , "சதுர்த்தசி", "அமாவாசை"];
+		
+		temp = (thithi.name).split('(');
 		if(thithi.end.getDate() == today.getDate()){
-			return " பிறகு "+thithis[thithis.indexOf(thithi.name)+1];
+			return " பிறகு "+thithis[thithis.indexOf(temp[0])+1];
 		}
 		else{
 			return "";
