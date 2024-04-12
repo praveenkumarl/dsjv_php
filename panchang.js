@@ -413,7 +413,7 @@ for (itit = n1; itit < (n1 + 2); ++itit) {
 aspect = len * itit; // sun n moon in the early tithi
 flag = 0;
 if (aspect == 0) {jdt = novolun(jd, knv); flag = 1;}
-if (aspect == 360) {jdt = novolun(jd, (knv+1)); flag = 1;}
+//if (aspect == 360) {jdt = novolun(jd, (knv+1)); flag = 1;} //commented by Praveen, this causing issues for new moon, it calculates end time as subsequent months New moon end
 while (flag < 1) {
 Lsun0 = sun(jdt);
 Lmoon0 = moon(jdt);
@@ -425,8 +425,9 @@ flag = 1;
 
 if (Math.abs(asp1) > 0.001) {jdt += (asp1 / (skor - 1)); flag = 0;}
 }
-if (itit == n1) s_t.start = calData(jdt + (tzone - dt)/24);
+if (itit == n1) s_t.start = calData(jdt + (tzone - dt)/24); 
 if (itit == (n1 + 1)) s_t.end=calData(jdt + (tzone - dt)/24);
+
 }
 return s_t;
 }

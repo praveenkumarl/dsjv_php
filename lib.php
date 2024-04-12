@@ -1,8 +1,10 @@
 <?php
+//ini_set("session.gc_maxlifetime", "86400");
+
 if(!session_id()){
 	session_start();
 }
-	
+
 include_once "db.php";
 
 $moon_longitude_data=array();
@@ -13,7 +15,26 @@ const MIN_STAR_MATCH_COUNT = 7; //minimum matching
 const TOTAL_STAR_MATCH_COUNT = 11; //max matching
 const TOTAL_MATCH_RULES = 12; //total matching rules
 
+$menu_style='background-color: gold;padding:20px;color:black;font-weight:bold';
+
+//user types
+const FREE = "FREE";
+const PAID = "PAID";
+const BIRTH = "BIRTH";
+const MATCHING = "MATCH";
+const BIRTHMATCH = "BIRTHMATCH";
+const PANCHANG = "PANCHANG";
+const JAMAKOL = "JAMAKOL";
+const SUPER = "SUPER";
+const ADMIN = "ADMIN";
+
+//usertype array used in drop down
+$usertype_arr = [PAID, MATCHING, BIRTH, BIRTHMATCH, JAMAKOL, PANCHANG, SUPER, ADMIN, FREE];
+
+
 $DEBUG= isset($_SESSION['debug']) ? $_SESSION['debug'] : 0;
+
+echo '<head><link rel="stylesheet" href="css/main.css"></head>';
 
 function getSunrise($date,$lat,$long)
 {
@@ -557,7 +578,8 @@ function getUserInfo_web($phone)
 
 	try {
 		
-		$sql = "SELECT name, phone, user_type, imei, last_login, registered_date from user where phone=$phone";
+		$sql = "SELECT user.name, user.phone, user.user_type, user.imei, user.last_login, user.registered_date, user_trial.expiry_date,user.office_name,user.office_contact from user, user_trial 
+		where user.phone=user_trial.phone and user.phone='$phone'";
 	
 		if(($result = mysqli_query($conn, $sql))){
 			$count = mysqli_num_rows($result);
@@ -573,10 +595,14 @@ function getUserInfo_web($phone)
 	} catch (mysqli_sql_exception $exception) {
 		mysqli_rollback($conn);
 
+		echo $conn->errorMessage();
 		throw $exception;
 	}
 	
 	dbDisconnect($conn);
+	
+	$_COOKIE['phone'] = $row['phone'];
+	
 	
 	return $row;
 }
@@ -585,13 +611,15 @@ function getUserInfo_mobile($key)
 {
 	global $conn, $row;
 	
+	debug("__FUNCTION__.$key");
+	
 	$conn = dbConnect($conn);
 
 	try {
 		
-		$sql = "SELECT name, phone, user_type, imei, last_login, registered_date from user where imei='$key'";
-		
-		//echo $sql;
+		//$sql = "SELECT name, phone, user_type, imei, last_login, registered_date from user where imei='$key'";
+		$sql = "SELECT user.name, user.phone, user.user_type, user.imei, user.last_login, user.registered_date, user_trial.expiry_date,user.office_name,user.office_contact from user, user_trial 
+		where user.phone=user_trial.phone and user.imei='$key'";
 	
 		if(($result = mysqli_query($conn, $sql))){
 			$count = mysqli_num_rows($result);
@@ -606,11 +634,14 @@ function getUserInfo_mobile($key)
 		
 	} catch (mysqli_sql_exception $exception) {
 		mysqli_rollback($conn);
-
+		
+		echo $conn->errorMessage();
 		throw $exception;
 	}
 	
 	dbDisconnect($conn);
+	
+	$_COOKIE['key'] = $key;
 	
 	return $row;
 }
@@ -643,38 +674,44 @@ function displayUserInfo($userinfo)
 		echo "<div class='userinfo'>";
 			echo $userinfo['user_type'];
 		echo "</div>";
+		echo "<div class='userinfo'>";
+			echo $userinfo['expiry_date'];
+		echo "</div>";
 	echo "</div>";
 	
 }
 
 function displayUserInfoMobile($userinfo)
 {
-	echo "<div class='envMobile' style='background-color:".envColor()."'>";
-		echo "<div class='userinfoMobile'>";
-			echo $userinfo['user_type'];
+	echo "<div class='envWeb' style='background-color:".envColor()."'>";
+		echo "<div class='userinfoMobile' style='width:auto'>";
+			echo $userinfo['name'];
 		echo "</div>";
-		echo "<div class='userinfoMobile'>";
+		echo "<div class='userinfoMobile' style='width:auto'>";
 			echo $userinfo['phone'];
 		echo "</div>";
-		echo "<div class='userinfoMobile'>";
-			echo $userinfo['name'];
+		echo "<div class='userinfoMobile' style='width:auto'>";
+			echo $userinfo['user_type'];
+		echo "</div>";
+		echo "<div class='userinfoMobile' style='width:auto'>";
+			echo $userinfo['expiry_date'];
 		echo "</div>";
 	echo "</div>";
 }
 
 //To display user details
-function displayDeviceInfo($devInfo)
+function displayHelpInfo($devInfo)
 {
-	echo "<table>";
+	echo "<div class='divTable blueTable' style='width:350px; height:120px'>";
 	
 	foreach($devInfo as $heading => $val){
-		echo "<tr>";
-			echo "<th class='devInfo_heading'>$heading</th>";
-			echo "<td class='devInfo_body'>$val</td>";
-		echo "</tr>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchang'>$heading</div>";
+			echo "<div class='divPanchang' style='font-size:2vw'>$val</div>";
+		echo "</div>";
 	}
 	
-	echo "</table>";
+	echo "</div>";
 }
 
 function isFreeUser($user_type)
@@ -917,6 +954,169 @@ function sortDegree_transit($inArray) // new function
 				}
 			}
 		}
+	}
+	
+	return $outArray;
+}
+
+function sortDegree_boy($inArray) // new function
+{
+	global $planetDeg_transit,$mandhi_degree_transit, $g_rasi_boy;
+	
+	$RK_house = -1;
+	
+	$planetDeg = $planetDeg_transit;
+	$mandhi_degree = $mandhi_degree_transit;
+	
+	$outArray=array(null,null,null,null,null,null,null,null,null,null,null,null);
+	
+	foreach ($planetDeg as $planet => $deg) {
+		foreach ($inArray as $house => $inPlanet)
+		{	
+			//$inArray[$house] = str_replace($planet, $planet. " " . $planetDeg[$planet],$inArray[$house]);
+			
+			//arrange planets by degree from top to bottom within these houses (Mesham to Thulam)
+			if($house<=5)
+			{
+				if(strpos($inArray[$house],$planet)===0 || strpos($inArray[$house],$planet)>0){	
+					if(strpos($inArray[$house],'retro">'.$planet)>0 || strpos($inArray[$house],'retro">'.$planet)===0){
+						$outArray[$house] = $outArray[$house] . " " . "<span class='retro'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+						
+					}
+					else{
+						//$outArray[$house] = $outArray[$house] . " " . $planet . "-". $planetDeg[$planet];
+						
+						if(strpos($planet,'லக்')>0 || strpos($planet,"லக்")===0){
+							$outArray[$house] = $outArray[$house] . " " . "<span class='lagna'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+						}
+						elseif(strpos($planet,'மா')>0 || strpos($planet,"மா")===0){
+							$outArray[$house] = $outArray[$house] . " " . "<span class='mandhi'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+						}
+						elseif(strpos($planet,'சந்')>0 || strpos($planet,"சந்")===0){
+							//$outArray[$house] = $outArray[$house] . " " . "<span>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+							$outArray[$house] = $outArray[$house] . " " . "<span class='moon'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+						}
+						elseif(strpos($planet,'உத')>0 || strpos($planet,"உத")===0){
+							if($planetDeg[$planet]>=0.0){
+								$outArray[$house] = $outArray[$house] . " " . "<span class='udh'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+							}
+							else{
+								$outArray[$house] = $outArray[$house] . " " . "<span class='udh'>$planet</span>";
+							}
+						}
+						elseif(strpos($planet,'ஆரு')>0 || strpos($planet,"ஆரு")===0){
+							if($planetDeg[$planet]>=0.0){
+								$outArray[$house] = $outArray[$house] . " " . "<span class='aar'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+							}
+							else{
+								$outArray[$house] = $outArray[$house] . " " . "<span class='aar'>$planet</span>";
+							}
+						}
+						elseif(strpos($planet,'கவி')>0 || strpos($planet,"கவி")===0){
+							if($planetDeg[$planet]>=0.0){
+								$outArray[$house] = $outArray[$house] . " " . "<span class='kav'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+							}
+							else{
+								$outArray[$house] = $outArray[$house] . " " . "<span class='kav'>$planet</span>";
+							}
+						}
+						elseif(strpos($planet,'R.K')>0 || strpos($planet,"R.K")===0){
+							$RK_house = $house;
+							if($planetDeg[$planet]>=0.0){
+								$outArray[$house] = $outArray[$house] . " " . "<span class='rahu_kaalam'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+							}
+							else{
+								$outArray[$house] = $outArray[$house] . " " . "<span class='rahu_kaalam'>$planet</span>" . " " . $outArray[$house] ;
+							}
+						}
+						elseif(strpos($planet,'எ.க')>0 || strpos($planet,"எ.க")===0){
+							if($planetDeg[$planet]>=0.0){
+								$outArray[$house] = $outArray[$house] . " " . "<span class='emma_kantam'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+							}
+							else{
+								$outArray[$house] = $outArray[$house] . " " . "<span class='emma_kantam'>$planet</span>";
+							}
+						}
+						else{
+							$outArray[$house] = $outArray[$house] . " " . $planet . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+							
+						}
+					}
+				}
+			}
+			//arrange planets by degree from bottom to top within these houses (Virichigam to Meenam)
+			else{
+				if(strpos($inArray[$house],$planet)===0 || strpos($inArray[$house],$planet)>0){	
+					if(strpos($inArray[$house],'retro">'.$planet)>0 || strpos($inArray[$house],'retro">'.$planet)===0){
+						$outArray[$house] = "<span class='retro'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house];
+						
+					}
+					else{
+						//$outArray[$house] = $outArray[$house] . " " . $planet . "-". $planetDeg[$planet];
+						
+						if(strpos($planet,'லக்')>0 || strpos($planet,"லக்")===0){
+							$outArray[$house] =  "<span class='lagna'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house];
+						}
+						elseif(strpos($planet,'மா')>0 || strpos($planet,"மா")===0){
+							$outArray[$house] = "<span class='mandhi'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house];
+						}
+						elseif(strpos($planet,'சந்')>0 || strpos($planet,"சந்")===0){
+							//$outArray[$house] = "<span>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house] ;
+							$outArray[$house] = "<span class='moon'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house] ;
+						}
+						elseif(strpos($planet,'உத')>0 || strpos($planet,"உத")===0){
+							if($planetDeg[$planet]>=0.0){
+								$outArray[$house] = "<span class='udh'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house];
+							}
+							else{
+								$outArray[$house] = "<span class='udh'>$planet</span>" . " " . $outArray[$house];
+							}
+						}
+						elseif(strpos($planet,'ஆரு')>0 || strpos($planet,"ஆரு")===0){
+							if($planetDeg[$planet]>=0.0){
+								$outArray[$house] = "<span class='aar'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house] ;
+							}
+							else{
+								$outArray[$house] = "<span class='aar'>$planet</span>" . " " . $outArray[$house] ;
+							}
+						}
+						elseif(strpos($planet,'கவி')>0 || strpos($planet,"கவி")===0){
+							if($planetDeg[$planet]>=0.0){
+								$outArray[$house] = "<span class='kav'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house] ;
+							}
+							else{
+								$outArray[$house] = "<span class='kav'>$planet</span>" . " " . $outArray[$house] ;
+							}
+						}
+						elseif(strpos($planet,'R.K')>0 || strpos($planet,"R.K")===0){
+							$RK_house = $house;
+							if($planetDeg[$planet]>=0.0){
+								$outArray[$house] = "<span class='rahu_kaalam'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house] ;
+							}
+							else{
+								$outArray[$house] = "<span class='rahu_kaalam'>$planet</span>" . " " . $outArray[$house] ;
+							}
+						}
+						elseif(strpos($planet,'எ.க')>0 || strpos($planet,"எ.க")===0){
+							if($planetDeg[$planet]>=0.0){
+								$outArray[$house] = "<span class='emma_kantam'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house] ;
+							}
+							else{
+								$outArray[$house] = "<span class='emma_kantam'>$planet</span>$planet</span>" . " " . $outArray[$house] ;
+							}
+						}
+						else{
+							$outArray[$house] = $planet . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house] ;
+						}
+					}
+				}
+				
+			}
+		}
+	}
+	
+	if(isset($outArray[$RK_house])){
+		$outArray[$RK_house] = str_replace("R.K","ரா.கா",$outArray[$RK_house]);
 	}
 	
 	return $outArray;
@@ -1608,7 +1808,7 @@ function calculateVimDasa()
 		echo "</div>";
 	echo "</div></center>";
 
-	echo "<center><div class='divTable blueTable' style='height:100%;width:360px;display:none;' id='BukthiMatable'>"; 
+	echo "<center><div class='divTable blueTable' style='height:auto;width:360px;display:none;' id='BukthiMatable'>"; 
 		echo "<div class='divTableRow'>";
 			echo "<div class='divDasaHeading'>தசா/புக்தி அதிபதி</div>";
 			echo "<div class='divDasaHeading'>Start</div>";
@@ -1693,7 +1893,7 @@ function calculateVimDasa_boy()
 		echo "</div>";
 	echo "</div></center>";
 
-	echo "<center><div class='divTable blueTable' style='height:100%;width:360px;display:none;' id='BukthiMatable_boy'>"; 
+	echo "<center><div class='divTable blueTable' style='height:auto;width:360px;display:none;' id='BukthiMatable_boy'>"; 
 		echo "<div class='divTableRow'>";
 			echo "<div class='divDasaHeading'>Dasa/Bukthi Lord</div>";
 			echo "<div class='divDasaHeading'>Start</div>";
@@ -1889,7 +2089,7 @@ function displayStarLard()
 		echo "</div>";
 	echo "</div></center>";
 
-	echo "<center><div class='divTable blueTable' id='starlordBodyMutable' style='height:100%;width:360px;display:none'>"; 
+	echo "<center><div class='divTable blueTable' id='starlordBodyMutable' style='height:auto;width:360px;display:none'>"; 
 	echo "<div class='divTableRow'>";
 				echo "<div class='divTableCell'>Planet</div>";
 				echo "<div class='divTableCell'>Star Padam</div>";
@@ -2021,7 +2221,7 @@ function displayStarLard_boy()
 	//calculate planaet karana's
 	calculateKaranamAllPlanets(false); //false for boy, outer
 
-	echo "<center><div class='divTable blueTable' id='starlordBodyMutable_boy' style='height:100%;width:360px;display:none'>"; 
+	echo "<center><div class='divTable blueTable' id='starlordBodyMutable_boy' style='height:auto;width:360px;display:none'>"; 
 	echo "<div class='divTableRow'>";
 				echo "<div class='divTableOuterCell'>Planet</div>";
 				echo "<div class='divTableOuterCell'>Star Padam</div>";
@@ -2325,7 +2525,7 @@ function calculatePanchang(){
 						"Revathi 1/ரேவதி 1","Revathi 2/ரேவதி 2","Revathi 3/ரேவதி 3","Revathi 4/ரேவதி 4");
 						
 	$yoga_arr = array("dummy","விஷ்கம்பம்","ப்ரீதி","ஆயுஷ்மான்", "செளபாக்யம்", "சோபனம்", "அதி கண்டம்", "சுகர்மம்", "திருதி", "சூலம்", "கண்டம்", "விருத்தி", "துருவம்","வ்யாகதம்",
-					"ஹர்ஷணம்", "வஜ்ரம்","சித்தி","வியதீபாதம்","வரீயான்", "பரிகம்","சிவம்", "சித்தம்", "சாத்தியம்","சுபம்","சுப்பிரம்","பிராம்மியம்","ஐந்திரம்","வைதிருதி");
+					"ஹர்ஷணம்", "வஜ்ரம்","சித்தி","வியதீபாதம்","வரீயான்", "பரிகம்","சிவம்", "சித்தம்", "சாத்தியம்","சுபம்","சுப்பிரம்","பிராம்மியம்","ஐந்திரம்","வைதிருதி","விஷ்கம்பம்");
 	
 	//Day calculation
 	$panchang["vaaram"] = $weekday_arr[$dayofweek];
@@ -2478,7 +2678,6 @@ function calculatePanchang(){
 	}
 	
 	$g_yoga_idx = ceil($deg / 13.333333); //divide by 13 deg 20 min in decimal, we will get the index of the yoga (1-27)
-	
 	
 	$panchang["yoga"] = $yoga_arr[$g_yoga_idx];
 }
@@ -2684,8 +2883,19 @@ function updateThithiSoonyam($thithi,$in_inner=true, $in_jamakol=false) //$inner
 	$thithi_soonya_rasi_arr = explode(',',$thithi_house[$thithi]);
 	
 	//to find exact thithi within the thithi's
-	$thithi_deg = ((($full_sun_deg-$full_moon_deg)/12 - floor(($full_sun_deg-$full_moon_deg)/12))) * 12;
+	if($full_moon_deg-$full_sun_deg < 12 && $full_moon_deg > $full_sun_deg){
+		$thithi_deg = $full_moon_deg-$full_sun_deg;
+	}
+	elseif($full_moon_deg < $full_sun_deg){
+		$thithi_deg = ((($full_moon_deg-$full_sun_deg+360)/12 - floor(($full_moon_deg-$full_sun_deg+360)/12))) * 12;
+		
+	}
+	else{
+		$thithi_deg = ((($full_moon_deg-$full_sun_deg)/12 - floor(($full_moon_deg-$full_sun_deg)/12))) * 12;
+	}
 	
+	debug(__FUNCTION__."-THITHI_DEG=$thithi_deg");
+		
 	if(sizeof($thithi_soonya_rasi_arr)==2){
 		if($thithi_deg <= 6){
 			$main_thithi_soonyam = 1;
@@ -4603,5 +4813,76 @@ function getTamilYear($year,$tamil_month){
 	}
 }
 
+function displayHomePageButtons($in_usertype){
+	
+	
+	echo "<center><IMG SRC='images/dsjv_title.png' width='70%' style='position:relative;top:0px;padding:20px'></center>";
+	echo "<BR><BR>";
+	switch($in_usertype){
+		case MATCHING:
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'Matching_input.php\',\'_self\')">புதிய திருமண பொருத்தம்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'matchingChartDisplay.php\',\'_self\')">சேமித்த திருமண பொருத்தங்கள்</button>';
+			break;
+		case BIRTH:
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'Birth_input.php\',\'_self\')">புதிய ஜாதகம்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'birthChartDisplay.php\',\'_self\')">சேமித்த ஜாதகங்கள்</button>';
+			break;
+		case BIRTHMATCH:
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'Matching_input.php\',\'_self\')">புதிய திருமண பொருத்தம்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'matchingChartDisplay.php\',\'_self\')">சேமித்த திருமண பொருத்தங்கள்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'Birth_input.php\',\'_self\')">புதிய ஜாதகம்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'birthChartDisplay.php\',\'_self\')">சேமித்த ஜாதகங்கள்</button>';
+			break;
+		case PANCHANG:
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'new_panchangam.php\',\'_self\')">பஞ்சாங்கம்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'hora.php\',\'_self\')">ஹோரை</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'star_thaara_palan.php\',\'_self\')">நட் தாரா பலன் </button>';
+			break;
+		case JAMAKOL:
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'index.php\',\'_self\')">முகப்பு</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'Birth_input.php\',\'_self\')">புதிய ஜாமக்கோள்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'birthChartDisplay.php\',\'_self\')">சேமித்த ஜாமக்கோள்</button>';
+			break;
+		default:  //PAID
+			//program will not reach this case at all
+			echo "Some server error occured..";
+			break;
+	}
+}
+
+function checkUserType($in_usertype){
+	switch($in_usertype){
+		case MATCHING:
+		case BIRTH:
+		case BIRTHMATCH:
+		case PANCHANG:
+		case JAMAKOL:
+			header('Location: homepage.php');
+		default:  //PAID
+			//it will just open the index.php
+			break;
+	}
+}
+
+function updateOfficeDetails($conn,$in_phone,$in_office_name,$in_office_contact)
+{
+	startSqlTxn($conn);
+
+	try {
+		$sql = "UPDATE user SET office_name='$in_office_name',office_contact='$in_office_contact' WHERE phone='$in_phone'";
+		
+		if(!mysqli_query($conn, $sql)){
+			echo "ERROR: Could not able to execute $sql. " . mysqli_error($conn);
+		}
+		
+		/* If code reaches this point without errors then commit the data in the database */
+		commitSqlTxn($conn);
+		
+	} catch (mysqli_sql_exception $exception) {
+		mysqli_rollback($conn);
+
+		throw $exception;
+	}
+}
 
 ?>

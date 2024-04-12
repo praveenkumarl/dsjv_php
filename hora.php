@@ -461,13 +461,13 @@ function displayHoraTable($hora_data)
 {
 	global $current_hora;
 	
-	echo "<div class='divTable blueTable' style='height:40px;width:320px;margin-left:20px'>";
+	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px'>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divTableCell' colspan=4>தற்போதைய ஓரை</div>";
 		echo "</div>";
 	echo "</div>";
 	
-	echo "<div class='divTable blueTable' style='height:40px;width:320px;margin-left:20px'>";
+	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px'>";
 		echo "<div class='divTableRow'>";
 				echo "<div class='divThaaraPalanHeading'>ஆரம்பம்</div>";
 				echo "<div class='divThaaraPalanHeading'>முடிவு</div>";
@@ -504,13 +504,13 @@ function displayHoraTable($hora_data)
 	
 	echo "<BR><BR>";
 	
-	echo "<div class='divTable blueTable' style='height:40px;width:320px;margin-left:20px'>";
+	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px'>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divTableCell' colspan=4>ஓரை அட்டவணை</div>";
 		echo "</div>";
 	echo "</div>";
 	
-	echo "<div class='divTable blueTable' style='height:40px;width:320px;margin-left:20px'>";
+	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px'>";
 	echo "<div class='divTableRow'>";
 			echo "<div class='divThaaraPalanHeading'>Date</div>";
 			echo "<div class='divThaaraPalanHeading'>Start</div>";

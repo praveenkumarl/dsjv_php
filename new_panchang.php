@@ -4,13 +4,15 @@ include_once "lib.php";
 $DEBUG= (int) isset($_GET['debug']) ? $_GET['debug'] : 0;
 $phone = isset($_COOKIE["phone"]) ? $_COOKIE["phone"] : 1;
 
+$home = isset($_GET['home'])? "none" : "";
+
 if(isset($_POST['place'])){
 	$cookie_name = "panchang_place";
 	$cookie_value = $_POST['place'];
 	setcookie($cookie_name, $cookie_value, time() + (86400 * 365), "/"); // 86400 = 1 day
 }
 
-$place = isset($_POST['place']) ? $_POST['place'] : $_COOKIE['panchang_place'];
+$place = isset($_COOKIE['panchang_place']) ? $_COOKIE['panchang_place'] : "Chennai|Asia/Kolkata";
 $lang = isset($_POST["lang"]) ? $_POST["lang"] : "Tamil";
 
 debug("PLACE=".$place);
@@ -883,7 +885,7 @@ function displayHoroDetails()
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeadingRed'>சந்திராஷ்டம்</div>";
-			echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house,6)-1)."</div>";
+			echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house-1,6))."</div>";
 			//echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house-1,8))."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
@@ -1193,7 +1195,7 @@ updateIndhuLagna();
 
 echo <<<EOL
 	<div class="title"></div>
-		<div class='column-menu'>
+		<div class='column-menu' style='display:$home'>
 			<div class='desktop'>
 				
 EOL;

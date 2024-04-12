@@ -23,7 +23,11 @@ if(isset($_GET["phone"])) {
 	$cookie_name = "phone";
 	$cookie_value = $_GET["phone"];
 	setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
-} 
+}
+
+$girlname = isset($_SESSION['girlname']) ? $_SESSION['girlname'] : "";
+$boyname = isset($_SESSION['boyname']) ? $_SESSION['boyname'] : "";
+
 ?>
 
 <!doctype html>
@@ -71,6 +75,8 @@ if(isset($_GET["phone"])) {
 function init(){
 	document.getElementById('place_girl').value = '<?php echo $place_girl; ?>';
 	document.getElementById('place_boy').value = '<?php echo $place_boy; ?>';
+	document.getElementById('girlname').value = '<?php echo $girlname; ?>';
+	document.getElementById('boyname').value = '<?php echo $boyname; ?>';
 	updateNow();
 }
 

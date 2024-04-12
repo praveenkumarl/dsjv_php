@@ -11,9 +11,9 @@
     <title>PK Astro Jamakol</title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
 	
-	<link rel="stylesheet" href="css/main.css">
-	<link rel="stylesheet" href="css/chart_style.css">
-	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	
     <script src="script.js"></script>
     <script type="text/javascript">

@@ -181,12 +181,13 @@ function deleteUser(in_phone){
 				echo "<div class='divTableRow'>";
 					echo "<div class='divPanchangHeading'>user_type</div>";
 					echo "<select name='usertype' id='usertype' style='background-color:white;border:solid 1px black;color:black;font-weight:bold;border-radius:0'>";
-						if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],'FREE')==0){
+						/*if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],'FREE')==0){
 							echo "<option value='FREE' selected>FREE</option>";
 						}
 						else{
 							echo "<option value='FREE'>FREE</option>";
 						}
+						
 						if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],'PAID')==0){
 							echo "<option value='PAID' selected>PAID</option>";
 						}
@@ -211,6 +212,19 @@ function deleteUser(in_phone){
 						else{
 							if(strcmp($usertype,'ADMIN')==0){
 								echo "<option value='ADMIN'>ADMIN</option>";
+							}
+						}*/
+						
+						foreach($usertype_arr as $utype){
+							if(strcmp($_SESSION['user_type'],SUPER)==0 && strcmp($utype,ADMIN)==0){
+								continue;
+							}
+							
+							if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],$utype)==0){
+								echo "<option value='$utype' selected>$utype</option>";
+							}
+							else{
+								echo "<option value='$utype'>$utype</option>";
 							}
 						}
 						

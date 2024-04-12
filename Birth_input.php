@@ -253,8 +253,8 @@ function updateNow() {
 						<td><div class="divBirthInputLable">*பாலினம்</div></td>
 						<td>
 							<select name="sex" id="sex" style="width:auto;font-size:16px;">
-								<option value="ஆண்" selected>ஆண்</option>
-								  <option value="பெண்">பெண்</option>
+								<option value="ஆண்" selected>&#128104;ஆண்</option>
+								  <option value="பெண்">&#128105;பெண்</option>
 								  <option value="மூன்றாம்">மூன்றாம்</option>
 							</select>
 						</td>
@@ -297,6 +297,7 @@ function updateNow() {
 		</div>
 	</center>
 </div>
+
 </body>
 
 </html>

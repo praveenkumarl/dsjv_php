@@ -2379,7 +2379,7 @@ echo <<<EOL
 		<div class='column-body'>
 					<center><P style="color:#660000;font-weight:bold; font-size:16px; text-align:center; background-color:white;width:200px;line-height: 30px;">பிறப்பு ஜாதகம்</P></center>
 					
-					<center id="pdf"><div class="divTable blueTable" style="height:70px;width:360px;">
+					<center id="pdf"><div class="divTable blueTable" style="height:70px;">
 						<!-- <IMG SRC='images/ganpati2.jpg' width='10%' height='10%' />
 						<center><P style="color:#660000;font-weight:bold; font-size:10px; text-align:center; background-color:white;width:200px;line-height: 20px;">பெரியநாயகி துணை</P></center> -->
 								<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
@@ -2421,7 +2421,7 @@ echo <<<EOL
 												<div class='divTableRow'>
 													<div class='divBirthInputLable'>*பி.இடம்</div>
 													<div class='divBirthInput'>
-														<div class="search-box"><input type="text" name="place" class='divBirthInput' id="place" autocomplete="off" style="background-color:var(--chart-background);font-weight:bold" placeholder="Search place..." onfocus=this.value='' value='$in_place' onBlur="placeOnBlur();" /><div class="result"></div></div>
+														<div class="search-box"><input type="text" name="place" class='divBirthInput' id="place" autocomplete="off" style="background-color:var(--chart-background);font-size:14px;font-weight:bold" placeholder="Search place..." onfocus=this.value='' value='$in_place' onBlur="placeOnBlur();" /><div class="result"></div></div>
 													</div>
 												</div>
 												<div class='divTableRow'>
@@ -2439,8 +2439,8 @@ echo <<<EOL
 											</div>
 											
 											<button type='button' class='actionBtn' id='submit1' value='Submit' onClick='return genChart(this.form);'>Submit</button>
-											<button class='actionBtn' value='Download' onClick='loadOnePage("$onePageURL");'>Download</button>
 											<input type='button' class='actionBtn' id='save' name='save' value='$saveBtnTxt' onClick='saveChart();'>
+											<button class='actionBtn' value='Download' onClick='loadOnePage("$onePageURL");'>Download</button>
 											</form>
 											
 											<!-- <button style="background-color:gold;color:#660000;font-weight:bold;font-size:10px;" onclick="generatePDF()">Download</button> -->
@@ -2559,7 +2559,7 @@ EOL;
 
 echo <<<EOL
 			
-						<div class='divTable blueTable' style='height:auto;width:360px;' id='buttons'>
+						<div class='divTable blueTable' style='height:auto;' id='buttons'>
 							<div class='divTableRow'>
 								<div class="divTableCell" colspan='2'>
 									<H6 style='font-weight:bold;color:black'>குறிப்புகள்</H6>

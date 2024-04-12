@@ -11,7 +11,7 @@ $_SESSION["place_girl"]=$place_girl;
 
 $cookie_name = "place_girl";
 $cookie_value = $in_place_girl;
-setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
+setcookie($cookie_name, $cookie_value, time() + (86400 * 1), "/"); // 86400 = 1 day
 
 $in_place_boy = isset($_POST["place_boy"]) ? $_POST["place_boy"] : $_POST["nPlace_boy"];
 $place_boy=strtok($in_place_boy,"|");
@@ -20,8 +20,8 @@ $TZ_boy=strtok("|");
 $_SESSION["place_boy"]=$place_boy;
 
 $cookie_name = "place_boy";
-$cookie_value = $in_place_girl;
-setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
+$cookie_value = $in_place_boy;
+setcookie($cookie_name, $cookie_value, time() + (86400 * 1), "/"); // 86400 = 1 day
 
 $DEBUG= (int) isset($_SESSION['debug']) ? $_SESSION['debug'] : 0;
 $conn="";
@@ -279,7 +279,7 @@ $dayofweek = date('w', strtotime($chart_date));
 			z2.style.display='block';
 		}
 		
-		function generatePDF() {
+		function old_generatePDF() {
 			// hide unncessary elements
 			var ele = document.getElementById('menu');
 			ele.style.display = 'none';
@@ -302,11 +302,25 @@ $dayofweek = date('w', strtotime($chart_date));
 			
 			//ele.style.display = 'block';
 		}
+		
+		function generatePdf(){
+			var frm = document.getElementById('matchingChart');
+			
+			$('#loader').show();
+			frm.action = 'matching_pdf.php';
+			frm.submit();
+		}
+		
+		$(document).ready(function() 
+		{
+			$('#loader').hide();
+		});
 				
 	</script>
 </head>
 
 <body onLoad="init();">
+<div id="loader" class="center"></div>
 
 <?php
 
@@ -393,9 +407,9 @@ function updatePlanet_transit(array $planets,array $retro, $in_ragu_house)
 
 function updateMandhi_transit(array $out, array $in, $in_sun_degree, $in_day, $in_dayofweek,$in_sun_house)
 {	
-	global $transit_datetime,$today_sunrise,$planetDeg_transit,$mandhi_degree, $planetDeg_default;
+	global $transit_datetime,$transit_today_sunrise,$planetDeg_transit,$mandhi_degree_transit, $planetDeg_default;
 	
-	if(strtotime($transit_datetime) < strtotime($today_sunrise)){
+	if(strtotime($transit_datetime) < strtotime($transit_today_sunrise)){
 		$in_dayofweek = $in_dayofweek - 1;
 		
 		if($in_dayofweek < 0){
@@ -403,7 +417,7 @@ function updateMandhi_transit(array $out, array $in, $in_sun_degree, $in_day, $i
 		}
 	}
 		
-	$mandhi_house = targetHouse($in_sun_house,findMandhiHouse($in_dayofweek,$in_sun_degree, $in_day));
+	$mandhi_house = targetHouse($in_sun_house,findMandhiHouse_transit($in_dayofweek,$in_sun_degree, $in_day));
 	
 	debug($mandhi_house);
 	
@@ -412,8 +426,8 @@ function updateMandhi_transit(array $out, array $in, $in_sun_degree, $in_day, $i
 		if($key == $mandhi_house){
 			$out[$key] = $out[$key] . " மா";
 			
-			$planetDeg_transit["மா"] = ($mandhi_degree % 30);
-			$planetDeg_default["மா"] = ($mandhi_degree % 30);
+			$planetDeg_transit["மா"] = ($mandhi_degree_transit % 30);
+			$planetDeg_default["மா"] = ($mandhi_degree_transit % 30);
 		}
 	}
 	
@@ -3335,8 +3349,8 @@ function displayGirlBoyDetails()
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பிறந்த நேரம்</div>";
-			echo "<div class='divGirlPanchang'>".$chart_time."</div>";
-			echo "<div class='divBoyPanchang'>".$transit_time."</div>";
+			echo "<div class='divGirlPanchang'>".date('h:i A',strtotime($chart_time))."</div>";
+			echo "<div class='divBoyPanchang'>".date('h:i A',strtotime($transit_time))."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பிறந்த இடம்</div>";
@@ -3957,7 +3971,7 @@ echo <<<EOL
 								<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
 									<div class="divTableDummyCell" colspan=3 style="border-radius: 20px 20px 0 0;">
 										
-										<form name='updateChart' action='Matching_Chart.php' method='post'>
+										<form id='matchingChart' action='Matching_Chart.php' method='post'>
 											<input type='hidden' id='nPlace_girl' name='nPlace_girl' value='$in_place_girl'>
 											<input type='hidden' id='nPlace_boy' name='nPlace_boy' value='$in_place_boy'>
 											<input type='hidden' id='nGirlName' name='nGirlName' value='$in_girlname'>
@@ -3969,8 +3983,9 @@ echo <<<EOL
 											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">&#128105;Girl BD: <input type='date' id='nDate' name='nDate' style="background-color:var(--girl-chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$chart_date > &#128105;Girl BT: <input type='time' id='nTime' name='nTime' style="background-color:var(--girl-chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$chart_time></H4>
 											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">&#128104;Boy BD: <input type='date' id='in_date_boy' name='in_date_boy' style="background-color:var(--boy-chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$transit_date>&#128104;Boy BT: <input type='time' id='in_time_boy' name='in_time_boy' style="background-color:var(--boy-chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$transit_time></H4>
 											<BR>
-											<input type='submit' class='actionBtnDefault' id='submit' value='Submit'>
+											<input type='submit' class='actionBtnDefault' id='btnSubmit' value='Submit'>
 											<input type='button' class='actionBtnDefault' id='save' value='Save' onClick='saveChart();'>
+											<input type='button' class='actionBtnDefault' value='Download' onClick='generatePdf();'>
 
 										</form>
 									</div>
@@ -4149,6 +4164,8 @@ $_SESSION["planet_degree"]=$Planet_degree;
 $_SESSION["transit_planet_degree"]=$Transit_Planet_degree;
 $_SESSION["transit_date"]=$transit_date;
 $_SESSION["transit_time"]=$transit_time;
+$_SESSION["girlname"]=$in_girlname;
+$_SESSION["boyname"]=$in_boyname;
 ?>
 
 </body>

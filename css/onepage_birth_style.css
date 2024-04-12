@@ -1,7 +1,7 @@
 :root {
     /*--chart-background: url(../images/square5.jpg); */
 	--header-background: url(../images/OnePageHeader.png);
-	--chart-background: rgba(255,255,255,0.5);
+	--chart-background: #ffe44d;
 	--chart-outer-background: #FFFFFF;
 	--details-background: #ffe44d;
 	--chart-inner-font-size: 10px;
@@ -16,10 +16,10 @@ body {
   margin: 5mm auto;
   padding: 0;
   font-size: 12pt;
-  /*background-image: url('../images/watermark.png');
-  background-repeat: no-repeat;
+  background-image: url('../images/watermark1.png');
+  background-repeat: repeat;
   background-position: center;
-  background-size: 100%; */
+  background-size: 100%; 
 }
 * {
   box-sizing: border-box;
@@ -44,17 +44,8 @@ body {
 @media print {
   html, body {
     width: 210mm; 
-    height: auto;    
-  }
-  .main-page {
-    margin: 0;
-    border: initial;
-    border-radius: initial;
-    width: initial;
-    min-height: initial;
-    box-shadow: initial;
-    background: initial;
-    page-break-after: always;
+    height: auto;
+	max-height: 297mm !important;
   }
 }
 
@@ -125,10 +116,10 @@ div.blueTable {
 .divTableHeading { display: table-header-group;}
 .divTableCell, .divTableHead 
 { 
-	display: table-cell;
+	/*display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 1px black;
+	border:solid 2px black !important;
 	border-collapse: collapse;
 
 	background-color: var(--chart-background);
@@ -139,14 +130,26 @@ div.blueTable {
 	width: 20%;
 	height: 20%;
 	padding:5px;
-
-	//background-image: url(../images/square5.jpg);
-	background-image: var(--chart-background);
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center;
 	
-	position:relative;
+	position:relative;*/
+	
+	display: table-cell; 
+	background-color: var(--chart-background);
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px black !important;
+	border-collapse: collapse;
+	
+	font-size: var(--chart-inner-font-size);
+	line-height: 14px;
+	font-weight: bold;
+	color: black;
+	width: 20%;
+	min-width: 20%;
+	height: 20%;
+	min-height: 20%;
+	padding:5px;
+	font-family: Verdana, Raavi, sans-serif;
 }
 
 .divTableOuterCell 
@@ -670,14 +673,28 @@ div.blueTable {
     text-align: -webkit-center;
 }
 
+.header-image{
+	display: block;
+	height:30px;
+	width:auto;
+	background-image: url('../images/maavilai.png');
+	background-repeat: repeat;
+	background-position: center;
+	background-size: 25%;
+	margin-left:5px;
+	margin-right:5px;
+}
+
 .PageFooter
 {
+	position:fixed;
+	bottom:10px;
 	text-align: center;
 	vertical-align: middle;
 	color: black;
 	font-size: 10px;
 	height: 10px;
-	line-height: 10px;
+	line-height: 15px;
 	border-top:1px solid;
 	border-color: black;
 	font-family: Verdana, Raavi, sans-serif;
@@ -699,7 +716,7 @@ div.blueTable {
 .thithi_soonyam_main {
 	font-size:8px;
 	font-weight:bold;
-	background-color: white !important;
+	background-color: rgb(255,255,255,0) !important;
 	color: black !important;
 	/* color: transparent; */
 	/* background-color: #FFFFFF; */
@@ -721,7 +738,7 @@ div.blueTable {
 }
 
 .indhu{
-	background-color:white !important;
+	/*background-color:white !important;*/
 	color:black;
 	font-size:8px;
 	font-family: Verdana, Raavi, sans-serif;
@@ -781,3 +798,4 @@ page[size="A4"] {
 	font-family: Verdana, Raavi, sans-serif;
 	line-height: 12px;
 }
+

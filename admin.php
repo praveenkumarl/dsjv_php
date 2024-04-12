@@ -219,16 +219,8 @@ getTopActivityDetails();
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <script src="script.js"></script>
+	<script src="tz.js"></script>
     <script type="text/javascript">
-        $(document).ready(function() {
-            $('#fullpage').fullpage({
-              //sectionsColor: ['#1bbc9b', '#4BBFC3', '#7BAABE', 'whitesmoke', '#ccddff'],
-			  sectionsColor: ['#FF8360', '#FFe6df', '#FFe6df', 'whitesmoke', '#ccddff'],
-              anchors: ['firstPage', 'secondPage', '3rdPage', '4thpage', 'lastPage'],
-			  responsiveHeight: 700
-            });
-        });
-
 		$(document).ready(function(){
     $('.search-box input[type="text"]').on("keyup input", function(){
         /* Get input value on change */
@@ -255,6 +247,52 @@ getTopActivityDetails();
 
 function init(){
 	document.getElementById('imei').value = '<?php echo $imei; ?>';
+	
+	getGeoLocation();
+}
+
+function getGeoLocation(){
+	// Check if the browser supports the Geolocation API.
+	if (navigator.geolocation) {
+	  // Get the user's current location.
+	  navigator.geolocation.getCurrentPosition(function(position) {
+		// The success callback function.
+		// This function is called if the browser is able to successfully determine the user's location.
+
+		// Get the user's latitude and longitude coordinates.
+		var latitude = position.coords.latitude;
+		var longitude = position.coords.longitude;
+		
+		//latitude = 15.065746974104158;
+		//longitude = 101.12441707669265;
+		
+		url='https://maps.google.com/maps?q='+latitude+','+longitude+'&output=svembed'+'&z=18';
+		var html = '<iframe src='+url+'></iframe>';
+		
+		const tz = tzlookup(latitude,longitude); //include tz.js
+		
+		alert("Lat="+latitude+" Long="+longitude+" TZ="+tz);
+		
+		$("#map").append(html); //embed map
+		
+		//window.open(url,'_blank');
+
+		// Display the user's location on a map.
+		// ...
+	  }, function(error) {
+		// The error callback function.
+		// This function is called if the browser is unable to determine the user's location.
+
+		// Handle the error.
+		// ...
+		alert(error.message);
+	  });
+	} else {
+	  // The browser does not support the Geolocation API.
+	  // Handle the error.
+	  // ...
+	  alert('Browser does not support Geolocation API');
+	}
 }
 
 function placeOnBlur() {
@@ -345,12 +383,15 @@ function openUserInfo(rowid){
 						
 ?>
 				</form>
-				<BR><BR><BR>
-					<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">User detail</P>
-				<BR><BR>
-				
-				
+				<BR>
+					<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">User detail</P>			
 <?php
+					echo "<form name='userInfo' action='userInfo.php' method='post'>";
+					echo "<P>Search by Name/Phone</P>";
+					echo "<div class='search-box'><input type='text' name='name' id='name' autocomplete='off' style='background:#ffffff' placeholder='Search name/phone...' onfocus=this.value='' onBlur='placeOnBlur();' /><div class='result'></div>";
+					echo "<input type='Submit' id='btSubmit' value='Submit' style='background-color:gold;color:#660000;font-weight:bold;font-size:10px;'>";
+					echo "</form>";
+				
 					echo "<div class='divTable blueTable' style='height:40px;'>";
 						echo "<div class='divTableRow'>";
 							echo "<div class='divPanchangHeading'>Rowid</div>";
@@ -381,12 +422,6 @@ function openUserInfo(rowid){
 
 
 					echo "</div>";
-					echo "<BR><BR>";
-					echo "<form name='userInfo' action='userInfo.php' method='post'>";
-					echo "<P>Type Name to search</P>";
-					echo "<div class='search-box'><input type='text' name='name' id='name' autocomplete='off' style='background:#ffffff' placeholder='Search name...' onfocus=this.value='' onBlur='placeOnBlur();' /><div class='result'></div>";
-					echo "<input type='Submit' id='btSubmit' value='Submit' style='background-color:gold;color:#660000;font-weight:bold;font-size:10px;'>";
-					echo "</form>";
 					
 					echo '<BR><BR><BR>';
 					echo '<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">Activity log</P>';
@@ -415,11 +450,13 @@ function openUserInfo(rowid){
 					echo "<BR><BR>";
 ?>
 				
-				<BR><BR><BR><BR><BR><BR>
+				<BR>
 			</div></center>
 	  </div>
 	</div>
 </div>
+
+<center><div id='map' width="400" height="400"></div></center>
 
 </body>
 

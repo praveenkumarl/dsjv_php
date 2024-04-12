@@ -296,7 +296,7 @@ function updateNow() {
 						</tr>			
 						<tr style="background-color: #FFFFFF">
 							<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:20px">*இடம் :</H5></td>
-							<td><div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="background:#ffffff;font-weight:bold;font-size:10;width:200px" placeholder="Search place..." onfocus=this.value='' onblur="placeOnBlur();" /><div class="result"></div>
+							<td><div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="background:#ffffff;font-weight:bold;font-size:20px;width:200px" placeholder="Search place..." onfocus=this.value='' onblur="placeOnBlur();" /><div class="result"></div>
 							</td>
 						</tr>
 						<tr style="background-color: #FFFFFF;" id="lat_input" hidden="hidden">

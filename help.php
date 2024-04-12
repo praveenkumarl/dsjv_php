@@ -1,9 +1,18 @@
 <?php session_start();
 require "lib.php";
 
-$devInfo = $_GET;
+$key = isset($_COOKIE['key']) ? $_COOKIE['key'] : $_GET['key'];
 
-displayUserInfo($_SESSION['userinfo']);
+$userInfo = getUserInfo_mobile($key);
+$_SESSION['user_type'] = $userInfo['user_type'];
+
+
+$helpInfo_arr = ["device-id" => $key,
+				"Source Platform" => $_SERVER['HTTP_SEC_CH_UA_PLATFORM'],
+				"Memory content" => $_SERVER['HTTP_COOKIE'],
+				"Requested key" => $_SERVER['QUERY_STRING'],
+				"host" => $_SERVER['REQUEST_SCHEME'].'//'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']
+				];
 
 ?>
 
@@ -21,8 +30,10 @@ displayUserInfo($_SESSION['userinfo']);
 	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	<link href='https://fonts.googleapis.com/css?family=Julius Sans One' rel='stylesheet'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">	
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	
 	 
 	<div id="google_translate_element"></div>
 	<script type="text/javascript">
@@ -31,12 +42,56 @@ displayUserInfo($_SESSION['userinfo']);
 	}
 	</script>
 	<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-	<script type="text/javascript" src="scrolloverflow.js"></script>
     <script src="script.js"></script>
+	<script src="tz.js"></script>
     <script type="text/javascript">
+	
 	function init(){
+		
+	}
+	
+	function getGeoLocation(){
+		// Check if the browser supports the Geolocation API.
+		if (navigator.geolocation) {
+		  // Get the user's current location.
+		  navigator.geolocation.getCurrentPosition(function(position) {
+			// The success callback function.
+			// This function is called if the browser is able to successfully determine the user's location.
 
+			// Get the user's latitude and longitude coordinates.
+			var latitude = position.coords.latitude;
+			var longitude = position.coords.longitude;
+			
+			//latitude = 15.065746974104158;
+			//longitude = 101.12441707669265;
+			
+			url='https://maps.google.com/maps?q='+latitude+','+longitude+'&output=svembed'+'&z=18';
+			var html = '<iframe src='+url+'></iframe>';
+			
+			const tz = tzlookup(latitude,longitude); //include tz.js
+			
+			//alert("Lat="+latitude+" Long="+longitude+" TZ="+tz);
+			
+			$("#map").append(html); //embed map
+			
+			//window.open(url,'_blank');
+
+			// Display the user's location on a map.
+			// ...
+		  }, function(error) {
+			// The error callback function.
+			// This function is called if the browser is unable to determine the user's location.
+
+			// Handle the error.
+			// ...
+			alert(error.message);
+		  });
+		} else {
+		  // The browser does not support the Geolocation API.
+		  // Handle the error.
+		  // ...
+		  alert('Bwoser does not support Geolocation API');
+		}
 	}
 			
     </script>
@@ -47,46 +102,51 @@ displayUserInfo($_SESSION['userinfo']);
 	
 <div class="title"></div>
 
-<div class='row'>
-	<div class='column-menu'>
-		<div class='desktop'>
-		</div>
-		<div class='mobile'>
-			<?php displayDeviceInfo($devInfo); ?>
-		</div>
+<div class='column-menu'>
+<?php displayUserInfo($userInfo);?>
+	<div class='desktop'>
+		<button class="menu" onClick="window.open('index.php','_self')">Home</button>
 	</div>
-	<div class='column-body'>
-		<div class="body">
-			<BR><div = class="help_heading">Installation/setup procedure </div>
-			<BR>
-			<div style='text-align:left'>
-				<H6>1. Install the app</H6>
-				<H6>2. Register with your phone/name</H6>
-				<H6>3. Once successfully registered, contact admin</H6>
-				<H6>4. Admin will activate your id post all validations and confirm (this will work only on one phone)</H6>
-				<H6>5. Close the app and reopen</H6>
-			</div>
-			<BR>
-			<BR>
-			<BR><div = class="help_heading">Frequently asked questions</div>
-			<div class="help_question">1. What to do when there is issue?</div>
-			<div class="help_answer">Contact admin with the screenshot of your help page</div>
-			<div class="help_question">2. How to download charts?</div>
-			<div class="help_answer">As now you can take screenshot until PDF feature is enabled</div>
-			<div class="help_question">3. Can I store my charts?</div>
-			<div class="help_answer">Yes, you can use save button to store it</div>
-			<div class="help_question">4. Can I use this app on multiple phones?</div>
-			<div class="help_answer">No. Activated only for one phone</div>
-			<div class="help_question">5. Can I use this app without internet/wifi/data connection?</div>
-			<div class="help_answer">No. This requires internet connection</div>
-			<div class="help_question">6. Will I get any future updates?</div>
-			<div class="help_answer">Yes. New features will be available</div>
-			<BR>
-			<BR>
-		</div>
-	</div>	 
+	<div class='mobile'>
+		<?php include "helpMenu_mobile.php"; ?>
+	</div>
 </div>
+<div class='column-body'>
+	<?php displayHelpInfo($helpInfo_arr); ?>
+	<BR><div = class="help_heading">Installation/setup procedure </div>
+	<BR>
+	<div style='text-align:left'>
+		<H6>1. Install the app</H6>
+		<H6>2. Register with your phone/name</H6>
+		<H6>3. Once successfully registered, contact admin</H6>
+		<H6>4. Admin will activate your id post all validations and confirm (this will work only on one phone)</H6>
+		<H6>5. Close the app and reopen</H6>
+	</div>
+	<BR>
+	<BR>
+	<BR><div = class="help_heading">Frequently asked questions</div>
+	<div class="help_question">1. What to do when there is issue?</div>
+	<div class="help_answer">Contact admin with the screenshot of your help page</div>
+	<div class="help_question">2. How to download charts?</div>
+	<div class="help_answer">You can use download button wherever available</div>
+	<div class="help_question">3. Can I store my charts?</div>
+	<div class="help_answer">Yes, you can use save button to store it</div>
+	<div class="help_question">4. Can I use this app on multiple phones?</div>
+	<div class="help_answer">No. Activated only for one phone. If you install it on another phone, existing phone will not work</div>
+	<div class="help_question">5. Can I use this app without internet/wifi/data connection?</div>
+	<div class="help_answer">No. This requires internet connection</div>
+	<div class="help_question">6. Will I get any future updates?</div>
+	<div class="help_answer">Yes. New features will be available</div>
+</div>	 
+	<BR>
+	<BR>
 
+<center>
+<div class='help_video_heading'>DSJV app - குருஜி Dr.சாஸ்தா ந.மணிகண்டராஜ் ஐயாவின் விளக்கம்</div>
+<!-- <object width="100%" height="300" data="http://www.youtube.com/v/HE9tqAjKYZs" type="application/x-shockwave-flash"><param name="src" value="http://www.youtube.com/v/Ahg6qcgoay4" /></object> -->
+<iframe width="350" height="195" src="https://www.youtube.com/embed/HE9tqAjKYZs?si=rfS5aPL1viQUuOAJ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<div class='help_video_heading'>DSJV app பயன்பாட்டு காணொளிகள்</div>
+<iframe width="350" height="195" src="https://www.youtube.com/embed/QfBBAE30sY0?si=9bR16OTnP6oaQB50" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</center>
 </body>
-
 </html>

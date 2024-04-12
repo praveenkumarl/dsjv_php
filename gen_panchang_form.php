@@ -23,9 +23,9 @@ $curr_month = date('m');
     <title>PK Monthly Panchang</title>
     <meta name="description" content="One page panchang">
 	
-	<link rel="stylesheet" href="css/main.css">
-	<link rel="stylesheet" href="css/chart_style.css">
-	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	<link href='https://fonts.googleapis.com/css?family=Julius Sans One' rel='stylesheet'>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -94,7 +94,7 @@ $curr_month = date('m');
 				<BR>
 				<div class="heading">*பஞ்சாங்கம் உள்ளீடு</div>
 				<BR>
-				<form name="panchangForm" action="gen_panchang.php" method="post" target="_self">
+				<form name="panchangForm" action="gen_panchang_pdf.php" method="post" target="_self">
 				<table width="350px">
 					
 					<tr style="background:none;">
