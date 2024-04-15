@@ -1,7 +1,10 @@
 <?php 
-session_start();
+include_once "lib.php";
 
 $key = isset($_GET['key']) ? $_GET['key'] : "-1";
+
+displayRegistrationMsg();
+return; //users are restricted to register on their own due to multiple phone registration. New page created for admin to register for users.
 ?>
 
 <!doctype html>
@@ -22,17 +25,6 @@ $key = isset($_GET['key']) ? $_GET['key'] : "-1";
 
     <script src="script.js"></script>
     <script type="text/javascript">
-        $(document).ready(function() {
-			$('#fullpage').fullpage({
-			  //sectionsColor: ['#1bbc9b', '#4BBFC3', '#7BAABE', 'whitesmoke', '#ccddff'],
-			  //sectionsColor: ['#FFe6df', '#FFcdbf', '#FFe6df', 'whitesmoke', '#ccddff'],
-			   sectionsColor: ['#FF8360', '#FFe6df', '#FFe6df', 'whitesmoke', '#ccddff'],
-			  anchors: ['firstPage','secondPage', '3rdPage', '4thpage', 'lastPage'],
-			  responsiveHeight: 800,
-			  autoScrolling: false,
-			fitToSection: false
-			});
-		});
 		
 		$(document).ready(function(){
 		$('.search-box input[type="text"]').on("keyup input", function(){

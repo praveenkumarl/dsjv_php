@@ -26,7 +26,7 @@ function getUserDetails()
 
 	try {
 		
-		$sql = "SELECT rowid,name,phone,imei,last_login,user_type,registered_date FROM user ORDER BY last_login DESC LIMIT $start_from, $results_per_page";
+		$sql = "SELECT rowid,name,phone,imei,last_login,user_type,registered_date FROM user ORDER BY registered_date DESC LIMIT $start_from, $results_per_page";
 	
 		if(($result = mysqli_query($conn, $sql))){
 			$count = mysqli_num_rows($result);
