@@ -3509,7 +3509,8 @@ if($DEBUG==0){
 	}
 }
 
-$sql = "SELECT Latitude, Longitude, GMT_offset, GMT_offset_dsl FROM world_cities WHERE Place="."'".$place_girl."'";
+$sql = "SELECT Latitude, Longitude, GMT_offset, GMT_offset_dsl,country FROM world_cities WHERE Place="."'".$place_girl."'"." AND TZ="."'".$TZ_girl."'";
+
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -3537,7 +3538,7 @@ echo "TZ: " . $TZ_girl ."<BR>";
 
 date_default_timezone_set($TZ_girl);
 
-if(date('I')==1) { // DST
+if(date('I',strtotime($chart_date))==1) { // DST
    $hour=(int)strtok($gmt_offset_dst,":");
    $min=(int)strtok(":");
    $offset=$hour+$min/60;
@@ -3696,7 +3697,7 @@ if($DEBUG==1){
 	echo "HOUR:" . $hour."<BR>";
 	echo "MIN:" . $min."<BR>";
 	echo "OFFSET:" . $offset."<BR>";
-	echo "PLACE:" . $place."<BR>";
+	echo "PLACE:" . $place_girl."<BR>";
 	echo "tz offset :" . $tz_offset."<BR>";
 }
 
@@ -3719,7 +3720,8 @@ $transit_date = isset($_POST['in_date_boy']) ? $_POST['in_date_boy'] : date('Y-m
 $transit_time = isset($_POST['in_time_boy']) ? $_POST['in_time_boy'] : date('H:i:s');
 
 //get boys lat/long
-$sql = "SELECT Latitude, Longitude, GMT_offset, GMT_offset_dsl FROM world_cities WHERE Place="."'".$place_boy."'";
+$sql = "SELECT Latitude, Longitude, GMT_offset, GMT_offset_dsl,country FROM world_cities WHERE Place="."'".$place_boy."'"." AND TZ="."'".$TZ_boy."'";
+
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -3745,9 +3747,9 @@ echo "GMT offset dst: " . $gmt_offset_dst."<BR>";
 echo "TZ: " . $TZ_boy ."<BR>";
 }
 
-date_default_timezone_set($TZ_girl);
+date_default_timezone_set($TZ_boy);
 
-if(date('I')==1) { // DST
+if(date('I',strtotime($transit_date))==1) { // DST
    $hour=(int)strtok($gmt_offset_dst,":");
    $min=(int)strtok(":");
    $offset=$hour+$min/60;
@@ -3883,7 +3885,7 @@ if($DEBUG==1){
 	echo "HOUR:" . $hour."<BR>";
 	echo "MIN:" . $min."<BR>";
 	echo "OFFSET:" . $offset."<BR>";
-	echo "PLACE:" . $place."<BR>";
+	echo "PLACE:" . $place_boy."<BR>";
 	echo "tz offset :" . $tz_offset."<BR>";
 }
 
