@@ -28,6 +28,8 @@ const JAMAKOL = "JAMAKOL";
 const SUPER = "SUPER";
 const ADMIN = "ADMIN";
 
+$g_nak="";
+
 //usertype array used in drop down
 $usertype_arr = [PAID, MATCHING, BIRTH, BIRTHMATCH, JAMAKOL, PANCHANG, SUPER, ADMIN, FREE];
 
@@ -63,7 +65,7 @@ function timeToMinutes($time)
 {
 	debug("timeToMinutes-time=".$time);
     list($hours, $minutes) = explode(':',$time);
-    return 60 * $hours + $minutes;
+    return 60 * (int)$hours + (int)$minutes;
 }
 
 // requires an integer, representing minutes, returns time in the sHH:MM format
@@ -1561,6 +1563,9 @@ function calculateVimBukthi($curr_dasa_lord, $bukthi_lord, $bukthi_start_date, $
 	if(strstr($_SERVER['HTTP_REFERER'],'Birth_Chart')>0 && strlen($transit_date>0)){
 		$current_date = date($transit_date); //We should use whatever the transit date choosen in the birth chart not the current date time
 	}
+	else if(strstr($_SERVER['HTTP_REFERER'],'panchang')>0){  //if user choose future date in panchang, we should not use current date
+		$current_date = date($chart_date);
+	}
 	else{
 		$current_date = date('d-m-Y');
 	}
@@ -2291,7 +2296,7 @@ function getDasaAthipathi($nak)
 
 function getPanchaPakshi()
 {
-	global $panchang;
+	global $panchang,$g_nak;
 	
 	$pancha_pakshi = array("அசுவினி" =>array("வல்லூரு", "மயில்"),
 		"பரணி" => array("வல்லூரு","மயில்"),
@@ -2321,15 +2326,15 @@ function getPanchaPakshi()
 		"உத்திரட்டாதி" => array("மயில்","வல்லூரு"),
 		"ரேவதி" => array("மயில்","வல்லூரு"));
 		
-		$nak = explode(' ',explode("/",$panchang['nak'])[1])[0];
+		$g_nak = explode(' ',explode("/",$panchang['nak'])[1])[0];
 		
 		$paksham = rtrim(explode('/',$panchang['thithi'])[2],']');
 		
 		if(strpos("வளர்",$paksham)===0){
-			return $pancha_pakshi[$nak][0];
+			return $pancha_pakshi[$g_nak][0];
 		}
 		else{
-			return $pancha_pakshi[$nak][1];
+			return $pancha_pakshi[$g_nak][1];
 		}
 		
 }
@@ -4324,8 +4329,8 @@ function calculateBirthPanchang(){
 						array("Visti/பத்தரை","Sakuni/சகுனி"),
 						array("Chatuspada/சதுஷ்பாத","Naga/நாகவ"));
 	
-	$weekday_arr = array("Sunday/ஞாயிற்றுக்கிழமை","Monday/திங்கட்கிழமை","Tuesday/செவ்வாய்க்கிழமை","Wednesday/புதன்கிழமை",
-					"Thursday/வியாழக்கிழமை","Friday/வெள்ளிக்கிழமை","Saturday/சனிக்கிழமை");
+	$weekday_arr = array("Sunday/ஞாயிற்று","Monday/திங்கள்","Tuesday/செவ்வாய்","Wednesday/புதன்",
+					"Thursday/வியாழன்","Friday/வெள்ளி","Saturday/சனி");
 	
 	$panchang = array();
 	
@@ -4759,7 +4764,7 @@ function getSessionId()
 }
 
 function getTamilMonthDay($sun_house,$sun_degree){
-	global $today_sunrise, $today_sunset,$chart_time;
+	global $today_sunrise, $today_sunset,$chart_time, $chart_date;
 	
 	$tamil_month_rasi_arr = [array("dummy","dummy",0,0),
 							 array("மேஷம்","சித்திரை",1.030851852,30),
@@ -4791,12 +4796,79 @@ function getTamilMonthDay($sun_house,$sun_degree){
 	$day = ceil($sun_degree * $maxdays/30); //Rasi deg 30
 	//$day = floor($sun_degree * $maxdays/30); //Rasi deg 30
 	
+	//increase day at sunrise
+		
+	if($day>$maxdays){
+		
+		$day=1;
+		$month = $tamil_month_rasi_arr[$sun_house+1][1];
+	}	
+	
+	
 	debug("maxdays_unrounded".((strtotime($today_sunset) - strtotime($today_sunrise))/60/12/60*30)."<BR>day_unrounded=".($sun_degree * $maxdays/30)."<BR>day=$day<BR>maxdays=$maxdays<BR>sun_degree=$sun_degree<BR>today_srise=$today_sunrise<BR>today_sset=$today_sunset");
 							 
 	return array($month,$day);
 }
 
-function getTamilYear($year,$tamil_month){
+//currently works only for 2024
+function getTamilDate(){
+	global $chart_time, $chart_date, $sun_house,$sun_degree;
+	
+	//eng month as idx, tamil month name, eng date when tamil month stars 
+	$eng_tam_map_2024 = [array("மார்கழி",16),
+					array("தை",15), 
+					 array("மாசி",13),
+					 array("பங்குனி",14),
+					 array("சித்திரை",14),
+					 array("வைகாசி",14),
+					 array("ஆனி",15),
+					 array("ஆடி",16),
+					 array("ஆவணி",17), 
+					 array("புரட்டாசி",17),
+					 array("ஐப்பசி",17),
+					 array("கார்த்திகை",16),
+					 array("மார்கழி",16),
+					 array("தை",17),  //2025 jan
+					 ];
+					 
+	$year = date('Y',strtotime($chart_date));
+	$month = (int) date('m',strtotime($chart_date));
+	$day = date('d',strtotime($chart_date));
+	
+	if($year==2024)
+	{
+		if($day < $eng_tam_map_2024[$month][1])
+		{
+			$tamil_month = $eng_tam_map_2024[$month-1][0];
+		}
+		else{
+			$tamil_month = $eng_tam_map_2024[$month][0];
+		}
+		
+		if($day - $eng_tam_map_2024[$month][1] >= 0){
+			$tamil_day = $day - $eng_tam_map_2024[$month][1] + 1;
+		}
+		else{
+			if($month==1){
+				$tamil_day = cal_days_in_month(CAL_GREGORIAN,12,$year)-$eng_tam_map_2024[$month-1][1]+$day+1;
+			}
+			else{
+				$tamil_day = cal_days_in_month(CAL_GREGORIAN,$month-1,$year)-$eng_tam_map_2024[$month-1][1]+$day+1;
+			}
+		}
+	}
+	else{
+		$month_day_arr = getTamilMonthDay($sun_house,$sun_degree);
+		$tamil_month = $month_day_arr[0];
+		$tamil_day = $month_day_arr[1];
+	}
+	
+	$tamil_year = getTamilYear($year, $tamil_month);
+
+	return $tamil_year . ', ' . $tamil_month . ' ' . $tamil_day;
+}
+
+function getTamilYear($eng_year,$tamil_month){
 	global $sun_house;
 	$first_year = [907,967,1027,1087,1147,1207,1267,1327,1387,1447,1507,1567,1627,1687,1747,1807,1867,1927,1987,2047,2107,2167,2227,2287,2347,2407,2467,2527,2587,2647,2707,2767,2827,2887,2947,3007];
 	$year_names = ['பிரபவ','விபவ','சுக்ல','பிரமோதூத','பிரசோற்பத்தி','ஆங்கீரச','ஸ்ரீமுக','பவ','யுவ','தாது','ஈஸ்வர','வெகுதானிய','பிரமாதி','விக்கிரம','விஷு','சித்திரபானு','சுபானு','தாரண','பார்த்திப','விய','சர்வசித்து','சர்வதாரி','விரோதி','விக்ருதி','கர','நந்தன','விஜய','ஜய','மன்மத','துன்முகி','ஹேவிளம்பி','விளம்பி','விகாரி','சார்வரி','பிலவ','சுபகிருது','சோபகிருது','குரோதி','விசுவாசுவ','பரபாவ','பிலவங்க','கீலக','சௌமிய','சாதாரண','விரோதகிருது','பரிதாபி','பிரமாதீச','ஆனந்த','ராட்சச','நள','பிங்கள','காளயுக்தி','சித்தார்த்தி','ரௌத்திரி','துன்மதி','துந்துபி','ருத்ரோத்காரி','ரக்தாட்சி','குரோதன','அட்சய'];
@@ -4804,12 +4876,12 @@ function getTamilYear($year,$tamil_month){
 	$second_half=["சித்திரை","வைகாசி","ஆனி","ஆடி","ஆவணி","புரட்டாசி","ஐப்பசி","கார்த்திகை","மார்கழி"];
 	
 	if(array_search($tamil_month,$second_half)===0 or array_search($tamil_month,$second_half)>0){
-		return $year_names[($year-907)%60];
-		debug(__FUNCTION__.":".(($year-907)%60));
+		return $year_names[($eng_year-907)%60];
+		debug(__FUNCTION__.":".(($eng_year-907)%60));
 	}
 	else{
-		return $year_names[($year-907-1)%60];
-		debug(__FUNCTION__.":".(($year-907-1)%60));
+		return $year_names[($eng_year-907-1)%60];
+		debug(__FUNCTION__.":".(($eng_year-907-1)%60));
 	}
 }
 
@@ -4885,4 +4957,170 @@ function updateOfficeDetails($conn,$in_phone,$in_office_name,$in_office_contact)
 	}
 }
 
+function displayRegistrationMsg(){
+	echo <<<EOL
+	<div class='regMessage'>
+		<img src='images/dsjv_logo.jpg' />
+		<br>
+		<img src='images/dsjv_title.png' />
+		<br>
+		<br>
+		Thanks for choosing DSJV App. Please contact DSJV Admin with your HELP menu screenshot, NAME and PHONE# for registration.
+		<BR>
+		<br>
+		DSJV app சேவையில் இணைந்ததற்கு நன்றி. தங்கள் பெயர், கைபேசி எண் மற்றும் help மெனு screenshot உடன் DSJV அட்மினை தொடர்பு கொள்ளவும்.
+		<BR>
+		<br>
+		<BR>
+		<br>
+		<img src='images/periyanayaki_astro_solutions.png' style='width:100px;left:35%;bottom:20px;position:fixed' />
+	</div>
+EOL;
+}
+
+//this function adds sunrise to rahu kaalam, ema kantam, kulika which is passed in the format 9:00-10:30
+function adjustSunrise($timestr){
+	global $today_sunrise;
+	
+	$AMPM = explode(' ',$timestr);
+	$start_end_arr = explode('-',$AMPM[1]);
+	
+	$sunrisetime = explode(' ',$today_sunrise)[1];
+	
+	/*if(strtotime($sunrisetime) > strtotime("06:00")){
+		$minutes = $minutes = timeToMinutes($sunrisetime) - timeToMinutes("06:00");
+	}
+	else{
+		$minutes = $minutes = timeToMinutes("06:00") - timeToMinutes($sunrisetime);
+	}*/
+	
+	$minutes = $minutes = timeToMinutes($sunrisetime) - timeToMinutes("06:00");
+	
+	if($minutes>0){
+		$newstart = date('H:i',strtotime($start_end_arr[0].' +'.abs($minutes).' minute'));
+		$newend = date('H:i',strtotime($start_end_arr[1].' +'.abs($minutes).' minute'));
+	}
+	else{
+		$newstart = date('H:i',strtotime($start_end_arr[0].' -'.abs($minutes).' minute'));
+		$newend = date('H:i',strtotime($start_end_arr[1].' -'.abs($minutes).' minute'));
+	}
+	
+	if(strcmp($AMPM[0],'காலை')==0){
+		return $newstart.'-'.$newend.' AM';
+	}
+	else{
+		return $newstart.'-'.$newend.' PM';
+	}
+	
+	
+}
+
+
+function getAmrithathiYogam(){ 
+	global $g_nak, $dayofweek;
+	//inner array is for each day of the week starts from Sunday till Sat
+	$yoga_arr = ["அசுவினி" =>Array("சி","சி","சி","ம","அ","அ","சி"),
+				"பரணி"=>Array("பி","சி","சி","சி","சி","சி","சி"),
+				"கிருத்திகை"=>Array("சி","ம","சி","அ","ம","சி","சி"),
+				"ரோகிணி"=>Array("சி","அ","அ","சி","ம","ம","அ"),
+				"மிருகசிரீஷம்" =>Array("சி","சி","சி","சி","ம","சி","சி"),
+				"திருவாதிரை"=>Array("சி","சி","ம","சி","ம","சி","சி"),
+				"புனர்பூசம்"=>Array("சி","அ","சி","சி","அ","சி","சி"),
+				"பூசம்"=>Array("சி","சி","சி","சி","சி","ம","சி"),
+				"ஆயில்யம்"=>Array("சி","சி","சி","சி","சி","ம","ம"),
+				"மகம்"=>Array("ம","ம","சி","சி","அ","ம","அ"),
+				"பூரம்"=>Array("சி","சி","சி","அ","சி","சி","சி"),
+				"உத்திரம்"=>Array("அ","சி","அ","அ","ம","சி","ம"),
+				"ஹஸ்தம்"=>Array("சி","சி","சி","ம","சி","அ","ம"),
+				"சித்திரை"=>Array("சி","பி","சி","சி","சி","சி","ம"),
+				"சுவாதி"=>Array("சி","அ","சி","சி","அ","சி","சி"),
+				"விசாகம்"=>Array("ம","ம","ம","சி","சி","சி","சி"),
+				"அனுஷம்" =>Array("ம","சி","சி","சி","சி","சி","சி"),
+				"கேட்டை"=>Array("ம","சி","ம","சி","பி","ம","சி"),
+				"மூலம்"=>Array("அ","சி","அ","ம","சி","அ","சி"),
+				"பூராடம்"=>Array("சி","ம","சி","அ","சி","பி","சி"),
+				"உத்திராடம்"=>Array("அ","ம","பி","அ","சி","சி","சி"),
+				"திருவோணம்"=>Array("அ","அ","சி","சி","சி","ம","சி"),
+				"அவிட்டம்"=>Array("ம","சி","சி","பி","சி","சி","சி"),
+				"சதயம்"=>Array("சி","சி","ம","சி","ம","சி","அ"),
+				"பூரட்டாதி"=>Array("சி","ம","ம","அ","சி","சி","ம"),
+				"உத்திரட்டாதி"=>Array("அ","சி","அ","சி","சி","சி","சி"),
+				"ரேவதி"=>Array("அ","சி","சி","ம","சி","சி","பி")
+				];
+				
+	$yoga_full_name = ["அ" => "அமிர்த",
+					   "சி" => "சித்த",
+					   "ம" => "மரண",
+					   "பி" => "பிரபலாரிஷ்ட"
+					  ];
+						
+	return $yoga_full_name[$yoga_arr[$g_nak][$dayofweek]];
+
+}
+
+/*
+குருடு நாட்கள் (அ) பார்வை இல்லாத நாட்கள் சூரியன் நிற்கும் நட்சத்திரம் முதல் அன்றைய நட்சத்திரம் வரை எண்ணினால் 1, 2, 3, 4, 25, 26, 27ம் நட்சத்திரங்கள்
+நேத்திரம் 1 (அ) ஒரு பார்வை உள்ள நாட்கள் சூரியன் நிற்கும் நட்சத்திரம் முதல் அன்றைய நட்சத்திரம் வரை எண்ணினால் 5, 6, 7, 8, 21, 22, 23, 24 ம் நட்சத்திரங்கள்
+நேத்திரம் 2 (அ) இருகண் உள்ள நாட்கள் சூரியன் நிற்கும் நட்சத்திரம் முதல் அன்றைய நட்சத்திரம் வரை எண்ணினால் 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20ம் நட்சத்திரங்கள்
+*/
+
+function getNethram()
+{
+	global $sun_degree,$sun_house, $g_nak_idx;
+	$result="";
+	
+	$sunstar = ceil((($sun_house-1)*30+$sun_degree)/13.33);
+	$todaystar = ceil($g_nak_idx/4);
+	
+	
+	$diff = $todaystar - $sunstar+1; //add one to include sun star
+	debug("$todaystar - $sunstar=$diff");
+	
+	if($diff >=9 and $diff <=20){
+		$result = "முழு (&#128065;&#128065;)";
+	}
+	elseif($diff >=5 and $diff <=8){
+		$result = "அரை (&#128065;)";
+	}
+	elseif($diff >=21 and $diff <=24){
+		$result = "குருடு (0)";
+	}
+	else{
+		$result = "குருடு (0)";
+	}
+	
+	return $result;
+}
+
+/*
+உயிரற்ற நாட்கள் சூரியன் நிற்கும் நட்சத்திரம் முதல் அன்றைய நட்சத்திரம் வரை எண்ணினால் 1, 2, 10, 19, 27 ம் நட்சத்திரங்கள்
+அரை உயிர் உள்ள நாட்கள் சூரியன் நிற்கும் நட்சத்திரம் முதல் அன்றைய நட்சத்திரம் வரை எண்ணினால் 3, 4, 5, 6, 7, 8, 9, 20, 21, 22, 23, 24, 25, 26 ம் நட்சத்திரங்கள்
+முழு உயிர் உள்ள நாட்கள் சூரியன் நிற்கும் நட்சத்திரம் முதல் அன்றைய நட்சத்திரம் வரை எண்ணினால் 11, 12, 13, 14, 15, 16, 17, 18 ம் நட்சத்திரங்கள்
+*/
+function getJeevan()
+{
+	global $sun_degree,$sun_house, $g_nak_idx;
+	$result="";
+	
+	$sunstar = ceil((($sun_house-1)*30+$sun_degree)/13.33);
+	$todaystar = ceil($g_nak_idx/4);
+	
+	
+	$diff = $todaystar - $sunstar+1; //add one to include sun star
+	debug("$todaystar - $sunstar=$diff");
+	
+	if($diff ==1 or $diff == 2 or $diff == 10 or $diff == 19 or $diff == 27){
+		$result = "உயிரற்ற (0)";
+	}
+	elseif(($diff >=3 and $diff <=9) or $diff == 9 or ($diff >=20 and $diff <=26)){
+		$result = "அரை உயிர் (&frac12;)";
+	}
+	elseif($diff >=11 and $diff <=18){
+		$result = "முழு உயிர் (1)";
+	}
+	
+	return $result;
+}
 ?>
+
+

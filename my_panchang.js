@@ -173,6 +173,18 @@ function generatePDF() {
 	  return formatted;
 	}
 	
+	function formatDateYYYYMMDD(date) {
+	  date = changeTimezone(date,timezone);	
+	  const year = date.getFullYear();
+	  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+	  //const month = date.toLocaleString('default', { month: 'short' }); // Get full month name
+	  const day = String(date.getDate()).padStart(2, '0');	  
+
+	  // Create the date string in the format: "YYYY-MM-DD"
+	  const formatted = `${year}-${month}-${day}`;
+	  return formatted;
+	}
+	
 	function formatDateTime(date) {
 		date = changeTimezone(date,timezone);	
 		const year = date.getFullYear();
@@ -211,3 +223,4 @@ function generatePDF() {
 	  const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 	  return lastDay.getDate();
 	}
+	

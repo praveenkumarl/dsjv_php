@@ -316,6 +316,21 @@ input, select, textarea {
 			  background-color:white;
 			  text-align:center;
 			}
+			
+			.regMessage
+			{
+				font-size: 30px;
+				line-height:30px;
+				font-weight: bold;
+				font-family: Arial, sans-serif;
+				color: blue;
+				margin: 10%;
+				text-align: center;
+				display: flex;
+				align-items: center;
+				width:100%;
+				height:100%;
+			}
 
 		}
 
@@ -1798,6 +1813,21 @@ input, select, textarea {
 				width:100%;
 				text-align:center;
 			}
+			
+			.regMessage
+			{
+				font-size: 30px;
+				line-height:30px;
+				font-weight: bold;
+				font-family: Arial, sans-serif;
+				color: blue;
+				margin: 10%;
+				text-align: center;
+				display: flex;
+				align-items: center;
+				width:100%;
+				height:100%;
+			}
 
 		}
 
@@ -2055,6 +2085,20 @@ input, select, textarea {
 				display: block;
 				width:100%;
 				text-align:center;
+			}
+			
+			.regMessage
+			{
+				font-size: 30px;
+				line-height:30px;
+				font-weight: bold;
+				font-family: Arial, sans-serif;
+				color: blue;
+				margin: 10%;
+				text-align: center;
+				display: block;
+				width:100%;
+				height:100%;
 			}
 
 		}
@@ -3657,9 +3701,9 @@ div.error {
 	text-align:center;
 	vertical-align:middle;
 	border:solid 1px #660000;
-
 	background-color: var(--details-background);
 	font-size: 12px;
+	line-height: 14px;
 	color: black;
 	width: 20%;
 	height: 20%;
@@ -3691,9 +3735,9 @@ div.error {
 	text-align:center;
 	vertical-align:middle;
 	border:solid 1px #660000;
-
 	background-color: #ffffff;
 	font-size: 12px;
+	line-height: 14px;
 	color: black;
 	width: 20%;
 	height: 20%;
@@ -4321,6 +4365,16 @@ div.error {
 	text-align: center;
 }
 
+.actionBtnSmall{
+	background-color: var(--menu-background) !important;
+	color:var(--button-text-color) !important;
+	font-weight:bold !important;
+	font-size:10px !important;
+	width:auto;
+	padding:1px;
+	text-align: center;
+}
+
 .actionBtnTransit{
 	background-color: var(--menu-background) !important;
 	color:var(--button-text-color) !important;
@@ -4767,4 +4821,46 @@ parigaraDiv{
 	color: black;
 	margin-top: 15px;
 	margin-bottom: 5px;
+}
+
+.regMessage
+{
+	font-size: 20px;
+	line-height:30px;
+	font-weight: bold;
+	font-family: Arial, sans-serif;
+	color: blue;
+	margin:0;
+	padding:5%;
+	text-align: center;
+	display: block;
+	align-items: center;
+	width:100%;
+	height:100%;
+	background-color:gold;
+}
+
+.divSmall{
+	font-size:9px;
+}
+
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto;
+  height:80vh;
+}
+.grid-item {
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  font-size: 30px;
+  height:100%;
+  align-content: center;
+  background-color: var(--menu-sel-background);
+  box-shadow: 0 0 25px rgba(255,0,0,.5);
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 4px #000000;
+  user-select: none; 
 }

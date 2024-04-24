@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 include_once "lib.php";
 
@@ -5,6 +6,7 @@ $DEBUG= (int) isset($_GET['debug']) ? $_GET['debug'] : 0;
 $phone = isset($_COOKIE["phone"]) ? $_COOKIE["phone"] : 1;
 
 $home = isset($_GET['home'])? "none" : "";
+$flag = (int)isset($_GET['flag']) ? $_GET['flag'] : 0;
 
 if(isset($_POST['place'])){
 	$cookie_name = "panchang_place";
@@ -86,8 +88,29 @@ $g_yoga_idx=-1;
 $g_nak_idx=-1;
 $g_dasaBalance=array();
 $g_dasaCurrent=array();
+
+
+// ------- Swiss ephemeris // ------- 
+$libPath = './sweph/';
+putenv("PATH=$libPath");
+// ------- Swiss ephemeris // ------- 
+
+if(isset($_POST['nDate']) && $_POST['nDate']==""){
+	$chart_date = date("Y-m-d");
+	$chart_time = date("H:i:s");
+}
+else{
+	$chart_date = isset($_POST['nDate']) ? $_POST['nDate'] : date("Y-m-d");
+	$chart_time = isset($_POST['nTime']) ? $_POST['nTime'] : date("H:i:s");
+}
+
+$_SESSION["date"] = date("d-m-Y",strtotime($chart_date));
+$_SESSION["time"] = $chart_time;
+
+$dayofweek = date('w', strtotime($chart_date));
+
 ?>
-<!DOCTYPE html>
+
 <html lang="en" class="no-js">
 <head>
     <meta charset="utf-8">
@@ -110,7 +133,25 @@ $g_dasaCurrent=array();
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <script src="script.js"></script>
+	<script src="panchang.js"></script>
+	<script src="my_panchang.js"></script>
     <script type="text/javascript">
+	var timezone = '<?php echo $TZ; ?>';
+	
+	function init(){
+			if(getCookie(focus)=='date'){
+				document.getElementById('nDate').focus();
+			}
+			
+			if(getCookie(focus)=='time'){
+				document.getElementById('nTime').focus();
+			}
+			
+			delete_cookie(focus);
+			
+			document.getElementById('place').value = '<?php echo $place; ?>';
+		} 
+	
 /******** this code is to take screenshot of the chart **************	
 		var dataURL = {};  
 		 $(document).ready(function(){
@@ -141,19 +182,7 @@ $g_dasaCurrent=array();
         }   
 ****** this code is to take screenshot of the chart ***************/
 
-		function init(){
-			if(getCookie(focus)=='date'){
-				document.getElementById('nDate').focus();
-			}
-			
-			if(getCookie(focus)=='time'){
-				document.getElementById('nTime').focus();
-			}
-			
-			delete_cookie(focus);
-			
-			document.getElementById('place').value = '<?php echo $place; ?>';
-		} 
+		
 		
 		function updateNow() {
 			  const date = new Date();
@@ -263,6 +292,41 @@ $g_dasaCurrent=array();
 			document.forms["updatePanchang"].submit();
 		}
 		
+		function movePanchang(days){
+			datetime = (new Date(document.getElementById('nDate').value+' '+document.getElementById('nTime').value));
+			switch(days){
+				case -1:
+					new_datetime = new Date(datetime.getTime()-60*60*24*1000);
+					document.getElementById('nDate').value = formatDateYYYYMMDD(new_datetime);
+					break;
+				case -30:
+					new_datetime = new Date(datetime.getTime()-60*60*24*1000*30);
+					document.getElementById('nDate').value = formatDateYYYYMMDD(new_datetime);
+					break;
+				case -365:
+					new_datetime = new Date(datetime.getTime()-60*60*24*1000*365);
+					document.getElementById('nDate').value = formatDateYYYYMMDD(new_datetime);
+					break;
+				case 1:
+					new_datetime = new Date(datetime.getTime()+60*60*24*1000);
+					document.getElementById('nDate').value = formatDateYYYYMMDD(new_datetime);
+					break;
+				case 30:
+					new_datetime = new Date(datetime.getTime()+60*60*24*1000*30);
+					document.getElementById('nDate').value = formatDateYYYYMMDD(new_datetime);
+					break;
+				case 365:
+					new_datetime = new Date(datetime.getTime()+60*60*24*1000*365);
+					document.getElementById('nDate').value = formatDateYYYYMMDD(new_datetime);
+					break;
+				default:
+					break;
+			}
+			document.querySelector("#loader").style.visibility = "visible";
+			
+			document.forms["updatePanchang"].submit();
+		}
+		
 		function showKaranamDiv() {
 		  document.getElementById("karanamDiv").style.display = "block";
 		}
@@ -285,6 +349,9 @@ $g_dasaCurrent=array();
 				case 4:
 					divName = "ayogiDetailsDiv";
 					break;
+				case 5:
+					divName = "ayogiDetailsDiv";
+					break;
 			}
 			
 			$(divName).delay(3000).fadeOut('slow');
@@ -300,7 +367,7 @@ $g_dasaCurrent=array();
 
 			div.style.left = left;
 			div.style.top = top;
-			div.style.position = fixed;
+			//div.style.position = absolute;
 			//div.style.left = (e.screenX + window.scrolLeft);
 			//div.style.top = (e.screenY + window.scrolTop);
 		  
@@ -339,21 +406,13 @@ $g_dasaCurrent=array();
 		document.onreadystatechange = function() {
 		
 		if(document.getElementById('dummy') != null){	//chart not loaded
-			document.querySelector("#loader").style.display = "none";
+			if(document.getElementById('loader'))
+				document.querySelector("#loader").style.display = "none";
 		}
 		else{
 			//document.querySelector("body").style.visibility = "hidden";
 			document.querySelector("#loader").style.visibility = "visible";
 		}
-		
-		/*if (document.readyState != "complete") {
-			document.querySelector("body").style.visibility = "hidden";
-			document.querySelector("#loader").style.visibility = "visible";
-		} else {
-			document.querySelector("#loader").style.display = "none";
-			document.querySelector("body").style.visibility = "visible";	
-			document.getElementById("msg").style.visibility = "none";
-		}*/
 	};
 	
 	function genPanchang(place){
@@ -381,36 +440,63 @@ $g_dasaCurrent=array();
 		  
 		  return true;
 	}
+	
+	function updatePanchangData(){
+		const t = new Date('<?php echo $chart_date." ".$chart_time; ?>');
+
+		newdate = new Date(t.getFullYear(),t.getMonth(),t.getDate(),t.getHours(),t.getMinutes()); 
+		
+				
+				newdate = changeTimezone(newdate,timezone);
+				
+				  panchang.calculate(newdate, function() {
+						//document.writeln('<div class="divTableRow">');
+						//	document.writeln('<div class="divTablePanchangMedium" style="width:80px">'+formatDate(newdate)+'</div>');
+						//	document.writeln('<div class="divTablePanchangMedium" style="width:50px">'+panchang.Day.name+'</div>');
+						//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Nakshatra.name+" "+formatDateTime(panchang.Nakshatra.end)+' வரை'+displayNextNak(newdate,panchang.Nakshatra)+'</div>');
+						//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Tithi.name+' '+formatDateTime(panchang.Tithi.end)+' வரை'+displayNextThithi(newdate,panchang.Tithi)+'</div>');
+						//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Karna.name+' '+formatDateTime(panchang.Karna.start)+" முதல் "+formatDateTime(panchang.Karna.end)+' வரை'+displayNextKar(newdate,panchang.Karna)+'</div>');
+						//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Yoga.name+' '+formatDateTime(panchang.Yoga.start)+" முதல் "+formatDateTime(panchang.Yoga.end)+' வரை'+displayNextYoga(newdate,panchang.Yoga)+'</div>');
+						//document.writeln('</div>');
+						
+						document.getElementById('thithi').innerHTML = panchang.Tithi.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Tithi.start)+' முதல்<BR>'+formatDateTime(panchang.Tithi.end)+' வரை</div>';
+						document.getElementById('nak').innerHTML = panchang.Nakshatra.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Nakshatra.start)+' முதல்<BR>'+formatDateTime(panchang.Nakshatra.end)+' வரை</div>';
+						document.getElementById('yogam').innerHTML = panchang.Yoga.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Yoga.start)+' முதல்<BR>'+formatDateTime(panchang.Yoga.end)+' வரை</div>';
+						document.getElementById('karanam').innerHTML = panchang.Karna.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Karna.start)+' முதல்<BR>'+formatDateTime(panchang.Karna.end)+' வரை</div>';
+
+				  });
+	}
+	
+	$(document).ready(function(){
+		updatePanchangData();
+		$('#hora').load('hora.php div#horaLordTxt'); //getting the current hora lord running the hora.php and extract only the lord text
+		
+		var param = '<?php echo $flag; ?>';
+		
+		if(param==1){ //Panchang details alone
+			document.getElementById('appMenu').style.display = 'none';
+			document.getElementById('panchangForm').style.display = 'none';
+			document.getElementById('panchangDetailsHeading').style.display = 'reset';
+			document.getElementById('panchangDetails').style.display = 'table';
+			document.getElementById('transitChartHeading').style.display = 'none';
+			document.getElementById('transitChart').style.display = 'none';
+		}
+		else if(param==2){ //transit chart alone
+			document.getElementById('appMenu').style.display = 'none';
+			document.getElementById('panchangForm').style.display = 'none';
+			document.getElementById('panchangDetailsHeading').style.display = 'none';
+			document.getElementById('panchangDetails').style.display = 'none';
+			document.getElementById('transitChartHeading').style.display = 'reset';
+			document.getElementById('transitChart').style.display = 'reset';
+		}
+	}); 
 				
 	</script>
 </head>
-<?php
-
-
-
-// ------- Swiss ephemeris // ------- 
-$libPath = './sweph/';
-putenv("PATH=$libPath");
-// ------- Swiss ephemeris // ------- 
-
-if(isset($_POST['nDate']) && $_POST['nDate']==""){
-	$chart_date = date("Y-m-d");
-	$chart_time = date("H:i:s");
-}
-else{
-	$chart_date = isset($_POST['nDate']) ? $_POST['nDate'] : date("Y-m-d");
-	$chart_time = isset($_POST['nTime']) ? $_POST['nTime'] : date("H:i:s");
-}
-
-$_SESSION["date"] = date("d-m-Y",strtotime($chart_date));
-$_SESSION["time"] = $chart_time;
-
-$dayofweek = date('w', strtotime($chart_date));
-
-?>
 
 <body onLoad="init();">
 <div class="karanamDiv" id="karanamDiv" onclick="hideKaranamDiv()"><!-- <img src='images/karanam.png' /> --></div>
+<div id="loader" class="center"></div>
 
 <?php
 
@@ -761,9 +847,9 @@ function displayProkeralaDetailPanchang($in_arr)
 function displayHoroDetails()
 {
 	global $panchang, $in_name, $chart_date, $chart_time, $g_dasaBalance, $place, $g_thithi_soonyam_matching_arr,$g_dasaCurrent, $transit_date, $lagna_house, $country,$yogi_arr, 
-		$g_pancha_pakshi, $g_thithi, $g_paksham, $moon_house, $today_sunrise, $today_sunset, $otherPanchangDetails, $city,$g_nak, $g_thithi_idx, $g_yoga_idx;
+		$g_pancha_pakshi, $g_thithi, $g_paksham, $moon_house, $today_sunrise, $today_sunset, $otherPanchangDetails, $city,$g_nak, $g_thithi_idx, $g_yoga_idx, $nak_pad_idx;
 	
-	echo "<div class='divTable blueTable' style='height:40px;width: fit'>";
+	echo "<div class='divTable blueTable' style='height:40px;width: fit' id='panchangDetailsHeading'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
 				echo "<div class='divPanchangHeading' colspan='3'>";
 					echo "<H6 style='font-weight:bold;color:black'>பஞ்சாங்கம்</H6>";
@@ -772,14 +858,18 @@ function displayHoroDetails()
 	echo "</div>";
 	
 	//display panchang table 
-	echo "<div class='divTable blueTable' style='height:40px;width:fit;'>"; 
+	echo "<div class='divTable blueTable' style='height:40px;width:fit;' id='panchangDetails'>"; 
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>தேதி</div>";
-			echo "<div class='divPanchang'>".$chart_date."</div>";
+			echo "<div class='divPanchangHeading'>ஆ.தேதி</div>";
+			echo "<div class='divPanchang'>".date('d-m-Y',strtotime($chart_date))."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>த.தேதி</div>";
+			echo "<div class='divPanchang'>".getTamilDate()."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>நேரம்</div>";
-			echo "<div class='divPanchang'>".date('h:i:s a',strtotime($chart_time))."</div>";
+			echo "<div class='divPanchang'>".date('h:i:s A',strtotime($chart_time))."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>இடம்</div>";
@@ -790,65 +880,61 @@ function displayHoroDetails()
 			echo "<div class='divPanchang'>".explode('/',$panchang['vaaram'])[1]."</div>";
 		echo "</div>";
 		
+		displayDetailsDiv('thi',$g_thithi_idx);
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>திதி</div>";
-			$g_thithi = explode('/',explode('[',$panchang['thithi'])[0])[1];
+				echo "<div class='divPanchang' id='thithi' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'></div>";
+			/*$g_thithi = explode('/',explode('[',$panchang['thithi'])[0])[1];
 			
 			if(strpos($panchang['thithi'],"Amavasya/அமாவாசை")===0 || strpos($panchang['thithi'],"Poornima/பௌர்ணமி")===0){
 				$g_paksham = "";
-				echo "<div class='divPanchang' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'>".$g_thithi . $g_paksham . "<BR>". "</div>";
+				echo "<div class='divPanchang' id='thithi' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'>".$g_thithi . $g_paksham . "<BR>". "</div>";
 			}
 			else{
 				$g_paksham = rtrim(explode('/',$panchang['thithi'])[2],']');
-				echo "<div class='divPanchang' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'>".$g_thithi ." [". $g_paksham . "]" . "</div>";
-			}
+				echo "<div class='divPanchang' id='thithi' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'>".$g_thithi ." [". $g_paksham . "]" . "</div>";
+			}*/
 		echo "</div>";
-		displayDetailsDiv('thi',$g_thithi_idx);
 		
+		displayDetailsDiv('nak',ceil($nak_pad_idx)/4);
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
-			echo "<div class='divPanchang'>".explode('/',$panchang['nak'])[1]."<BR>".$panchang['nak-end-time']." வரை</div>";
+			//echo "<div class='divPanchang' id='nak'>".explode('/',$panchang['nak'])[1]."<BR>".$panchang['nak-end-time']." வரை</div>";
+			echo "<div class='divPanchang' id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'></div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>யோகம்</div>";
-			echo "<div class='divPanchang'>".$panchang['yoga']."</div>";
+			//echo "<div class='divPanchang' id='yogam'>".$panchang['yoga']."</div>";
+			echo "<div class='divPanchang' id='yogam'></div>";
 		echo "</div>";
 		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>கரணம்</div>";
 			$karan = explode('/',$panchang['karan'])[1];
-			//echo "<div class='divPanchang' OnClick='showKaranamDiv(event)' style='color:blue;cursor:pointer'>".$karan."(".getKaranaPlanet($karan).")</div>";
-			echo "<div class='divPanchang' OnClick='showDetailsDiv(event,2)' style='color:blue;cursor:pointer'>".$karan."(".getKaranaPlanet($karan).")</div>";
+			//echo "<div class='divPanchang' id='karanam' OnClick='showDetailsDiv(event,2)' style='color:blue;cursor:pointer'>".$karan."(".getKaranaPlanet($karan).")</div>";
+			echo "<div class='divPanchang' id='karanam' OnClick='showDetailsDiv(event,2)' style='color:blue;cursor:pointer'></div>";
 		echo "</div>";
 		displayDetailsDiv('kar',$karan);
-		
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>நக்ஷத்ர நாம எழுத்து </div>";
-			echo "<div class='divPanchang'>".getStarLetters($g_nak)[0][0]."<BR>".getStarLetters($g_nak)[1][0]."</div>";
-		echo "</div>";
-		
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>லக்கினம்</div>";
-			echo "<div class='divPanchang'>".getRasi($lagna_house-1)."</div>";
-		echo "</div>";
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>ராசி</div>";
-			echo "<div class='divPanchang'>".getRasi($moon_house-1)."</div>";
-		echo "</div>";
 		$yogi_arr = getYogi($panchang['yoga']);
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>யோகி</div>";
 			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 3)' style='color:blue;cursor:pointer'>".$yogi_arr[1]."(".$yogi_arr[0].")</div>";
 		echo "</div>";
-		displayDetailsDiv('yogi',$g_yoga_idx);
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeadingRed'>அவயோகி</div>";
-			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 4)' style='color:blue;cursor:pointer'>".$yogi_arr[3]."(".$yogi_arr[2].")</div>";
+			echo "<div class='divPanchangHeading'>ஹோரை</div>";
+			echo "<div class='divPanchang' id='hora'></div>";
 		echo "</div>";
-		displayDetailsDiv('ayogi',$g_yoga_idx);
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeadingRed'>திதி சூன்யம்</div>";
-			echo "<div class='divPanchang'>".$g_thithi_soonyam_matching_arr[0]."</div>";
+			echo "<div class='divPanchangHeading'>அமிர்தாதி யோகம்</div>";
+			echo "<div class='divPanchang'>".getAmrithathiYogam()."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>நேத்திரம்</div>";
+			echo "<div class='divPanchang'>".getNethram()."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>ஜீவன்</div>";
+			echo "<div class='divPanchang'>".getJeevan()."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பஞ்ச பக்ஷி</div>";
@@ -864,24 +950,42 @@ function displayHoroDetails()
 			echo "<div class='divPanchang'>".explode(' ',$today_sunset)[1]."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>ராகு காலம்</div>";
+			echo "<div class='divPanchangHeading'>நக்ஷத்ர நாம எழுத்து </div>";
+			echo "<div class='divPanchang'>".getStarLetters($g_nak)[0][0]."<BR>".getStarLetters($g_nak)[1][0]."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>லக்கினம்</div>";
+			echo "<div class='divPanchang'>".getRasi($lagna_house-1)."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>ராசி</div>";
+			echo "<div class='divPanchang'>".getRasi($moon_house-1)."</div>";
+		echo "</div>";
+		displayDetailsDiv('yogi',$g_yoga_idx);
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeadingRed'>அவயோகி</div>";
+			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 4)' style='color:blue;cursor:pointer'>".$yogi_arr[3]."(".$yogi_arr[2].")</div>";
+		echo "</div>";
+		displayDetailsDiv('ayogi',$g_yoga_idx);
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeadingRed'>திதி சூன்யம்</div>";
+			echo "<div class='divPanchang'>".$g_thithi_soonyam_matching_arr[0]."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeadingRed'>ராகு காலம்</div>";
 			echo "<div class='divPanchang'>".$otherPanchangDetails[0]."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>எம கண்டம்</div>";
+			echo "<div class='divPanchangHeadingRed'>எம கண்டம்</div>";
 			echo "<div class='divPanchang'>".$otherPanchangDetails[2]."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>குளிகை நேரம்</div>";
+			echo "<div class='divPanchangHeadingRed'>குளிகை நேரம்</div>";
 			echo "<div class='divPanchang'>".$otherPanchangDetails[1]."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>வார சூலை</div>";
-			echo "<div class='divPanchang'>".$otherPanchangDetails[3]."</div>";
-		echo "</div>";
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>பரிகாரம்</div>";
-			echo "<div class='divPanchang'>".$otherPanchangDetails[4]."</div>";
+			echo "<div class='divPanchangHeadingRed'>வார சூலை</div>";
+			echo "<div class='divPanchang'>".$otherPanchangDetails[3].'<BR>பரிகாரம் - '. $otherPanchangDetails[4] ."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeadingRed'>சந்திராஷ்டம்</div>";
@@ -908,14 +1012,14 @@ function getOtherPanchangamDetails()
 	global $dayofweek,$otherPanchangDetails;
 	
 	$rahu_kaalam = array("மாலை 4:30-6:30","காலை 7:30-9:00","மதியம் 3:00-4:30","மதியம் 12:00-1:30","மதியம் 1:30-3:00","காலை 10:30-12:00","காலை 09:00-10:30");
-	$kuligai_neram = array("மதியம் 3:00-4:30","மதியம் 1:30-3:00","மதியம்12:00-1:30","காலை 10:30-12:00","காலை 09:00-10:30","காலை 7:30-9:00","காலை 6:00-7:30");
+	$kuligai_neram = array("மதியம் 3:00-4:30","மதியம் 1:30-3:00","மதியம் 12:00-1:30","காலை 10:30-12:00","காலை 09:00-10:30","காலை 7:30-9:00","காலை 6:00-7:30");
 	$yama_kantam = array("மதியம் 12:00-1:30","காலை 10:30-12:00","காலை 09:00-10:30","காலை 7:30-9:00","காலை 6:00-7:30","மதியம் 3:00-4:30","மதியம் 1:30-3:00");
 	$vaara_soolai = array("மேற்கு","கிழக்கு","வடக்கு","வடக்கு","தெற்கு","மேற்கு","கிழக்கு");
 	$parikaaram = array("வெல்லம் ","தயிர்","பால்","பால்","தைலம்","வெல்லம்","தயிர்");
 	
-	$otherPanchangDetails[0] = $rahu_kaalam[$dayofweek];
-	$otherPanchangDetails[1] = $kuligai_neram[$dayofweek];
-	$otherPanchangDetails[2] = $yama_kantam[$dayofweek];
+	$otherPanchangDetails[0] = adjustSunrise($rahu_kaalam[$dayofweek]);
+	$otherPanchangDetails[1] = adjustSunrise($kuligai_neram[$dayofweek]);
+	$otherPanchangDetails[2] = adjustSunrise($yama_kantam[$dayofweek]);
 	$otherPanchangDetails[3] = $vaara_soolai[$dayofweek];
 	$otherPanchangDetails[4] = $parikaaram[$dayofweek];
 	
@@ -928,7 +1032,7 @@ function displayTransitChart()
 	
 	echo "<BR>";
 	echo "<div class='divTable blueTable' style='height:40px;width:360px;'>";
-		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
+		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)' id='transitChartHeading'>";
 				echo "<div class='divPanchangHeading' colspan='3'>";
 					echo "<H6 style='font-weight:bold;color:black'>தற்போதய கோட்சாரம்</H6>";
 				echo "</div>";
@@ -936,7 +1040,7 @@ function displayTransitChart()
 	echo "</div>";
 	
 echo <<<EOL
-	<div class="divTable blueTable" id="transit_chart">
+	<div class="divTable blueTable" id="transitChart">
 		<div class="divTableBody">
 			<div class="divTableRow">
 					<div class="divTableDummyCell"></div>
@@ -1023,7 +1127,7 @@ if($DEBUG==1){
 
 date_default_timezone_set($TZ);
 
-if(date('I')==1) { // DST
+if(date('I',strtotime($chart_date))==1) { // DST
    $hour=(int)strtok($gmt_offset_dst,":");
    $min=(int)strtok(":");
    $offset=$hour+$min/60;
@@ -1195,7 +1299,7 @@ updateIndhuLagna();
 
 echo <<<EOL
 	<div class="title"></div>
-		<div class='column-menu' style='display:$home'>
+		<div class='column-menu' id='appMenu' style='display:$home'>
 			<div class='desktop'>
 				
 EOL;
@@ -1212,10 +1316,10 @@ EOL;
 echo <<<EOL
 			</div>
 		</div>
-		<div class='column-body'>
+		<div class='column-body' id='panchangBody'>
 		
 			<center>
-			<form name='updatePanchang' action='new_panchang.php?debug=$DEBUG' method='post' style='width:300px;margin-left:20px'>
+			<form name='updatePanchang' id='panchangForm' action='new_panchang.php?debug=$DEBUG' method='post' style='width:300px;margin-left:20px'>
 			
 
 				<input type='hidden' id='nPlace' name='nPlace' value='$place'>
@@ -1226,9 +1330,22 @@ echo <<<EOL
 						<TR>
 							<TD>
 								Date: <input type='date' id='nDate' name='nDate' onChange='onDateChange();' style="background-color:#FDE966;color:#000000;font-size:14px;font-weight:bold;width:110px;" value=$chart_date> 
+								
 							</TD>
 							<TD>
-								Time: <input type='time' id='nTime' name='nTime' onChange='onTimeChange();' style="background-color:#FDE966;color:#000000;font-size:14px;font-weight:bold;width:110px" step='1' value=$chart_time>
+								Time: <input type='time' id='nTime' name='nTime' onChange='onTimeChange();' style="background-color:#FDE966;color:#000000;font-size:14px;font-weight:bold;width:110px" step='1' value=$chart_time>								
+							</TD>
+						</TR>
+						<TR>
+							<TD colspan=2>
+								<center>
+									<input type='button' class='actionBtnSmall' id='prevDay' onClick='movePanchang(-1);' value='&#x25C0;நா' />	
+									<button class='actionBtnSmall' id='prevMonth' onClick='movePanchang(-30);'>&#x25C0;மா</button> 
+									<button class='actionBtnSmall' id='prevYear' onClick='movePanchang(-365);'>&#x25C0;வரு</button> 
+									<button class='actionBtnSmall' id='nextYear' onClick='movePanchang(365);'>வரு&#x25B6;</button>
+									<button class='actionBtnSmall' id='nextMonth' onClick='movePanchang(30);'>மா&#x25B6;</button>
+									<button class='actionBtnSmall' id='nextDay' onClick='movePanchang(1);'>நா&#x25B6;</button>
+								</center>
 							</TD>
 						</TR>
 						<TR>

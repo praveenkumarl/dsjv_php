@@ -3,6 +3,7 @@
 require "lib.php";
 
 $DEBUG= (int) isset($_GET['debug']) ? $_GET['debug'] : 0;
+$flag = (int)isset($_GET['flag']) ? $_GET['flag'] : 0;
 
 $conn="";
 $lat="";
@@ -17,7 +18,7 @@ $day_hora_data=array();
 $night_hora_data=array();
 $current_hora=array();
 
-$place = isset($_POST['place']) ? $_POST['place'] : "Chennai|Asia/Kolkata";
+$place = isset($_POST['place']) ? $_POST['place'] : (isset($_SESSION['horaplace']) ? $_SESSION['horaplace'] : "Chennai|Asia/Kolkata");
 $sub_type = isset($_POST['sub_type']) ? $_POST['sub_type'] : "2"; //to identify form submission button
 
 if(isset($_GET["phone"])) {
@@ -77,28 +78,28 @@ function displayHorai($lat,$lon)
 }
 
 function getSubHora($start_time,$curr_time,$hora_lord,$hora_time)
-{
-	$sub_hora_order_sun = array("சூரி","சுக்","புத","சந்","சனி","குரு","செ");
-	$sub_hora_order_moo = array("சந்","சனி","குரு","செ","சூரி","சுக்","புத");
-	$sub_hora_order_mer = array("புத","சந்","சனி","குரு","செ","சூரி","சுக்");
-	$sub_hora_order_ven = array("சுக்","புத","சந்","சனி","குரு","செ","சூரி");
-	$sub_hora_order_mar = array("செ","சூரி","சுக்","புத","சந்","சனி","குரு");
-	$sub_hora_order_jup = array("குரு","செ","சூரி","சுக்","புத","சந்","சனி");
-	$sub_hora_order_sat = array("சனி","குரு","செ","சூரி","சுக்","புத","சந்");
+{	
+	$sub_hora_order_sun = array("சூரி","சந்","செ","புத","குரு");
+	$sub_hora_order_moo = array("சந்","செ","புத","குரு","சுக்");
+	$sub_hora_order_mer = array("புத","குரு","சுக்","சனி","சூரி");
+	$sub_hora_order_ven = array("சுக்","சனி","சூரி","சந்","செ");
+	$sub_hora_order_mar = array("செ","புத","குரு","சுக்","சனி");
+	$sub_hora_order_jup = array("குரு","சுக்","சனி","சூரி","சந்");
+	$sub_hora_order_sat = array("சனி","சூரி","சந்","செ","புத");
 	
 	debug ("getSubHoraTEST=".$hora_time);
 	debug("getSubHora-start_time=".$start_time."getSubHora-curr_time=".$curr_time);
 	
-	$subHoraTime = minutesToTime(timeToMinutes($hora_time)/7);
+	$subHoraTime = minutesToTime(timeToMinutes($hora_time)/5);
 	//$sub_hora_idx = ceil(timeToMinutes(subtractTime($curr_time,$start_time))/timeToMinutes($subHoraTime))-1;
 	$sub_hora_idx = floor(timeToMinutes(subtractTime($curr_time,$start_time))/timeToMinutes($subHoraTime));
 	
 	debug ("subHoraTime=".$subHoraTime);
 
-	if($sub_hora_idx==7)
+	if($sub_hora_idx==5)
 	{
-		$subHora_starttime = addTime($start_time,minutesToTime($sub_hora_idx*timeToMinutes($subHoraTime)));
-		$sub_hora_idx = 6;
+		//$subHora_starttime = addTime($start_time,minutesToTime($sub_hora_idx*timeToMinutes($subHoraTime)));
+		$sub_hora_idx = 4;
 	}
 	else{
 		$subHora_starttime = addTime($start_time,minutesToTime($sub_hora_idx*timeToMinutes($subHoraTime)));
@@ -106,38 +107,16 @@ function getSubHora($start_time,$curr_time,$hora_lord,$hora_time)
 	
 	debug ("sub_hora_idx=".$sub_hora_idx);
 	
-	//$subHora_endtime = subtractTime(addTime($subHora_starttime,$subHoraTime),"00:01");
-	$subHora_endtime = addTime($subHora_starttime,$subHoraTime);
-	
-	debug("subHora-starttime=".$subHora_starttime."subHora-endtime=".$subHora_endtime);
+	if($sub_hora_idx==4)
+	{
+		$subHora_endtime = addTime($start_time,$hora_time);
+	}
+	else{
+		//$subHora_endtime = subtractTime(addTime($subHora_starttime,$subHoraTime),"00:01");
+		$subHora_endtime = addTime($subHora_starttime,$subHoraTime);
+	}
 	
 	$subHora = "";
-	
-	/*
-	switch($hora_lord){
-		case "சூரி":
-			$subHora = "<BR>" . $sub_hora_order_sun[$sub_hora_idx] . "(" . date("h:i A",strtotime($subHora_starttime)) . "-" . date("h:i A",strtotime($subHora_endtime)) .")";
-			break;
-		case "சுக்":
-			$subHora = "<BR>" . $sub_hora_order_ven[$sub_hora_idx] . "(" . date("h:i A",strtotime($subHora_starttime)) . "-" . date("h:i A",strtotime($subHora_endtime)) .")";
-			break;
-		case "புத":
-			$subHora = "<BR>" . $sub_hora_order_mer[$sub_hora_idx] . "(" . date("h:i A",strtotime($subHora_starttime)) . "-" . date("h:i A",strtotime($subHora_endtime)) .")";
-			break;
-		case "சந்":
-			$subHora = "<BR>" . $sub_hora_order_moo[$sub_hora_idx] . "(" . date("h:i A",strtotime($subHora_starttime)) . "-" . date("h:i A",strtotime($subHora_endtime)) .")";
-			break;
-		case "சனி":
-			$subHora = "<BR>" . $sub_hora_order_sat[$sub_hora_idx] . "(" . date("h:i A",strtotime($subHora_starttime)) . "-" . date("h:i A",strtotime($subHora_endtime)) .")";
-			break;
-		case "குரு":
-			$subHora = "<BR>" . $sub_hora_order_jup[$sub_hora_idx] . "(" . date("h:i A",strtotime($subHora_starttime)) . "-" . date("h:i A",strtotime($subHora_endtime)) .")";
-			break;
-		case "செ":
-			$subHora = "<BR>" . $sub_hora_order_mar[$sub_hora_idx] . "(" . date("h:i A",strtotime($subHora_starttime)) . "-" . date("h:i A",strtotime($subHora_endtime)) .")";
-			break;
-	}
-	*/
 	
 	switch($hora_lord){
 		case "சூரி":
@@ -461,13 +440,13 @@ function displayHoraTable($hora_data)
 {
 	global $current_hora;
 	
-	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px'>";
+	echo "<center><div class='divTable blueTable' style='height:40px;margin-left:5px' id='currentHoraHeading'>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divTableCell' colspan=4>தற்போதைய ஓரை</div>";
 		echo "</div>";
 	echo "</div>";
 	
-	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px'>";
+	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px' id='currentHoraTable'>";
 		echo "<div class='divTableRow'>";
 				echo "<div class='divThaaraPalanHeading'>ஆரம்பம்</div>";
 				echo "<div class='divThaaraPalanHeading'>முடிவு</div>";
@@ -479,38 +458,38 @@ function displayHoraTable($hora_data)
 			if(strpos($current_hora[3],"குரு")===0 or strpos($current_hora[3],"சுக்")===0 or strpos($current_hora[3],"புத")===0 or strpos($current_hora[3],"சந்")===0){  //== will not differenciate between 0 and false, so should use ===
 				echo "<div class='divThaaraPalanGreen'>".date("h:i A",strtotime($current_hora[1]))."</div>";
 				echo "<div class='divThaaraPalanGreen'>".date("h:i A",strtotime($current_hora[2]))."</div>";	
-				echo "<div class='divThaaraPalanGreen'>".$current_hora[3]."</div>";
+				echo "<div class='divThaaraPalanGreen' id='horaLord'><div id='horaLordTxt'>".$current_hora[3]."</div></div>";
 				if(strpos($current_hora[3],"குரு")===0 or strpos($current_hora[3],"சுக்")===0 or strpos($current_hora[3],"புத")===0 or strpos($current_hora[3],"சந்")===0){  //== will not differenciate between 0 and false, so should use ===
-					echo "<div class='divThaaraPalanGreen'>".$current_hora[5]."</div>";
+					echo "<div class='divThaaraPalanGreen' id='horaSubLord'>".$current_hora[5]."</div>";
 				}
 				else{
-					echo "<div class='divThaaraPalanRed'>".$current_hora[5]."</div>";
+					echo "<div class='divThaaraPalanRed' id='horaSubLord'>".$current_hora[5]."</div>";
 				}
 			}
 			else{ //Condition is to mark current hora in red color for bad horas
 				
 				echo "<div class='divThaaraPalanRed'>".date("h:i A",strtotime($current_hora[1]))."</div>";
 				echo "<div class='divThaaraPalanRed'>".date("h:i A",strtotime($current_hora[2]))."</div>";	
-				echo "<div class='divThaaraPalanRed'>".$current_hora[3]."</div>";
+				echo "<div class='divThaaraPalanRed' id='horaLord'><div id='horaLordTxt'>".$current_hora[3]."</div></div>";
 				if(strpos($current_hora[3],"குரு")===0 or strpos($current_hora[3],"சுக்")===0 or strpos($current_hora[3],"புத")===0 or strpos($current_hora[3],"சந்")===0){  //== will not differenciate between 0 and false, so should use ===
-					echo "<div class='divThaaraPalanGreen'>".$current_hora[5]."</div>";
+					echo "<div class='divThaaraPalanGreen' id='horaSubLord'>".$current_hora[5]."</div>";
 				}
 				else{
-					echo "<div class='divThaaraPalanRed'>".$current_hora[5]."</div>";
+					echo "<div class='divThaaraPalanRed' id='horaSubLord'>".$current_hora[5]."</div>";
 				}
 			}
 		echo "</div>";
-	echo "</div>";
+	echo "</div><center>";
 	
 	echo "<BR><BR>";
 	
-	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px'>";
+	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px' id='fullHoraHeading'>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divTableCell' colspan=4>ஓரை அட்டவணை</div>";
 		echo "</div>";
 	echo "</div>";
 	
-	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px'>";
+	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px' id='fullHoraTable'>";
 	echo "<div class='divTableRow'>";
 			echo "<div class='divThaaraPalanHeading'>Date</div>";
 			echo "<div class='divThaaraPalanHeading'>Start</div>";
@@ -591,6 +570,8 @@ if(isset($_COOKIE["phone"])) {
 
 dbDisconnect($conn);
 
+$_SESSION['horaplace'] = $place;
+
 ?>
 
 <!doctype html>
@@ -605,20 +586,12 @@ dbDisconnect($conn);
     <meta name="description" content="One stop website for Jamakol Prasannam">
 	
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
-	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>" id='chartstyle'>
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
     <script src="script.js"></script>
     <script type="text/javascript">
-        $(document).ready(function() {
-            $('#fullpage').fullpage({
-              //sectionsColor: ['#1bbc9b', '#4BBFC3', '#7BAABE', 'whitesmoke', '#ccddff'],
-			  sectionsColor: ['#FF8360', '#FFe6df', '#FFe6df', 'whitesmoke', '#ccddff'],
-              anchors: ['firstPage', 'secondPage', '3rdPage', '4thpage', 'lastPage'],
-			  responsiveHeight: 800
-            });
-        });
 		
 	$(document).ready(function(){
     $('.search-box input[type="text"]').on("keyup input", function(){
@@ -706,16 +679,56 @@ function validateForm() {
 	  
 	  return true;
 }
+
+$(document).ready(function(){
+	var param = '<?php echo $flag; ?>';
+	
+	if(param==1){ //Top hora/sub hora table alone
+		document.getElementById('appMenu').style.display = 'none';
+		document.getElementById('horaForm').style.display = 'none';
+		document.getElementById('currentHoraHeading').style.display = 'table';
+		document.getElementById('currentHoraTable').style.display = 'table';
+		document.getElementById('fullHoraHeading').style.display = 'none';
+		document.getElementById('fullHoraTable').style.display = 'none';
+		
+		//removing the chart style sheet to avoid any changes in the calling php page
+		sheet = document.getElementById('chartstyle')
+		sheet.parentNode.removeChild(sheet)
+		
+	}
+	else if(param==2){ //transit chart alone
+		document.getElementById('appMenu').style.display = 'none';
+		document.getElementById('horaForm').style.display = 'none';
+		document.getElementById('currentHoraHeading').style.display = 'none';
+		document.getElementById('currentHoraTable').style.display = 'none';
+		document.getElementById('fullHoraHeading').style.display = 'table';
+		document.getElementById('fullHoraTable').style.display = 'table';
+		
+		//removing the chart style sheet to avoid any changes in the calling php page
+		sheet = document.getElementById('chartstyle')
+		sheet.parentNode.removeChild(sheet)
+	}
+}); 
+	
 		
     </script>
 </head>
 
-<body onLoad="init();">
+<body onLoad="init();"  id='bdy'>
 
 	
 <div class="title"></div>
+<!-- <div class="horaDetail" id='sun'>சூரிய ஹோரைகள்: (உத்தியோக ஹோரை)
+அரசு தொடர்பான காரியங்களில் ஈடுபடுதல், அரசியல் தலைவர்களை சிந்தித்தல், அரசு உதவியைத் தேடல், தந்தை தொடர்பான அனைத்து விஷயங்களும், பெரியோர்களின் ஆதரவைப் பெறுதல், சிவ வழிபாடு, அரசு பதவி ஏற்றல், பிரபலங்களின் தொடர்பு கிடைத்தல், பொதுவாக சூரிய ஹோரையில் அரசு, தந்தை வகையிலான செயல்களை செவ்வனே செய்யலாம்.</div>
+<div class="horaDetail" id='moo'><div>
+<div class="horaDetail" id='ven'><div>
+<div class="horaDetail" id='mer'><div>
+<div class="horaDetail" id='mar'><div>
+<div class="horaDetail" id='jup'><div>
+<div class="horaDetail" id='sat'><div>
+-->
 
-	<div class='column-menu'>
+	<div class='column-menu' id='appMenu'>
 		<?php displayUserInfo($_SESSION['userinfo']); ?>
 		<div class='desktop'>
 			<button class="menu" onClick="window.open('index.php','_self')">Home</button>
@@ -725,7 +738,7 @@ function validateForm() {
 		</div>
 	</div>
 	<div class='column-body'>			
-				<form name="horaForm" style="width:320px" action="hora.php?debug=<?php echo $DEBUG; ?>" method="post">
+				<center><form name="horaForm" style="width:320px" action="hora.php?debug=<?php echo $DEBUG; ?>" method="post" id='horaForm'>
 				<CENTER><P style="color:#660000;font-weight:bold; font-size:16px; background-color:white;">ஓரை</P></CENTER>
 					<table style="width:25%; text-align:left;">
 					
@@ -749,8 +762,12 @@ function validateForm() {
 							<td></td>
 						</tr> -->
 					</table>
-				</form>
-				<?php displayHorai($lat,$lon); ?>
+				</form></center>
+				<?php 
+				
+				displayHorai($lat,$lon); 
+				
+				?>
 				<BR>
 				<!-- <img src="images/Horai Kaalam.jpg" alt="Horai/ஹோரை" width="100%" height="100%"> -->
 	</div>	 
