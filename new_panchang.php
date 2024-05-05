@@ -77,7 +77,6 @@ $g_dasaCurrent=array();
 $current_dasa_bukthi=array();
 $yogi_arr=array();
 $country="";
-$otherPanchangDetails = array();
 $g_thithi_soonyam_arr = array(null,null,null,null,null,null,null,null,null,null,null,null);
 $full_sun_deg=0.00000;
 $sun_moon_data=array();
@@ -88,7 +87,7 @@ $g_yoga_idx=-1;
 $g_nak_idx=-1;
 $g_dasaBalance=array();
 $g_dasaCurrent=array();
-
+$g_kariNaal ="";
 
 // ------- Swiss ephemeris // ------- 
 $libPath = './sweph/';
@@ -469,7 +468,12 @@ $dayofweek = date('w', strtotime($chart_date));
 	
 	$(document).ready(function(){
 		updatePanchangData();
-		$('#hora').load('hora.php div#horaLordTxt'); //getting the current hora lord running the hora.php and extract only the lord text
+		date='<?php echo $chart_date; ?>';
+		time='<?php echo $chart_time; ?>';
+		place='<?php echo $place; ?>';
+		url = 'hora.php?date='+date+'&time='+time+'&place='+place+' div#horaLordTxt';
+		//$('#hora').load('hora.php div#horaLordTxt'); //getting the current hora lord running the hora.php and extract only the lord text
+		$('#hora').load(url); //getting the current hora lord running the hora.php and extract only the lord text
 		
 		var param = '<?php echo $flag; ?>';
 		
@@ -490,12 +494,94 @@ $dayofweek = date('w', strtotime($chart_date));
 			document.getElementById('transitChart').style.display = 'reset';
 		}
 	}); 
+	
+	function generateMuhurtam(today_sunrise,tomm_sunrise) {
+       var count = 0;
+          
+       mukurt_arr = [
+						["ருத்ர","அசுபமானது"],
+						["ஆஹி","அசுபமானது"],
+						["மித்ர","சுப"],
+						["பித்ரு","அசுபமானது"],
+						["வசு","சுப"],
+						["வராஹ","சுப"],
+						["விஸ்வேதேவா","சுப"],
+						["விதி","மங்களகரமானது (திங்கள் மற்றும் வெள்ளி தவிர)"],
+						["சுதாமுகீ","சுப"],
+						["புருஹூத","அசுபமானது"],
+						["வாஹிநீ","அசுபமானது"],
+						["நக்தனகரா","அசுபமானது"],
+						["வருண","சுப"],
+						["ஆர்யமன்","மங்களகரமானது (ஞாயிற்றுக்கிழமைகள் தவிர)"],
+						["பக","அசுபமானது"],
+						["கிரீச","சுப"],
+						["அஜபாத","அசுபமானது"],
+						["அஹிர்புத்ன்ய","சுப"],
+						["புஷ்ய","சுப"],
+						["அஸ்வினி","சுப"],
+						["யம","அசுபமானது"],
+						["அக்னி","சுப"],
+						["விதாத்ரு","சுப"],
+						["கண்ட","சுப"],
+						["அதிதி","சுப"],
+						["ஜீவ/அம்ருத","மிகவும் மங்களகரமானது"],
+						["விஷ்ணு","சுப"],
+						["த்யுமத்கத்யுதி","சுப"],
+						["பிரம்மா","மிகவும் மங்களகரமானது"],
+						["சமுத்ர","சுப"]
+					];
+      
+       var html_str='';
+      
+       html_str='<center><div class="divTable blueTable" style="width:100%;height:100%">';
+       html_str=html_str+'<div class="divTableRow"><div class="divAnthraHeading" colspan="3">முகூர்த்தங்கள்</div></div></div>';
+       html_str=html_str+'<center><div class="divTable blueTable" style="width:100%;height:100%">';
+	   
+	   
+	   todaysunrise = new Date(today_sunrise);
+	   tommsunrise = new Date(tomm_sunrise);
+	   muhurt_time = (tommsunrise.getTime() - todaysunrise.getTime()) / (1000 * 60 )/30;
+
+		start_time = new Date(todaysunrise.getTime());
+		
+		html_str = html_str+'<div class="divTableRow"><div class="divMuhurtHeading">ஆரம்பம்</div><div class="divMuhurtHeading">முடிவு</div><div class="divMuhurtHeading">முகூர்த்தம்</div><div class="divMuhurtHeading">பலன்</div></div>';
+
+       for (var i = 0; i < 30; i++) {
+		   end_time = new Date((start_time.getTime()+muhurt_time*60000));
+		   
+		   stime=String(start_time.getDate()).padStart(2, '0')+'-'+String(start_time.getMonth()).padStart(2, '0')+'-'+start_time.getFullYear()+' '+String(start_time.getHours()).padStart(2, '0')+':'+String(start_time.getMinutes()).padStart(2, '0');
+		   etime=String(end_time.getDate()).padStart(2, '0')+'-'+String(end_time.getMonth()).padStart(2, '0')+'-'+end_time.getFullYear()+' '+String(end_time.getHours()).padStart(2, '0')+':'+String(end_time.getMinutes()).padStart(2, '0');
+           //console.log(stime+'-'+etime+'   '+mukurt_arr[i]);
+		   
+		   if((mukurt_arr[i][1]).indexOf("அசுபமானது")!=-1){
+			   html_str = html_str + '<div class="divTableRow"><div class="divMurtaRed">'+stime+'</div><div class="divMurtaRed">'+etime+'</div><div class="divMurtaRed">'+mukurt_arr[i][0]+'</div><div class="divMurtaRed">'+mukurt_arr[i][1]+'</div></div>';
+		   }
+		   else if((mukurt_arr[i][1]).indexOf("மங்களகரமானது")!=-1){
+			   html_str = html_str + '<div class="divTableRow"><div class="divMurtaBrightGreen">'+stime+'</div><div class="divMurtaBrightGreen">'+etime+'</div><div class="divMurtaBrightGreen">'+mukurt_arr[i][0]+'</div><div class="divMurtaBrightGreen">'+mukurt_arr[i][1]+'</div></div>';
+		   }
+		   else{
+   			   html_str = html_str + '<div class="divTableRow"><div class="divMurtaGreen">'+stime+'</div><div class="divMurtaGreen">'+etime+'</div><div class="divMurtaGreen">'+mukurt_arr[i][0]+'</div><div class="divMurtaGreen">'+mukurt_arr[i][1]+'</div></div>';
+		   }
+          
+		   start_time = end_time;
+       }
+       
+       html_str=html_str+"</div></center>";
+      
+       document.getElementById('muhurthamDiv').innerHTML = html_str;
+       document.getElementById('muhurthamDiv').style.display = 'block';
+     }
+	 
+	 function hide(){
+		document.getElementById('muhurthamDiv').style.visibility='hidden';
+	}
 				
 	</script>
 </head>
 
 <body onLoad="init();">
 <div class="karanamDiv" id="karanamDiv" onclick="hideKaranamDiv()"><!-- <img src='images/karanam.png' /> --></div>
+<div class="muhurthamDiv" id="muhurthamDiv" onclick="this.style.display='none'"></div>
 <div id="loader" class="center"></div>
 
 <?php
@@ -847,7 +933,7 @@ function displayProkeralaDetailPanchang($in_arr)
 function displayHoroDetails()
 {
 	global $panchang, $in_name, $chart_date, $chart_time, $g_dasaBalance, $place, $g_thithi_soonyam_matching_arr,$g_dasaCurrent, $transit_date, $lagna_house, $country,$yogi_arr, 
-		$g_pancha_pakshi, $g_thithi, $g_paksham, $moon_house, $today_sunrise, $today_sunset, $otherPanchangDetails, $city,$g_nak, $g_thithi_idx, $g_yoga_idx, $nak_pad_idx;
+		$g_pancha_pakshi, $g_thithi, $g_paksham, $moon_house, $today_sunrise, $tomo_sunrise,$today_sunset,$city,$g_nak, $g_thithi_idx, $g_yoga_idx, $nak_pad_idx, $g_kariNaal;
 	
 	echo "<div class='divTable blueTable' style='height:40px;width: fit' id='panchangDetailsHeading'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
@@ -920,8 +1006,9 @@ function displayHoroDetails()
 			echo "<div class='divPanchangHeading'>யோகி</div>";
 			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 3)' style='color:blue;cursor:pointer'>".$yogi_arr[1]."(".$yogi_arr[0].")</div>";
 		echo "</div>";
+		displayDetailsDiv('yogi',$g_yoga_idx);
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>ஹோரை</div>";
+			echo "<div class='divPanchangHeading'>தற்போதய ஹோரை</div>";
 			echo "<div class='divPanchang' id='hora'></div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
@@ -936,18 +1023,15 @@ function displayHoroDetails()
 			echo "<div class='divPanchangHeading'>ஜீவன்</div>";
 			echo "<div class='divPanchang'>".getJeevan()."</div>";
 		echo "</div>";
+		
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>நாள் நோக்கு</div>";
+			echo "<div class='divPanchang'>".getDayType()."</div>";
+		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பஞ்ச பக்ஷி</div>";
 			$g_pancha_pakshi = getPanchaPakshi();
 			echo "<div class='divPanchang'>".$g_pancha_pakshi."</div>";
-		echo "</div>";
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>சூரிய உதயம்</div>";
-			echo "<div class='divPanchang'>".explode(' ',$today_sunrise)[1]."</div>";
-		echo "</div>";
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>சூரிய அஸ்தமனம்</div>";
-			echo "<div class='divPanchang'>".explode(' ',$today_sunset)[1]."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>நக்ஷத்ர நாம எழுத்து </div>";
@@ -961,7 +1045,14 @@ function displayHoroDetails()
 			echo "<div class='divPanchangHeading'>ராசி</div>";
 			echo "<div class='divPanchang'>".getRasi($moon_house-1)."</div>";
 		echo "</div>";
-		displayDetailsDiv('yogi',$g_yoga_idx);
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>அபிஜித் நேரம்</div>";
+			echo "<div class='divPanchang'>".getAbhijit()."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>முகூர்த்தங்கள்</div>";
+			echo "<div class='divPanchang' onClick='generateMuhurtam(\"$today_sunrise\",\"$tomo_sunrise\");' style='color:blue;cursor:pointer'>Click to see</div>";
+		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeadingRed'>அவயோகி</div>";
 			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 4)' style='color:blue;cursor:pointer'>".$yogi_arr[3]."(".$yogi_arr[2].")</div>";
@@ -973,57 +1064,50 @@ function displayHoroDetails()
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeadingRed'>ராகு காலம்</div>";
-			echo "<div class='divPanchang'>".$otherPanchangDetails[0]."</div>";
+			echo "<div class='divPanchang'>".getRahuKaalam()."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeadingRed'>எம கண்டம்</div>";
-			echo "<div class='divPanchang'>".$otherPanchangDetails[2]."</div>";
+			echo "<div class='divPanchang'>".getEmaKantam()."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeadingRed'>குளிகை நேரம்</div>";
-			echo "<div class='divPanchang'>".$otherPanchangDetails[1]."</div>";
+			echo "<div class='divPanchang'>".getKulikai()."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeadingRed'>வார சூலை</div>";
-			echo "<div class='divPanchang'>".$otherPanchangDetails[3].'<BR>பரிகாரம் - '. $otherPanchangDetails[4] ."</div>";
+			echo "<div class='divPanchang'>".getVaaraSoolai().'<BR>பரிகாரம் - '. getSoolaiParigaaram() ."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeadingRed'>சந்திராஷ்டம்</div>";
 			echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house-1,6))."</div>";
 			//echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house-1,8))."</div>";
 		echo "</div>";
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>பிறப்பு தசா இருப்பு</div>";
-			echo "<div class='divPanchang'>".$g_dasaBalance[0]."</div>";
-		echo "</div>";
+		//echo "<div class='divTableRow'>";
+			//echo "<div class='divPanchangHeading'>பிறப்பு தசா இருப்பு</div>";
+			//echo "<div class='divPanchang'>".$g_dasaBalance[0]."</div>";
+		//echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>தற்போதைய தசா புக்தி</div>";
 			echo "<div class='divPanchang'>".$g_dasaCurrent[0]."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>சூரிய உதயம்</div>";
+			echo "<div class='divPanchang'>".explode(' ',$today_sunrise)[1]."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>சூரிய அஸ்தமனம்</div>";
+			echo "<div class='divPanchang'>".explode(' ',$today_sunset)[1]."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>மற்ற விவரங்கள்</div>";
+			echo "<div class='divPanchang'>$g_kariNaal</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>கணக்கீட்டு முறை</div>";
 			echo "<div class='divPanchang'>திருக்கணிதம்<BR>(லஹரி அயனாம்சம்)</div>";
 		echo "</div>";
 	echo "</div>";
-}
-
-function getOtherPanchangamDetails()
-{
-	global $dayofweek,$otherPanchangDetails;
-	
-	$rahu_kaalam = array("மாலை 4:30-6:30","காலை 7:30-9:00","மதியம் 3:00-4:30","மதியம் 12:00-1:30","மதியம் 1:30-3:00","காலை 10:30-12:00","காலை 09:00-10:30");
-	$kuligai_neram = array("மதியம் 3:00-4:30","மதியம் 1:30-3:00","மதியம் 12:00-1:30","காலை 10:30-12:00","காலை 09:00-10:30","காலை 7:30-9:00","காலை 6:00-7:30");
-	$yama_kantam = array("மதியம் 12:00-1:30","காலை 10:30-12:00","காலை 09:00-10:30","காலை 7:30-9:00","காலை 6:00-7:30","மதியம் 3:00-4:30","மதியம் 1:30-3:00");
-	$vaara_soolai = array("மேற்கு","கிழக்கு","வடக்கு","வடக்கு","தெற்கு","மேற்கு","கிழக்கு");
-	$parikaaram = array("வெல்லம் ","தயிர்","பால்","பால்","தைலம்","வெல்லம்","தயிர்");
-	
-	$otherPanchangDetails[0] = adjustSunrise($rahu_kaalam[$dayofweek]);
-	$otherPanchangDetails[1] = adjustSunrise($kuligai_neram[$dayofweek]);
-	$otherPanchangDetails[2] = adjustSunrise($yama_kantam[$dayofweek]);
-	$otherPanchangDetails[3] = $vaara_soolai[$dayofweek];
-	$otherPanchangDetails[4] = $parikaaram[$dayofweek];
-	
-	return $otherPanchangDetails;
 }
 
 function displayTransitChart()
@@ -1172,8 +1256,13 @@ if($DEBUG==1){
 	echo "----------".getUTCtimestamp($birthTimestamp,$offset);
 }
 
+$next_day=date("Y-m-d",strtotime($chart_date. ' + 1 days'));
+$previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
+
 $today_sunrise = $chart_date . " " . getSunrise(strtotime($chart_date),floatval($lat), floatval($lon));
 $today_sunset = $chart_date . " " .  getSunset(strtotime($chart_date),floatval($lat), floatval($lon));
+$tomo_sunrise = $next_day . " " .  getSunrise(strtotime($next_day),floatval($lat), floatval($lon));
+$prev_sunset = $previous_day . " " .  getSunset(strtotime($previous_day),floatval($lat), floatval($lon));
 
 debug("CHART date=".$chart_date);
 debug("CHART TIME=".$chart_time);
@@ -1319,9 +1408,7 @@ echo <<<EOL
 		<div class='column-body' id='panchangBody'>
 		
 			<center>
-			<form name='updatePanchang' id='panchangForm' action='new_panchang.php?debug=$DEBUG' method='post' style='width:300px;margin-left:20px'>
-			
-
+			<form name='updatePanchang' id='panchangForm' action='new_panchang.php?debug=$DEBUG' method='post' style='width:350px;margin-left:20px'>
 				<input type='hidden' id='nPlace' name='nPlace' value='$place'>
 				<input type='hidden' id='place_flag' name='place_flag' value=0>
 					<H4 style="color:#000000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; width:parent;">
@@ -1342,6 +1429,7 @@ echo <<<EOL
 									<input type='button' class='actionBtnSmall' id='prevDay' onClick='movePanchang(-1);' value='&#x25C0;நா' />	
 									<button class='actionBtnSmall' id='prevMonth' onClick='movePanchang(-30);'>&#x25C0;மா</button> 
 									<button class='actionBtnSmall' id='prevYear' onClick='movePanchang(-365);'>&#x25C0;வரு</button> 
+									<button class='actionBtnSmall' id='now' onClick='updateNow();window.reload();'>தற்போது</button>
 									<button class='actionBtnSmall' id='nextYear' onClick='movePanchang(365);'>வரு&#x25B6;</button>
 									<button class='actionBtnSmall' id='nextMonth' onClick='movePanchang(30);'>மா&#x25B6;</button>
 									<button class='actionBtnSmall' id='nextDay' onClick='movePanchang(1);'>நா&#x25B6;</button>
@@ -1371,12 +1459,8 @@ EOL;
 					//$panchang = getPanchangFromDB();
 					
 					calculateBirthThithiSoonyam($panchang["thithi"]);
-				
-					getOtherPanchangamDetails();
 					displayHoroDetails();
-					
 					$thithi_soonyam_arr = updateThithiSoonyam($panchang["thithi"]);
-					
 					displayTransitChart();
 					displayDisclaimer();
 					

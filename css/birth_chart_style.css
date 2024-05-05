@@ -117,6 +117,82 @@ div.blueTable {
 	position:relative;
 }
 
+.divTableOuterCellLeftTop
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #FFFFFF;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 11px;
+	font-weight: var(--chart-inner-font-weight);
+	color: #660000;
+	width: 10%;
+	height: 10%;
+	border-top:solid 1px #660000;
+	border-left:solid 1px #660000;
+	border-right:none;
+	border-bottom:none;
+	position:relative;
+}
+
+.divTableOuterCellRightTop
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #FFFFFF;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 11px;
+	font-weight: var(--chart-inner-font-weight);
+	color: #660000;
+	width: 10%;
+	height: 10%;
+	border-right:solid 1px #660000;
+	border-top:solid 1px #660000;
+	border-left:none;
+	border-bottom:none;
+	position:relative;
+}
+
+.divTableOuterCellLeftBottom
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #FFFFFF;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 11px;
+	font-weight: var(--chart-inner-font-weight);
+	color: #660000;
+	width: 10%;
+	height: 10%;
+	border-left:solid 1px #660000;
+	border-bottom:solid 1px #660000;
+	border-right:none;
+	border-top:none;
+	position:relative;
+}
+
+.divTableOuterCellRightBottom
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #FFFFFF;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 11px;
+	font-weight: var(--chart-inner-font-weight);
+	color: #660000;
+	width: 10%;
+	height: 10%;
+	border-right:solid 1px #660000;
+	border-bottom:solid 1px #660000;
+	border-left:none;
+	border-top:none;
+	position:relative;
+}
+
 .divTableDummyCell 
 { 
 	display: table-cell; 

@@ -16,10 +16,10 @@ body {
   margin: 5mm auto;
   padding: 0;
   font-size: 12pt;
-  background-image: url('../images/watermark1.png');
+  /*background-image: url('../images/watermark1.png');
   background-repeat: repeat;
   background-position: center;
-  background-size: 100%; 
+  background-size: 100%; */
 }
 * {
   box-sizing: border-box;
@@ -669,7 +669,8 @@ div.blueTable {
 
 .header-center { 
     float: left;
-    width: 500px;
+    /*width: 500px;*/
+	width:100%;
     text-align: -webkit-center;
 }
 

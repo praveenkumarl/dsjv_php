@@ -3,8 +3,21 @@
 include "lib.php";
 
 $DEBUG= (int) isset($_GET['debug']) ? $_GET['debug'] : 0;
-$place = isset($_POST['place']) ? $_POST['place'] : (isset($_SESSION['place']) ? $_SESSION['place'] : "Chennai|Asia/Kolkata");
-$_SESSION['place']=$place;
+
+if(isset($_SESSION['prasannam_place']) && isset($_POST['prasannam_place']) && strcmp($_SESSION['prasannam_place'],$_POST['prasannam_place'])==0){
+	$place = $_SESSION['prasannam_place'];
+}
+elseif (isset($_POST['prasannam_place'])){
+	$place = $_POST['prasannam_place'];
+	$_SESSION['prasannam_place'] = $_POST['prasannam_place'];
+}
+elseif (isset($_SESSION['prasannam_place'])){
+	$place = $_SESSION['prasannam_place'];
+}
+else{
+	$place = "Chennai|Asia/Kolkata";
+}
+
 
 $lang = isset($_POST["lang"]) ? $_POST["lang"] : "Tamil";
 debug("PLACE=".$place);
@@ -173,7 +186,7 @@ function getTransitChart()
 	global $sw_planet;
 	
 echo <<<EOL
-	<center><div class="divTable blueTable" id="transit_chart">
+	<center><div class="divTable blueTable" id="transit_chart" style="width:300px;height:300px;">
 		<div class="divTableBody">
 			<div class="divTableRow">
 					<div class="divTableCell" id=12>$sw_planet[11]</div>
@@ -202,7 +215,7 @@ echo <<<EOL
 		</div>	
 	</div>
 	</center>
-
+<BR><BR><BR>
 EOL;
 }
 
@@ -411,11 +424,12 @@ $sw_planet = sortDegree($sw_planet);
 dbDisconnect($conn);
 
 function lagnaPrasannam(){
+	global $place;
 	echo <<<EOL
 	<center>
-	<div class="divTable blueTable" id="d2">
+	<div class="divTable blueTable" id="d2" style='height:auto'>
 		<form name="prasannamForm" id="prasannamForm" action="#" method="post">
-			<input type="hidden" value=1>;
+			<input type="hidden" value=1>
 			<table style="width:100%; text-align: left">
 				<tr>
 					<td colspan=2><P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">லக்ன/கோட்சார பிரசன்னம்</P></td>
@@ -430,18 +444,18 @@ function lagnaPrasannam(){
 				</tr>
 				<tr style="background-color: #FFFFFF">
 					<td><div class="divBirthInputLable">*பிரசன்ன இடம்</div></td>
-					<td><div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur(this.form);" /><div class="result"></div>
+					<td><div class="search-box"><input type="text" name="prasannam_place" id="prasannam_place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur(this.form);" value='$place' /><div class="result"></div>
 					</td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
 					<td colspan="2" align="center"><div id="error" style="color:red;"></div></td>
 				</tr>
 				<tr  style="background-color: #FFFFFF">
-					<td>
-						<input type="submit" value="Submit" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
+					<td style="width:50%;text-align:right">
+						<input type="submit" value="Submit" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
 					</td>
-					<td>
-						<button value="New" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="window.reload();">New</button>
+					<td style="width:50%;text-align:left">
+						<button value="New" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="window.reload();">New</button>
 					</td>
 				</tr>					
 			</table>
@@ -452,9 +466,10 @@ EOL;
 }
 
 function clockPrasannam(){
+	global $place;
 	echo <<<EOL
 	<center>
-	<div class="divTable blueTable" id="clock">
+	<div class="divTable blueTable" id="clock" style='height:auto'>
 				
 		<form name="prasannamForm" id="prasannamForm" action="#" method="post">
 			<table style="width:100%; text-align: left">
@@ -471,18 +486,18 @@ function clockPrasannam(){
 				</tr>
 				<tr style="background-color: #FFFFFF">
 					<td><div class="divBirthInputLable">*பிரசன்ன இடம்</div></td>
-					<td><div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" /><div class="result"></div>
+					<td><div class="search-box"><input type="text" name="prasannam_place" id="prasannam_place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" value='$place' /><div class="result"></div>
 					</td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
 					<td colspan="2" align="center"><div id="error" style="color:red;"></div></td>
 				</tr>
 				<tr  style="background-color: #FFFFFF">
-					<td>
-						<input type="submit" value="Submit" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
+					<td style="width:50%;text-align:right">
+						<input type="submit" value="Submit" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
 					</td>
-					<td>
-						<button value="New" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="window.reload();">New</button>
+					<td style="width:50%;text-align:left">
+						<button value="New" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="window.reload();">New</button>
 					</td>
 				</tr>					
 			</table>
@@ -493,7 +508,7 @@ EOL;
 }
 
 function rasiPrasannam(){
-	global $rasi,$rasiNo ;
+	global $rasi,$rasiNo,$place ;
 	$selected = [null,null,null,null,null,null,null,null,null,null,null,null,null];
 	
 	if($rasi != 1){ //first time, so display random rasi
@@ -508,7 +523,7 @@ function rasiPrasannam(){
 	
 	echo <<<EOL
 	<center>
-	<div class="divTable blueTable" id="rasi">
+	<div class="divTable blueTable" id="rasi" style='height:auto'>
 				
 		<form name="prasannamForm" id="prasannamForm" action="#" method="post">
 			<input type='hidden' name='hiddenRasi' id='hiddenRasi' value=1 />
@@ -533,6 +548,7 @@ function rasiPrasannam(){
 							<option value='11' $selected[11]>11</option>
 							<option value='12' $selected[12]>12</option>
 						</select>
+						<BR><div style='font-size:12px;color:blue'>12க்குள் ஒரு நம்பர் தேர்வு செய்யவும்</div>
 					</td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
@@ -545,18 +561,18 @@ function rasiPrasannam(){
 				</tr>
 				<tr style="background-color: #FFFFFF">
 					<td><div class="divBirthInputLable">*பிரசன்ன இடம்</div></td>
-					<td><div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" /><div class="result"></div>
+					<td><div class="search-box"><input type="text" name="prasannam_place" id="prasannam_place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" value='$place' /><div class="result"></div>
 					</td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
 					<td colspan="2" align="center"><div id="error" style="color:red;"></div></td>
 				</tr>
 				<tr  style="background-color: #FFFFFF">
-					<td>
-						<input type="submit" value="Submit" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
+					<td style="width:50%;text-align:right">
+						<input type="submit" value="Submit" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
 					</td>
-					<td>
-						<button value="New" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="newPrasannam(3);return false;">New</button>
+					<td style="width:50%;text-align:left">
+						<button value="New" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="newPrasannam(3);return false;">New</button>
 					</td>
 				</tr>				
 			</table>
@@ -567,7 +583,7 @@ EOL;
 }
 
 function paadhaPrasannam(){
-	global $paadham,$paadhamNo ;
+	global $paadham,$paadhamNo,$place ;
 	
 	if($paadham != 1){ //first time, so display random paadham
 		mt_srand();
@@ -576,7 +592,7 @@ function paadhaPrasannam(){
 	
 	echo <<<EOL
 	<center>
-	<div class="divTable blueTable" id="paadham">
+	<div class="divTable blueTable" id="paadham" style='height:auto'>
 				
 		<form name="prasannamForm" id="prasannamForm" action="#" method="post">
 			<input type='hidden' name='hiddenPaadham' id='hiddenPaadham' value=1 />
@@ -599,18 +615,18 @@ function paadhaPrasannam(){
 				</tr>
 				<tr style="background-color: #FFFFFF">
 					<td><div class="divBirthInputLable">*பிரசன்ன இடம்</div></td>
-					<td><div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" /><div class="result"></div>
+					<td><div class="search-box"><input type="text" name="prasannam_place" id="prasannam_place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" value='$place' /><div class="result"></div>
 					</td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
 					<td colspan="2" align="center"><div id="error" style="color:red;"></div></td>
 				</tr>
 				<tr  style="background-color: #FFFFFF">
-					<td>
-						<input type="submit" value="Submit" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
+					<td style="width:50%;text-align:right">
+						<input type="submit" value="Submit" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
 					</td>
-					<td>
-						<button value="New" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="newPrasannam(4);return false;">New</button>
+					<td style="width:50%;text-align:left">
+						<button value="New" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="newPrasannam(4);return false;">New</button>
 					</td>
 				</tr>				
 			</table>
@@ -621,9 +637,10 @@ EOL;
 }
 
 function horaiPrasannam(){
+	global $place;
 	echo <<<EOL
 	<center>
-	<div class="divTable blueTable" id="horai">
+	<div class="divTable blueTable" id="horai" style='height:auto'>
 				
 		<form name="prasannamForm" id="prasannamForm" action="#" method="post">
 			<input type='hidden' name='hiddenHorai' value=1 />
@@ -641,18 +658,18 @@ function horaiPrasannam(){
 				</tr>
 				<tr style="background-color: #FFFFFF">
 					<td><div class="divBirthInputLable">*பிரசன்ன இடம்</div></td>
-					<td><div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" /><div class="result"></div>
+					<td><div class="search-box"><input type="text" name="prasannam_place" id="prasannam_place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" value='$place' /><div class="result"></div>
 					</td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
 					<td colspan="2" align="center"><div id="error" style="color:red;"></div></td>
 				</tr>
 				<tr  style="background-color: #FFFFFF">
-					<td>
-						<input type="submit" value="Submit" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
+					<td style="width:50%;text-align:right">
+						<input type="submit" value="Submit" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
 					</td>
-					<td>
-						<button value="New" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="window.reload();">New</button>
+					<td style="width:50%;text-align:left">
+						<button value="New" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="window.reload();">New</button>
 					</td>
 				</tr>				
 			</table>
@@ -728,7 +745,7 @@ EOL;
 		});
 		
 		function init(){
-			document.getElementById('place').value = '<?php echo $place; ?>';
+			//document.getElementById('prasannam_place').value = '<?php echo $place; ?>';
 			updateNow();
 			
 		}
@@ -742,27 +759,27 @@ EOL;
 			updateNow();
 	  }
 	  
-	  p = document.getElementById("place").value;
+	  p = document.getElementById("prasannam_place").value;
 	  if (p == "") {
 		alert('பிறந்த இடம் கொடுல்லவில்லை');
 		document.getElementById("error").innerHTML = "பிறந்த இடம் கொடுல்லவில்லை";
-		document.getElementById('place').style.borderColor = "red";
+		document.getElementById('prasannam_place').style.borderColor = "red";
 		return false;
 	  }
 	  
 	  if (p.includes("|")==false || p.includes("/")==false || p.length<10){
 		  alert('நீங்கள் இடத்தை கீழ் வரும் பட்டியலில் தேர்ந்தெடுக்கவில்லை');
 		  document.getElementById("error").innerHTML = "நீங்கள் இடத்தை கீழ் வரும் பட்டியலில் தேர்ந்தெடுக்கவில்லை";
-		  document.getElementById('place').style.borderColor = "red";
+		  document.getElementById('prasannam_place').style.borderColor = "red";
 		  return false;
 	  }
 	}
 
 	function placeOnBlur() {
-		let place = document.getElementById("place").value;
+		let place = document.getElementById("prasannam_place").value;
 		
 		if(place==""){
-			document.getElementById('place').value = '<?php echo $place; ?>';
+			document.getElementById('prasannam_place').value = '<?php echo $place; ?>';
 		}
 	}
 
@@ -951,7 +968,6 @@ EOL;
 		<div class='desktop'>	
 			 
 			<button class="menu" onClick="window.open('prasannam_home.php','_self')">Prasannam Home</button>
-			<button class='menu' onClick='window.open("index.php","_self")'>Home</button>
 		</div>
 		<div class='mobile'>
 			<?php include "prasannamMenu_mobile.php"; ?>
@@ -978,7 +994,7 @@ switch($type){
 		break;
 	case 5:
 		horaiPrasannam();
-		echo "<center><div class='hora' style='margin:20px' id='hora'>will be filled from hora.php</div></center>";
+		echo "<center><div class='hora' style='margin-bottom:20px' id='hora'>will be filled from hora.php</div></center>";
 		//echo "<script>getSubHora();</script>";
 		break;
 	default:
@@ -991,6 +1007,7 @@ getTransitChart();
 
 	</div>
 <script>setTimeout(updateUdhayaLagna,500);</script>
+
 
 </body>
 </html>

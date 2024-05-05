@@ -8,6 +8,7 @@ if(!session_id()){
 include_once "db.php";
 
 $moon_longitude_data=array();
+$g_agas=null;
 
 //constants
 
@@ -27,11 +28,12 @@ const PANCHANG = "PANCHANG";
 const JAMAKOL = "JAMAKOL";
 const SUPER = "SUPER";
 const ADMIN = "ADMIN";
+const PRASANNAM = "PRASANNAM";
 
 $g_nak="";
 
 //usertype array used in drop down
-$usertype_arr = [PAID, MATCHING, BIRTH, BIRTHMATCH, JAMAKOL, PANCHANG, SUPER, ADMIN, FREE];
+$usertype_arr = [PAID, MATCHING, BIRTH, BIRTHMATCH, JAMAKOL, PANCHANG, PRASANNAM, SUPER, ADMIN, FREE];
 
 
 $DEBUG= isset($_SESSION['debug']) ? $_SESSION['debug'] : 0;
@@ -1552,26 +1554,61 @@ function calculateCurrentDasaBukthi($inner)
 
 function calculateVimBukthi($curr_dasa_lord, $bukthi_lord, $bukthi_start_date, $dasa_end_date)
 {
-	global $chart_date,$current_dasa_bukthi, $g_bukthi_arr, $g_current_dasa_lord, $transit_date;
-	
+	global $chart_date,$current_dasa_bukthi,$g_bukthi_arr, $g_current_dasa_lord, $transit_date;
+   
+	/*$dasa_period = ['கே' => 7,'சுக்' => 20, 'சூரி' => 6,'சந்' => 10, 'செ' => 7, 'ரா' => 18, 'குரு' => 16, 'சனி' => 19, 'புத' => 17];
+	$dasa_lord_arr = array('ket'=>'கே','ven'=>'கே','sun'=>'சூரி','moo'=>'சந்','mar'=>'செ','rah'=>'ரா','jup'=>'குரு','sat'=>'சனி','mer'=>'புத');
+   
+	$bukthi_arr=array();
+	$count =0;
+   
+	$start = $bukthi_start_date;
+	$dasa = $dasa_lord_arr[$bukthi_lord];
+   
+	$index = array_search($dasa,array_keys($dasa_period));
+   
+	echo "Bukthi<br>";
+   
+	for($i=$index; $i<=$index+7; $i++){
+				   
+					if($i>8){
+									break;
+					}
+				   
+					debug(array_keys($dasa_period)[$i]."<BR>");
+					$no_of_days = round(($dasa_period[$dasa] * array_values($dasa_period)[$i])/120*365.2425 * 24*60*60*1000);
+					$end = date('d-m-Y',strtotime($start.' + '.$no_of_days.' milliseconds'));
+				   
+					debug( "$start - $end<BR>");
+				   
+					$bukthi_arr[array_keys($dasa_period)[$i]]= array($start,$end);
+					//$start=date('d-m-Y',strtotime($end.' + 1 days'));
+					$start = date('d-m-Y',strtotime($end));
+				   
+					$count++;
+	}
+   
+	for($i=0; $i<9-$count; $i++){
+					debug(array_keys($dasa_period)[$i]."<BR>");
+					$no_of_days = round(($dasa_period[$dasa] * array_values($dasa_period)[$i])/120*365.2425*24*60*60*1000);
+					$end = date('d-m-Y',strtotime($start.' + '.$no_of_days.' milliseconds'));
+				   
+					debug( "$start - $end<BR>");
+					$bukthi_arr[array_keys($dasa_period)[$i]]= array($start,$end);
+					//$start=date('d-m-Y',strtotime($end.' + 1 days'));
+					$start = date('d-m-Y',strtotime($end));
+	}*/
+   
+   
 	$bukthi_lord_arr = array('ket'=>7,'ven'=>20,'sun'=>6,'moo'=>10,'mar'=>7,'rah'=>18,'jup'=>16,'sat'=>19,'mer'=>17);
 	$bukthi_lord_order = array('ket','ven','sun','moo','mar','rah','jup','sat','mer');
 	$bukthi_lord_order_tamil = array('கே','சுக்','சூரி','சந்','செ','ரா','குரு','சனி','புத');
-	
+   
 	$curr_bukthi_start_date = $bukthi_start_date;
-	
-	if(strstr($_SERVER['HTTP_REFERER'],'Birth_Chart')>0 && strlen($transit_date>0)){
-		$current_date = date($transit_date); //We should use whatever the transit date choosen in the birth chart not the current date time
-	}
-	else if(strstr($_SERVER['HTTP_REFERER'],'panchang')>0){  //if user choose future date in panchang, we should not use current date
-		$current_date = date($chart_date);
-	}
-	else{
-		$current_date = date('d-m-Y');
-	}
-	
+   
 	//$current_date = date('d-m-Y');
-	
+	$current_date = date('d-m-Y',strtotime($chart_date));
+   
 	for($i=0; $i<9; $i++)
 	{
 		if($i<$curr_dasa_lord){
@@ -1579,102 +1616,110 @@ function calculateVimBukthi($curr_dasa_lord, $bukthi_lord, $bukthi_start_date, $
 		}
 		else{
 			$curr_bukthi_period = ($bukthi_lord_arr[$bukthi_lord_order[$curr_dasa_lord]]/120) * $bukthi_lord_arr[$bukthi_lord_order[$i]];
-			
-			$curr_bukthi_period = round($curr_bukthi_period * 365);
-			
-			$curr_bukthi_end_date = date('d-m-Y',strtotime($curr_bukthi_start_date. '+ '.$curr_bukthi_period.' days'));
-			
+		   
+			$curr_bukthi_period = round($curr_bukthi_period * 365.2425*24*60*60);
+		   
+			$curr_bukthi_end_date = date('d-m-Y',strtotime($curr_bukthi_start_date. '+ '.$curr_bukthi_period.' seconds'));
+		   
+			$start = date('Y-m-d',strtotime($curr_bukthi_start_date));
+			$end = date('Y-m-d',strtotime($curr_bukthi_start_date. '+ '.$curr_bukthi_period.' seconds'));
+		   
 			if(strtotime($current_date) >= strtotime($curr_bukthi_start_date) and strtotime($current_date) <= strtotime($curr_bukthi_end_date)){
-				echo "<div class='divTableRow'>";
-					echo "<div class='divBukthiHeading'  onClick='displayAnthara(\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\",\"$curr_bukthi_start_date\", \"$curr_bukthi_end_date\");'>".$bukthi_lord_order_tamil[$curr_dasa_lord]."&#8594;".$bukthi_lord_order_tamil[$i]."</div>";
+				echo "<div class='divTableRow' onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
+					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divCurrentBukthi'>$curr_bukthi_start_date</div>";
 					echo "<div class='divCurrentBukthi'>$curr_bukthi_end_date</div>";
 				echo "</div>";
-				
+			   
 				$current_dasa_bukthi['dasa'] = $bukthi_lord_order_tamil[$curr_dasa_lord];
 				$current_dasa_bukthi['bukthi'] = $bukthi_lord_order_tamil[$i];
 				$current_dasa_bukthi['start_date'] = $curr_bukthi_start_date;
 				$current_dasa_bukthi['end_date'] = $curr_bukthi_end_date;
-				
-				$g_current_dasa_lord = $bukthi_lord_order_tamil[$curr_dasa_lord];
 			}
 			elseif(strtotime($chart_date) >= strtotime($curr_bukthi_start_date) and strtotime($chart_date) <= strtotime($curr_bukthi_end_date)){
-				echo "<div class='divTableRow'>";
-					echo "<div class='divBukthiHeading'  onClick='displayAnthara(\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\",\"$curr_bukthi_start_date\", \"$curr_bukthi_end_date\");'>".$bukthi_lord_order_tamil[$curr_dasa_lord]."&#8594;".$bukthi_lord_order_tamil[$i]."</div>";
+				echo "<div class='divTableRow' onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
+					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divBirthBukthi'>$curr_bukthi_start_date</div>";
 					echo "<div class='divBirthBukthi'>$curr_bukthi_end_date</div>";
 				echo "</div>";
 			}
 			else{
-				echo "<div class='divTableRow'>";
-					echo "<div class='divBukthiHeading'  onClick='displayAnthara(\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\",\"$curr_bukthi_start_date\", \"$curr_bukthi_end_date\");'>".$bukthi_lord_order_tamil[$curr_dasa_lord]."&#8594;".$bukthi_lord_order_tamil[$i]."</div>";
+				echo "<div class='divTableRow'   onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
+					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divBukthi'>$curr_bukthi_start_date</div>";
 					echo "<div class='divBukthi'>$curr_bukthi_end_date</div>";
 				echo "</div>";
 			}
 			
-			$g_bukthi_arr[$bukthi_lord_order_tamil[$curr_dasa_lord]."&#8594;".$bukthi_lord_order_tamil[$i]] = array($bukthi_lord_order_tamil[$i],$curr_bukthi_start_date,$curr_bukthi_end_date);
-			
+			$g_bukthi_arr[$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]] = array($bukthi_lord_order_tamil[$i],$curr_bukthi_start_date,$curr_bukthi_end_date);
+		   
 			//$curr_bukthi_start_date=date('d-m-Y',strtotime($curr_bukthi_end_date. '+ 1 day'));
 			$curr_bukthi_start_date = $curr_bukthi_end_date;
 		}
 	}
-	
+   
 	//to calculate bukthi for planets previous to birth dasa
 	for($i=0; $i<$curr_dasa_lord; $i++)
 	{
-		$curr_bukthi_period = ($bukthi_lord_arr[$bukthi_lord_order[$curr_dasa_lord]]/120) * $bukthi_lord_arr[$bukthi_lord_order[$i]];
-		$curr_bukthi_period = round($curr_bukthi_period * 365);
-		$curr_bukthi_end_date = date('d-m-Y',strtotime($curr_bukthi_start_date. '+ '.$curr_bukthi_period.' days'));
-		
-		if(strtotime($current_date) >= strtotime($curr_bukthi_start_date) and strtotime($current_date) <= strtotime($curr_bukthi_end_date)){
-				echo "<div class='divTableRow'>";
-					echo "<div class='divBukthiHeading'  onClick='displayAnthara(\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\",\"$curr_bukthi_start_date\", \"$curr_bukthi_end_date\");'>".$bukthi_lord_order_tamil[$curr_dasa_lord]."&#8594;".$bukthi_lord_order_tamil[$i]."</div>";
-					echo "<div class='divCurrentBukthi'>$curr_bukthi_start_date</div>";
-					if($i==$curr_dasa_lord-1){
-						echo "<div class='divCurrentBukthi'>$dasa_end_date</div>";
+					$curr_bukthi_period = ($bukthi_lord_arr[$bukthi_lord_order[$curr_dasa_lord]]/120) * $bukthi_lord_arr[$bukthi_lord_order[$i]];
+					$curr_bukthi_period = round($curr_bukthi_period * 365.2425*24*60*60);
+					$curr_bukthi_end_date = date('d-m-Y',strtotime($curr_bukthi_start_date. '+ '.$curr_bukthi_period.' seconds'));
+				   
+					$start = date('Y-m-d',strtotime($curr_bukthi_start_date));
+					$end = date('Y-m-d',strtotime($curr_bukthi_start_date. '+ '.$curr_bukthi_period.' seconds'));
+				   
+					if(strtotime($current_date) >= strtotime($curr_bukthi_start_date) and strtotime($current_date) <= strtotime($curr_bukthi_end_date)){
+													echo "<div class='divTableRow'   onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
+																	echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
+																	echo "<div class='divCurrentBukthi'>$curr_bukthi_start_date</div>";
+																	if($i==$curr_dasa_lord-1){
+																					echo "<div class='divCurrentBukthi'>$dasa_end_date</div>";
+																	}
+																	else{
+																					echo "<div class='divCurrentBukthi'>$curr_bukthi_end_date</div>";
+																	}
+													echo "</div>";
+												   
+													$current_dasa_bukthi['dasa'] = $bukthi_lord_order_tamil[$curr_dasa_lord];
+													$current_dasa_bukthi['bukthi'] = $bukthi_lord_order_tamil[$i];
+													$current_dasa_bukthi['start_date'] = $curr_bukthi_start_date;
+													$current_dasa_bukthi['end_date'] = $curr_bukthi_end_date;
+					}
+					elseif(strtotime($chart_date) >= strtotime($curr_bukthi_start_date) and strtotime($chart_date) <= strtotime($curr_bukthi_end_date)){
+													echo "<div class='divTableRow'   onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
+																	echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
+																	echo "<div class='divBirthBukthi'>$curr_bukthi_start_date</div>";
+																	if($i==$curr_dasa_lord-1){
+																					echo "<div class='divBirthBukthi'>$dasa_end_date</div>";
+																	}
+																	else{
+																					echo "<div class='divBirthBukthi'>$curr_bukthi_end_date</div>";
+																	}
+													echo "</div>";
 					}
 					else{
-						echo "<div class='divCurrentBukthi'>$curr_bukthi_end_date</div>";
+									echo "<div class='divTableRow'   onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
+													echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
+													echo "<div class='divBukthi'>$curr_bukthi_start_date</div>";
+													if($i==$curr_dasa_lord-1){
+																	echo "<div class='divBukthi'>$dasa_end_date</div>";
+													}
+													else{
+																	echo "<div class='divBukthi'>$curr_bukthi_end_date</div>";
+													}
+									echo "</div>";
 					}
-				echo "</div>";
-				
-				$current_dasa_bukthi['dasa'] = $bukthi_lord_order_tamil[$curr_dasa_lord];
-				$current_dasa_bukthi['bukthi'] = $bukthi_lord_order_tamil[$i];
-				$current_dasa_bukthi['start_date'] = $curr_bukthi_start_date;
-				$current_dasa_bukthi['end_date'] = $curr_bukthi_end_date;
-		}
-		elseif(strtotime($chart_date) >= strtotime($curr_bukthi_start_date) and strtotime($chart_date) <= strtotime($curr_bukthi_end_date)){
-				echo "<div class='divTableRow'>";
-					echo "<div class='divBukthiHeading'  onClick='displayAnthara(\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\",\"$curr_bukthi_start_date\", \"$curr_bukthi_end_date\");'>".$bukthi_lord_order_tamil[$curr_dasa_lord]."&#8594;".$bukthi_lord_order_tamil[$i]."</div>";
-					echo "<div class='divBirthBukthi'>$curr_bukthi_start_date</div>";
-					if($i==$curr_dasa_lord-1){
-						echo "<div class='divBirthBukthi'>$dasa_end_date</div>";
-					}
-					else{
-						echo "<div class='divBirthBukthi'>$curr_bukthi_end_date</div>";
-					}
-				echo "</div>";
-		}
-		else{
-			echo "<div class='divTableRow'>";
-				echo "<div class='divBukthiHeading'  onClick='displayAnthara(\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\",\"$curr_bukthi_start_date\", \"$curr_bukthi_end_date\");'>".$bukthi_lord_order_tamil[$curr_dasa_lord]."&#8594;".$bukthi_lord_order_tamil[$i]."</div>";
-				echo "<div class='divBukthi'>$curr_bukthi_start_date</div>";
-				if($i==$curr_dasa_lord-1){
-					echo "<div class='divBukthi'>$dasa_end_date</div>";
-				}
-				else{
-					echo "<div class='divBukthi'>$curr_bukthi_end_date</div>";
-				}
-			echo "</div>";
-		}
-		
-		$g_bukthi_arr[$bukthi_lord_order_tamil[$curr_dasa_lord]."&#8594;".$bukthi_lord_order_tamil[$i]] = array($bukthi_lord_order_tamil[$i],$curr_bukthi_start_date,$curr_bukthi_end_date);
-		
-		//$curr_bukthi_start_date=date('d-m-Y',strtotime($curr_bukthi_end_date. '+ 1 day'));
-		$curr_bukthi_start_date = $curr_bukthi_end_date;
+				   
+					$g_bukthi_arr[$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]] = array($bukthi_lord_order_tamil[$i],$curr_bukthi_start_date,$curr_bukthi_end_date);
+					//$curr_bukthi_start_date=date('d-m-Y',strtotime($curr_bukthi_end_date. '+ 1 day'));
+					$curr_bukthi_start_date = $curr_bukthi_end_date;
 	}
+   
+   
+	//var_dump($bukthi_arr);
 }
+
+
 
 function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_date, $dasa_end_date)
 {
@@ -1702,7 +1747,7 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 			
 			if(strtotime($current_date) >= strtotime($curr_bukthi_start_date) and strtotime($current_date) <= strtotime($curr_bukthi_end_date)){
 				echo "<div class='divTableRow'>";
-					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]."&#8594;".$bukthi_lord_order_tamil[$i]."</div>";
+					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divCurrentBukthi'>$curr_bukthi_start_date</div>";
 					echo "<div class='divCurrentBukthi'>$curr_bukthi_end_date</div>";
 				echo "</div>";
@@ -1714,14 +1759,14 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 			}
 			elseif(strtotime($transit_date) >= strtotime($curr_bukthi_start_date) and strtotime($transit_date) <= strtotime($curr_bukthi_end_date)){
 				echo "<div class='divTableRow'>";
-					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]."&#8594;".$bukthi_lord_order_tamil[$i]."</div>";
+					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divBirthBukthi'>$curr_bukthi_start_date</div>";
 					echo "<div class='divBirthBukthi'>$curr_bukthi_end_date</div>";
 				echo "</div>";
 		}
 			else{
 				echo "<div class='divTableRow'>";
-					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]."&#8594;".$bukthi_lord_order_tamil[$i]."</div>";
+					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divBukthi'>$curr_bukthi_start_date</div>";
 					echo "<div class='divBukthi'>$curr_bukthi_end_date</div>";
 				echo "</div>";
@@ -1741,7 +1786,7 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 		
 		if(strtotime($current_date) >= strtotime($curr_bukthi_start_date) and strtotime($current_date) <= strtotime($curr_bukthi_end_date)){
 				echo "<div class='divTableRow'>";
-					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]."&#8594;".$bukthi_lord_order_tamil[$i]."</div>";
+					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divCurrentBukthi'>$curr_bukthi_start_date</div>";
 					if($i==$curr_dasa_lord-1){
 						echo "<div class='divCurrentBukthi'>$dasa_end_date</div>";
@@ -1758,7 +1803,7 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 		}
 		elseif(strtotime($transit_date) >= strtotime($curr_bukthi_start_date) and strtotime($transit_date) <= strtotime($curr_bukthi_end_date)){
 				echo "<div class='divTableRow'>";
-					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]."&#8594;".$bukthi_lord_order_tamil[$i]."</div>";
+					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divBirthBukthi'>$curr_bukthi_start_date</div>";
 					if($i==$curr_dasa_lord-1){
 						echo "<div class='divBirthBukthi'>$dasa_end_date</div>";
@@ -1770,7 +1815,7 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 		}
 		else{
 			echo "<div class='divTableRow'>";
-				echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]."&#8594;".$bukthi_lord_order_tamil[$i]."</div>";
+				echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 				echo "<div class='divBukthi'>$curr_bukthi_start_date</div>";
 				if($i==$curr_dasa_lord-1){
 					echo "<div class='divBukthi'>$dasa_end_date</div>";
@@ -1819,7 +1864,7 @@ function calculateVimDasa()
 			echo "<div class='divDasaHeading'>Start</div>";
 			echo "<div class='divDasaHeading'>End</div>";
 		echo "</div>";
-	
+
 	for($i=0; $i<9; $i++)
 	{
 		if($i<$curr_dasa_lord){
@@ -1844,6 +1889,7 @@ function calculateVimDasa()
 			calculateVimBukthi($i,$dasa_lord,$dasa_start_date,$curr_dasa_end_date);
 		}
 	}
+	
 	
 	//to calculate for dasa for planets previous to birth dasa
 	for($i=0; $i<$curr_dasa_lord-1; $i++)
@@ -4619,12 +4665,11 @@ function displayDetailsDiv($in_dataType,$in_data){
 function displayDisclaimer()
 {
 	echo "<BR>";
-/*echo <<<EOL
+/*	echo <<<EOL
 		<div class="divDisclaimer" colspan=3>
 			<H6 style='font-weight;color:red'>*இந்த தளத்தில்/மொபைல் ஆப்பில் கொடுக்கப்பட்டுள்ள ஆய்வுகள் மற்றும் மதிப்பென்கள் இறுதியானது கிடையாது, இதனுடன் நீங்கள் தங்கள் விரிவான ஆய்வுகளையும் மேற்க்கொண்டு இருதி முடிவு எடுக்கவும்</H6>
 		</div>
-EOL;
-*/
+EOL;*/
 }
 
 function starCount($star1_idx, $star2_idx)
@@ -4864,6 +4909,8 @@ function getTamilDate(){
 	}
 	
 	$tamil_year = getTamilYear($year, $tamil_month);
+	
+	setKariNaal($tamil_month,$tamil_day);
 
 	return $tamil_year . ', ' . $tamil_month . ' ' . $tamil_day;
 }
@@ -4980,12 +5027,13 @@ EOL;
 
 //this function adds sunrise to rahu kaalam, ema kantam, kulika which is passed in the format 9:00-10:30
 function adjustSunrise($timestr){
-	global $today_sunrise;
+	global $today_sunrise, $today_sunset;
 	
 	$AMPM = explode(' ',$timestr);
 	$start_end_arr = explode('-',$AMPM[1]);
 	
 	$sunrisetime = explode(' ',$today_sunrise)[1];
+	$sunsettime = explode(' ',$today_sunset)[1];
 	
 	/*if(strtotime($sunrisetime) > strtotime("06:00")){
 		$minutes = $minutes = timeToMinutes($sunrisetime) - timeToMinutes("06:00");
@@ -4994,7 +5042,9 @@ function adjustSunrise($timestr){
 		$minutes = $minutes = timeToMinutes("06:00") - timeToMinutes($sunrisetime);
 	}*/
 	
-	$minutes = $minutes = timeToMinutes($sunrisetime) - timeToMinutes("06:00");
+	$agas = timeToMinutes($sunrisetime) - timeToMinutes($sunsettime);
+	
+	$minutes = timeToMinutes($sunrisetime) - timeToMinutes("06:00");
 	
 	if($minutes>0){
 		$newstart = date('H:i',strtotime($start_end_arr[0].' +'.abs($minutes).' minute'));
@@ -5011,10 +5061,115 @@ function adjustSunrise($timestr){
 	else{
 		return $newstart.'-'.$newend.' PM';
 	}
-	
-	
 }
 
+function getRahuKaalam(){
+	global $today_sunrise, $today_sunset, $dayofweek, $g_agas;
+	
+	//$rahu_kaalam = array("மாலை 4:30-6:00","காலை 7:30-9:00","மதியம் 3:00-4:30","மதியம் 12:00-1:30","மதியம் 1:30-3:00","காலை 10:30-12:00","காலை 09:00-10:30");
+	$rahu_kaalam = array(7,1,6,4,5,3,2); //mulipier, 8th jamam will not come
+	
+	$sunrisetime = explode(' ',$today_sunrise)[1];
+	$sunsettime = explode(' ',$today_sunset)[1];
+		
+	if($g_agas==null){
+		$g_agas = timeToMinutes($sunsettime) - timeToMinutes($sunrisetime);
+	}
+	
+	$jama_time = ceil($g_agas/8*60); //single jama time
+	
+	$rk_startime = date('H:i',strtotime($sunrisetime.' +'.($jama_time * $rahu_kaalam[$dayofweek]).' seconds'));
+	$rk_endime = date('H:i',strtotime($rk_startime.' +'.$jama_time.' seconds'));
+	
+	debug (__FUNCTION__.':'.$rk_startime.' - '.$rk_endime);
+	
+	return convertToMeridian($rk_startime).' - '.convertToMeridian($rk_endime);
+}
+
+function getEmaKantam(){
+	global $today_sunrise, $today_sunset, $dayofweek, $g_agas;
+	
+	//$yama_kantam = array("மதியம் 12:00-1:30","காலை 10:30-12:00","காலை 09:00-10:30","காலை 7:30-9:00","காலை 6:00-7:30","மதியம் 3:00-4:30","மதியம் 1:30-3:00");
+	$ek_kaalam = array(4,3,2,1,0,6,5); //multiplier 1st jamam will not come, so reducing it by 1
+	
+	$sunrisetime = explode(' ',$today_sunrise)[1];
+	$sunsettime = explode(' ',$today_sunset)[1];
+	
+	if($g_agas==null){
+		$g_agas = timeToMinutes($sunsettime) - timeToMinutes($sunrisetime);
+	}
+
+	$jama_time = ceil($g_agas/8*60); //single jama time
+	
+	$ek_startime = date('H:i',strtotime($sunrisetime.' +'.($jama_time * $ek_kaalam[$dayofweek]).' seconds'));
+	$ek_endime = date('H:i',strtotime($ek_startime.' +'.$jama_time.' seconds'));
+	
+	debug (__FUNCTION__.':'.$ek_startime.' - '.$ek_endime);
+	
+	return convertToMeridian($ek_startime).' - '.convertToMeridian($ek_endime);
+}
+
+function getKulikai(){
+	global $today_sunrise, $today_sunset, $dayofweek, $g_agas;
+	
+	//$kuligai_neram = array("மதியம் 3:00-4:30","மதியம் 1:30-3:00","மதியம் 12:00-1:30","காலை 10:30-12:00","காலை 09:00-10:30","காலை 7:30-9:00","காலை 6:00-7:30");
+	$kuligai_kaalam = array(6,5,4,3,2,1,0); //multiplier
+	
+	$sunrisetime = explode(' ',$today_sunrise)[1];
+	$sunsettime = explode(' ',$today_sunset)[1];
+	
+	if($g_agas==null){
+		$g_agas = timeToMinutes($sunsettime) - timeToMinutes($sunrisetime);
+	}
+
+	$jama_time = ceil($g_agas/8*60); //single jama time
+	
+	$kuli_startime = date('H:i',strtotime($sunrisetime.' +'.($jama_time * $kuligai_kaalam[$dayofweek]).' seconds'));
+	$kuli_endime = date('H:i',strtotime($kuli_startime.' +'.$jama_time.' seconds'));
+	
+	debug (__FUNCTION__.':'.$kuli_startime.' - '.$kuli_endime);
+	
+	return convertToMeridian($kuli_startime).' - '.convertToMeridian($kuli_endime);
+}
+
+function getVaaraSoolai(){
+	global $dayofweek;
+	$vaara_soolai = array("மேற்கு","கிழக்கு","வடக்கு","வடக்கு","தெற்கு","மேற்கு","கிழக்கு");
+	
+	return $vaara_soolai[$dayofweek];
+}
+
+function getSoolaiParigaaram(){
+	global $dayofweek;
+	$parikaaram = array("வெல்லம் ","தயிர்","பால்","பால்","தைலம்","வெல்லம்","தயிர்");
+	
+	return $parikaaram[$dayofweek];
+}
+
+function getAbhijit(){
+	global $today_sunrise, $today_sunset, $dayofweek, $g_agas;
+	
+	$sunrisetime = explode(' ',$today_sunrise)[1];
+	$sunsettime = explode(' ',$today_sunset)[1];
+	
+	if($g_agas==null){
+		$g_agas = timeToMinutes($sunsettime) - timeToMinutes($sunrisetime);
+	}
+
+	$halfday = ceil($g_agas/2*60); //half agas
+	
+	$noon_time = date('H:i',strtotime($sunrisetime.' +'.$halfday.' seconds'));
+	$abijit_startime = date('H:i',strtotime($noon_time.' -'.(24*60).' seconds'));
+	$abijit_endime = date('H:i',strtotime($noon_time.' +'.(24*60).' seconds'));
+	
+	debug (__FUNCTION__.':'.$abijit_startime.' - '.$abijit_endime);
+	
+	return convertToMeridian($abijit_startime).' - '.convertToMeridian($abijit_endime);
+}
+
+function convertToMeridian($time){
+	return date('h:i A',strtotime($time));
+}
 
 function getAmrithathiYogam(){ 
 	global $g_nak, $dayofweek;
@@ -5105,11 +5260,14 @@ function getJeevan()
 	$sunstar = ceil((($sun_house-1)*30+$sun_degree)/13.33);
 	$todaystar = ceil($g_nak_idx/4);
 	
-	
 	$diff = $todaystar - $sunstar+1; //add one to include sun star
+	
+	if($diff < 0){
+		$diff = 27-abs($diff);
+	}
 	debug("$todaystar - $sunstar=$diff");
 	
-	if($diff ==1 or $diff == 2 or $diff == 10 or $diff == 19 or $diff == 27){
+	if($diff ==0 or $diff ==1 or $diff == 2 or $diff == 10 or $diff == 19 or $diff == 27){
 		$result = "உயிரற்ற (0)";
 	}
 	elseif(($diff >=3 and $diff <=9) or $diff == 9 or ($diff >=20 and $diff <=26)){
@@ -5121,6 +5279,49 @@ function getJeevan()
 	
 	return $result;
 }
-?>
 
+//மேல்நோக்கு நாள் - ரோகிணி, திருவாதிரை, பூசம், உத்திரம், உத்திராடம், திருவோணம், அவிட்டம், சதயம், உத்திரட்டாதி
+//கீழ்நோக்கு நாட்கள் - பரணி, கிருத்திகை, ஆயில்யம், மகம், பூரம், விசாகம், மூலம், பூராடம், பூரட்டாதி
+//சமநோக்கு நாட்கள் - அஸ்வினி, மிருகசீரிஷம், புனர்பூசம், ஹஸ்தம், சித்திரை, சுவாதி, அனுஷம், கேட்டை, ரேவதி
+
+function getDayType(){
+	global $g_nak;
+	
+	$good_day_arr = ['ரோகிணி', 'திருவாதிரை', 'பூசம்', 'உத்திரம்', 'உத்திராடம்', 'திருவோணம்', 'அவிட்டம்', 'சதயம்', 'உத்திரட்டாதி'];
+	$bad_day_arr = ['பரணி', 'கிருத்திகை', 'ஆயில்யம்', 'மகம்', 'பூரம்', 'விசாகம்', 'மூலம்', 'பூராடம்', 'பூரட்டாதி'];
+	$equal_day_arr = ['அசுவினி', 'மிருகசிரீஷம்', 'புனர்பூசம்', 'ஹஸ்தம்', 'சித்திரை', 'சுவாதி', 'அனுஷம்', 'கேட்டை', 'ரேவதி'];
+	
+	if(array_search($g_nak,$good_day_arr)!==false){
+		return 'மேல் நோக்கு';
+	}
+	elseif(array_search($g_nak, $bad_day_arr)!==false){
+		return 'கீழ் நோக்கு';
+	}
+	elseif(array_search($g_nak, $equal_day_arr)!==false){
+		return 'சம நோக்கு';
+	}
+}
+
+function setKariNaal($in_tamil_month,$in_tamil_day){
+	global $g_kariNaal;
+	
+	$kariNaal_arr = ['சித்திரை' => array(6, 15),
+					 'வைகாசி' => array(7, 16, 17),
+					 'ஆனி' => array(1, 6),
+					 'ஆடி' => array(2, 10, 20),
+					 'ஆவணி' => array(2, 9, 28),
+					 'புரட்டாசி' => array(16, 29),
+					 'ஐப்பசி' => array(6, 20),
+					 'கார்த்திகை' => array(1, 10, 17),
+					 'மார்கழி' => array(6, 9, 11),
+					 'தை' => array(1, 2, 3, 11, 17),
+					 'மாசி' => array(15, 16, 17),
+					 'பங்குனி' => array(6, 15, 19)
+					];
+					
+	if(array_search($in_tamil_day,$kariNaal_arr[$in_tamil_month])!==false){
+		$g_kariNaal = "கரி நாள்";
+	}
+}
+?>
 

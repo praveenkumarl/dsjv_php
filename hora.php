@@ -55,6 +55,12 @@ else{
 	$curr_date = date("Y-m-d");
 }
 
+if(isset($_GET['date']) && isset($_GET['time']) && isset($_GET['place'])){
+	$curr_date = $_GET["date"];
+	$curr_time = $_GET["time"];
+	$place = $_GET["place"];
+}
+
 function displayHorai($lat,$lon)
 {
 	global $curr_time,$sunrise,$sunset,$curr_date,$day_hora_data,$night_hora_data;

@@ -179,42 +179,8 @@ function deleteUser(in_phone){
 					echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'><input type='textbox' name='imei' value='".$userInfo['imei'][$i]."' ></div>";
 				echo "</div>";
 				echo "<div class='divTableRow'>";
-					echo "<div class='divPanchangHeading'>user_type</div>";
+					echo "<div class='divPanchangHeading'>User Type</div>";
 					echo "<select name='usertype' id='usertype' style='background-color:white;border:solid 1px black;color:black;font-weight:bold;border-radius:0'>";
-						/*if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],'FREE')==0){
-							echo "<option value='FREE' selected>FREE</option>";
-						}
-						else{
-							echo "<option value='FREE'>FREE</option>";
-						}
-						
-						if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],'PAID')==0){
-							echo "<option value='PAID' selected>PAID</option>";
-						}
-						else{
-							echo "<option value='PAID'>PAID</option>";
-						}
-						if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],'SUPER')==0){
-							if(strcmp($usertype,'ADMIN')==0){
-								echo "<option value='SUPER' selected>SUPER</option>";
-							}
-						}
-						else{
-							if(strcmp($usertype,'ADMIN')==0){
-								echo "<option value='SUPER'>SUPER</option>";
-							}
-						}
-						if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],'ADMIN')==0){
-							if(strcmp($usertype,'ADMIN')==0){
-								echo "<option value='ADMIN' selected>ADMIN</option>";
-							}
-						}
-						else{
-							if(strcmp($usertype,'ADMIN')==0){
-								echo "<option value='ADMIN'>ADMIN</option>";
-							}
-						}*/
-						
 						foreach($usertype_arr as $utype){
 							if(strcmp($_SESSION['user_type'],SUPER)==0 && strcmp($utype,ADMIN)==0){
 								continue;

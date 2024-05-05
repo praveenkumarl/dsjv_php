@@ -62,6 +62,7 @@ elseif(strcmp($usertype,PAID)==0){
 				  <a class='glow-button' href="hora.php" class='glow-button'>ஓரை</a>
 				  <a class='glow-button' href="star_thaara_palan.php" class='glow-button'>தாரா பலன்</d</a>
 				  <a class='glow-button' href="new_panchang.php" class='glow-button'>பஞ்சாங்கம்</a>
+				  <a class='glow-button' href="prasannam_home.php">பிரசன்னம்</a>
 				</div>
 			</div> 
 			<a href="index.php"><i class="fa fa-home fa-2x"></i></a>
@@ -89,6 +90,7 @@ elseif(strcmp($usertype,SUPER)==0){
 				  <a class='glow-button' href="hora.php">ஓரை</a>
 				  <a class='glow-button' href="star_thaara_palan.php">தாரா பலன்</d</a>
 				  <a class='glow-button' href="new_panchang.php">பஞ்சாங்கம்</a>
+				  <a class='glow-button' href="prasannam_home.php">பிரசன்னம்</a>
 				  <a class='glow-button' href="maintenance.php">Manage</a>
 				</div>
 			</div> 
@@ -115,6 +117,7 @@ elseif(strcmp($usertype,ADMIN)==0){
 				  <a class='glow-button' href="hora.php">ஓரை</a>
 				  <a class='glow-button' href="star_thaara_palan.php">தாரா பலன்</d</a>
 				  <a class='glow-button' href="new_panchang.php">பஞ்சாங்கம்</a>
+				  <a class='glow-button' href="prasannam_home.php">பிரசன்னம்</a>
 				  <a class='glow-button' href="admin.php">ADMIN</a>
 				  <a class='glow-button' href="maintenance.php">Manage</a>
 				</div>

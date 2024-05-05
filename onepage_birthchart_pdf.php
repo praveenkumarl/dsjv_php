@@ -824,7 +824,7 @@ function prepareBukthiTable(){
 	$bukthi_arr = array();
 	
 	$dasa_lord = explode('-',$g_dasaCurrent[0])[0];
-	$dasa_lord = $dasa_lord . "&#8594;";
+	$dasa_lord = $dasa_lord . " / ";
 
 	foreach($g_bukthi_arr as $bukthi => $data){
 	if(mb_strpos($bukthi,$dasa_lord)===0){
@@ -1300,11 +1300,12 @@ echo "TZ: " . $TZ ."<BR>";
 
 date_default_timezone_set($TZ);
 
-if(date('I')==1) { // DST
+if(date('I',strtotime($chart_date))==1) { // DST
    $hour=(int)strtok($gmt_offset_dst,":");
    $min=(int)strtok(":");
    $offset=$hour+$min/60;
    $tz_offset=$gmt_offset_dst;
+   debug('Choosing daylight savings offset');
 }
 else {
    $hour=(int)strtok($gmt_offset,":");
@@ -1712,9 +1713,9 @@ else{
 
 <div id='onepage' style="width: min-content">
 	<div class="header-parent">
-	  <div class="header-left"><img src='images/dsjv_title.png' height="35px"></div>
+	  <!-- <div class="header-left"><img src='images/dsjv_title.png' height="35px"></div> -->
 	  <div class="header-center"><div class='divTableTextOfficeName'>&#3059; &#2384; &#21328; &#10017;<BR><?php echo $office_name.'<BR>&#128241;'.$office_phone; ?></div></div>
-	  <div class="header-right"><img src='images/periyanayaki_astro_solutions.png' height="35px"></div>
+	  <!-- <div class="header-right"><img src='images/periyanayaki_astro_solutions.png' height="35px"></div> -->
 	</div>
 	<div class="header-image"></div>
 <center><div class='divTableTextSloka' style='font-family: Verdana, Raavi, sans-serif;font-size:8px;width:100%;line-height:10px'>&#2384; ஜனனி ஜன்ம சௌக்யானாம் வர்தநீ குலஸம்பதாம்
@@ -1748,7 +1749,7 @@ else{
 	
 </div>
 
-<div class="PageFooter" style="width:-webkit-fill-available">&#169; Periyanayaki Astro Solutions</div>  
+<div class="PageFooter" style="width:-webkit-fill-available">தர்ம சாஸ்தா ஜோதிட வித்யாலயா & Periyanayaki Astro Solutions</div>
 
 					
 <?php

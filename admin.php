@@ -220,7 +220,9 @@ getTopActivityDetails();
 
     <script src="script.js"></script>
 	<script src="tz.js"></script>
+	<script src="calendar_ta.js"></script>
     <script type="text/javascript">
+	
 		$(document).ready(function(){
     $('.search-box input[type="text"]').on("keyup input", function(){
         /* Get input value on change */
@@ -247,7 +249,6 @@ getTopActivityDetails();
 
 function init(){
 	document.getElementById('imei').value = '<?php echo $imei; ?>';
-	
 	getGeoLocation();
 }
 
@@ -271,7 +272,7 @@ function getGeoLocation(){
 		
 		const tz = tzlookup(latitude,longitude); //include tz.js
 		
-		alert("Lat="+latitude+" Long="+longitude+" TZ="+tz);
+		//alert("Lat="+latitude+" Long="+longitude+" TZ="+tz);
 		
 		$("#map").append(html); //embed map
 		
@@ -311,6 +312,11 @@ function actAs(num){
 
 function openUserInfo(rowid){
 	window.location = "userInfo.php?rowid="+rowid;
+}
+
+function getTamilDate(){
+	var temp = TC.getTamilYearName(2020,4,20);
+	alert(temp);
 }
 		
     </script>
@@ -388,7 +394,7 @@ function openUserInfo(rowid){
 <?php
 					echo "<form name='userInfo' action='userInfo.php' method='post'>";
 					echo "<P>Search by Name/Phone</P>";
-					echo "<div class='search-box'><input type='text' name='name' id='name' autocomplete='off' style='background:#ffffff' placeholder='Search name/phone...' onfocus=this.value='' onBlur='placeOnBlur();' /><div class='result'></div>";
+					echo "<div class='search-box'><input type='text' name='name' id='name' autocomplete='off' style='background:#ffffff' placeholder='Search name/phone...' onfocus=this.value='' onBlur='placeOnBlur();' x-webkit-speech /><div class='result'></div>";
 					echo "<input type='Submit' id='btSubmit' value='Submit' style='background-color:gold;color:#660000;font-weight:bold;font-size:10px;'>";
 					echo "</form>";
 				
@@ -457,6 +463,7 @@ function openUserInfo(rowid){
 </div>
 
 <center><div id='map' width="400" height="400"></div></center>
+<button class='actionBtn' onClick='getTamilDate();'>Tamil Date</button>
 
 </body>
 

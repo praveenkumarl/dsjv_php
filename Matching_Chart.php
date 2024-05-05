@@ -868,104 +868,104 @@ function matchingRule12()
 	$thinam = [2, 4, 6, 8, 9, 11, 13, 15, 17, 18, 20, 24, 26]; //removed 22 as it's vainasigam
 	
 	if(array_search($girl_to_boy_start_count,$thinam)){
-		$result_txt = $result_txt . "<BR>தினம் பொருத்தம் &#x2714;<BR>";
+		$result_txt = $result_txt . "தினம் பொருத்தம் &#x2714;";
 		$star_match_count++;
 	}
 	else{
-		$result_txt = $result_txt . "<BR>தினம் பொருத்தம் &#x2716;<BR>";
+		$result_txt = $result_txt . "தினம் பொருத்தம் &#x2716;";
 	}
 	
 	//2 கணம்
 	if(ganaMatching())
 	{
-		$result_txt = $result_txt . "<BR>கண பொருத்தம் &#x2714;<BR>";
+		$result_txt = $result_txt . "<BR>கண பொருத்தம் &#x2714;";
 		$star_match_count++;
 	}
 	else{
-		$result_txt = $result_txt . "<BR>கண பொருத்தம் &#x2716;<BR>";
+		$result_txt = $result_txt . "<BR>கண பொருத்தம் &#x2716;";
 	}
 	
 	//மகேந்திர பொருத்தம்
 	$mahendra = [4,7,10,13,16,19,22,25];
 	
 	if(array_search($girl_to_boy_start_count,$mahendra)){
-		$result_txt = $result_txt . "<BR>மகேந்திர பொருத்தம் &#x2714;<BR>";
+		$result_txt = $result_txt . "<BR>மகேந்திர பொருத்தம் &#x2714;";
 		$star_match_count++;
 	}
 	else{
-		$result_txt = $result_txt . "<BR>மகேந்திர பொருத்தம் &#x2716;<BR>";
+		$result_txt = $result_txt . "<BR>மகேந்திர பொருத்தம் &#x2716;";
 	}
 	
 	//ஸ்திரீ தீர்க்கம்
 	if($girl_to_boy_start_count>13){
-		$result_txt = $result_txt . "<BR>ஸ்திரீ தீர்க்கம் &#x2714;<BR>";
+		$result_txt = $result_txt . "<BR>ஸ்திரீ தீர்க்கம் &#x2714;";
 		$star_match_count++;
 	}
 	else{
-		$result_txt = $result_txt . "<BR>ஸ்திரீ தீர்க்கம் &#x2716;<BR>";
+		$result_txt = $result_txt . "<BR>ஸ்திரீ தீர்க்கம் &#x2716;";
 	}
 	
 	//யோனி பொருத்தம்
 	if(yoniMatch()){
-		$result_txt = $result_txt . "<BR>யோனி பொருத்தம் &#x2714;<BR>";
+		$result_txt = $result_txt . "<BR>யோனி பொருத்தம் &#x2714;";
 		$star_match_count++;
 	}
 	else{
-		$result_txt = $result_txt . "<BR>யோனி பொருத்தம் &#x2716;<BR>";
+		$result_txt = $result_txt . "<BR>யோனி பொருத்தம் &#x2716;";
 	}
 	
 	//ராசி பொருத்தம்
 	if(matchingRule2(false)){
-		$result_txt = $result_txt . "<BR>ராசி பொருத்தம் &#x2714;<BR>";
+		$result_txt = $result_txt . "<BR>ராசி பொருத்தம் &#x2714;";
 		$star_match_count++;
 	}
 	else{
-		$result_txt = $result_txt . "<BR>ராசி பொருத்தம் &#x2716;<BR>";
+		$result_txt = $result_txt . "<BR>ராசி பொருத்தம் &#x2716;";
 	}
 	
 	//ராசி அதிபதி பொருத்தம் 
 	if(checkRaasiAthipathiMatching()){
-		$result_txt = $result_txt . "<BR>ராசி அதிபதி பொருத்தம் &#x2714;<BR>";
+		$result_txt = $result_txt . "<BR>ராசி அதிபதி பொருத்தம் &#x2714;";
 		$star_match_count++;
 	}
 	else{
-		$result_txt = $result_txt . "<BR>ராசி அதிபதி பொருத்தம் &#x2716;<BR>";
+		$result_txt = $result_txt . "<BR>ராசி அதிபதி பொருத்தம் &#x2716;";
 	}
 	
 	//வசிய பொருத்தம் 
 	if(vasiyaMatching()){
-		$result_txt = $result_txt . "<BR>வசிய பொருத்தம் &#x2714;<BR>";
+		$result_txt = $result_txt . "<BR>வசிய பொருத்தம் &#x2714;";
 		$star_match_count++;
 	}
 	else{
-		$result_txt = $result_txt . "<BR>வசிய பொருத்தம் &#x2716;<BR>";
+		$result_txt = $result_txt . "<BR>வசிய பொருத்தம் &#x2716;";
 	}
 	
 	//ரஜ்ஜு பொருத்தம் 
 	if(matchingRule8(false)){
-		$result_txt = $result_txt . "<BR>ரஜ்ஜு பொருத்தம் &#x2714;<BR>";
+		$result_txt = $result_txt . "<BR>ரஜ்ஜு பொருத்தம் &#x2714;";
 		$star_match_count++;
 	}
 	else{
-		$result_txt = $result_txt . "<BR>ரஜ்ஜு பொருத்தம் &#x2716;<BR>";
+		$result_txt = $result_txt . "<BR>ரஜ்ஜு பொருத்தம் &#x2716;";
 	}
 	
 	//வேதை பொருத்தம் 
 	if(matchingRule8(false)){
-		$result_txt = $result_txt . "<BR>வேதை பொருத்தம் &#x2714;<BR>";
+		$result_txt = $result_txt . "<BR>வேதை பொருத்தம் &#x2714;";
 		$star_match_count++;
 	}
 	else{
-		$result_txt = $result_txt . "<BR>வேதை பொருத்தம் &#x2716;<BR>";
+		$result_txt = $result_txt . "<BR>வேதை பொருத்தம் &#x2716;";
 	}
 	
 	//நாடி பொருத்தம் 
 	if(naadiMatching()){
-		$result_txt = $result_txt . "<BR>நாடி பொருத்தம் &#x2714;<BR>";
+		$result_txt = $result_txt . "<BR>நாடி பொருத்தம் &#x2714;";
 		$star_match_count++;
 	}
 	else{
-		$result_txt = $result_txt . "<BR>நாடி பொருத்தம் &#x2716;<BR>";
+		$result_txt = $result_txt . "<BR>நாடி பொருத்தம் &#x2716;";
 	}	
 	
 	if($star_match_count >= MIN_STAR_MATCH_COUNT){

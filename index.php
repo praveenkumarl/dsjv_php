@@ -75,6 +75,9 @@ elseif(strcmp($_SESSION['user_type'],BIRTH)==0){
 elseif(strcmp($_SESSION['user_type'],MATCHING)==0 OR strcmp($_SESSION['user_type'],BIRTHMATCH)==0){
 	header("Location: Matching_input.php");
 }
+elseif(strcmp($_SESSION['user_type'],PRASANNAM)==0){
+	header("Location: prasannam_home.php");
+}
 elseif(strcmp($_SESSION['user_type'],FREE)==0){
 	header("Location: freeuser.php");
 }

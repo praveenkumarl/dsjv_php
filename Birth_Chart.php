@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <?php
 include_once "lib.php";
 
@@ -115,7 +116,7 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 	$saveBtnTxt='Update';
 }
 ?>
-<!DOCTYPE html>
+
 <html lang="en" class="no-js">
 <head>
     <meta charset="utf-8">
@@ -358,8 +359,8 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 			var z5 = document.getElementById("d9_chart");
 			
 			if (z1.style.display === "none" && z2.style.display === "none") {
-				z1.style.display = "block";
-				z2.style.display = "block";
+				z1.style.display = "table-cell";
+				z2.style.display = "table-cell";
 				x.style.display = "none";
 				y.style.display = "none";
 				z3.style.display = "none";
@@ -383,8 +384,8 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 			var z3 = document.getElementById("d9_chart");
 			
 			if (z1.style.display === "none" && z2.style.display === "none") {
-				z1.style.display = "block";
-				z2.style.display = "block";
+				z1.style.display = "table-cell";
+				z2.style.display = "table-cell";
 				z3.style.display = "none";
 				x.style.display = "none";
 				y.style.display = "none";
@@ -494,8 +495,8 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 			btns.style.display='none';
 			x.style.display='block';
 			y.style.display='block';
-			z1.style.display='block';
-			z2.style.display='block';
+			z1.style.display='table-cell';
+			z2.style.display='table-cell';
 		}
 		
 		function generatePDF() {
@@ -635,29 +636,94 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 		form.submit();
 	}
 	
-	function displayAnthara(dasa_lord, bukthi_lord, bukthi_start, bukthi_end) {
-		//bukthi_start = "05/24/2023";
-		//bukthi_end = "06/24/2023";
-		var bukthi_str_date = bukthi_start.split('-');
-		var bukthi_end_date = bukthi_end.split('-');
-		
-		//d1 = new Date(bukthi_str_date[2], bukthi_str_date[0]-1, bukthi_str_date[1]);
-		//d2 = new Date(bukthi_end_date[2], bukthi_end_date[0]-1, bukthi_end_date[1]);
-		d1 = new Date(bukthi_str_date[2]+"/"+bukthi_str_date[1]+"/"+bukthi_str_date[0]);
-		d2 = new Date(bukthi_end_date[2]+"/"+bukthi_end_date[1]+"/"+bukthi_end_date[0]);
-		
-		days = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
-		
-		months = Math.floor(days / 30); 
-		
-		remdays = days % 30;
-		
-		new_end_date = new Date(d1);
-		new_end_date = new_end_date.setDate(d1.getDate()+days*19/120);
-		alert(new_end_date.getDate()); 
-		
-		alert(days+" days"+" "+months+" months "+remdays+" rem days");	
-	}
+	function generateAnthram(in_start, in_end, dasa, bukthi) {
+       var anthram_arr = {};
+       var count = 0;
+ 
+       //var start = new Date(in_start).toLocaleDateString();
+	   var start = new Date(in_start);
+          
+       var dasa_period = {'கே': 7, 'சுக்': 20, 'சூரி': 6, 'சந்': 10, 'செ': 7, 'ரா': 18, 'குரு': 16, 'சனி': 19, 'புத': 17};
+       var index = Object.keys(dasa_period).indexOf(bukthi);
+       var last_planet = '';
+       var html_str='';
+      
+       //var link = document.createElement('link');
+       //    link.rel = 'stylesheet';
+        //   link.href = 'css/main.css';
+        //   document.head.appendChild(link);
+      
+       html_str='<center><div class="divTable blueTable" style="width:80%;height:auto">';
+       html_str=html_str+'<div class="divTableRow"><div class="divAnthraHeading" colspan="3">அந்தரம்</div></div></div>';
+       html_str=html_str+'<center><div class="divTable blueTable" style="width:80%;height:auto">';
+	   
+	   curr_date = new Date();
+       
+       console.log("Anthram");
+       for (var i = index; i <= index + 7; i++) {
+           if (i > 8) {
+             break;
+           }
+           //console.log(Object.keys(dasa_period)[i]);
+           var no_of_days = Math.round((dasa_period[dasa] * dasa_period[bukthi] * Object.values(dasa_period)[i]) / 14400 * 365.2425 * 24 * 60 * 60);
+           var end = new Date(new Date(start).getTime() + no_of_days * 1000);
+          
+           anthram_arr[Object.keys(dasa_period)[i]] = [start, end];
+           //console.log(start + " - " + end);
+          
+           temp1=new Date(start);
+           s_date = String(temp1.getDate()).padStart(2, '0')+'-'+String(temp1.getMonth()+1).padStart(2, '0')+'-'+temp1.getFullYear();
+           temp2=new Date(end);
+           e_date = String(temp2.getDate()).padStart(2, '0')+'-'+String(temp2.getMonth()+1).padStart(2, '0')+'-'+temp2.getFullYear();
+		   
+		   if(curr_date.getTime() > temp1.getTime() && curr_date.getTime() < temp2.getTime()){
+			   html_str = html_str + '<div class="divTableRow"><div class="divAnthraHeading">'+dasa+' / '+bukthi+' / '+Object.keys(dasa_period)[i]+'</div><div class="divCurrAnthra">'+s_date+'</div><div class="divCurrAnthra">'+e_date+'</div></div>';
+		   }
+		   else{
+			   html_str = html_str + '<div class="divTableRow"><div class="divAnthraHeading">'+dasa+' / '+bukthi+' / '+Object.keys(dasa_period)[i]+'</div><div class="divAnthra">'+s_date+'</div><div class="divAnthra">'+e_date+'</div></div>';
+		   }
+          
+           //start = new Date(new Date(end).getTime() + 24 * 60 * 60 * 1000);
+           start = end;
+          
+           count++;
+           last_planet = Object.keys(dasa_period)[i];
+       }
+      
+       
+       
+       for (var i = 0; i < 9 - count; i++) {
+           //console.log(Object.keys(dasa_period)[i]);
+           var no_of_days = Math.round((dasa_period[dasa] * dasa_period[bukthi] * Object.values(dasa_period)[i]) / 14400 * 365.2425 * 24 * 60 * 60);
+           var end = new Date(new Date(start).getTime() + no_of_days * 1000);
+           anthram_arr[Object.keys(dasa_period)[i]] = [start, end];
+          
+           temp1=new Date(start);
+           s_date = String(temp1.getDate()).padStart(2, '0')+'-'+String(temp1.getMonth()+1).padStart(2, '0')+'-'+temp1.getFullYear();
+           temp2=new Date(end);
+           e_date = String(temp2.getDate()).padStart(2, '0')+'-'+String(temp2.getMonth()+1).padStart(2, '0')+'-'+temp2.getFullYear();
+          
+           if(curr_date.getTime() > temp1.getTime() && curr_date.getTime() < temp2.getTime()){
+			   html_str = html_str + '<div class="divTableRow"><div class="divAnthraHeading">'+dasa+' / '+bukthi+' / '+Object.keys(dasa_period)[i]+'</div><div class="divCurrAnthra">'+s_date+'</div><div class="divCurrAnthra">'+e_date+'</div></div>';
+		   }
+		   else{
+			   html_str = html_str + '<div class="divTableRow"><div class="divAnthraHeading">'+dasa+' / '+bukthi+' / '+Object.keys(dasa_period)[i]+'</div><div class="divAnthra">'+s_date+'</div><div class="divAnthra">'+e_date+'</div></div>';
+		   }
+          
+           //start = new Date(new Date(end).getTime() + 24 * 60 * 60 * 1000);
+           start = end;
+          
+           last_planet = Object.keys(dasa_period)[i];
+       }
+       //console.log(anthram_arr);
+       
+       html_str=html_str+"</div></center>";
+      
+       document.getElementById('anthramDiv').innerHTML = html_str;
+       document.getElementById('anthramDiv').style.display = 'block';
+      
+       return anthram_arr;
+     }
 	
 	function openWallpaper(){
 		var x = document.getElementById("wallpaper");
@@ -718,6 +784,10 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 		document.getElementById("divNotes").style.display = "block";
 		window.scrollTo(0, document.body.scrollHeight);
 	}
+	
+	function hide(){
+		document.getElementById('anthramDiv').style.visibility='hidden';
+	}
 				
 	</script>
 </head>
@@ -745,6 +815,7 @@ $onePageURL="onepage_form.php?place=".$in_place."&name=".$in_name."&sex=".$in_se
 
 <body onLoad="init();">
 <div id="karanamDiv" onclick="hide ()"><img src='images/karanam.png' width='100%' /></div>
+<div class="anthramDiv" id="anthramDiv" onclick="this.style.display='none'"></div>
 <div id="loader" class="center"></div>
 
 <?php
@@ -1354,6 +1425,19 @@ function displayHoroDetails()
 		echo "</div>";
 		displayDetailsDiv('yogi',$g_yoga_idx);
 		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>பஞ்ச பக்ஷி</div>";
+			$g_pancha_pakshi = getPanchaPakshi();
+			echo "<div class='divPanchang'>".$g_pancha_pakshi."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>சூரிய உதயம்</div>";
+			echo "<div class='divPanchang'>".explode(' ',$today_sunrise)[1]."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>சூரிய அஸ்தமனம்</div>";
+			echo "<div class='divPanchang'>".explode(' ',$today_sunset)[1]."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeadingRed'>அவயோகி</div>";
 			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 4)' style='color:blue;cursor:pointer'>".$yogi_arr[3]."(".$yogi_arr[2].")</div>";
 		echo "</div>";
@@ -1371,19 +1455,6 @@ function displayHoroDetails()
 			echo "<div class='divPanchangHeadingRed'>முடக்கு</div>";
 			$g_mudakku_detail = $mudakku_star." (".$mudakku_rasi.")<BR>".$mudakku_baavam."ஆம் வீடு";
 			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 6)' style='color:blue;cursor:pointer'>".$g_mudakku_detail."</div>";
-		echo "</div>";
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>பஞ்ச பக்ஷி</div>";
-			$g_pancha_pakshi = getPanchaPakshi();
-			echo "<div class='divPanchang'>".$g_pancha_pakshi."</div>";
-		echo "</div>";
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>சூரிய உதயம்</div>";
-			echo "<div class='divPanchang'>".explode(' ',$today_sunrise)[1]."</div>";
-		echo "</div>";
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>சூரிய அஸ்தமனம்</div>";
-			echo "<div class='divPanchang'>".explode(' ',$today_sunset)[1]."</div>";
 		echo "</div>";
 		/*echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>ராகு காலம்</div>";
@@ -1863,7 +1934,7 @@ function prepareBukthiTable(){
 	$bukthi_arr = array();
 	
 	$dasa_lord = explode('-',$g_dasaCurrent[0])[0];
-	$dasa_lord = $dasa_lord . "&#8594;";
+	$dasa_lord = $dasa_lord . "/";
 
 	foreach($g_bukthi_arr as $bukthi => $data){
 	if(mb_strpos($bukthi,$dasa_lord)===0){
@@ -1962,7 +2033,8 @@ echo "TZ: " . $TZ ."<BR>";
 
 date_default_timezone_set($TZ);
 
-if(date('I')==1) { // DST
+if(date('I',strtotime($chart_date))==1) { // DST
+   debug('<br>Picking daylight savings '.$gmt_offset_dst);
    $hour=(int)strtok($gmt_offset_dst,":");
    $min=(int)strtok(":");
    $offset=$hour+$min/60;
@@ -2457,20 +2529,20 @@ echo <<<EOL
 						
 						<div class="divTableBody">
 							<div class="divTableRow">
-									<div class="divTableOuterCell">$tr_sw_planet[11]</div>
-									<div class="divTableOuterCell"></div>
+									<div class="divTableOuterCellLeftTop">$tr_sw_planet[11]</div>
+									<div class="divTableOuterCell" style='border-left:none'></div>
 									<div class="divTableOuterCell">$tr_sw_planet[0]</div>
 									<div class="divTableOuterCell">$tr_sw_planet[1]</div>
-									<div class="divTableOuterCell"></div>
-									<div class="divTableOuterCell">$tr_sw_planet[2]</div>
+									<div class="divTableOuterCell"  style='border-right:none'></div>
+									<div class="divTableOuterCellRightTop">$tr_sw_planet[2]</div>
 							</div>
 							<div class="divTableRow">
-									<div class="divTableOuterCell"></div>
+									<div class="divTableOuterCell" style='border-top:none'></div>
 									<div class="divTableCell">$sw_planet[11]<span class='symbol'>&#9795;</span>$g_thithi_soonyam_arr[11]</div>
 									<div class="divTableCell">$sw_planet[0]<span class='symbol'>&#9794;</span>$g_thithi_soonyam_arr[0]</div>
 									<div class="divTableCell">$sw_planet[1]<span class='symbol'>&#9792;</span>$g_thithi_soonyam_arr[1]</div>
 									<div class="divTableCell">$sw_planet[2]<span class='symbol'>&#9791;</span>$g_thithi_soonyam_arr[2]</div>
-									<div class="divTableOuterCell"></div>
+									<div class="divTableOuterCell"  style='border-top:none'></div>
 							</div>
 							<div class="divTableRow">
 									<div class="divTableOuterCell">$tr_sw_planet[10]</div>
@@ -2489,20 +2561,20 @@ echo <<<EOL
 									<div class="divTableOuterCell">$tr_sw_planet[4]</div>
 							</div>
 							<div class="divTableRow">
-									<div class="divTableOuterCell"></div>
+									<div class="divTableOuterCell" style='border-bottom:none'></div>
 									<div class="divTableCell">$sw_planet[8]<span class='symbol'>&#9795;</span>$g_thithi_soonyam_arr[8]</div>
 									<div class="divTableCell">$sw_planet[7]<span class='symbol'>&#9794;</span>$g_thithi_soonyam_arr[7]</div>
 									<div class="divTableCell">$sw_planet[6]<span class='symbol'>&#9792;</span>$g_thithi_soonyam_arr[6]</div>
 									<div class="divTableCell">$sw_planet[5]<span class='symbol'>&#9791;</span>$g_thithi_soonyam_arr[5]</div>
-									<div class="divTableOuterCell"></div>
+									<div class="divTableOuterCell"  style='border-bottom:none'></div>
 							</div>
 							<div class="divTableRow">
-									<div class="divTableOuterCell">$tr_sw_planet[8]</div>
-									<div class="divTableOuterCell"></div>
+									<div class="divTableOuterCellLeftBottom">$tr_sw_planet[8]</div>
+									<div class="divTableOuterCell" style='border-left:none'></div>
 									<div class="divTableOuterCell">$tr_sw_planet[7]</div>
 									<div class="divTableOuterCell">$tr_sw_planet[6]</div>
-									<div class="divTableOuterCell"></div>
-									<div class="divTableOuterCell">$tr_sw_planet[5]</div>
+									<div class="divTableOuterCell"  style='border-right:none'></div>
+									<div class="divTableOuterCellRightBottom">$tr_sw_planet[5]</div>
 							</div>
 						</div>	
 					</div>

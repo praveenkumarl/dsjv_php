@@ -17,6 +17,7 @@ if(strcmp($usertype,ADMIN)==0){
 				  <a class='glow-button' href="hora.php">ஓரை</a>
 				  <a class='glow-button' href="star_thaara_palan.php">தாரா பலன்</a>
 				  <a class='glow-button' href="new_panchang.php">பஞ்சாங்கம்</a>
+				  <a class='glow-button' href="prasannam_home.php">பிரசன்னம்</a>
 				  <a class='glow-button' href="maintenance.php">Manage</a>
 				</div>
 			</div> 

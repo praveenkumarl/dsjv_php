@@ -973,13 +973,12 @@ function matchingRule13(){
 	
 	if($result == false){
 		echo <<<EOL
-		<div class="divDisclaimer" colspan=3>
+		<div class="divDisclaimer" id='disclaimer' colspan=3>
 			<H6 style='font-weight;color:red'>*$reason</H6>
 		</div>
 EOL;
 	}
 }
-
 
 function vasiyaMatching()
 {
@@ -4204,6 +4203,7 @@ function displayMark(){
 			<span id='boot-icon' class='bi bi-dash-square-fill' style='color: orange;'></span> சராசரி (50-69)<BR>
 			<span id='boot-icon' class='bi bi-check-square-fill' style='color: #0BDA51;'></span> உத்தமம் (70-100)
 		</div>
+		<div id='disclaimer1' style='width:150px'></div>
 		</center>
 		
 EOL;
@@ -4243,9 +4243,9 @@ calculateAll();
 
 <div id='onepage' style="width: max-content">
 	<div class="header-parent">
-	  <div class="header-left"><img src='images/dsjv_title.png' height="35px"></div>
+	  <!-- <div class="header-left"><img src='images/dsjv_title.png' height="35px"></div> -->
 	  <div class="header-center"><div class='divTableTextOfficeName'>&#3059; &#2384; &#21328; &#10017;<BR><?php echo $office_name.'<BR>&#128241;'.$office_contact; ?></div></div>
-	  <div class="header-right"><img src='images/periyanayaki_astro_solutions.png' height="35px"></div>
+	  <!-- <div class="header-right"><img src='images/periyanayaki_astro_solutions.png' height="35px"></div> -->
 	</div>
 	<div class="header-image"></div>
 	
@@ -4270,16 +4270,17 @@ calculateAll();
 			<div class="divStarDetailCell" style="border:none;"><?php //displayBukthi(); ?></div>
 		</div>
 			
-		<?php displayDisclaimer(); ?>
+		<?php //displayDisclaimer(); ?>
 	</center>
 	
 	<!-- this is to update the matching % at the top -->
 	<script>
 	document.getElementById('mark').style.backgroundColor ='<?php echo $g_matching_color; ?>'
-	document.getElementById('mark').innerHTML='<?php echo $g_matching_percent.'%'; ?>'; 
+	document.getElementById('mark').innerHTML='<?php echo '*'.$g_matching_percent.'%'; ?>'; 
+	document.getElementById('disclaimer1').innerHTML = document.getElementById('disclaimer').innerHTML;
 </script>
 	
-<div class="PageFooter" style="width:-webkit-fill-available">&#169; Periyanayaki Astro Solutions</div>  
+<div class="PageFooter" style="width:-webkit-fill-available">தர்ம சாஸ்தா ஜோதிட வித்யாலயா & Periyanayaki Astro Solutions</div>
 </div>
 
 
