@@ -10,8 +10,9 @@ $_SESSION['user_type'] = $userInfo['user_type'];
 $helpInfo_arr = ["device-id" => $key,
 				"Source Platform" => $_SERVER['HTTP_SEC_CH_UA_PLATFORM'],
 				"Memory content" => $_SERVER['HTTP_COOKIE'],
-				"Requested key" => $_SERVER['QUERY_STRING'],
-				"host" => $_SERVER['REQUEST_SCHEME'].'//'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']
+				"User agent" => $_SERVER["HTTP_USER_AGENT"],
+				"Requested key" => $_SERVER['QUERY_STRING']//,
+				//"host" => $_SERVER['REQUEST_SCHEME'].'//'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']
 				];
 
 ?>
@@ -147,6 +148,17 @@ $helpInfo_arr = ["device-id" => $key,
 <iframe width="350" height="195" src="https://www.youtube.com/embed/HE9tqAjKYZs?si=rfS5aPL1viQUuOAJ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 <div class='help_video_heading'>DSJV app பயன்பாட்டு காணொளிகள்</div>
 <iframe width="350" height="195" src="https://www.youtube.com/embed/QfBBAE30sY0?si=9bR16OTnP6oaQB50" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<div class='help_video_heading'>DSJV App - வருடம் எவ்வாறு மாற்ற வேண்டும்</div>
+<iframe width="350" height="195" src="https://www.youtube.com/embed/rC26eJzLIt0?si=QFHZjYVBRj5cyuGi" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<div class='help_video_heading'>DSJV App - பிறந்த தேதி மற்றும் நேரம் எவ்வாறு உள்ளீடு செய்வது</div>
+<iframe width="350" height="195" src="https://www.youtube.com/embed/M-D-liXzH-0?si=IJeqtlgPUHm4twwD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<div class='help_video_heading'>DSJV App - இடத்தை தேர்வு செய்யும் சரியான முறை</div>
+<iframe width="350" height="195" src="https://www.youtube.com/embed/Lz08Ibk-7KY?si=K7dXtBGVmuE-euAc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<div class='help_video_heading'>DSJV App -  கிரக காரகம் எவ்வாறு பார்ப்பது</div>
+<iframe width="350" height="195" src="https://www.youtube.com/embed/MkdHsVMvBWI?si=vJSY9T1h6gHyvqJA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<div class='help_video_heading'>DSJV App - மாத பஞ்சாங்கம் கணிக்கும் முறை</div>
+<iframe width="350" height="195" src="https://www.youtube.com/embed/vbeL6cQO4vs?si=UKEmoWBgbUSI8RMX" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 </center>
 </body>
 </html>

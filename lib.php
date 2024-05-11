@@ -567,7 +567,14 @@ function isMobileDevice() {
 }
 
 function isMobile(){
-	return is_numeric(strpos(strtolower($_SERVER["HTTP_USER_AGENT"]), "mobile")); //returns true if mobile
+	if(strpos(strtolower($_SERVER["HTTP_USER_AGENT"]), "mobile") == true or strpos(strtolower($_SERVER["HTTP_USER_AGENT"]), "android") == true){
+		return true;
+	}
+	else{
+		return false;
+	}
+	
+	//return is_numeric(strpos(strtolower($_SERVER["HTTP_USER_AGENT"]), "mobile")); //returns true if mobile
 }
 
 function isLogged(){
@@ -1606,8 +1613,14 @@ function calculateVimBukthi($curr_dasa_lord, $bukthi_lord, $bukthi_start_date, $
    
 	$curr_bukthi_start_date = $bukthi_start_date;
    
-	//$current_date = date('d-m-Y');
-	$current_date = date('d-m-Y',strtotime($chart_date));
+    $backtrace = debug_backtrace();
+	if(strpos($backtrace[1]['file'],'panchang')>0){ //this is to check if this function is called from panchang or other page
+		//$current_date = date('d-m-Y'); //for panchang we don't have transit data so we should use chart_date
+		$current_date = date('d-m-Y',strtotime($chart_date));
+	}
+	else{
+		$current_date = date('d-m-Y',strtotime($transit_date));  //for birth chart we have transit date
+	}
    
 	for($i=0; $i<9; $i++)
 	{
@@ -2129,8 +2142,11 @@ function displayStarLard()
 		}
 	}
 	
-	//calculate planaet karana's
+	//calculate planet karana's
 	calculateKaranamAllPlanets(true); //true for girl
+	
+	//calculate planet thithi's
+	calculateThithiAllPlanets(true); //true for girl
 
 	echo "<center><div class='divTable blueTable' id='starlordHeadMutable' style='height:32px;width:360px;display:none'>"; 
 		echo "<div class='divTableRow'>";
@@ -4073,6 +4089,180 @@ function getRasi_short($in_house)
 	return $rasi_arr[$in_house];
 }
 
+function calculateYogamAllPlanets($inner)
+{
+	global $full_sun_deg, $full_sun_deg_boy,$planet_starlord, $planet_starlord_boy, $g_planetYogamLord, $g_planetYogamLord_boy, $planetDeg, $planetDeg_transit;
+	
+	$planetYogamLord = array();
+	
+	if($inner==true){
+		$temp_planetDeg = $planetDeg;  //girl list
+		$temp_full_sun_deg = $full_sun_deg;
+		$temp_planet_starlord = $planet_starlord;
+	}
+	else{
+		$temp_planetDeg = $planetDeg_transit;  //boy list
+		$temp_full_sun_deg = $full_sun_deg_boy;
+		$temp_planet_starlord = $planet_starlord_boy;
+	}
+					
+	$yogam_arr = array(
+					"dummy",    //to avoid index 0 
+					"Prathame/பிரதமை",
+					"Dwithiya/துவிதியை",
+					"Thrithiya/திருதியை",
+					"Chathurthi/சதுர்த்தி",
+					"Panchami/பஞ்சமி",
+					"Shrashti/சஷ்டி",
+					"Saptami/சப்தமி",
+					"Ashtami/அஷ்டமி",
+					"Navami/நவமி",
+					"Dashami/தசமி",
+					"Ekadashi/ஏகாதசி",
+					"Dwadashi/துவாதசி",
+					"Thrayodashi/திரயோதசி",
+					"Chaturdashi/சதுர்த்தசி",
+					"Poornima/பௌர்ணமி",
+					"Prathame/பிரதமை",
+					"Dwithiya/துவிதியை",
+					"Thrithiya/திருதியை",
+					"Chathurthi/சதுர்த்தி",
+					"Panchami/பஞ்சமி",
+					"Shrashti/சஷ்டி",
+					"Saptami/சப்தமி",
+					"Ashtami/அஷ்டமி",
+					"Navami/நவமி",
+					"Dashami/தசமி",
+					"Ekadashi/ஏகாதசி",
+					"Dwadashi/துவாதசி",
+					"Thrayodashi/திரயோதசி",
+					"Chaturdashi/சதுர்த்தசி",
+					"Amavasya/அமாவாசை"
+					);
+	
+	foreach($temp_planetDeg as $planet => $deg){
+		if(strcmp($planet,"R.K")==0){
+			continue;
+		}
+
+		if($temp_planet_starlord[$planet][2] > $temp_full_sun_deg)
+		{
+			$thithi_deg = $temp_planet_starlord[$planet][2] - $temp_full_sun_deg;
+		}
+		else{
+			$thithi_deg = 360 - ($temp_full_sun_deg - $temp_planet_starlord[$planet][2]); //subtract it from 360 to get degree from sun to the planet
+		}
+		
+		if(strcmp($planet,"சூரி")==0){
+			if($temp_planetDeg['லக்'] > $temp_full_sun_deg)
+			{
+				$thithi_deg = $temp_planetDeg['லக்'] - $temp_full_sun_deg;
+			}
+			else{
+				$thithi_deg = 360 - ($temp_full_sun_deg - $temp_planetDeg['லக்']); //subtract it from 360 to get degree from sun to the planet
+			}
+		}
+		
+		$planetThithiLord[$planet] = getValue($thithi_arr[ceil($thithi_deg/12)]); //2nd argument is lang, which is defaulted to 1 (tamil)
+		
+		echo("$planet-------$thithi_deg---".ceil($thithi_deg/12)."-----".$thithi_arr[ceil($thithi_deg/12)]."<BR>");
+	}
+	
+	if($inner==true){
+		$g_planetThithiLord = $planetThithiLord;
+	}
+	else{
+		$g_planetThithiLord_boy = $planetThithiLord;
+	}
+}
+
+function calculateThithiAllPlanets($inner)
+{
+	global $full_sun_deg, $full_sun_deg_boy,$planet_starlord, $planet_starlord_boy, $g_planetThithiLord, $g_planetThithiLord_boy, $planetDeg, $planetDeg_transit;
+	
+	$planetThithiLord = array();
+	
+	if($inner==true){
+		$temp_planetDeg = $planetDeg;  //girl list
+		$temp_full_sun_deg = $full_sun_deg;
+		$temp_planet_starlord = $planet_starlord;
+	}
+	else{
+		$temp_planetDeg = $planetDeg_transit;  //boy list
+		$temp_full_sun_deg = $full_sun_deg_boy;
+		$temp_planet_starlord = $planet_starlord_boy;
+	}
+					
+	$thithi_arr = array(
+					"dummy",    //to avoid index 0 
+					"Prathame/பிரதமை",
+					"Dwithiya/துவிதியை",
+					"Thrithiya/திருதியை",
+					"Chathurthi/சதுர்த்தி",
+					"Panchami/பஞ்சமி",
+					"Shrashti/சஷ்டி",
+					"Saptami/சப்தமி",
+					"Ashtami/அஷ்டமி",
+					"Navami/நவமி",
+					"Dashami/தசமி",
+					"Ekadashi/ஏகாதசி",
+					"Dwadashi/துவாதசி",
+					"Thrayodashi/திரயோதசி",
+					"Chaturdashi/சதுர்த்தசி",
+					"Poornima/பௌர்ணமி",
+					"Prathame/பிரதமை",
+					"Dwithiya/துவிதியை",
+					"Thrithiya/திருதியை",
+					"Chathurthi/சதுர்த்தி",
+					"Panchami/பஞ்சமி",
+					"Shrashti/சஷ்டி",
+					"Saptami/சப்தமி",
+					"Ashtami/அஷ்டமி",
+					"Navami/நவமி",
+					"Dashami/தசமி",
+					"Ekadashi/ஏகாதசி",
+					"Dwadashi/துவாதசி",
+					"Thrayodashi/திரயோதசி",
+					"Chaturdashi/சதுர்த்தசி",
+					"Amavasya/அமாவாசை"
+					);
+	
+	foreach($temp_planetDeg as $planet => $deg){
+		if(strcmp($planet,"R.K")==0){
+			continue;
+		}
+
+		if($temp_planet_starlord[$planet][2] > $temp_full_sun_deg)
+		{
+			$thithi_deg = $temp_planet_starlord[$planet][2] - $temp_full_sun_deg;
+		}
+		else{
+			$thithi_deg = 360 - ($temp_full_sun_deg - $temp_planet_starlord[$planet][2]); //subtract it from 360 to get degree from sun to the planet
+		}
+		
+		if(strcmp($planet,"சூரி")==0){
+			if($temp_planetDeg['லக்'] > $temp_full_sun_deg)
+			{
+				$thithi_deg = $temp_planetDeg['லக்'] - $temp_full_sun_deg;
+			}
+			else{
+				$thithi_deg = 360 - ($temp_full_sun_deg - $temp_planetDeg['லக்']); //subtract it from 360 to get degree from sun to the planet
+			}
+		}
+		
+		$planetThithiLord[$planet] = getValue($thithi_arr[ceil($thithi_deg/12)]); //2nd argument is lang, which is defaulted to 1 (tamil)
+		
+		echo("$planet-------$thithi_deg---".ceil($thithi_deg/12)."-----".$thithi_arr[ceil($thithi_deg/12)]."<BR>");
+	}
+	
+	if($inner==true){
+		$g_planetThithiLord = $planetThithiLord;
+	}
+	else{
+		$g_planetThithiLord_boy = $planetThithiLord;
+	}
+}
+
 function calculateKaranamAllPlanets($inner)
 {
 	global $full_sun_deg, $full_sun_deg_boy,$planet_starlord, $planet_starlord_boy, $g_planetKaranaLord, $g_planetKaranaLord_boy, $planetDeg, $planetDeg_transit;
@@ -4089,72 +4279,8 @@ function calculateKaranamAllPlanets($inner)
 		$temp_full_sun_deg = $full_sun_deg_boy;
 		$temp_planet_starlord = $planet_starlord_boy;
 	}
-	
-	/* $karana_array = [
-						"/",                            //this is to avoid adding 1 to the index
-						"Kimstughna/கிம்ஸ்துக்கினம்",
-						"Bava/பவ",
-						"Balava/பாலவ",
-						"Kaulava/கௌலவ",
-						"Taitula/தைதுலை",
-						"Garija/கரசை",
-						"Vanija/வணிசை",
-						"Visti/பத்தரை",
-						"Bava/பவ",
-						"Balava/பாலவ",
-						"Kaulava/கௌலவ",
-						"Taitula/தைதுலை",
-						"Garija/கரசை",
-						"Vanija/வணிசை",
-						"Visti/பத்தரை",
-						"Bava/பவ",
-						"Balava/பாலவ",
-						"Kaulava/கௌலவ",
-						"Taitula/தைதுலை",
-						"Garija/கரசை",
-						"Vanija/வணிசை",
-						"Visti/பத்தரை",
-						"Bava/பவ",
-						"Balava/பாலவ",
-						"Kaulava/கௌலவ",
-						"Taitula/தைதுலை",
-						"Garija/கரசை",
-						"Vanija/வணிசை",
-						"Visti/பத்தரை",
-						"Bava/பவ",
-						"Balava/பாலவ",
-						"Kaulava/கௌலவ",
-						"Taitula/தைதுலை",
-						"Garija/கரசை",
-						"Vanija/வணிசை",
-						"Visti/பத்தரை",
-						"Bava/பவ",
-						"Balava/பாலவ",
-						"Kaulava/கௌலவ",
-						"Taitula/தைதுலை",
-						"Garija/கரசை",
-						"Vanija/வணிசை",
-						"Visti/பத்தரை",
-						"Bava/பவ",
-						"Balava/பாலவ",
-						"Kaulava/கௌலவ",
-						"Taitula/தைதுலை",
-						"Garija/கரசை",
-						"Vanija/வணிசை",
-						"Visti/பத்தரை",
-						"Bava/பவ",
-						"Balava/பாலவ",
-						"Kaulava/கௌலவ",
-						"Taitula/தைதுலை",
-						"Garija/கரசை",
-						"Vanija/வணிசை",
-						"Visti/பத்தரை",
-						"Sakuni/சகுனி",
-						"Chatuspada/சதுஷ்பாத",
-						"Naga/நாகவ",
-					]; */
 					
-	$karana_array = [
+	$karana_array  = [
 						"/",                            //this is to avoid adding 1 to the index
 						"Kim/கிம்ஸ்",
 						"Bav/பவ",
@@ -5322,6 +5448,12 @@ function setKariNaal($in_tamil_month,$in_tamil_day){
 	if(array_search($in_tamil_day,$kariNaal_arr[$in_tamil_month])!==false){
 		$g_kariNaal = "கரி நாள்";
 	}
+}
+
+function sqlDateToDefault($date){
+	$date_arr = explode('-',$date);
+	
+	return $date_arr[2].'-'.$date_arr[1].'-'.$date_arr[0];
 }
 ?>
 
