@@ -149,6 +149,9 @@ $dayofweek = date('w', strtotime($chart_date));
 			delete_cookie(focus);
 			
 			document.getElementById('place').value = '<?php echo $place; ?>';
+			
+			document.getElementById("starlordHeadMutable").style.display = 'table';
+			document.getElementById("starlordBodyMutable").style.display = 'table';
 		} 
 	
 /******** this code is to take screenshot of the chart **************	
@@ -349,7 +352,7 @@ $dayofweek = date('w', strtotime($chart_date));
 					divName = "ayogiDetailsDiv";
 					break;
 				case 5:
-					divName = "ayogiDetailsDiv";
+					divName = "nakDetailsDiv";
 					break;
 			}
 			
@@ -380,6 +383,7 @@ $dayofweek = date('w', strtotime($chart_date));
 		  document.getElementById("karanaDetailsDiv").style.display = "none";
 		  document.getElementById("yogiDetailsDiv").style.display = "none";
 		  document.getElementById("ayogiDetailsDiv").style.display = "none";
+		  document.getElementById("nakDetailsDiv").style.display = "none";
 		}
 		
 		function formSubmitButton(){
@@ -549,8 +553,8 @@ $dayofweek = date('w', strtotime($chart_date));
        for (var i = 0; i < 30; i++) {
 		   end_time = new Date((start_time.getTime()+muhurt_time*60000));
 		   
-		   stime=String(start_time.getDate()).padStart(2, '0')+'-'+String(start_time.getMonth()).padStart(2, '0')+'-'+start_time.getFullYear()+' '+String(start_time.getHours()).padStart(2, '0')+':'+String(start_time.getMinutes()).padStart(2, '0');
-		   etime=String(end_time.getDate()).padStart(2, '0')+'-'+String(end_time.getMonth()).padStart(2, '0')+'-'+end_time.getFullYear()+' '+String(end_time.getHours()).padStart(2, '0')+':'+String(end_time.getMinutes()).padStart(2, '0');
+		   stime=String(start_time.getDate()).padStart(2, '0')+'-'+String(start_time.getMonth()+1).padStart(2, '0')+'-'+start_time.getFullYear()+' '+String(start_time.getHours()).padStart(2, '0')+':'+String(start_time.getMinutes()).padStart(2, '0');
+		   etime=String(end_time.getDate()).padStart(2, '0')+'-'+String(end_time.getMonth()+1).padStart(2, '0')+'-'+end_time.getFullYear()+' '+String(end_time.getHours()).padStart(2, '0')+':'+String(end_time.getMinutes()).padStart(2, '0');
            //console.log(stime+'-'+etime+'   '+mukurt_arr[i]);
 		   
 		   if((mukurt_arr[i][1]).indexOf("அசுபமானது")!=-1){
@@ -1462,6 +1466,7 @@ EOL;
 					displayHoroDetails();
 					$thithi_soonyam_arr = updateThithiSoonyam($panchang["thithi"]);
 					displayTransitChart();
+					displayStarLard();
 					displayDisclaimer();
 					
 
