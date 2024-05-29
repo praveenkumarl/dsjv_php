@@ -60,7 +60,7 @@ function displayHistory()
 	getChartDetails();
 	
 echo <<<EOL
-	<div class="divTable blueTable" id="chart" style="width:400px;">
+	<center><div class="divTable blueTable" id="chart">
 
 		<!-- (A) HIDDEN HTML FORM -->
 		<form id="hiddenViewBirthChart" action="Birth_Chart.php" method="post" style="display:none;">
@@ -85,15 +85,15 @@ echo <<<EOL
 		<BR>
 EOL;
 		
-			echo "<div class='divTable blueTable' style='height:40px;width:360px;margin-left:10px'>";
+			echo "<div class='divTable blueTable'>";
 				echo "<div class='divTableRow'>";
-						echo "<div class='divChartHistoryHeading'>எண்</div>";
-						echo "<div class='divChartHistoryHeading'>பெயர்</div>";
-						echo "<div class='divChartHistoryHeading'>பாலினம்</div>";
-						echo "<div class='divChartHistoryHeading'>இடம்</div>";
-						echo "<div class='divChartHistoryHeading'>தேதி</div>";
-						echo "<div class='divChartHistoryHeading'>நேரம்</div>";
-						echo "<div class='divChartHistoryHeading'>செய்கை</div>";
+						echo "<div class='divChartHistoryHeading'>#</div>";
+						echo "<div class='divChartHistoryHeading'>பெ</div>";
+						echo "<div class='divChartHistoryHeading'>பாலி</div>";
+						echo "<div class='divChartHistoryHeading'>இட</div>";
+						echo "<div class='divChartHistoryHeading'>தே</div>";
+						echo "<div class='divChartHistoryHeading'>நே</div>";
+						echo "<div class='divChartHistoryHeading'>*</div>";
 				echo "</div>";
 				
 				if(isset($chartInfo['rowid'])){
@@ -122,7 +122,7 @@ EOL;
 					echo "</div>";
 					echo "<BR><P style='color:#660000;font-weight:bold; font-size:14px; text-align:center; width:100%'>ஜாதகங்கள் இல்லை</P>";
 				}
-	echo "</div>";
+	echo "</div></center>";
 }
 
 ?>
@@ -243,12 +243,9 @@ EOL;
 		</div>
 	</div>
 	<div class='column-body'>
-		<div class="container">
 		
-			<center><div class="divTable blueTable" id="chart" style="width:400px;">
 				<?php displayHistory() ?>					
-			</div></center>
-		</div>
+
 	</div>
 </body>
 

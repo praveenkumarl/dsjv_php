@@ -94,6 +94,13 @@ $helpInfo_arr = ["device-id" => $key,
 		  alert('Bwoser does not support Geolocation API');
 		}
 	}
+	
+	$(document).ready(function() {
+		var height = $(window).height();
+		var width = $(window).width();
+	
+		document.getElementById("sw").innerHTML = width+','+height;
+	});
 			
     </script>
 </head>
@@ -146,6 +153,8 @@ $helpInfo_arr = ["device-id" => $key,
 <div class='help_video_heading'>DSJV app - குருஜி Dr.சாஸ்தா ந.மணிகண்டராஜ் ஐயாவின் விளக்கம்</div>
 <!-- <object width="100%" height="300" data="http://www.youtube.com/v/HE9tqAjKYZs" type="application/x-shockwave-flash"><param name="src" value="http://www.youtube.com/v/Ahg6qcgoay4" /></object> -->
 <iframe width="350" height="195" src="https://www.youtube.com/embed/HE9tqAjKYZs?si=rfS5aPL1viQUuOAJ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<div class='help_video_heading'>DSJV Mobile App-ன் பயன்களும், அம்சங்களும் - வாராவாரம் ஆரவாரம் 153வது நிகழ்ச்சி</div>
+<iframe width="350" height="195" src="https://www.youtube.com/embed/TVAHUfLiEmc?si=8zKRVeN0BwsH-b_R" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 <div class='help_video_heading'>DSJV app பயன்பாட்டு காணொளிகள்</div>
 <iframe width="350" height="195" src="https://www.youtube.com/embed/QfBBAE30sY0?si=9bR16OTnP6oaQB50" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 <div class='help_video_heading'>DSJV App - வருடம் எவ்வாறு மாற்ற வேண்டும்</div>

@@ -6,7 +6,7 @@
 	
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   
     <title>PK Astro Jamakol</title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
@@ -56,9 +56,9 @@ function displayChart($sw_planet,$outside,$chart_date,$chart_time,$place)
 
 	echo <<<EOL
 			<div class="$requestor">
-				<!-- <div class="divTable blueTable" id="chart" OnClick='window.location.reload();' style='margin-left:5px;width:100%'> -->
+				<!-- <div class="divTable blueTable" id="chart" OnClick='window.location.reload();'> -->
 				<center>
-				<div class="divTable blueTable" id="chart" style='margin-left:5px'>
+				<div class="divTable blueTable" id="chart">
 					<div class="divTableBody">
 						<div class="divTableRow">
 								<div class="divTableOuterCell">$outside[11]</div>

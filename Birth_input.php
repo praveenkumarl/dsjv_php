@@ -154,7 +154,9 @@ function validateForm() {
 	document.getElementById('name').style.borderColor = "red";
     return false;
   }
+  
 }
+
 
 function placeOnBlur() {
 	let place = document.getElementById("place").value;
@@ -238,7 +240,7 @@ function updateNow() {
 </div>
 <div class='column-body'>
 	<center>
-		<div class="divTable blueTable" id="chart" style="width:360px;">
+		<div class="divTable blueTable" id="chart">
 			<form name="chartInput" id="chartInput" action="Birth_Chart.php" method="post" onsubmit="openLoader()">
 				<table style="width:100%; text-align: left">
 					<tr>
@@ -271,6 +273,10 @@ function updateNow() {
 					<tr style="background-color: #FFFFFF">
 						<td><div class="divBirthInputLable">*பி.நேரம்</div></td>
 						<td><input type="time" id="in_time" name="in_time" step="1" style="border:1px solid lightgray;font-weight:bold"></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><input type="checkbox" id="birthsave" name="birthsave" value=1 /><label class='divBirthInputLable' for="birthsave">Save</label></td>
 					</tr>
 					<!-- <tr style="background-color: #FFFFFF">
 						<td>

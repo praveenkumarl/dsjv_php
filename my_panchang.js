@@ -70,7 +70,7 @@ function generatePDF() {
 							document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Nakshatra.name+" "+formatDateTime(panchang.Nakshatra.end)+' வரை'+displayNextNak(newdate,panchang.Nakshatra)+'</div>');
 							document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Tithi.name+' '+formatDateTime(panchang.Tithi.end)+' வரை'+displayNextThithi(newdate,panchang.Tithi)+'</div>');
 							//document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Karna.name+' '+formatDateTime(panchang.Karna.end)+' வரை'+(newdate,panchang.Karna)+'</div>');
-							document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Karna.name+' '+formatDateTime(panchang.Karna.start)+" முதல் "+formatDateTime(panchang.Karna.end)+' வரை'+displayNextKar(newdate,panchang.Karna)+'</div>');
+							document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Karna.name+' '+formatDateTime(panchang.Karna.start)+" முதல் "+formatDateTime(panchang.Karna.end)+' வரை'+displayNextKar(newdate,panchang.Karna,panchang.Tithi.name)+'</div>');
 							//document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Yoga.name+' '+formatDateTime(panchang.Yoga.end)+' வரை'+displayNextYoga(newdate,panchang.Yoga)+'</div>');
 							document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Yoga.name+' '+formatDateTime(panchang.Yoga.start)+" முதல் "+formatDateTime(panchang.Yoga.end)+' வரை'+displayNextYoga(newdate,panchang.Yoga)+'</div>');
 						document.writeln('</div>');
@@ -109,9 +109,12 @@ function generatePDF() {
 		}
 	}
 	
-	function displayNextKar(today,kar){
-	var kars = [ "பவ", "பாலவ", "கௌலவ", "தைதுலை", "கரசை", "வணிசை", "பத்தரை", "சகுனி", "சதுஷ்பாத", "நாகவ", "கிம்ஸ்துக்கினம்", "பவ"];
-		if(kar.end.getDate() == today.getDate()){
+	function displayNextKar(today,kar,thithi){
+		var thithis_suk = ["பிரதமை" , "துவிதியை" , "திருதியை" , "சதுர்த்தி" , "பஞ்சமி" , "சஷ்டி" , "சப்தமி" , "அஷ்டமி" , "நவமி" , "தசமி" , "ஏகாதசி" , "துவாதசி" , "திரயோதசி" , "சதுர்த்தசி", "பௌர்ணமி"];
+		var kars = [ "பவ", "பாலவ", "கௌலவ", "தைதுலை", "கரசை", "வணிசை", "பத்தரை", "பவ"];
+		var kars1 = [ "பவ", "பாலவ", "கௌலவ", "தைதுலை", "கரசை", "வணிசை", "பத்தரை", "சகுனி", "சதுஷ்பாத", "நாகவ", "கிம்ஸ்துக்கினம்", "பவ"];
+		
+		if(kar.end.getDate() == today.getDate() && !thithi.includes("அமாவாசை") && !thithi.includes("பிரதமை")){
 			return " பிறகு "+kars[kars.indexOf(kar.name)+1];
 		}
 		else{

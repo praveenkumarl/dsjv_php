@@ -125,7 +125,32 @@ $g_mudakku_detail="";
 		$(document).ready(function() 
 		{
 			$('#loader').hide();
+			hideAll();
+			
 		});
+		
+		function hideAll()
+		{
+			var x = document.getElementById("DasaMatable");
+			var y = document.getElementById("BukthiMatable");
+			var z1 = document.getElementById("starlordHeadMutable");
+			var z2 = document.getElementById("starlordBodyMutable");
+			document.getElementById("thithiYogamKaranamHeadMutable").style.display='none';
+			document.getElementById("thithiYogamKaranamBodyMutable").style.display='none';
+			
+			
+			//document.getElementById("DasaMatable_boy").style.display='none';
+			//document.getElementById("BukthiMatable_boy").style.display='none';
+			document.getElementById("starlordHeadMutable_boy").style.display='none';
+			document.getElementById("starlordBodyMutable_boy").style.display='none';
+			//var btns = document.getElementById("buttons");
+			
+			//btns.style.display='none';
+			x.style.display='none';
+			y.style.display='none';
+			z1.style.display='none';
+			z2.style.display='none';
+		}
 		
    </script>
 
@@ -592,6 +617,7 @@ EOL;
 	displayStarLard_transit();
 }
 
+/*
 function displayStarLard_transit()
 {
 	global $planetDeg_transit,$tr_sw_planet, $planet_starlord_transit;
@@ -818,6 +844,7 @@ $planet_padam = explode('(',$planet_starlord["லக்"][1])[0] . explode(' ',$
 	$planet_padam = explode('(',$planet_starlord["மா"][1])[0] . explode(' ',$planet_starlord["மா"][0])[1];
 	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " மா";
 }
+*/
 
 function prepareBukthiTable(){
 	global $dasa_lord, $g_dasaCurrent, $g_bukthi_arr;
@@ -982,7 +1009,10 @@ EOL;
 
 function displayDasa()
 {
-	global $dasa;
+	global $dasa,$chart_date;
+	
+	$current_date = date('d-m-Y');
+	$first_dasa_updated=false;
 	
 echo <<<EOL
 	<div class="divTableRow">
@@ -997,14 +1027,29 @@ echo <<<EOL
 EOL;
 	
 	foreach($dasa as $planet => $data){
+		if($first_dasa_updated==false){
+			$data[0] = sqlDateToDefault($chart_date);
+			$first_dasa_updated=true;
+		}
 		
-echo <<<EOL
-		<div class="divTableRow">
-			<div class="divTableTextHeading">$planet</div>
-			<div class="divTableTextMedium">$data[0]</div>
-			<div class="divTableTextMedium">$data[1]</div>
-		</div>
+		if(strtotime($current_date) >= strtotime($data[0]) and strtotime($current_date) <= strtotime($data[1])){
+			echo <<<EOL
+			<div class="divTableRow">
+				<div class="divTableTextHeading">$planet</div>
+				<div class="divTableTextMediumBold">$data[0]</div>
+				<div class="divTableTextMediumBold">$data[1]</div>
+			</div>
 EOL;
+		}
+		else{
+			echo <<<EOL
+			<div class="divTableRow">
+				<div class="divTableTextHeading">$planet</div>
+				<div class="divTableTextMedium">$data[0]</div>
+				<div class="divTableTextMedium">$data[1]</div>
+			</div>
+EOL;
+		}
 	}
 	
 	echo '</div>';
@@ -1013,6 +1058,10 @@ EOL;
 function displayBukthi()
 {
 	global $bukthi_table;
+	
+	$current_date = date('d-m-Y');
+	
+	$current_bukthi_flag = false;
 	
 echo <<<EOL
 	<div class="divTableRow">
@@ -1027,14 +1076,24 @@ echo <<<EOL
 EOL;
 	
 	foreach($bukthi_table as $key => $data){
-		
-echo <<<EOL
-		<div class="divTableRow">
-			<div class="divTableTextHeading">$key</div>
-			<div class="divTableTextMedium">$data[1]</div>
-			<div class="divTableTextMedium">$data[2]</div>
-		</div>
+		if(strtotime($current_date) >= strtotime($data[1]) and strtotime($current_date) <= strtotime($data[2])){
+			echo <<<EOL
+				<div class="divTableRow">
+					<div class="divTableTextHeading">$key</div>
+					<div class="divTableTextMediumBold">$data[1]</div>
+					<div class="divTableTextMediumBold">$data[2]</div>
+				</div>
 EOL;
+		}
+		else{
+			echo <<<EOL
+				<div class="divTableRow">
+					<div class="divTableTextHeading">$key</div>
+					<div class="divTableTextMedium">$data[1]</div>
+					<div class="divTableTextMedium">$data[2]</div>
+				</div>
+EOL;
+		}
 	}
 	
 	echo '</div>';
@@ -1721,7 +1780,7 @@ else{
 <center><div class='divTableTextSloka' style='font-family: Verdana, Raavi, sans-serif;font-size:8px;width:100%;line-height:10px'>&#2384; ஜனனி ஜன்ம சௌக்யானாம் வர்தநீ குலஸம்பதாம்
  பதவி பூர்வ  புண்யாணாம் லிக்ய தே ஜன்ம பத்திரிகா !</div></center>
 	<center>
-		<div class="header">பிரப்பு ஜாதகம் (<?php echo $in_name.', '.$birth_date.', '.$birth_time.', '.$place; ?>)</div>
+		<div class="header">பிறப்பு ஜாதகம் (<?php echo $in_name.', '.$birth_date.', '.$birth_time.', '.$place; ?>)</div>
 		<!-- <div class="divTableBody"> -->
 		<div class='divTable blueTable' style='width:90%'> 
 			<div class="divTableRow">

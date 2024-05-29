@@ -280,7 +280,7 @@ function updateNow() {
 			</div>
 			<div class='column-body'>
 		
-			<center><div class="divTable blueTable" id="chart" style="width:360px;">
+			<center><div class="divTable blueTable" id="chart">
 				<form name="chartInput" action="Jamakol_Chart.php" method="post">
 					<table style="width:100%; text-align: left">
 						<tr>
@@ -288,29 +288,29 @@ function updateNow() {
 						</tr>
 						
 						<tr style="background-color: #FFFFFF">
-							<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:20px">கேள்வி:</H5></td>
+							<td><div class="divBirthInputLable">கேள்வி:</div></td>
 							<td>
 							<!-- <input type="text" name="question1" id="question1" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Enter question..." onfocus=this.value=''  /> -->
-							<textarea rows = "4" cols = "60" name="question" id="question" autocomplete="off" style="background:#ffffff; font-size:3vp;width:200px" onBlur="questionOnBlur();" placeholder="Enter question here..." /></textarea>
+							<textarea rows = "4" cols = "60" name="question" id="question" autocomplete="off" style="background:#ffffff;font-weight:bold" onBlur="questionOnBlur();" placeholder="Enter question here..." /></textarea>
 							</td>
 						</tr>			
 						<tr style="background-color: #FFFFFF">
-							<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:20px">*இடம் :</H5></td>
-							<td><div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="background:#ffffff;font-weight:bold;font-size:20px;width:200px" placeholder="Search place..." onfocus=this.value='' onblur="placeOnBlur();" /><div class="result"></div>
+							<td><div class="divBirthInputLable">*இடம் :</div></td>
+							<td><div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onblur="placeOnBlur();" /><div class="result"></div>
 							</td>
 						</tr>
 						<tr style="background-color: #FFFFFF;" id="lat_input" hidden="hidden">
-							<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:20px">*Latitude:</H5></td>
+							<td><div class="divBirthInputLable">*Latitude:</div></td>
 							<td><input type="number" id="in_lat" name="in_lat" style="border:1px solid lightgray;font-weight:bold;width:100px"></td>
 							</td>
 						</tr>
 						<tr style="background-color: #FFFFFF" id="long_input" hidden="hidden">
-								<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:20px">*Longitude:</H5></td>
+								<td><div class="divBirthInputLable">*Longitude:</div></td>
 								<td><input type="number" id="in_long" name="in_long" style="border:1px solid lightgray;font-weight:bold;width:100px"></td>
 							</td>
 						</tr>
 						<tr style="background-color: #FFFFFF" id="tz_input" hidden="hidden">
-								<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:20px">*TimeZone:</H5></td>
+								<td><div class="divBirthInputLable">*TimeZone:</div></td>
 <?php
 /*								echo '<td><select name="in_tz" id="in_tz" style="width:auto;font-size:16px;font-weight:bold;">';
 								foreach ($TZlist as $value){
@@ -321,11 +321,11 @@ function updateNow() {
 ?>
 						</tr>
 						<tr style="background-color: #FFFFFF">
-							<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:20px">தேதி:</H5></td>
+							<td><div class="divBirthInputLable">தேதி:</div></td>
 							<td><input type="date" id="in_date" name="in_date" style="border:1px solid lightgray;font-weight:bold"></td>
 						</tr>
 						<tr style="background-color: #FFFFFF">
-							<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:20px">நேரம்:</H5></td>
+							<td><div class="divBirthInputLable">நேரம்:</div></td>
 							<td><input type="time" id="in_time" name="in_time" step="1" style="border:1px solid lightgray;font-weight:bold"></td>
 						</tr>
 						<input type="hidden" id="yes" name="in_degree" value="1" />

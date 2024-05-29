@@ -19,6 +19,7 @@ $match = MATCHING;
 $birthmatch = BIRTHMATCH;
 $panchang = PANCHANG;
 $jamakol = JAMAKOL;
+$prasannam = PRASANNAM;
 
 ?>
 
@@ -186,6 +187,7 @@ if(!isset($_POST['insert_submitted'])){
 							<option value='$birthmatch'>$birthmatch </option>
 							<option value='$panchang'>$panchang</option>
 							<option value='$jamakol'>$jamakol</option>
+							<option value='$prasannam'>$prasannam</option>
 						</select>
 					</td>
 				</tr>

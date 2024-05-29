@@ -195,15 +195,15 @@ getChartDetails();
 					
 				
 <?php
-					echo "<div class='divTable blueTable' style='height:40px;width:300px;margin-left:10px'>";
+					echo "<div class='divTable blueTable' style='height:40px;'>";
 						echo "<div class='divTableRow'>";
-								echo "<div class='divChartHistoryHeading'>எண்</div>";
-								echo "<div class='divChartHistoryHeading'>கேள்வி</div>";
-								echo "<div class='divChartHistoryHeading'>கணிப்பு</div>";
-								echo "<div class='divChartHistoryHeading'>இடம்</div>";
-								echo "<div class='divChartHistoryHeading'>கே.தேதி</div>";
-								echo "<div class='divChartHistoryHeading'>கே.நேரம்</div>";
-								echo "<div class='divChartHistoryHeading'>செய்கை</div>";
+								echo "<div class='divChartHistoryHeading'>#</div>";
+								echo "<div class='divChartHistoryHeading'>கே</div>";
+								echo "<div class='divChartHistoryHeading'>கணி</div>";
+								echo "<div class='divChartHistoryHeading'>இட</div>";
+								echo "<div class='divChartHistoryHeading'>தே</div>";
+								echo "<div class='divChartHistoryHeading'>நே</div>";
+								echo "<div class='divChartHistoryHeading'>*</div>";
 						echo "</div>";
 						
 						if(isset($chartInfo['rowid'])){

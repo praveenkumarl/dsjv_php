@@ -1466,7 +1466,7 @@ EOL;
 					displayHoroDetails();
 					$thithi_soonyam_arr = updateThithiSoonyam($panchang["thithi"]);
 					displayTransitChart();
-					displayStarLard();
+					displayStarLard(true);
 					displayDisclaimer();
 					
 

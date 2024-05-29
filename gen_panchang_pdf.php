@@ -35,18 +35,18 @@ date_default_timezone_set($TZ);
 	<link rel="stylesheet" href="css/onepage_panchang_style.css?<?php echo date('ymdhis'); ?>">
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
    <script src="html2pdf.bundle.min.js" type="text/javascript"></script>
-	<script src="panchang.js"></script>
-	<script src="my_panchang.js"></script>
+	<script src="panchang.js?<?php echo date('ymdhis'); ?>"></script>
+	<script src="my_panchang.js?<?php echo date('ymdhis'); ?>"></script>
 </head>
 <body>
 
 <div id='onepage' style="width: min-content">
 <div class="header-parent">
-  <div class="header-left"><img src='images/dsjv_title.png' height="25px"></div>
+  <div class="header-left"></div>
   <!-- <div class="header-left"><button class="actionBtn" onclick="window.open('gen_panchang_form.php','_self')">Back</button></div>  -->
   <div class="header-center"><div class='divTableTextOfficeName'>பஞ்சாங்கம் (<?php echo "$monthName/$year/$place"; ?>)</div></div>
   <!-- <a href='#' onClick='generatePDF();'>download</a> -->
-  <div class="header-right"><img src='images/pkastro_title.png' height="25px"></div>
+  <div class="header-right"></div>
 </div>
 <script>
 
@@ -61,7 +61,7 @@ date_default_timezone_set($TZ);
   
 </script>
 
-<BR><BR><BR><BR><BR>
-<div class="PageFooter" style="width:-webkit-fill-available">&#169; Periyanayaki Astro Solutions</div>  
+
+<div class="PageFooter" style="width:-webkit-fill-available">தர்ம சாஸ்தா ஜோதிட வித்யாலயா & Periyanayaki Astro Solutions</div>
 </body>
 </html>

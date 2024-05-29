@@ -8,6 +8,11 @@ $in_place = isset($_POST["place"]) ? $_POST["place"] : $_POST["nPlace"];
 $in_name = isset($_POST["name"]) ? $_POST["name"] : $_POST["nName"];
 $in_sex = isset($_POST["sex"]) ? $_POST["sex"] : $_POST["nSex"];
 
+$chart_time = isset($_POST["nTime"]) ? $_POST["nTime"] : $_POST["in_time"];
+$chart_date = isset($_POST["nDate"]) ? $_POST["nDate"] : $_POST["in_date"];
+
+$default_save = isset($_POST["birthsave"]) ? $_POST["birthsave"] : 0; //should we save it by default?
+
 $place=strtok($in_place,"|");
 $TZ=strtok("|");
 
@@ -96,6 +101,9 @@ $g_bhava_arr = array();
 $saveMode=0;
 $saveBtnTxt='Save';
 $g_planetKaranaLord=array();
+$g_planetThithiLord=array();
+$g_planetVainasigamNak=array();
+$g_planetAbhijitNak=array();
 $g_thithi_idx=-1;
 $otherPanchangDetails = array();
 $g_dasa_arr = array();
@@ -110,8 +118,10 @@ $g_tamil_date_arr=array();
 $g_vayadhotta_lagna="";
 $g_age=0;
 $g_mudakku_detail="";
+$full_sun_deg=0;
 
-if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_input.php')==false){
+
+if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_input.php')==false) or $default_save){
 	$saveMode=1;
 	$saveBtnTxt='Update';
 }
@@ -193,6 +203,14 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 				$(this).parent(".result").empty();
 				$(this).parent("#lplace").hide();
 			});
+			
+			let head = $('#birthHead').clone();
+			let detail = $('#birthDetail').clone();
+				$('#birth_info').append(head);
+				$('#birth_info').append(detail);
+				$('#birthdetails').hide();
+				
+			displayAll();
 		});
 		
 		function validateForm() {
@@ -454,7 +472,8 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 		{
 			var name = document.getElementById("name").value;
 			var sex = document.getElementById("sex").value;
-			var place = document.getElementById("nPlace").value;
+			//var place = document.getElementById("nPlace").value;
+			var place = document.getElementById("place").value;
 			var date = document.getElementById("nDate").value;
 			var time = document.getElementById("nTime").value;
 			var notes = document.getElementById("notesTxt").innerHTML;
@@ -490,13 +509,20 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 			var y = document.getElementById("BukthiMatable");
 			var z1 = document.getElementById("starlordHeadMutable");
 			var z2 = document.getElementById("starlordBodyMutable");
+			document.getElementById("starlordHeadMutable_transit").style.display='table';
+			document.getElementById("starlordBodyMutable_transit").style.display='table';
+			document.getElementById("thithiYogamKaranamHeadMutable").style.display='table';
+			document.getElementById("thithiYogamKaranamBodyMutable").style.display='table';
+			document.getElementById("abhijitHeadMutable").style.display='table';
+			document.getElementById("abhijitBodyMutable").style.display='table';
+			
 			var btns = document.getElementById("buttons");
 			
 			btns.style.display='none';
-			x.style.display='block';
-			y.style.display='block';
-			z1.style.display='table-cell';
-			z2.style.display='table-cell';
+			x.style.display='table';
+			y.style.display='table';
+			z1.style.display='table';
+			z2.style.display='table';
 		}
 		
 		function generatePDF() {
@@ -799,9 +825,6 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_inp
 $libPath = './sweph/';
 putenv("PATH=$libPath");
 // ------- Swiss ephemeris // ------- 
-
-$chart_time = isset($_POST["nTime"]) ? $_POST["nTime"] : $_POST["in_time"];
-$chart_date = isset($_POST["nDate"]) ? $_POST["nDate"] : $_POST["in_date"];
 
 $_SESSION["date"] = date("d-m-Y",strtotime($chart_date));
 $_SESSION["time"] = $chart_time;
@@ -1300,7 +1323,7 @@ function displayHoroDetails()
 		$g_pancha_pakshi, $g_thithi, $g_paksham, $moon_house, $today_sunrise, $today_sunset, $otherPanchangDetails, $city,$g_nak, $g_thithi_idx, $g_yoga_idx, $in_place, $g_rowid, $in_sex,
 		$g_lagnam, $g_rasi, $nak_pad_idx, $g_ucha_details, $g_neecha_details, $sun_house, $sun_degree, $g_tamil_date_arr, $g_vayadhotta_lagna, $g_age, $g_mudakku_detail  ;
 	
-	echo "<div class='divTable blueTable' style='height:40px;'>";
+	echo "<div id='birthdetails'><div class='divTable blueTable' style='height:40px;' id='birthHead'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
 				echo "<div class='divTableCell' colspan='3'>";
 					echo "<H6 style='font-weight:bold;color:black'>விவரங்கள்</H6>";
@@ -1309,7 +1332,7 @@ function displayHoroDetails()
 	echo "</div>";
 	
 	//display panchang table 
-	echo "<div class='divTable blueTable' style='height:40px;'>"; 
+	echo "<div class='divTable blueTable' style='height:40px;' id='birthDetail'>"; 
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பெயர்</div>";
 			echo "<div class='divPanchang' style='font-weight:bold'>".$in_name."(id=$g_rowid)</div>";
@@ -1449,7 +1472,7 @@ function displayHoroDetails()
 		    $mudakku_star = getMudakku(1);
 			$mudakku_rasi = getMudakku(2);
 			
-			$mudakku_baavam = getBavam(getMudakku(2));
+			$mudakku_baavam = getBavam($mudakku_rasi);
 		displayDetailsDiv('mudakku',$mudakku_rasi.$mudakku_baavam);
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeadingRed'>முடக்கு</div>";
@@ -1513,6 +1536,7 @@ EOL;
 			echo "<div class='divPanchang'>திருக்கணிதம்<BR>(லஹரி அயனாம்சம்)</div>";
 		echo "</div>";
 	echo "</div></center>";
+	echo "</div>";
 	
 }
 
@@ -1624,7 +1648,7 @@ function displayTransitStartLordButton()
 	$class_name = 'actionBtnTransit';
 	$starlord_function = 'showStarLordTable_transit()';
 
-	echo "<center><div class='divTable blueTable' style='height:auto;' id='buttons'>"; 
+	echo "<center><div class='divTable blueTable' style='height:auto;display:none' id='buttons'>"; 
 		echo "<div class='divTableRow'>";
 			echo <<<EOL
 				<div class="divMenu" style="width:50%">
@@ -1640,239 +1664,14 @@ EOL;
 	displayStarLard_transit();
 }
 
-function displayStarLard_transit()
-{
-	global $planetDeg_transit,$tr_sw_planet, $planet_starlord_transit;
-	
-	$planet_starlord_transit = array();
-	
-	$nak_array = array("dummy/dummy","Aswini 1/அசுவினி 1","Aswini 2/அசுவினி 2","Aswini 3/அசுவினி 3","Aswini 4/அசுவினி 4",
-						"Bharani 1/பரணி 1","Bharani 2/பரணி 2","Bharani 3/பரணி 3","Bharani 4/பரணி 4",
-						"Krithika 1/கிருத்திகை 1","Krithika 2/கிருத்திகை 2","Krithika 3/கிருத்திகை 3","Krithika 4/கிருத்திகை 4",
-						"Rohini 1/ரோகிணி 1","Rohini 2/ரோகிணி 2","Rohini 3/ரோகிணி 3","Rohini 4/ரோகிணி 4",
-						"Mrigashirsha 1/மிருகசிரீஷம் 1","Mrigashirsha 2/மிருகசிரீஷம் 2","Mrigashirsha 3/மிருகசிரீஷம் 3","Mrigashirsha 4/மிருகசிரீஷம் 4",
-						"Arudra 1/திருவாதிரை 1","Arudra 2/திருவாதிரை 2","Arudra 3/திருவாதிரை 3","Arudra 4/திருவாதிரை 4",
-						"Punarvasu 1/புனர்பூசம் 1","Punarvasu 2/புனர்பூசம் 2","Punarvasu 3/புனர்பூசம் 3","Punarvasu 4/புனர்பூசம் 4",
-						"Pushyami 1/பூசம் 1","Pushyami 2/பூசம் 2","Pushyami 3/பூசம் 3","Pushyami 4/பூசம் 4",
-						"Ashlesha 1/ஆயில்யம் 1","Ashlesha 2/ஆயில்யம் 2","Ashlesha 3/ஆயில்யம் 3","Ashlesha 4/ஆயில்யம் 4",
-						"Magha 1/மகம் 1","Magha 2/மகம் 2","Magha 3/மகம் 3","Magha 4/மகம் 4",
-						"Poorva Phalguni 1/பூரம் 1","Poorva Phalguni 2/பூரம் 2","Poorva Phalguni 3/பூரம் 3","Poorva Phalguni 4/பூரம் 4",
-						"Uthra phalguni 1/உத்திரம் 1","Uthra phalguni 2/உத்திரம் 2","Uthra phalguni 3/உத்திரம் 3","Uthra phalguni 4/உத்திரம் 4",
-						"Hastha 1/ஹஸ்தம் 1","Hastha 2/ஹஸ்தம் 2","Hastha 3/ஹஸ்தம் 3","Hastha 4/ஹஸ்தம் 4",
-						"Chitra 1/சித்திரை 1","Chitra 2/சித்திரை 2","Chitra 3/சித்திரை 3","Chitra 4/சித்திரை 4",
-						"Swaathi 1/சுவாதி 1","Swaathi 2/சுவாதி 2","Swaathi 3/சுவாதி 3","Swaathi 4/சுவாதி 4",
-						"Vishaakha 1/விசாகம் 1","Vishaakha 2/விசாகம் 2","Vishaakha 3/விசாகம் 3","Vishaakha 4/விசாகம் 4",
-						"Anuraadha 1/அனுஷம் 1","Anuraadha 2/அனுஷம் 2","Anuraadha 3/அனுஷம் 3","Anuraadha 4/அனுஷம் 4",
-						"Jyeshta 1/கேட்டை 1","Jyeshta 2/கேட்டை 2","Jyeshta 3/கேட்டை 3","Jyeshta 4/கேட்டை 4",
-						"Moola 1/மூலம் 1","Moola 2/மூலம் 2","Moola 3/மூலம் 3","Moola 4/மூலம் 4",
-						"Poorva Ashaada 1/பூராடம் 1","Poorva Ashaada 2/பூராடம் 2","Poorva Ashaada 3/பூராடம் 3","Poorva Ashaada 4/பூராடம் 4",
-						"Uthra Ashaada 1/உத்திராடம் 1","Uthra Ashaada 2/உத்திராடம் 2","Uthra Ashaada 3/உத்திராடம் 3","Uthra Ashaada 4/உத்திராடம் 4",
-						"Shraavan 1/திருவோணம் 1","Shraavan 2/திருவோணம் 2","Shraavan 3/திருவோணம் 3","Shraavan 4/திருவோணம் 4",
-						"Dhanishta 1/அவிட்டம் 1","Dhanishta 2/அவிட்டம் 2","Dhanishta 3/அவிட்டம் 3","Dhanishta 4/அவிட்டம் 4",
-						"Shathabhisha 1/சதயம் 1","Shathabhisha 2/சதயம் 2","Shathabhisha 3/சதயம் 3","Shathabhisha 4/சதயம் 4",
-						"Poorva bhadrapada 1/பூரட்டாதி 1","Poorva bhadrapada 2/பூரட்டாதி 2","Poorva bhadrapada 3/பூரட்டாதி 3","Poorva bhadrapada 4/பூரட்டாதி 4",
-						"Uthra bhadrapada 1/உத்திரட்டாதி 1","Uthra bhadrapada 2/உத்திரட்டாதி 2","Uthra bhadrapada 3/உத்திரட்டாதி 3","Uthra bhadrapada 4/உத்திரட்டாதி 4",
-						"Revathi 1/ரேவதி 1","Revathi 2/ரேவதி 2","Revathi 3/ரேவதி 3","Revathi 4/ரேவதி 4");
-	$nak_lord = array("dummy","கே","கே","கே","கே","சுக்","சுக்","சுக்","சுக்","சூரி","சூரி","சூரி","சூரி","சந்","சந்","சந்","சந்","செ","செ","செ","செ","ரா","ரா","ரா","ரா","குரு","குரு","குரு","குரு","சனி","சனி","சனி","சனி","புத","புத","புத","புத",
-						"கே","கே","கே","கே","சுக்","சுக்","சுக்","சுக்","சூரி","சூரி","சூரி","சூரி","சந்","சந்","சந்","சந்","செ","செ","செ","செ","ரா","ரா","ரா","ரா","குரு","குரு","குரு","குரு","சனி","சனி","சனி","சனி","புத","புத","புத","புத",
-						"கே","கே","கே","கே","சுக்","சுக்","சுக்","சுக்","சூரி","சூரி","சூரி","சூரி","சந்","சந்","சந்","சந்","செ","செ","செ","செ","ரா","ரா","ரா","ரா","குரு","குரு","குரு","குரு","சனி","சனி","சனி","சனி","புத","புத","புத","புத");
-	
-	
-	foreach($planetDeg_transit as $planet => $deg)
-	{
-		foreach($tr_sw_planet as $house => $planets)
-		{
-			//starlord calculation
-			$full_planet_deg = ($house * 30 + $deg);
-			$full_planet_deg_ragu = ($full_planet_deg > 180) ? $full_planet_deg-180 : $full_planet_deg;
-			$starlord_idx = ceil($full_planet_deg/3.333333);
-			$starlord_idx_ragu = ceil($full_planet_deg_ragu/3.333333);
-			
-			if(strpos($planets,$planet)===0 || strpos($planets,$planet)>0){
-				
-				//$planet_starlord_transit[$planet][0] = $nak_array[$starlord_idx];
-				$planet_starlord_transit[$planet][0] = explode('/',$nak_array[$starlord_idx])[1];  //display only tamil
-				
-				if($starlord_idx==7 || $starlord_idx==9 || $starlord_idx==12 || $starlord_idx==14 || $starlord_idx==24 || $starlord_idx==26 || $starlord_idx==28 || 
-				$starlord_idx==30 || $starlord_idx==43 || $starlord_idx==45 || $starlord_idx==48 || $starlord_idx==50 || $starlord_idx==60 || $starlord_idx==62 || 
-				$starlord_idx==64 || $starlord_idx==66 || $starlord_idx==79 || $starlord_idx==81 || $starlord_idx==84 || $starlord_idx==86 || $starlord_idx==96 || 
-				$starlord_idx==98 || $starlord_idx==100 || $starlord_idx==102){
-					$planet_starlord_transit[$planet][1] = $nak_lord[$starlord_idx]."(புஷ்)";
-				}
-				else{
-					$planet_starlord_transit[$planet][1] = $nak_lord[$starlord_idx];
-				}
-				
-				$planet_starlord_transit[$planet][2] = $full_planet_deg;
-				$planet_starlord_transit[$planet][3] = $deg;
-			}
-			
-			if(strpos($planet,"ரா")===0 && (strpos($planets,"கே")===0 || strpos($planets,"கே")>0))
-			{
-				
-				//$planet_starlord_transit["கே"][0] = $nak_array[$starlord_idx];
-				$planet_starlord_transit["கே"][0] = explode('/',$nak_array[$starlord_idx])[1];  //display only tamil
-				//$planet_starlord["ரா"][0] = $nak_array[$starlord_idx_ragu];
-				$planet_starlord["ரா"][0] = explode('/',$nak_array[$starlord_idx_ragu])[1]; //display tamil star name
-				
-				if($starlord_idx==7 || $starlord_idx==9 || $starlord_idx==12 || $starlord_idx==14 || $starlord_idx==24 || $starlord_idx==26 || $starlord_idx==28 || 
-				$starlord_idx==30 || $starlord_idx==43 || $starlord_idx==45 || $starlord_idx==48 || $starlord_idx==50 || $starlord_idx==60 || $starlord_idx==62 || 
-				$starlord_idx==64 || $starlord_idx==66 || $starlord_idx==79 || $starlord_idx==81 || $starlord_idx==84 || $starlord_idx==86 || $starlord_idx==96 || 
-				$starlord_idx==98 || $starlord_idx==100 || $starlord_idx==102){
-					$planet_starlord_transit["கே"][1] = $nak_lord[$starlord_idx]."(புஷ்)";
-					$planet_starlord_transit["ரா"][1] = $nak_lord[$starlord_idx_ragu]."(புஷ்)";
-				}
-				else{
-					$planet_starlord_transit["கே"][1] = $nak_lord[$starlord_idx];
-					$planet_starlord_transit["ரா"][1] = $nak_lord[$starlord_idx_ragu];
-				}
-				
-				$planet_starlord["ரா"][2] = ($full_planet_deg > 180) ? $full_planet_deg-180 : $full_planet_deg;
-				$planet_starlord["ரா"][3] = $deg;
-				$planet_starlord_transit["கே"][2] = $full_planet_deg;
-				$planet_starlord_transit["கே"][3] = $deg;
-			}
-		}
-	}
 
-	echo "<center><div class='divTable blueTable' id='starlordHeadMutable_boy' style='height:32px;display:none'>"; 
-		echo "<div class='divTableRow'>";
-			echo "<div class='divTableCell' colspan=3>";
-					echo "<H6 style='font-weight:bold;color:black'>கோட் நட் சாரம்</H6>";
-					echo "</div>";
-		echo "</div>";
-	echo "</div></center>";
-
-	echo "<center><div class='divTable blueTable' id='starlordBodyMutable_boy' style='height:100%;width:360px;display:none'>"; 
-	echo "<div class='divTableRow'>";
-				echo "<div class='divTableCell'>Planet</div>";
-				echo "<div class='divTableCell'>Star Padam</div>";
-				echo "<div class='divTableCell'>Star lord</div>";
-				echo "<div class='divTableCell'>Full degree</div>";
-				echo "<div class='divTableCell'>Rasi degree</div>";
-		echo "</div>";
-	
-	foreach($planet_starlord_transit as $planet => $data)
-	{
-		echo "<div class='divTableRow'>";
-				echo "<div class='divPanchangHeading'>$planet</div>";
-				echo "<div class='divPanchang'>$data[0]</div>";
-				echo "<div class='divPanchang'>$data[1]</div>";
-				echo "<div class='divPanchang'>" . DECtoDMS($data[2]) . "</div>";
-				echo "<div class='divPanchang'>" . DECtoDMS($data[3]) . "</div>";
-		echo "</div>";
-	}
-	
-	echo "<div class='divTableRow' id='hidePdf1'>";
-	echo "</div>";
-	
-	echo "</div></center>";
-	
-}
-
-function calculateNavamsam()
-{
-	global $planet_starlord, $g_navamsam_arr;
-	
-	//Arrnagement of rasi planets in navamsa chart arrangmenet notes
-	//Mesham to Katakam - சந் குரு கே - Mesham - padam1, Rishabam - padam2, Mithunam - padam3, Katakam - padham4
-	//Simham to Virichigam - செ சனி சுக் - Simham - padam1, Kanni - padam2, Thulaam - padam3, Virichigam - padham4
-	//Danusu to Meenam - சூரி ரா புத  - Danusu - padam1, Makaram - padam2, Kumbam - padam3, Meenam - padham4
-	
-	$rasi_idx1 = [	
-					array('சந்1','குரு1','கே1'), //mesham
-					array('சந்2','குரு2','கே2'), //rishabam
-					array('சந்3','குரு3','கே3'),  //mithunam
-					array('சந்4','குரு4','கே4'),  //katakam
-					array('செ1','சனி1','சுக்1'),  //simham
-					array('செ2','சனி2','சுக்2'),  //kanni
-					array('செ3','சனி3','சுக்3'),  //thulaam
-					array('செ4','சனி4','சுக்4'),  //virichigam
-					array('சூரி1','ரா1','புத1'),  //danusu
-					array('சூரி2','ரா2','புத2'),  //makaram
-					array('சூரி3','ரா3','புத3'),  //kumbam
-					array('சூரி4','ரா4','புத4')  //meenam
-				];
-				
-	$rasi_idx = [	
-					'சந்1' => 0,  // mesham
-					'குரு1' => 0 , // mesham
-					'கே1' => 0 , // mesham
-					'சந்2' => 1 , // rishabam
-					'குரு2' => 1 , // rishabam
-					'கே2' => 1 , // rishabam
-					'சந்3'  => 2 , // mithunam
-					'குரு3'  => 2 , // mithunam
-					'கே3'  => 2 , // mithunam
-					'சந்4'  => 3 , // katakam
-					'குரு4'  => 3 , // katakam
-					'கே4'  => 3 , // katakam
-					'செ1'  => 4 , // simham
-					'சனி1'  => 4 , // simham
-					'சுக்1'  => 4 , // simham
-					'செ2'  => 5 , // kanni
-					'சனி2'  => 5 , // kanni
-					'சுக்2'  => 5 , // kanni
-					'செ3'  => 6 , // thulaam
-					'சனி3'  => 6 , // thulaam
-					'சுக்3'  => 6 , // thulaam
-					'செ4'  => 7 , // virichigam
-					'சனி4'  => 7 , // virichigam
-					'சுக்4'  => 7 , // virichigam
-					'சூரி1'  => 8 , // danusu
-					'ரா1'  => 8 , // danusu
-					'புத1'  => 8 , // danusu
-					'சூரி2'  => 9 , // makaram
-					'ரா2'  => 9 , // makaram
-					'புத2'  => 9 , // makaram
-					'சூரி3'  => 10 , // kumbam
-					'ரா3'  => 10 , // kumbam
-					'புத3'  => 10 , // kumbam
-					'சூரி4'  => 11 , // meenam
-					'ரா4'  => 11 , // meenam
-					'புத4'  => 11  // meenam
-				];
-	
-$planet_padam = explode('(',$planet_starlord["லக்"][1])[0] . explode(' ',$planet_starlord["லக்"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " <span class='lagna'>லக்</span>";
-	
-	$planet_padam = explode('(',$planet_starlord["சூரி"][1])[0] . explode(' ',$planet_starlord["சூரி"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " சூரி";
-	
-	$planet_padam = explode('(',$planet_starlord["சந்"][1])[0] . explode(' ',$planet_starlord["சந்"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " <span class='moon'>சந்</span>";
-	
-	$planet_padam = explode('(',$planet_starlord["புத"][1])[0] . explode(' ',$planet_starlord["புத"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " புத";
-	
-	$planet_padam = explode('(',$planet_starlord["சுக்"][1])[0] . explode(' ',$planet_starlord["சுக்"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " சுக்";
-	
-	$planet_padam = explode('(',$planet_starlord["செ"][1])[0] . explode(' ',$planet_starlord["செ"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " செ";
-	
-	$planet_padam = explode('(',$planet_starlord["குரு"][1])[0] . explode(' ',$planet_starlord["குரு"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " குரு";
-	
-	$planet_padam = explode('(',$planet_starlord["சனி"][1])[0] . explode(' ',$planet_starlord["சனி"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " சனி";
-	
-	$planet_padam = explode('(',$planet_starlord["ரா"][1])[0] . explode(' ',$planet_starlord["ரா"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " ரா";
-	
-	$planet_padam = explode('(',$planet_starlord["கே"][1])[0] . explode(' ',$planet_starlord["கே"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " கே";
-	
-	$planet_padam = explode('(',$planet_starlord["மா"][1])[0] . explode(' ',$planet_starlord["மா"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " மா";
-}
 
 function displayNavamsam()
 {
 	global $g_navamsam_arr;
 	
 echo <<<EOL
-	<div class="divTable blueTable" id="d9_chart" style='display:none'>
+	<div class="divTable blueTable" id="d9_chart" style='display:table'>
 		
 		<div class="divTableBody">
 			<div class="divTableRow">
@@ -2032,6 +1831,11 @@ echo "TZ: " . $TZ ."<BR>";
 }
 
 date_default_timezone_set($TZ);
+
+if($default_save){ //save it to DB and show the chart
+	$url = 'saveChartMultiple.php?name=' . $in_name . '&place=' . $in_place . '&date=' . $chart_date . '&time=' . $chart_time . '&sex=' . $in_sex . '&phone=' . $phone . '&charttype=b&savemode=0&default_save=1';
+	echo "<script>window.location='$url';</script>";
+}
 
 if(date('I',strtotime($chart_date))==1) { // DST
    debug('<br>Picking daylight savings '.$gmt_offset_dst);
@@ -2523,8 +2327,7 @@ echo <<<EOL
 									</div>
 								</div>
 							</div>
-				<div class="container" style="horizontal-align:center">
-					
+					<br>
 					<div class="divTable blueTable" id="chart">
 						
 						<div class="divTableBody">
@@ -2607,37 +2410,35 @@ EOL;
 								/*if($autoAnalysisMenu==1){
 									echo "<div class='footer'>Scroll down for Auto Analysis details &#9660;</div>";
 								}*/
-echo <<<EOL
-
-						
-					</div>
-EOL;
 					//NOTE: These functions should be called in these order because various global variables are filled which is dependent
 					//displayPanchang();
+					calculateStarLard();
+					calculateNavamsam();
+					displayNavamsam();
 					calculateBirthPanchang();
+					echo "<br><div id='birth_info'></div>";
 					//displayThithiSoonyam($panchang["thithi"]);
 					//calculateBirthThithiSoonyam($panchang["thithi"]);
 					calculateVimDasaBalance($moon_degree,$moon_house,$chart_time,$chart_time,$panchang['nak'],$nak_pad_idx, true);
 					displayButtons(true); //this will calculate star lord as well 
+					displayStarLard_transit();
 					calculateCurrentDasaBukthi(true);
-					displayTransitStartLordButton(); //starlord dasa buttons for transit planets
 					
 					echo "<div class='html2pdf__page-break'></div>";
-					calculateNavamsam();
-					displayNavamsam();
+					
 					getOtherPanchangamDetails();
 					displayHoroDetails();
 
-
 echo <<<EOL
-			
-						<div class='divTable blueTable' style='height:auto;' id='buttons'>
+						
+						<center><div class='divTable blueTable' style='height:auto;' id='buttons'>
+							<br>
 							<div class='divTableRow'>
 								<div class="divTableCell" colspan='2'>
 									<H6 style='font-weight:bold;color:black'>குறிப்புகள்</H6>
 								</div>
 							</div>
-							<form id='saveForm' action='' method='post'>
+							<form id='saveForm' action='' method='post' style='width:inherit'>
 								<input type="hidden" id="hNotesTxt" name="hNotesTxt" value="">
 								<div class="editable" id="notesTxt" contenteditable="true" onClick='addDateTime();'>$g_notes</div>
 								<input type='button' class='actionBtn' id='save' name='save' value='$saveBtnTxt' onClick='saveChart();'>

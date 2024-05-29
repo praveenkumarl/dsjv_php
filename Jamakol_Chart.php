@@ -135,7 +135,7 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Jamakol_i
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     
     <title>PK Astro Jamakol</title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
@@ -1528,7 +1528,7 @@ echo <<<EOL
 		<div class='column-body' id="pdf">
 					<center>
 					<P style="color:#660000;font-weight:bold; font-size:16px; text-align:center; background-color:white;width:200px;">ஜாமக்கோள் Chart</P>
-					<center><div class="divTable blueTable" style="height:70px;width:360px;">
+					<center><div class="divTable blueTable" style="height:70px;">
 								<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
 									<div class="divTableDummyCell" colspan=3 style="border-radius: 20px 20px 0 0;">
 										<DIV class='body'>Question</div>
@@ -1546,8 +1546,8 @@ echo <<<EOL
 											<input type='date' id='nDate' name='nDate' style="color:#660000;font-size:12px;font-weight:bold;width:110px;" value=$chart_date onChange='dateChange(this.form);'>
 											<input type='time' id='nTime' name='nTime' style="color:#660000;font-size:12px;font-weight:bold;width:110px" step='1' value=$chart_time onChange='timeChange(this.form);'>
 											<BR>
-											<input type='button' class='actionBtn' value='Question Time' Onclick="return questionChart(this.form);">
-											<input type='button' class='actionBtn' value='Now' Onclick="return updateNow(this.form);">
+											<input type='button' class='actionBtn' value='கே.நேரம்' Onclick="return questionChart(this.form);">
+											<input type='button' class='actionBtn' value='தற்ப்போது' Onclick="return updateNow(this.form);">
 	
 											<BR><BR>
 										</form>
@@ -1610,6 +1610,7 @@ echo <<<EOL
 							</div>
 						</div>	
 					</div>
+					<BR>
 					<input type='button' class='actionBtn' id='strdtl' value='சாரம் (உள்)' Onclick="showStarLordTable();">
 					<input type='button' class='actionBtn' id='strdtl_jama' value='சாரம் (வெளி)'  Onclick="showStarLordTable_jama();">
 EOL;
@@ -1619,7 +1620,7 @@ EOL;
 					
 					$filename = 'jamakol_'.$date.'_'.$time;
 echo <<<EOL
-					<div class="divTable blueTable" style="height:40px;width:360px;">
+					<div class="divTable blueTable" style="height:40px;">
 						<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
 							<div class="divTableDummyCell" colspan=3 style="border-radius:  0 0 20px 20px;">
 							<form id='analysisData' method='post'>

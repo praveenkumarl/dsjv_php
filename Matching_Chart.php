@@ -195,8 +195,8 @@ $dayofweek = date('w', strtotime($chart_date));
 			var z2 = document.getElementById("starlordBodyMutable");
 			
 			if (z1.style.display === "none" && z2.style.display === "none") {
-				z1.style.display = "block";
-				z2.style.display = "block";
+				z1.style.display = "table";
+				z2.style.display = "table";
 				x.style.display = "none";
 				y.style.display = "none";
 			  } else {
@@ -214,8 +214,8 @@ $dayofweek = date('w', strtotime($chart_date));
 			var z2 = document.getElementById("starlordBodyMutable_boy");
 			
 			if (z1.style.display === "none" && z2.style.display === "none") {
-				z1.style.display = "block";
-				z2.style.display = "block";
+				z1.style.display = "table";
+				z2.style.display = "table";
 				x.style.display = "none";
 				y.style.display = "none";
 			  } else {
@@ -273,10 +273,10 @@ $dayofweek = date('w', strtotime($chart_date));
 			var btns = document.getElementById("buttons");
 			
 			btns.style.display='none';
-			x.style.display='block';
-			y.style.display='block';
-			z1.style.display='block';
-			z2.style.display='block';
+			x.style.display='table';
+			y.style.display='table';
+			z1.style.display='table';
+			z2.style.display='table';
 		}
 		
 		function old_generatePDF() {
@@ -2812,13 +2812,28 @@ function calculateGirlPanchang(){
 			
 			$thi_idx = floor($idx);
 			
-			if($idx > 29){
-				$thi_idx = 29;
-				$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]$idx";
+			if($thi_idx >=0 and $thi_idx <=14)
+			{
+				$panchang["thithi"] = $tithi[$thi_idx]."[shukla/வளர்]";
 			}
-			else{
+			elseif($thi_idx >14 and $thi_idx <=29)
+			{
 				$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]";
 			}
+			
+			/*
+			if($idx > 29){
+				$thi_idx = 29;
+				$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]";
+			}
+			elseif($idx > 14){
+				$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]-";
+			}
+			elseif($idx <= 14){
+				
+				$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]-";
+			}
+			*/
 		}
 		else{
 			$idx = ($full_moon_deg - $full_sun_deg) / 12;
@@ -3106,15 +3121,28 @@ function calculateBoyPanchang(){
 			
 			$thi_idx = floor($idx);
 			
-			if($idx > 29){
-				$thi_idx = 29;
-				$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]$idx";
+			if($thi_idx >=0 and $thi_idx <=14)
+			{
+				$panchang["thithi"] = $tithi[$thi_idx]."[shukla/வளர்]";
 			}
-			else{
+			elseif($thi_idx >14 and $thi_idx <=29)
+			{
 				$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]";
 			}
 			
-			
+			/*
+			if($idx > 29){
+				$thi_idx = 29;
+				$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]";
+			}
+			elseif($idx > 14){
+				$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]-";
+			}
+			elseif($idx <= 14){
+				
+				$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]-";
+			}
+			*/
 		}
 		else{
 			$idx = ($full_moon_deg - $full_sun_deg) / 12;
@@ -4082,7 +4110,9 @@ EOL;
 								/*if($autoAnalysisMenu==1){
 									echo "<div class='footer'>Scroll down for Auto Analysis details &#9660;</div>";
 								}*/
-
+					calculateStarLard();
+					calculateStarLard_boy();
+					
 					calculateGirlPanchang();
 					calculateBoyPanchang();
 					calculateThithiSoonyam($g_panchang_girl["thithi"],$g_panchang_boy["thithi"]);

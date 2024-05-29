@@ -13,7 +13,7 @@ $savemode = isset($_GET["savemode"]) ? $_GET["savemode"] : "";
 $savemode = intval($savemode);
 $g_rowid = isset($_GET["rowid"]) ? $_GET["rowid"] : "-1";
 $g_notes = isset($_POST["hNotesTxt"]) ? $_POST["hNotesTxt"] : "";
-
+$g_default_save = isset($_GET["default_save"]) ? true : false;
 
 //for jamakol
 $question = isset($_GET["question"]) ? $_GET["question"] : "";
@@ -24,6 +24,7 @@ $savemode = intval($savemode);
 
 // for both birthchart and jamakol
 $place = isset($_GET["place"]) ? $_GET["place"] : "";
+$g_tz = explode('|',$place)[1];
 $date = isset($_GET["date"]) ? $_GET["date"] : "";
 $time = isset($_GET["time"]) ? $_GET["time"] : "";
 
@@ -66,19 +67,38 @@ $charttype = $_GET["charttype"];
 	function showSavedMatchingCharts(){
 		window.open('matchingChartDisplay.php','_self');
 	}
+	
+	function showChart(rownum,place,name,sex,date,time,g_notes)
+	{	
+		//document.getElementById("place").value = document.getElementById("col4"+rownum).innerHTML;
+		document.getElementById("place").value = place;
+		document.getElementById("name").value = name;
+		document.getElementById("sex").value = sex;
+		document.getElementById("in_date").value = date;
+		document.getElementById("in_time").value = time;
+		document.getElementById("lang").value = 'Tamil';
+		document.getElementById("rowid").value = rownum;
+		document.getElementById("notes").value = g_notes;
+		
+		document.getElementById("hiddenViewBirthChart").submit();
+		
+		$('#loader').show();
+	}
 		
     </script>
 </head>
-<body>
 
+<body>
 <!-- (A) HIDDEN HTML FORM -->
-<form id="hiddenViewBirthChart" action="Birth_Input.php" method="post" style="display:none;">
+<form id="hiddenViewBirthChart" action="Birth_Chart.php" method="post" style="display:none;">
   <input type="hidden" id="place" name="place" required/>
   <input type="hidden" id="name" name="name" required/>
   <input type="hidden" id="sex" name="sex" required/>
   <input type="hidden" id="in_date" name="in_date" required/>
   <input type="hidden" id="in_time" name="in_time" required/>
   <input type="hidden" id="lang" name="lang" required/>
+  <input type="hidden" id="rowid" name="rowid" required/>
+  <input type="hidden" id="notes" name="notes" required/>
 </form>
 
 <!-- (A) HIDDEN HTML FORM -->
@@ -92,12 +112,14 @@ $charttype = $_GET["charttype"];
    <input type="hidden" id="nDegree" name="nDegree" required/>
 </form>
 
+
 <?php
 
 function saveBirthChartToDB($in_savemode)
 {
-	global $conn,$place,$date,$time,$phone,$name,$g_notes,$g_rowid,$sex;
+	global $conn,$place,$date,$time,$phone,$name,$g_notes,$g_rowid,$sex,$g_default_save,$g_tz;
 	
+	date_default_timezone_set($g_tz);
 	$db_date=date("Y-m-d",strtotime($date));
 	
 	$conn=dbConnect($conn);
@@ -107,14 +129,27 @@ function saveBirthChartToDB($in_savemode)
 	try {	
 		if($in_savemode==0){ //insert
 			$sql = "INSERT INTO birth_chart (phone,name,sex,place,birth_date,birth_time,notes) VALUES ('$phone','$name','$sex','$place','$date','$time','$g_notes')";
+			$msg = 'Record inserted successfully...';
 		}
 		else{ //update existing record
 			$sql = "UPDATE birth_chart SET phone='$phone',name='$name',sex='$sex',place='$place',birth_date='$date',birth_time='$time',notes='$g_notes' where rowid='$g_rowid'";
+			$msg = 'Record updated successfully...';
 		}
 		
-	
 		if(mysqli_query($conn, $sql)){
-			echo "<script>alert('Records inserted/updated successfully.');showSavedBirthCharts();</script>";
+			if($g_default_save){
+				$sql = "SELECT getMaxBirthRowId('$phone') AS rowid;";
+				if($result = mysqli_query($conn, $sql)){
+					$row = $result->fetch_assoc();
+					$g_rowid = $row["rowid"];
+				  }
+				commitSqlTxn($conn);
+				echo "<script>alert('$msg');showChart($g_rowid,'$place','$name','$sex','$date','$time','$g_notes');</script>";
+			}
+			else{
+				commitSqlTxn($conn);
+				echo "<script>alert('$msg');showSavedBirthCharts();</script>";
+			}
 		} else{
 			echo "ERROR: Could not able to execute $sql. " . mysqli_error($conn);
 		}
@@ -126,6 +161,9 @@ function saveBirthChartToDB($in_savemode)
 	catch (mysqli_sql_exception $exception) {
 		if ($exception->getCode() == 1062) {
 			echo "<script>alert('ERROR: Chart already exits');showSavedBirthCharts();</script>";
+		}
+		else{
+			echo $exception->getMessage();
 		}
 		
 		mysqli_rollback($conn);
