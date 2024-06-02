@@ -13,10 +13,33 @@
 	--bukthiHead-color: #FCD71E;
 	--currentBukthi-color: yellow;
 	--birthBukthi-color: silver;
+	
+	--dasabukthi-fontsize: clamp(11px,2vw,14px);
+	
+	
 	--button-background: #1F45FC ;
 	--button-text-color: white;
 	--anthraHead-color: #FCD71E;
 	--muhurtHead-color: #FCD71E;
+	
+	--panchang-head-fontsize: clamp(12px,2vw,14px);
+	--panchang-body-fontsize: clamp(12px,2vw,14px);
+	--panchang-body-linesize: clamp(12px,2vw,14px);
+	
+	--panchang-bodysmall-fontsize: clamp(10px,2vw,12px);
+	--panchang-bodysmall-linesize: clamp(10px,2vw,12px);
+	
+	--actionBtn-width: clamp(90px,2vw,120px);
+	--actionBtn-fontsize: clamp(8px,2vw,12px);
+	
+	--actionBtn-small-width:  clamp(40px,1vw,100px);
+	--actionBtn-small-fontsize:  clamp(8px,2vw,11px);
+	
+	--chartHistoryHeading-fontsize: clamp(8px,2vw,14px);
+	--chartHistory-fontsize: clamp(8px,2vw,14px);
+
+	--thaarapalan-fontsize: clamp(10px,1vw,14px);
+	
 }
 
 /*
@@ -2102,7 +2125,6 @@ input, select, textarea {
 				width:100%;
 				height:100%;
 			}
-
 		}
 
 /* Section/Article */
@@ -2314,7 +2336,8 @@ input, select, textarea {
 			background: #666666;
 			border-color: #666666;
 			color: #ffffff;
-			content: '\f00c';
+			//content: '\f00c';
+			content: '\2713';
 		}
 
 		input[type="checkbox"]:focus + label:before,
@@ -2672,8 +2695,15 @@ input, select, textarea {
 				}
 			.column-body {
 				display: block;
-				width:100%;
+				width:auto;
 				text-align:center;
+			}
+			
+			.mobile
+			{
+				display:block;
+				text-align:center;
+				width:100%;
 			}
 
 		}
@@ -3609,11 +3639,12 @@ input, select, textarea {
 				  text-align:center;
 				}
 				
-			.navbar {
-				overflow: hidden;
-				background-color: var(--menu-background);
-				width: 100% ;
-				font-family: Arial, Helvetica, sans-serif;
+			
+			.mobile
+			{
+				display:block;
+				text-align:center;
+				width:100%;
 			}
 
 	}
@@ -3624,9 +3655,9 @@ input, select, textarea {
 
 		/* Basic */
 
-			html, body {
+			/*html, body {
 				min-width: 320px;
-			}
+			}*/
 
 		/* Main */
 
@@ -3654,18 +3685,22 @@ input, select, textarea {
 			  text-align:center;
 			}
 			
-		.navbar {
-			overflow: hidden;
-			background-color: var(--menu-background);
-			width: 100%;
-			font-family: Arial, Helvetica, sans-serif;
-		}
+		
 			
 		.column-body {
 			display: block;
-			width:100%;
+			width:auto;
 			text-align:center;
 		}
+		
+		.mobile
+		{
+			display:block;
+			text-align:center;
+			width:100%;
+		}
+		
+		
 	}
 	
 	@media screen and (max-width: 400px) {		
@@ -3677,17 +3712,19 @@ input, select, textarea {
 			  text-align:center;
 			}
 			
-		.navbar {
-			overflow: hidden;
-			background-color: var(--menu-background);
-			width: 100%;
-			font-family: Arial, Helvetica, sans-serif;
-		}
+		
 		
 		.column-body {
 			display: block;
-			width:100%;
+			width:auto;
 			text-align:center;
+		}
+		
+		.mobile
+		{
+			display:block;
+			text-align:center;
+			width:100%;
 		}
 	}
 	
@@ -3704,10 +3741,24 @@ div.error {
 	vertical-align:middle;
 	border:solid 1px #660000;
 	background-color: var(--details-background);
-	font-size: 12px;
-	line-height: 14px;
+	font-size: var(--panchang-head-fontsize);
 	color: black;
-	width: 20%;
+	height: 20%;
+	padding:5px;
+	font-weight: bold;
+}
+
+.divPanchangHeadingSmall 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px #660000;
+	background-color: var(--details-background);
+	font-size: var(--panchang-bodysmall-fontsize);
+	line-height: 12px;
+	color: black;
+	width: auto;
 	height: 20%;
 	padding:5px;
 	
@@ -3722,9 +3773,9 @@ div.error {
 	border:solid 1px #660000;
 
 	background-color: var(--details-background);
-	font-size: 12px;
+	font-size: var(--panchang-head-fontsize);
 	color: Red;
-	width: 20%;
+	width: auto;
 	height: 20%;
 	padding:5px;
 	
@@ -3738,10 +3789,25 @@ div.error {
 	vertical-align:middle;
 	border:solid 1px #660000;
 	background-color: #ffffff;
-	font-size: 12px;
+	font-size: var(--panchang-body-fontsize);
 	line-height: 14px;
 	color: black;
-	width: 20%;
+	width: 50%;
+	height: 20%;
+	padding:5px;
+}
+
+.divPanchangSmall 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px #660000;
+	background-color: #ffffff;
+	font-size: var(--panchang-bodysmall-fontsize);
+	line-height: 12px;
+	color: black;
+	width: auto;
 	height: 20%;
 	padding:5px;
 }
@@ -3754,7 +3820,7 @@ div.error {
 	border:solid 1px #660000;
 
 	background-color: #ff8080;
-	font-size: 12px;
+	font-size: var(--panchang-body-fontsize);
 	color: black;
 	width: 20%;
 	height: 20%;
@@ -3769,7 +3835,7 @@ div.error {
 	border:solid 1px #660000;
 
 	background-color: #99ff66;
-	font-size: 12px;
+	font-size: var(--panchang-body-fontsize);
 	color: black;
 	width: 20%;
 	height: 20%;
@@ -3784,10 +3850,9 @@ div.error {
 	border:solid 1px #660000;
 
 	background-color: var(--historytableHead-background);
-	font-size: 10px;
+	font-size: var(--chartHistoryHeading-fontsize);
 	color: var(--historytableHead-color);
-	width: 20%;
-	height: 20%;
+	width: auto;
 	padding:5px;
 	
 	font-weight: bold;
@@ -3801,10 +3866,9 @@ div.error {
 	border:solid 1px #660000;
 
 	background-color: #ffffff;
-	font-size: 8px;
+	font-size: var(--chartHistory-fontsize);
 	color: black;
-	width: 20%;
-	height: 20%;
+	width: auto;
 	padding:5px;
 }
 
@@ -3902,7 +3966,7 @@ div.error {
 	border:solid 1px #660000;
 
 	background-color: var(--dasaHead-color);
-	font-size: 11px;
+	font-size: var(--dasabukthi-fontsize);
 	color: black;
 	width: 120px;
 	height: 20%;
@@ -3919,7 +3983,7 @@ div.error {
 	border:solid 1px #660000;
 
 	background-color:  var(--dasaHead-color);
-	font-size: 11px;
+	font-size: var(--dasabukthi-fontsize);
 	color: black;
 	width: 120px;
 	height: 20%;
@@ -3936,7 +4000,7 @@ div.error {
 	border:solid 1px #660000;
 
 	background-color: var(--bukthiHead-color);
-	font-size: 11px;
+	font-size: var(--dasabukthi-fontsize);
 	color: black;
 	width: 120px;
 	height: 20%;
@@ -3953,7 +4017,7 @@ div.error {
 	border:solid 1px #660000;
 
 	background-color: #FFFFFF;
-	font-size: 11px;
+	font-size: var(--dasabukthi-fontsize);
 	color: black;
 	width: 120px;
 	height: 20%;
@@ -3968,7 +4032,7 @@ div.error {
 	border:solid 3px #660000;
 
 	background-color: var(--currentBukthi-color);
-	font-size: 11px;
+	font-size: var(--dasabukthi-fontsize);
 	color: black;
 	width: 120px;
 	height: 20%;
@@ -3983,7 +4047,7 @@ div.error {
 	border:solid 3px #660000;
 
 	background-color: var(--birthBukthi-color);
-	font-size: 11px;
+	font-size: var(--dasabukthi-fontsize);
 	color: black;
 	width: 120px;
 	height: 20%;
@@ -4111,7 +4175,7 @@ div.error {
 	{
 		display:block;
 		text-align:center;
-		width:inherit;
+		width:100%;
 	}
 	
 	.title{
@@ -4204,6 +4268,7 @@ div.error {
 .menu-container{
   display: flex;
   flex-wrap: wrap;
+  width:100%;
 }
 .menuBtn {
   display: box;
@@ -4361,9 +4426,8 @@ div.error {
 	background-color: var(--menu-background) !important;
 	color:var(--button-text-color) !important;
 	font-weight:bold !important;
-	font-size:10px !important;
-	#width:120px;
-	width:100px;
+	font-size: var(--actionBtn-fontsize) !important;
+	width:var(--actionBtn-width);
 	text-align: center;
 }
 
@@ -4371,8 +4435,8 @@ div.error {
 	background-color: var(--menu-background) !important;
 	color:var(--button-text-color) !important;
 	font-weight:bold !important;
-	font-size:10px !important;
-	width:auto;
+	font-size:var(--actionBtn-small-fontsize) !important;
+	width:var(--actionBtn-small-width);
 	padding:1px;
 	text-align: center;
 }
@@ -4381,8 +4445,8 @@ div.error {
 	background-color: var(--menu-background) !important;
 	color:var(--button-text-color) !important;
 	font-weight:bold;
-	font-size:10px !important;
-	width:100px;
+	font-size:var(--actionBtn-fontsize) !important;
+	width:var(--actionBtn-width);
 	text-align: center;
 	vertical-align:middle;
 }
@@ -4484,7 +4548,7 @@ textarea {
   font-size: 16px;
   color: var(--menu-text-color);
   text-align: center;
-  padding: 14px 16px;
+  padding: 12px 12px;
   text-decoration: none;
 }
 
@@ -4649,12 +4713,11 @@ parigaraDiv{
 	vertical-align:middle;
 	border:solid 1px #660000;
 
-	background-color: var(--details-background);;
-	font-size: 11px;
+	background-color: var(--details-background);
+	font-size: var(--thaarapalan-fontsize);
 	line-height: 16px;
 	font-weight: bold;
 	color: black;
-	width: auto;
 	height: 20%;
 	padding:5px;
 	font-weight:bold;
@@ -4668,9 +4731,8 @@ parigaraDiv{
 	border:solid 1px #660000;
 	line-height: 16px;
 	background-color: White;
-	font-size: 11px;
+	font-size: var(--thaarapalan-fontsize);
 	color: black;
-	width: auto;
 	height: 20%;
 	padding:5px;
 	font-weight:500;
@@ -4684,9 +4746,8 @@ parigaraDiv{
 	border:solid 1px #660000;
 	line-height: 16px;
 	background-color: #FADBD8;
-	font-size: 11px;
+	font-size: var(--thaarapalan-fontsize);
 	color: black;
-	width: auto;
 	height: auto;
 	padding:5px;
 	font-weight:500;
@@ -4700,9 +4761,8 @@ parigaraDiv{
 	border:solid 1px #660000;
 	line-height: 16px;
 	background-color: #D5F5E3;
-	font-size: 11px;
+	font-size: var(--thaarapalan-fontsize);
 	color: black;
-	width: auto;
 	height: 20%;
 	padding:5px;
 	font-weight:500;
@@ -4716,9 +4776,8 @@ parigaraDiv{
 	border:solid 1px #660000;
 	line-height: 16px;
 	background-color: #FC0000;
-	font-size: 11px;
+	font-size: var(--thaarapalan-fontsize);
 	color: white;
-	width: auto;
 	height: 20%;
 	padding:5px;
 	font-weight:bold;
@@ -4732,9 +4791,8 @@ parigaraDiv{
 	border:solid 1px #660000;
 	line-height: 16px;
 	background-color: #0FFC00;
-	font-size: 11px;
+	font-size: var(--thaarapalan-fontsize);
 	color: black;
-	width: auto;
 	height: 20%;
 	padding:5px;
 	font-weight:bold;
@@ -4749,13 +4807,14 @@ parigaraDiv{
 	background-color: white;
 	font-size: 10px;
 	color: black;
-	width: 350px;
+	width: auto;
 	height: 20%;
 	padding:5px;
 }
 
 .menuHeading{
-	display: inline-block;
+	#display: inline-block;
+	display: none;
 	padding: 5px;
 	width: auto;
 	background: var(--menu-heading-background);
@@ -4941,7 +5000,8 @@ parigaraDiv{
 	border:solid 1px #000000;
 
 	background-color: var(--muhurtHead-color);
-	font-size: 8px;
+	/*font-size: 8px;*/
+	font-size: 2vw;
 	color: black;
 	width: 80px;
 	height: 20%;
@@ -4955,7 +5015,8 @@ parigaraDiv{
 	text-align:center;
 	vertical-align:middle;
 	border:solid 1px #000000;
-	font-size: 8px;
+	/*font-size: 8px;*/
+	font-size: 2vw;
 	color: black;
 	width: 80px;
 	height: 20%;
@@ -4970,7 +5031,8 @@ parigaraDiv{
 	text-align:center;
 	vertical-align:middle;
 	border:solid 1px #000000;
-	font-size: 8px;
+	/*font-size: 8px;*/
+	font-size: 2vw;
 	color: black;
 	width: 80px;
 	height: 20%;
@@ -4985,7 +5047,8 @@ parigaraDiv{
 	text-align:center;
 	vertical-align:middle;
 	border:solid 1px #000000;
-	font-size: 8px;
+	/*font-size: 8px;*/
+	font-size: 2vw;
 	color: black;
 	width: 80px;
 	height: 20%;

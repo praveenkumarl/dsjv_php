@@ -3987,15 +3987,9 @@ echo <<<EOL
 			</div>
 			<div class='column-body'>
 
-			<div class="intro">
 					<center>
 					<div class="divTable blueTable" style="height:70px;">
-					<!-- <IMG SRC='images/ganpati2.jpg' width='10%' height='10%' />
-					<P style="color:#660000;font-weight:bold; font-size:10px; text-align:center; background-color:white;width:200px;line-height: 20px;">பெரியநாயகி துணை</P>
-					<BR>
-					<P style="color:#660000;font-weight:bold; font-size:14px; text-align:center; background-color:white;width:200px;line-height: 20px;">மணமகள்/மணமகன் ஜாதகம்</P> -->
-					<BR>
-					<P style="color:#660000;font-weight:bold; font-size:12px; text-align:center; background-color:white;width:200px;line-height: 20px;">திருமண பொருத்தம்</P>
+					<P style="color:#660000;font-weight:bold; font-size:12px; text-align:center; background-color:white;line-height: 20px;">திருமண பொருத்தம்</P>
 					<BR>
 					
 								<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
@@ -4010,8 +4004,11 @@ echo <<<EOL
 											<input type='hidden' id='nGirlTime' name='nGirlTime' value='$chart_time'>
 											<input type='hidden' id='nBoyDate' name='nGirlDate' value='$transit_date'>
 											<input type='hidden' id='nBoyTime' name='nBoyTime' value='$transit_time'>
-											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">&#128105;Girl BD: <input type='date' id='nDate' name='nDate' style="background-color:var(--girl-chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$chart_date > &#128105;Girl BT: <input type='time' id='nTime' name='nTime' style="background-color:var(--girl-chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$chart_time></H4>
-											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">&#128104;Boy BD: <input type='date' id='in_date_boy' name='in_date_boy' style="background-color:var(--boy-chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$transit_date>&#128104;Boy BT: <input type='time' id='in_time_boy' name='in_time_boy' style="background-color:var(--boy-chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$transit_time></H4>
+											<div><H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">&#128105;Girl BD: <input type='date' id='nDate' name='nDate' style="background-color:var(--girl-chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$chart_date ></div>
+											<div>&#128105;Girl BT: <input type='time' id='nTime' name='nTime' style="background-color:var(--girl-chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$chart_time></H4></div>
+											<div><H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center"></div>
+											<div>&#128104;Boy BD: <input type='date' id='in_date_boy' name='in_date_boy' style="background-color:var(--boy-chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$transit_date></div>
+											<div>&#128104;Boy BT: <input type='time' id='in_time_boy' name='in_time_boy' style="background-color:var(--boy-chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$transit_time></H4></div>
 											<BR>
 											<input type='submit' class='actionBtnDefault' id='btnSubmit' value='Submit'>
 											<input type='button' class='actionBtnDefault' id='save' value='Save' onClick='saveChart();'>
@@ -4021,26 +4018,25 @@ echo <<<EOL
 									</div>
 								</div>
 							</div>
-				<div class="container" id="container" style="horizontal-align:center;">
 					
 					<div class="divTable blueTable" id="chart">
 						
 						<div class="divTableBody">
 							<div class="divTableRow">
-									<div class="divTableOuterCell">$tr_sw_planet[11]</div>
-									<div class="divTableOuterCell"></div>
+									<div class="divTableOuterCellLeftTop">$tr_sw_planet[11]</div>
+									<div class="divTableOuterCell" style='border-left:none'></div>
 									<div class="divTableOuterCell">$tr_sw_planet[0]</div>
 									<div class="divTableOuterCell">$tr_sw_planet[1]</div>
-									<div class="divTableOuterCell"></div>
-									<div class="divTableOuterCell">$tr_sw_planet[2]</div>
+									<div class="divTableOuterCell" style='border-right:none'></div>
+									<div class="divTableOuterCellRightTop">$tr_sw_planet[2]</div>
 							</div>
 							<div class="divTableRow">
-									<div class="divTableOuterCell"></div>
+									<div class="divTableOuterCell" style='border-top:none'></div>
 									<div class="divTableCell">$sw_planet[11]<span class='symbol'>&#9795;<span></div>
 									<div class="divTableCell">$sw_planet[0]<span class='symbol'>&#9794;<span></div>
 									<div class="divTableCell">$sw_planet[1]<span class='symbol'>&#9792;<span></div>
 									<div class="divTableCell">$sw_planet[2]<span class='symbol'>&#9791;<span></div>
-									<div class="divTableOuterCell"></div>
+									<div class="divTableOuterCell" style='border-top:none'></div>
 							</div>
 							<div class="divTableRow">
 									<div class="divTableOuterCell">$tr_sw_planet[10]</div>
@@ -4059,20 +4055,20 @@ echo <<<EOL
 									<div class="divTableOuterCell">$tr_sw_planet[4]</div>
 							</div>
 							<div class="divTableRow">
-									<div class="divTableOuterCell"></div>
+									<div class="divTableOuterCell" style='border-bottom:none'></div>
 									<div class="divTableCell">$sw_planet[8]<span class='symbol'>&#9795;<span></div>
 									<div class="divTableCell">$sw_planet[7]<span class='symbol'>&#9794;<span></div>
 									<div class="divTableCell">$sw_planet[6]<span class='symbol'>&#9792;<span></div>
 									<div class="divTableCell">$sw_planet[5]<span class='symbol'>&#9791;<span></div>
-									<div class="divTableOuterCell"></div>
+									<div class="divTableOuterCell" style='border-bottom:none'></div>
 							</div>
 							<div class="divTableRow">
-									<div class="divTableOuterCell">$tr_sw_planet[8]</div>
-									<div class="divTableOuterCell"></div>
+									<div class="divTableOuterCellLeftBottom">$tr_sw_planet[8]</div>
+									<div class="divTableOuterCell" style='border-left:none'></div>
 									<div class="divTableOuterCell">$tr_sw_planet[7]</div>
 									<div class="divTableOuterCell">$tr_sw_planet[6]</div>
-									<div class="divTableOuterCell"></div>
-									<div class="divTableOuterCell">$tr_sw_planet[5]</div>
+									<div class="divTableOuterCell" style='border-right:none'></div>
+									<div class="divTableOuterCellRightBottom">$tr_sw_planet[5]</div>
 							</div>
 						</div>	
 					</div>
@@ -4104,7 +4100,6 @@ echo <<<EOL
 
 							
 					</div>
-				</div>
 						
 EOL;
 								/*if($autoAnalysisMenu==1){
@@ -4164,7 +4159,6 @@ echo <<<EOL
 			
 					</div></center>
 				</div>
-			</div>
 			</div>
 		
 		

@@ -119,7 +119,7 @@ $g_vayadhotta_lagna="";
 $g_age=0;
 $g_mudakku_detail="";
 $full_sun_deg=0;
-
+$g_bhava_arr = array(null,null,null,null,null,null,null,null,null,null,null,null);
 
 if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_input.php')==false) or $default_save){
 	$saveMode=1;
@@ -1353,11 +1353,12 @@ function displayHoroDetails()
 			echo "<div class='divPanchang' style='font-weight:bold'>".date('d-M-Y',strtotime($chart_date))."<BR>($g_age வயது)</div>";
 		echo "</div>";
 		
-		$g_tamil_date_arr = getTamilMonthDay($sun_house,$sun_degree);
-		$tamil_year = getTamilYear(date("Y",strtotime($chart_date)),$g_tamil_date_arr[0]);
+		//$g_tamil_date_arr = getTamilMonthDay($sun_house,$sun_degree);
+		//$tamil_year = getTamilYear(date("Y",strtotime($chart_date)),$g_tamil_date_arr[0]);
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>தமிழ் தேதி</div>";
-			echo "<div class='divPanchang' style='font-weight:bold'>".$tamil_year.", ".$g_tamil_date_arr[0]." ".$g_tamil_date_arr[1]."</div>";
+			//echo "<div class='divPanchang' style='font-weight:bold'>".$tamil_year.", ".$g_tamil_date_arr[0]." ".$g_tamil_date_arr[1]."</div>";
+			echo "<div class='divPanchang' style='font-weight:bold'>".getTamilDate()."</div>";
 		echo "</div>";
 		
 		echo "<div class='divTableRow'>";
@@ -1946,7 +1947,8 @@ foreach ($output as $key => $line)
 			$house = preg_replace('!\s+!', ' ', $row[0]);
 			$house = preg_replace('!\s+!', ' ', $row[0]);
 			$house = explode(' ',$house)[1];
-			$g_bhava_arr[$house] = array($row[1],DECtoDMS(fmod($row[1],30.0)));
+			$g_bhava_arr[$house-1] = array(round((float)trim($row[1]),4),DECtoDMS(fmod($row[1],30.0)));
+			array_push($g_bhava_arr[$house-1],"");
 		}
 		
 		continue;
@@ -2413,6 +2415,7 @@ EOL;
 					//NOTE: These functions should be called in these order because various global variables are filled which is dependent
 					//displayPanchang();
 					calculateStarLard();
+					//displayBhavaChart();
 					calculateNavamsam();
 					displayNavamsam();
 					calculateBirthPanchang();
