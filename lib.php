@@ -777,7 +777,7 @@ function envColor()
 
 function sortDegree($inArray) // new function
 {
-	global $planetDeg,$mandhi_degree, $g_rasi_girl;
+	global $planetDeg,$mandhi_degree, $g_rasi_girl,$g_bhava_arr;
 	
 	$RK_house = -1;
 	
@@ -795,19 +795,26 @@ function sortDegree($inArray) // new function
 					if(strpos($inArray[$house],'retro">'.$planet)>0 || strpos($inArray[$house],'retro">'.$planet)===0){
 						$outArray[$house] = $outArray[$house] . " " . "<span class='retro'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
 						
+						//updateBhavaArray($planetDeg[$planet],$planet,$house);
 					}
 					else{
 						//$outArray[$house] = $outArray[$house] . " " . $planet . "-". $planetDeg[$planet];
 						
 						if(strpos($planet,'லக்')>0 || strpos($planet,"லக்")===0){
 							$outArray[$house] = $outArray[$house] . " " . "<span class='lagna'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+							
+							//updateBhavaArray($planetDeg[$planet],$planet,$house);
 						}
 						elseif(strpos($planet,'மா')>0 || strpos($planet,"மா")===0){
 							$outArray[$house] = $outArray[$house] . " " . "<span class='mandhi'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+							
+							//updateBhavaArray($planetDeg[$planet],$planet,$house);
 						}
 						elseif(strpos($planet,'சந்')>0 || strpos($planet,"சந்")===0){
 							//$outArray[$house] = $outArray[$house] . " " . "<span>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
 							$outArray[$house] = $outArray[$house] . " " . "<span class='moon'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+							
+							//updateBhavaArray($planetDeg[$planet],$planet,$house);
 						}
 						elseif(strpos($planet,'உத')>0 || strpos($planet,"உத")===0){
 							if($planetDeg[$planet]>=0.0){
@@ -853,6 +860,8 @@ function sortDegree($inArray) // new function
 						else{
 							$outArray[$house] = $outArray[$house] . " " . $planet . "-". DECtoDMS_jamakol($planetDeg[$planet]);
 							
+							//updateBhavaArray($planetDeg[$planet],$planet,$house);
+							
 						}
 					}
 				}
@@ -863,19 +872,27 @@ function sortDegree($inArray) // new function
 					if(strpos($inArray[$house],'retro">'.$planet)>0 || strpos($inArray[$house],'retro">'.$planet)===0){
 						$outArray[$house] = "<span class='retro'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house];
 						
+						//updateBhavaArray($planetDeg[$planet],$planet,$house);
+						
 					}
 					else{
 						//$outArray[$house] = $outArray[$house] . " " . $planet . "-". $planetDeg[$planet];
 						
 						if(strpos($planet,'லக்')>0 || strpos($planet,"லக்")===0){
 							$outArray[$house] =  "<span class='lagna'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house];
+							
+							//updateBhavaArray($planetDeg[$planet],$planet,$house);
 						}
 						elseif(strpos($planet,'மா')>0 || strpos($planet,"மா")===0){
 							$outArray[$house] = "<span class='mandhi'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house];
+							
+							//updateBhavaArray($planetDeg[$planet],$planet,$house);
 						}
 						elseif(strpos($planet,'சந்')>0 || strpos($planet,"சந்")===0){
 							//$outArray[$house] = "<span>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house] ;
 							$outArray[$house] = "<span class='moon'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house] ;
+							
+							//updateBhavaArray($planetDeg[$planet],$planet,$house);
 						}
 						elseif(strpos($planet,'உத')>0 || strpos($planet,"உத")===0){
 							if($planetDeg[$planet]>=0.0){
@@ -920,6 +937,8 @@ function sortDegree($inArray) // new function
 						}
 						else{
 							$outArray[$house] = $planet . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house] ;
+							
+							//updateBhavaArray($planetDeg[$planet],$planet,$house);
 						}
 					}
 				}
@@ -2162,6 +2181,7 @@ function displayStarLard()
 	}
 	
 	if(strpos(debug_backtrace()[0]['file'],"new_panchang")===false){
+		
 		//calculate planet karana's
 		calculateKaranamAllPlanets(true); //true for inner/girl
 	
@@ -2213,61 +2233,63 @@ function displayStarLard()
 	
 	echo "</div></center>";
 	
-	echo "<center><div class='divTable blueTable' id='thithiYogamKaranamHeadMutable' style='height:32px;display:none;margin-top:20px'>"; 
-		echo "<div class='divTableRow'>";
-			echo "<div class='divTableCell' colspan=3>";
-				echo "<H6 style='font-weight:bold;color:black'>கிரக திதி/யோக/கரணம்</H6>";
+	if(strpos(debug_backtrace()[0]['file'],"new_panchang")===false){
+		echo "<center><div class='divTable blueTable' id='thithiYogamKaranamHeadMutable' style='height:32px;display:none;margin-top:20px'>"; 
+			echo "<div class='divTableRow'>";
+				echo "<div class='divTableCell' colspan=3>";
+					echo "<H6 style='font-weight:bold;color:black'>கிரக திதி/யோக/கரணம்</H6>";
+				echo "</div>";
 			echo "</div>";
-		echo "</div>";
-	echo "</div></center>";
+		echo "</div></center>";
 
-	echo "<center><div class='divTable blueTable' id='thithiYogamKaranamBodyMutable' style='height:auto;display:none'>"; 
-	echo "<div class='divTableRow'>";
-				echo "<div class='divTableCell'>கிர</div>";
-				echo "<div class='divTableCell'>திதி</div>";
-				echo "<div class='divTableCell'>யோ</div>";
-				echo "<div class='divTableCell'>கர</div>";
-		echo "</div>";
-	
-	foreach($planet_starlord as $planet => $data)
-	{
+		echo "<center><div class='divTable blueTable' id='thithiYogamKaranamBodyMutable' style='height:auto;display:none'>"; 
 		echo "<div class='divTableRow'>";
-				echo "<div class='divPanchangHeadingSmall'>$planet</div>";
-				echo "<div class='divPanchangSmall'>" . $g_planetThithiLord[$planet] . "</div>";
-				echo "<div class='divPanchangSmall'>" . $g_planetYogamLord[$planet] . "</div>";
-				echo "<div class='divPanchangSmall'>" . $g_planetKaranaLord[$planet] . "</div>";
-		echo "</div>";
-	}
-
-	echo "</div></center>";
-	
-	echo "<center><div class='divTable blueTable' id='abhijitHeadMutable' style='height:32px;display:none;margin-top:20px'>"; 
-		echo "<div class='divTableRow'>";
-			echo "<div class='divTableCell' colspan=3>";
-				echo "<H6 style='font-weight:bold;color:black'>கிரக வைநாசிகம்/அபிஜித்</H6>";
+					echo "<div class='divTableCell'>கிர</div>";
+					echo "<div class='divTableCell'>திதி</div>";
+					echo "<div class='divTableCell'>யோ</div>";
+					echo "<div class='divTableCell'>கர</div>";
 			echo "</div>";
-		echo "</div>";
-	echo "</div></center>";
+		
+		foreach($planet_starlord as $planet => $data)
+		{
+			echo "<div class='divTableRow'>";
+					echo "<div class='divPanchangHeadingSmall'>$planet</div>";
+					echo "<div class='divPanchangSmall'>" . $g_planetThithiLord[$planet] . "</div>";
+					echo "<div class='divPanchangSmall'>" . $g_planetYogamLord[$planet] . "</div>";
+					echo "<div class='divPanchangSmall'>" . $g_planetKaranaLord[$planet] . "</div>";
+			echo "</div>";
+		}
 
-	echo "<center><div class='divTable blueTable' id='abhijitBodyMutable' style='height:auto;display:none'>"; 
-		echo "<div class='divTableRow'>";
-				echo "<div class='divTableCell'>கிர</div>";
-				echo "<div class='divTableCell'>வைநா</div>";
-				echo "<div class='divTableCell'>வைநா நிவர்தி</div>";
-				echo "<div class='divTableCell'>அபிஜித்</div>";
-		echo "</div>";
-	
-	foreach($planet_starlord as $planet => $data)
-	{
-		echo "<div class='divTableRow'>";
-				echo "<div class='divPanchangHeadingSmall'>$planet</div>";
-				echo "<div class='divPanchangSmall'>" . $g_planetVainasigamNak[$planet][0] . "</div>";
-				echo "<div class='divPanchangSmall'>" . $g_planetVainasigamNak[$planet][1] . "</div>";
-				echo "<div class='divPanchangSmall'>" . join("<BR>",$g_planetAbhijitNak[$planet]) . "</div>";
-		echo "</div>";
+		echo "</div></center>";
+		
+		echo "<center><div class='divTable blueTable' id='abhijitHeadMutable' style='height:32px;display:none;margin-top:20px'>"; 
+			echo "<div class='divTableRow'>";
+				echo "<div class='divTableCell' colspan=3>";
+					echo "<H6 style='font-weight:bold;color:black'>கிரக வைநாசிகம்/அபிஜித்</H6>";
+				echo "</div>";
+			echo "</div>";
+		echo "</div></center>";
+
+		echo "<center><div class='divTable blueTable' id='abhijitBodyMutable' style='height:auto;display:none'>"; 
+			echo "<div class='divTableRow'>";
+					echo "<div class='divTableCell'>கிர</div>";
+					echo "<div class='divTableCell'>வைநா</div>";
+					echo "<div class='divTableCell'>வைநா நிவர்தி</div>";
+					echo "<div class='divTableCell'>அபிஜித்</div>";
+			echo "</div>";
+		
+		foreach($planet_starlord as $planet => $data)
+		{
+			echo "<div class='divTableRow'>";
+					echo "<div class='divPanchangHeadingSmall'>$planet</div>";
+					echo "<div class='divPanchangSmall'>" . $g_planetVainasigamNak[$planet][0] . "</div>";
+					echo "<div class='divPanchangSmall'>" . $g_planetVainasigamNak[$planet][1] . "</div>";
+					echo "<div class='divPanchangSmall'>" . join("<BR>",$g_planetAbhijitNak[$planet]) . "</div>";
+			echo "</div>";
+		}
+		
+		echo "</div></center>";
 	}
-	
-	echo "</div></center>";
 	
 	//displayStarLard_transit();
 }
@@ -5189,7 +5211,7 @@ function getValue($in_string, $lang=1)
 function getThithiParigaaram($thithi_idx)
 {
 	$temple_arr = [
-					"பட்டீஸ்வரம் துர்க்கை", //1-15
+					"பட்டீஸ்வரம், துர்க்கை", //1-15
 					"திருவைக்காவூர்",
 					"திங்களூர் சந்திரன்",
 					"பிள்ளையார்பட்டி விநாயகர்",
@@ -5723,7 +5745,7 @@ function getMudakku($flag)  //flag=1 star, flag=2 rasi
 			}
 		}
 		else{
-			return $mutakku_arr[$star][1];
+			return $mutakku_arr[$mutakku_arr[$star][0]][1];
 		}
 	}
 }
@@ -6266,6 +6288,85 @@ function sqlDateToDefault($date){
 	$date_arr = explode('-',$date);
 	
 	return $date_arr[2].'-'.$date_arr[1].'-'.$date_arr[0];
+}
+
+function displayBhavaChart()
+{
+	global $g_bhava_arr, $tr_sw_planet;
+	
+	var_dump($g_bhava_arr[4]);
+	
+	echo '<div class="divTable blueTable" id="bhava_chart" style="margin-top:20px">';
+		
+		echo '<div class="divTableBody">';
+			echo '<div class="divTableRow">';
+					echo '<div class="divTableOuterCellLeftTop">'.$tr_sw_planet[11].'</div>';
+					echo '<div class="divTableOuterCell" style="border-left:none"></div>';
+					echo '<div class="divTableOuterCell">'.$tr_sw_planet[0].'</div>';
+					echo '<div class="divTableOuterCell">'.$tr_sw_planet[1].'</div>';
+					echo '<div class="divTableOuterCell" style="border-right:none"></div>';
+					echo '<div class="divTableOuterCellRightTop">'.$tr_sw_planet[2].'</div>';
+			echo '</div>';
+			echo '<div class="divTableRow">';
+					echo '<div class="divTableOuterCell" style="border-top:none"></div>';
+					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[11],2)).'</div>';
+					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[0],2)).'</div>';
+					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[1],2)).'</div>';
+					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[2],2)).'</div>';
+					echo '<div class="divTableOuterCell"  style="border-top:none"></div>';
+			echo '</div>';
+			echo '<div class="divTableRow">';
+					echo '<div class="divTableOuterCell">'.$tr_sw_planet[10].'</div>';
+					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[10],2)).'</div>';
+					echo '<div class="divTableCenterCell1">பாவம்</div>';
+					echo '<div class="divTableCenterCell1"></div>';
+					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[3],2)).'</div>';
+					echo '<div class="divTableOuterCell">'.$tr_sw_planet[3].'</div>';
+			echo '</div>';
+			echo '<div class="divTableRow">';
+					echo '<div class="divTableOuterCell">'.$tr_sw_planet[9].'</div>';
+					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[9],2)).'</div>';
+					echo '<div class="divTableCenterCell1"></div>';
+					echo '<div class="divTableCenterCell1" style="font-size:10px"></div>';
+					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[4],2)).'</div>';
+					echo '<div class="divTableOuterCell">'.$tr_sw_planet[4].'</div>';
+			echo '</div>';
+			echo '<div class="divTableRow">';
+					echo '<div class="divTableOuterCell" style="border-bottom:none"></div>';
+					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[8],2)).'</div>';
+					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[7],2)).'</div>';
+					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[6],2)).'</div>';
+					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[5],2)).'</div>';
+					echo '<div class="divTableOuterCell"  style="border-bottom:none"></div>';
+			echo '</div>';
+			echo '<div class="divTableRow">';
+					echo '<div class="divTableOuterCellLeftBottom">'.$tr_sw_planet[8].'</div>';
+					echo '<div class="divTableOuterCell" style="border-left:none"></div>';
+					echo '<div class="divTableOuterCell">'.$tr_sw_planet[7].'</div>';
+					echo '<div class="divTableOuterCell">'.$tr_sw_planet[6].'</div>';
+					echo '<div class="divTableOuterCell" style="border-right:none"></div>';
+					echo '<div class="divTableOuterCellRightBottom">'.$tr_sw_planet[5].'</div>';
+			echo '</div>';
+		echo '</div>';
+	echo '</div>';
+}
+
+function updateBhavaArray($deg,$planet,$house){
+	global $g_bhava_arr, $lagna_house;
+	
+	$targetHouse = targetHouse($lagna_house-1,$house)-1;
+	
+	if($targetHouse < 0){
+		$targetHouse = 11;
+	}
+	
+	echo ("<br>$planet ".($deg+$house*30).' '.$g_bhava_arr[$targetHouse][0].' '.$targetHouse);
+	if($deg+$house*30 < $g_bhava_arr[$targetHouse][0]){
+		array_push($g_bhava_arr[($house-1 < 0 ? 11 : $house-1)],$planet);
+	}
+	else{
+		array_push($g_bhava_arr[$house],$planet);
+	}
 }
 ?>
 
