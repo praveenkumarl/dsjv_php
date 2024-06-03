@@ -5745,7 +5745,7 @@ function getMudakku($flag)  //flag=1 star, flag=2 rasi
 			}
 		}
 		else{
-			return $mutakku_arr[$mutakku_arr[$star][0]][1];
+			return $mutakku_arr[$star][1];
 		}
 	}
 }
