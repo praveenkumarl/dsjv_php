@@ -722,6 +722,12 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
            //console.log(Object.keys(dasa_period)[i]);
            var no_of_days = Math.round((dasa_period[dasa] * dasa_period[bukthi] * Object.values(dasa_period)[i]) / 14400 * 365.2425 * 24 * 60 * 60);
            var end = new Date(new Date(start).getTime() + no_of_days * 1000);
+		   
+		   if(i==9-count-1) 
+		   { 
+				end = new Date(in_end);
+			}
+		   
            anthram_arr[Object.keys(dasa_period)[i]] = [start, end];
           
            temp1=new Date(start);
@@ -1132,146 +1138,6 @@ echo <<<EOL
 	</div>
 
 EOL;
-}
-
-function planetSort($inArray)
-{
-	global $planetDeg, $planetDeg_default, $DEBUG;
-	$count = 0;
-	
-	foreach ($inArray as $key => $line)
-	{
-		$row = explode(',',$line);
-		$count = $count + 1;
-		
-		if($count>8 && $count!=21) {continue;}
-
-		debug($count."[".$row[0]."|".$row[1]."|".$row[2]."]<Br>");
-		$planetDeg[trim($row[0])] = round(fmod(floatval($row[1]), 30.0),4);
-	}
-	
-	debug("PLANET+DEGREE");
-	if($DEBUG==1){var_dump($planetDeg);}
-	
-	debug("PLANET+DEGREE+SORTED");
-	asort($planetDeg);
-	
-	if($DEBUG==1){var_dump($planetDeg);}
-	
-	foreach ($planetDeg as $key => $val) {
-		if($val!=null or $val>=0) {
-			
-			switch (trim($key)) {
-				case "Sun":
-					$planet="சூரி";
-					break;
-				case "Moon":
-					$planet="சந்";
-					break;
-				case "Mercury":
-					$planet="புத";
-					break;
-				case "Venus":
-					$planet="சுக்";
-					break;
-				case "Mars":
-					$planet="செ";
-					break;
-				case "Jupiter":
-					$planet="குரு";
-					break;
-				case "Saturn":
-					$planet="சனி";
-					break;
-				//case "true Node":
-				case "mean Node":
-					$planet="ரா";
-					break;
-				case "Ascendant":
-					$planet="லக்";
-					break;
-				case "mandhi":
-					$planet="மா";
-					break;
-				default:
-					break;
-			}
-			
-			$out_planet_degree[$planet] = $val;
-		}
-	}
-	
-	$planetDeg = $out_planet_degree;
-}
-
-function planetSort_transit($inArray)
-{
-	global $planetDeg_transit, $DEBUG;
-	$count = 0;
-	
-	foreach ($inArray as $key => $line)
-	{
-		$row = explode(',',$line);
-		$count = $count + 1;
-		
-		if($count>8 && $count!=21) {continue;}
-
-		debug($count."[".$row[0]."|".$row[1]."|".$row[2]."]<Br>");
-		$planetDeg_transit[trim($row[0])] = round(fmod(floatval($row[1]), 30.0),2);		
-	}
-	
-	debug("PLANET+DEGREE");
-	if($DEBUG==1){var_dump($planetDeg_transit);}
-	
-	debug("PLANET+DEGREE+SORTED");
-	asort($planetDeg_transit);
-	
-	if($DEBUG==1){var_dump($planetDeg_transit);}
-	
-	foreach ($planetDeg_transit as $key => $val) {
-		if($val!=null) {
-			
-			switch (trim($key)) {
-				case "Sun":
-					$planet="சூரி";
-					break;
-				case "Moon":
-					$planet="சந்";
-					break;
-				case "Mercury":
-					$planet="புத";
-					break;
-				case "Venus":
-					$planet="சுக்";
-					break;
-				case "Mars":
-					$planet="செ";
-					break;
-				case "Jupiter":
-					$planet="குரு";
-					break;
-				case "Saturn":
-					$planet="சனி";
-					break;
-				//case "true Node":
-				case "mean Node":
-					$planet="ரா";
-					break;
-				case "Ascendant":
-					$planet="லக்";
-					break;
-				case "mandhi":
-					$planet="மா";
-					break;
-				default:
-					break;
-			}
-			
-			$out_planet_degree[$planet] = $val;
-		}
-	}
-	
-	$planetDeg_transit = $out_planet_degree;
 }
 
 
@@ -2212,6 +2078,7 @@ foreach($data as $key => $value){
 }*/
 
 calculatePanchang();
+//calculateBirthPanchang();
 $thithi_soonyam_arr = updateThithiSoonyam($panchang["thithi"]);
 
 echo <<<EOL

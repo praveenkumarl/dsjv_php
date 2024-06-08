@@ -538,7 +538,7 @@ function findMandhiHouse_transit($in_dayofweek,$in_sun_degree,$in_day)
 }
 
 
-function planetSort($inArray)
+/*function planetSort($inArray)
 {
 	global $planetDeg, $planetDeg_default, $DEBUG;
 	$count = 0;
@@ -677,6 +677,7 @@ function planetSort_transit($inArray)
 	
 	$planetDeg_transit = $out_planet_degree;
 }
+*/
 
 function old_sortDegree($inArray) // new function
 {

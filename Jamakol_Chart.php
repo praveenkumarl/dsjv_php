@@ -694,8 +694,8 @@ function updateUAK_Mandhi(array $in, $sun_degree, $day)
 			}
 		}
 		
-		$sw_planet[$mandhi_house] = $sw_planet[$mandhi_house] . " <span class='mandhi'>மா</span>";
-		$planetDeg["மா"]=$mandhi_degree % 30;
+		//$sw_planet[$mandhi_house] = $sw_planet[$mandhi_house] . " <span class='mandhi'>மா</span>";
+		//$planetDeg["மா"]=$mandhi_degree % 30;
 	}
 	elseif(strpos($lang,"English")===0){
 		foreach ($in as $key => $value) {
@@ -727,9 +727,9 @@ function updateUAK_Mandhi(array $in, $sun_degree, $day)
 			}
 			
 			//mandhi house update
-			if($key == $mandhi_house){
-				$sw_planet[$key] = $sw_planet[$key] . " <span>Md</span>";
-			}
+			//if($key == $mandhi_house){
+			//	$sw_planet[$key] = $sw_planet[$key] . " <span>Md</span>";
+			//}
 		}
 	}
 	
@@ -915,7 +915,7 @@ function updateLagna($sunrise, $tom_sunrise)
 	$sw_planet[$lagna_house] = $sw_planet[$lagna_house] . " " . "லக்";
 }
 
-function planetSort($inArray)
+/*function planetSort($inArray)
 {
 	global $planetDeg, $planetDeg_default, $DEBUG;
 	$count = 0;
@@ -984,6 +984,7 @@ function planetSort($inArray)
 	
 	$planetDeg = $out_planet_degree;
 }
+*/
 
 function displayStarLard_jama()
 {
@@ -1353,7 +1354,7 @@ if(strtotime($datetime) >= strtotime($today_sunrise) && strtotime($datetime) <= 
 debug("DAY=" . $day);
 
 // Update Mandhi
-//$sw_planet = updateMandhi($sw_planet,$sw_planet,$sun_degree,$day,$dayofweek,$sun_house);
+$sw_planet = updateMandhi($sw_planet,$sw_planet,$sun_degree,$day,$dayofweek,$sun_house);
 
 if($db_ephemeris==true){
 	updateLagna($today_sunrise,$tomo_sunrise);

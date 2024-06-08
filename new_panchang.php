@@ -590,7 +590,7 @@ $dayofweek = date('w', strtotime($chart_date));
 
 <?php
 
-function planetSort($inArray)
+/*function planetSort($inArray)
 {
 	global $planetDeg, $planetDeg_default, $DEBUG;
 	$count = 0;
@@ -659,6 +659,7 @@ function planetSort($inArray)
 	
 	$planetDeg = $out_planet_degree;
 }
+*/
 
 function getProkeralaAuthToken()
 {
@@ -720,7 +721,7 @@ function getProkeralaPunchangDetail($in_lat,$in_long,$in_datetime,$in_lang)
 
 function displayProkeralaDetailPanchang($in_arr)
 {
-	echo "<center><div class='divTable blueTable' style='height:40px;width:360px;' id='panchangBody'>"; 
+	echo "<center><div class='divTable blueTable' style='height:40px;' id='panchangBody'>"; 
 	
 	foreach($in_arr['data'] as $heading => $value)
 	{
@@ -939,7 +940,7 @@ function displayHoroDetails()
 	global $panchang, $in_name, $chart_date, $chart_time, $g_dasaBalance, $place, $g_thithi_soonyam_matching_arr,$g_dasaCurrent, $transit_date, $lagna_house, $country,$yogi_arr, 
 		$g_pancha_pakshi, $g_thithi, $g_paksham, $moon_house, $today_sunrise, $tomo_sunrise,$today_sunset,$city,$g_nak, $g_thithi_idx, $g_yoga_idx, $nak_pad_idx, $g_kariNaal;
 	
-	echo "<div class='divTable blueTable' style='height:40px;width: fit' id='panchangDetailsHeading'>";
+	echo "<div class='divTable blueTable' style='height:40px;' id='panchangDetailsHeading'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
 				echo "<div class='divPanchangHeading' colspan='3'>";
 					echo "<H6 style='font-weight:bold;color:black'>பஞ்சாங்கம்</H6>";
@@ -948,7 +949,7 @@ function displayHoroDetails()
 	echo "</div>";
 	
 	//display panchang table 
-	echo "<div class='divTable blueTable' style='height:40px;width:fit;' id='panchangDetails'>"; 
+	echo "<div class='divTable blueTable' id='panchangDetails'>"; 
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>ஆ.தேதி</div>";
 			echo "<div class='divPanchang'>".date('d-m-Y',strtotime($chart_date))."</div>";
@@ -1119,7 +1120,7 @@ function displayTransitChart()
 	global $sw_planet,$g_thithi_soonyam_arr;
 	
 	echo "<BR>";
-	echo "<div class='divTable blueTable' style='height:40px;width:360px;'>";
+	echo "<div class='divTable blueTable' style='height:40px;'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)' id='transitChartHeading'>";
 				echo "<div class='divPanchangHeading' colspan='3'>";
 					echo "<H6 style='font-weight:bold;color:black'>தற்போதய கோட்சாரம்</H6>";
@@ -1412,11 +1413,11 @@ echo <<<EOL
 		<div class='column-body' id='panchangBody'>
 		
 			<center>
-			<form name='updatePanchang' id='panchangForm' action='new_panchang.php?debug=$DEBUG' method='post' style='width:350px;margin-left:20px'>
+			<form name='updatePanchang' id='panchangForm' action='new_panchang.php?debug=$DEBUG' method='post'>
 				<input type='hidden' id='nPlace' name='nPlace' value='$place'>
 				<input type='hidden' id='place_flag' name='place_flag' value=0>
 					<H4 style="color:#000000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; width:parent;">
-						<TABLE style='width:parent'>
+						<TABLE style='width:inherit'>
 						<CENTER><P style="color:#660000;font-weight:bold; font-size:16px; background-color:white;width:200px;">பஞ்சாங்கம்</P></CENTER>
 						<TR>
 							<TD>
@@ -1433,10 +1434,11 @@ echo <<<EOL
 									<input type='button' class='actionBtnSmall' id='prevDay' onClick='movePanchang(-1);' value='&#x25C0;நா' />	
 									<button class='actionBtnSmall' id='prevMonth' onClick='movePanchang(-30);'>&#x25C0;மா</button> 
 									<button class='actionBtnSmall' id='prevYear' onClick='movePanchang(-365);'>&#x25C0;வரு</button> 
-									<button class='actionBtnSmall' id='now' onClick='updateNow();window.reload();'>தற்போது</button>
 									<button class='actionBtnSmall' id='nextYear' onClick='movePanchang(365);'>வரு&#x25B6;</button>
 									<button class='actionBtnSmall' id='nextMonth' onClick='movePanchang(30);'>மா&#x25B6;</button>
 									<button class='actionBtnSmall' id='nextDay' onClick='movePanchang(1);'>நா&#x25B6;</button>
+									<BR>
+									<button class='actionBtn' id='now' onClick='updateNow();window.reload();'>தற்போது</button>
 								</center>
 							</TD>
 						</TR>
