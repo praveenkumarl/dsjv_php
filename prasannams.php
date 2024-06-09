@@ -110,6 +110,7 @@ $chart_date = isset($_GET['date']) ? $_GET['date'] : date("Y-m-d");
 $chart_time = isset($_GET['time']) ? $_GET['time'] : date("H:i:s");
 $dayofweek = date('w', strtotime($chart_date));
 
+/*
 function planetSort($inArray)
 {
 	global $planetDeg, $planetDeg_default, $DEBUG;
@@ -179,7 +180,7 @@ function planetSort($inArray)
 	
 	$planetDeg = $out_planet_degree;
 }
-
+*/
 
 function getTransitChart()
 {
