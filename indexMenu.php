@@ -21,6 +21,9 @@ elseif(strcmp($usertype,JAMAKOL)==0){
 	<button class="menu" onClick='window.open("new_logout.php","_self")'>Logout</button>
 EOL;
 }
+elseif(strcmp($usertype,JAMA_MATCH)==0){
+    
+}
 elseif(strcmp($usertype,MATCHING)==0){
 	echo <<<EOL
 	<button class="menu" onClick='window.open("Matching_input.php","_self")'>திருமண பொருத்தம்</button>

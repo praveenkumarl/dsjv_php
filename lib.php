@@ -26,6 +26,7 @@ const MATCHING = "MATCH";
 const BIRTHMATCH = "BIRTHMATCH";
 const PANCHANG = "PANCHANG";
 const JAMAKOL = "JAMAKOL";
+const JAMA_MATCH = "JAMAMATCH";
 const SUPER = "SUPER";
 const ADMIN = "ADMIN";
 const PRASANNAM = "PRASANNAM";
@@ -36,7 +37,7 @@ const ABHIJIT_PAD_COUNT = 84;
 $g_nak="";
 
 //usertype array used in drop down
-$usertype_arr = [PAID, MATCHING, BIRTH, BIRTHMATCH, JAMAKOL, PANCHANG, PRASANNAM, SUPER, ADMIN, FREE];
+$usertype_arr = [PAID, MATCHING, BIRTH, BIRTHMATCH, JAMAKOL, JAMA_MATCH, PANCHANG, PRASANNAM, SUPER, ADMIN, FREE];
 
 
 $DEBUG= isset($_SESSION['debug']) ? $_SESSION['debug'] : 0;
@@ -1553,7 +1554,7 @@ function calculateVimDasaBalance($in_moon_degree, $in_moon_house, $in_birth_date
 			//$already_covered = $in_moon_degree - (($nak_pad_idx)*$one_pada_degree-(($in_moon_house-1) * 30.0)-$nak_padam[1]*$one_pada_degree); // moon degree - (total degree till previous nak pada - total degree till moon's previous house - total degree of previous padas in current nak)
 			//$already_covered = $planetDeg['சந்'] - (($nak_pad_idx)*$one_pada_degree-(($in_moon_house-1) * 30.0) - $nak_padam[1]*$one_pada_degree); // moon degree - (total degree till previous nak pada - total degree till moon's previous house - total degree of previous padas in current nak)
 			//$remining = $one_pada_minutes-$already_covered*60.0; // multiplying by 60 to convert in minutes. Dedecting from 800 which is total minutes for one Nakshathra
-			//$balance =  $remining * $mer_dasa_period/$one_pada_minutes; // calculation balance for sun by multiplying the remining with sun total dasa years / total minutesf or a nakshatra
+			$balance =  $remining * $mer_dasa_period/$one_pada_minutes; // calculation balance for sun by multiplying the remining with sun total dasa years / total minutesf or a nakshatra
 	
 			debug("<BR>mer_dasa_period=$mer_dasa_period<BR>already_covered=$already_covered<BR>remining=$remining<BR>balance=$balance<BR>".$planetDeg['சந்']);
 			debug("<BR>($nak_pad_idx)*$one_pada_degree====".(($nak_pad_idx)*$one_pada_degree));
@@ -5923,6 +5924,13 @@ function displayHomePageButtons($in_usertype){
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'Birth_input.php\',\'_self\')">புதிய ஜாமக்கோள்</button>';
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'birthChartDisplay.php\',\'_self\')">சேமித்த ஜாமக்கோள்</button>';
 			break;
+		case JAMA_MATCH:
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'index.php\',\'_self\')">முகப்பு</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'Birth_input.php\',\'_self\')">புதிய ஜாமக்கோள்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'birthChartDisplay.php\',\'_self\')">சேமித்த ஜாமக்கோள்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'Matching_input.php\',\'_self\')">புதிய திருமண பொருத்தம்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'matchingChartDisplay.php\',\'_self\')">சேமித்த திருமண பொருத்தங்கள்</button>';
+			break;
 		default:  //PAID
 			//program will not reach this case at all
 			echo "Some server error occured..";
@@ -5937,6 +5945,7 @@ function checkUserType($in_usertype){
 		case BIRTHMATCH:
 		case PANCHANG:
 		case JAMAKOL:
+		case JAMA_MATCH:
 			header('Location: homepage.php');
 		default:  //PAID
 			//it will just open the index.php

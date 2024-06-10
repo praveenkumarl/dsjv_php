@@ -180,15 +180,24 @@ if(!isset($_POST['insert_submitted'])){
 				<tr style="background-color: #FFFFFF">
 					<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:20px" required>*Usertype:</H5></td>
 					<td>
-						<select name='usertype' id='usertype' style='background-color:white;border:solid 1px black;color:black;font-weight:bold;border-radius:0'>
-							<option value='$paid' selected>$paid</option>
-							<option value='$birth'>$birth</option>
-							<option value='$match'>$match</option>
-							<option value='$birthmatch'>$birthmatch </option>
-							<option value='$panchang'>$panchang</option>
-							<option value='$jamakol'>$jamakol</option>
-							<option value='$prasannam'>$prasannam</option>
-						</select>
+EOL;
+						echo "<select name='usertype' id='usertype' style='background-color:white;border:solid 1px black;color:black;font-weight:bold;border-radius:0'>";
+						foreach($usertype_arr as $utype){
+								if(strcmp($utype,SUPER)==0 or strcmp($utype,ADMIN)==0){
+									continue;
+								}
+								
+								if(isset($userInfo['user_type'][$i]) && strcmp($userInfo['user_type'][$i],$utype)==0){
+									echo "<option value='$utype' selected>$utype</option>";
+								}
+								else{
+									echo "<option value='$utype'>$utype</option>";
+								}
+							}
+							
+						echo "</select>";
+
+	echo<<<EOL
 					</td>
 				</tr>
 				

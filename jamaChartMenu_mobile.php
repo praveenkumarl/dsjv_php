@@ -13,7 +13,7 @@ if(strcmp($usertype,FREE)==0){
 EOL;
 
 }
-if(strcmp($usertype,JAMAKOL)==0){
+elseif(strcmp($usertype,JAMAKOL)==0){
     echo <<<EOL
     <div class="MENU-container">
         <div class="navbar">
@@ -27,6 +27,29 @@ if(strcmp($usertype,JAMAKOL)==0){
 	</div>
 EOL;
 
+}
+elseif(strcmp($usertype,JAMA_MATCH)==0){
+    echo <<<EOL
+    <div class="MENU-container">
+        <div class="navbar">
+			<div class="dropdown1">
+				<button class="dropbtn" style="padding:10px; width:auto">
+				  <i class="fa fa-caret-square-o-down fa-2x"></i>
+				</button>
+				<div class="dropdown1-content">
+				  <a class='glow-button' href="Jamakol_input.php">புதிய ஜாமக்கோள்</a>
+				  <a class='glow-button' href="jamaChartDisplay.php">சேமித்த பிரசன்னங்கள்</a>
+				  <a class='glow-button' href="Matching_input.php">திருமண பொருத்தம்</a>
+				</div>
+			</div>
+			<a href="index.php"><i class="fa fa-home fa-2x"></i></a>
+			<a href="Jamakol_input.php"><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></a>
+			<a href="jamaChartDisplay.php"><i class="fa fa-history fa-2x"></i></a>
+			<a href="planet_kaaragam.php" style='font-size:30px;'><img src='images/solar_system.png'></a>
+				<div class='menuHeading'>ஜாமக்கோள்</div>
+		</div>
+	</div>
+EOL;
 }
 elseif(strcmp($usertype,PAID)==0){
     
