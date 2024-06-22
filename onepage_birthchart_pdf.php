@@ -114,9 +114,7 @@ $g_mudakku_detail="";
 	<link rel="stylesheet" href="css/onepage_birth_style.css?<?php echo date('ymdhis'); ?>">
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
    <script src="html2pdf.bundle.min.js" type="text/javascript"></script>
-   
-   <script>
-			
+	<script>
 		
 		/*window.addEventListener('load', function () {
 			setTimeOut(window.close(),5000);

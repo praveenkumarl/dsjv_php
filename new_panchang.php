@@ -71,6 +71,7 @@ $mandhi_degree=0;
 $mandhi_degree_transit=0;
 $panchang = array();
 $g_nak_pad_idx = 0;
+$nak_pad_idx = 0;
 $dasa_balance = array(null,null,null); // years, months, days
 $birth_dasa_athipathi="";
 $g_dasaCurrent=array();
@@ -475,9 +476,12 @@ $dayofweek = date('w', strtotime($chart_date));
 		date='<?php echo $chart_date; ?>';
 		time='<?php echo $chart_time; ?>';
 		place='<?php echo $place; ?>';
-		url = 'hora.php?date='+date+'&time='+time+'&place='+place+' div#horaLordTxt';
-		//$('#hora').load('hora.php div#horaLordTxt'); //getting the current hora lord running the hora.php and extract only the lord text
-		$('#hora').load(url); //getting the current hora lord running the hora.php and extract only the lord text
+
+		url = 'hora.php?date='+date+'&time='+time+'&place='+place;
+
+		$('#hora').load(url+' div#horaLordTxt'); //getting the current hora lord running the hora.php and extract only the lord text
+		
+		//$('#hora').load(url); //getting the current hora lord running the hora.php and extract only the lord text
 		
 		var param = '<?php echo $flag; ?>';
 		
@@ -1456,14 +1460,13 @@ echo <<<EOL
 
 EOL;
     
-					//displayPanchang();
+					calculatePanchang();
 					calculateBirthPanchang();
-					calculateVimDasaBalance($moon_degree,$moon_house,$chart_time,$chart_time,$panchang['nak'],$g_nak_pad_idx, true);
+					calculateVimDasaBalance($moon_degree,$moon_house,$chart_time,$chart_time,$panchang['nak'],$nak_pad_idx, true);
 					calculateVimDasa();
 					calculateCurrentDasaBukthi(true);
 					
 					//$panchang = getPanchangFromDB();
-					
 					calculateBirthThithiSoonyam($panchang["thithi"]);
 					displayHoroDetails();
 					$thithi_soonyam_arr = updateThithiSoonyam($panchang["thithi"]);

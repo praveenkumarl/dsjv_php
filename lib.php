@@ -1283,6 +1283,11 @@ function calculateVimDasaBalance($in_moon_degree, $in_moon_house, $in_birth_date
 			//$remining = $one_pada_minutes-$already_covered*60; // multiplying by 60 to convert in minutes. Dedecting from 800 which is total minutes for one Nakshathra
 			$balance =  $remining * $ket_dasa_period/$one_pada_minutes; // calculation balance for sun by multiplying the remining with sun total dasa years / total minutesf or a nakshatra	
 			
+			debug("<BR>ket_dasa_period=$ket_dasa_period<BR>already_covered=$already_covered<BR>remining=$remining<BR>balance=$balance<BR>".$planetDeg['சந்']);
+			debug("<BR>($nak_pad_idx)*$one_pada_degree====".(($nak_pad_idx)*$one_pada_degree));
+			debug("<BR>($in_moon_house-1) * 30.0)====".(($in_moon_house-1) * 30.0));
+			debug("<BR>$nak_padam[1]*$one_pada_degree====".($nak_padam[1]*$one_pada_degree));
+			
 			$whole = floor($balance);
 			$decimal = $balance - floor($balance);
 			
@@ -1447,7 +1452,7 @@ function calculateVimDasaBalance($in_moon_degree, $in_moon_house, $in_birth_date
 		case "rah":
 			//$already_covered = $in_moon_degree - (($nak_pad_idx)*$one_pada_degree-(($in_moon_house-1) * 30.0)-$nak_padam[1]*$one_pada_degree); // moon degree - (total degree till previous nak pada - total degree till moon's previous house - total degree of previous padas in current nak)
 			//$remining = $one_pada_minutes-$already_covered*60; // multiplying by 60 to convert in minutes. Dedecting from 800 which is total minutes for one Nakshathra
-			//$balance =  $remining * $rah_dasa_period/$one_pada_minutes; // calculation balance for sun by multiplying the remining with sun total dasa years / total minutesf or a nakshatra
+			$balance =  $remining * $rah_dasa_period/$one_pada_minutes; // calculation balance for sun by multiplying the remining with sun total dasa years / total minutesf or a nakshatra
 			
 			$whole = floor($balance);
 			$decimal = $balance - floor($balance);
@@ -1516,7 +1521,7 @@ function calculateVimDasaBalance($in_moon_degree, $in_moon_house, $in_birth_date
 			//$remining = $one_pada_minutes-$already_covered*60; // multiplying by 60 to convert in minutes. Dedecting from 800 which is total minutes for one Nakshathra
 			$balance =  $remining * $sat_dasa_period/$one_pada_minutes; // calculation balance for sun by multiplying the remining with sun total dasa years / total minutesf or a nakshatra
 			
-			debug("<BR>sat_dasa_period=$sat_dasa_period<BR>already_covered=$already_covered<BR>remining=$remining<BR>balance=$balance<BR>".$planetDeg_transit['சந்']);
+			debug("<BR>sat_dasa_period=$sat_dasa_period<BR>already_covered=$already_covered<BR>remining=$remining<BR>balance=$balance<BR>".$planetDeg['சந்']);
 			debug("<BR>($nak_pad_idx)*$one_pada_degree====".(($nak_pad_idx)*$one_pada_degree));
 			debug("<BR>($in_moon_house-1) * 30.0)====".(($in_moon_house-1) * 30.0));
 			debug("<BR>$nak_padam[1]*$one_pada_degree====".($nak_padam[1]*$one_pada_degree));
@@ -2250,7 +2255,14 @@ function displayStarLard()
 		echo "<div class='divTableRow'>";
 				echo "<div class='divPanchangHeadingSmall'>$planet</div>";
 				echo "<div class='divPanchangSmall'>$data[0]</div>";
-				echo "<div class='divPanchangSmall'>$data[1]</div>";
+				
+				if(strstr($data[1],"புஷ்") !== false){
+					echo "<div class='divPanchangSmallGreen'>$data[1]</div>";
+				}
+				else{
+					echo "<div class='divPanchangSmall'>$data[1]</div>";
+				}
+				
 				echo "<div class='divPanchangSmall'>" . DECtoDMS($data[2]) . "</div>";
 				echo "<div class='divPanchangSmall'>" . DECtoDMS($data[3]) . "</div>";
 		echo "</div>";
@@ -4969,7 +4981,7 @@ function calculateYogamAllPlanets($inner=true)
 function calculateThithiAllPlanets($inner=true)
 {
 	global $full_sun_deg, $full_sun_deg_boy,$planet_starlord, $planet_starlord_transit, $g_planetThithiLord, $g_planetThithiLord_boy, $planetDeg, $planetDeg_transit,
-			$lagna_house,$transit_lagna_house;;
+			$lagna_house,$transit_lagna_house;
 	
 	$planetThithiLord = array();
 	
@@ -5077,9 +5089,20 @@ function calculateThithiAllPlanets($inner=true)
 			}
 		}
 		
-		$planetThithiLord[$planet] = getValue($thithi_arr[ceil($thithi_deg/12)]); //2nd argument is lang, which is defaulted to 1 (tamil)
+		$temp_thithi_idx = ceil($thithi_deg/12);
 		
-		debug("$planet-------$thithi_deg---".ceil($thithi_deg/12)."-----".$planetThithiLord[$planet]."<BR>");
+		if($temp_thithi_idx >=0 and $temp_thithi_idx <=14)
+		{
+			$temp_paksham = "வளர்";
+		}
+		elseif($temp_thithi_idx >14 and $temp_thithi_idx <=29)
+		{
+			$temp_paksham = "தேய்";
+		}
+		
+		$planetThithiLord[$planet] = getValue($thithi_arr[$temp_thithi_idx]) . " ($temp_paksham)"; //2nd argument is lang, which is defaulted to 1 (tamil)
+		
+		debug("planet=$planet---thithi-deg=$thithi_deg---temp_paksham----$temp_paksham---".ceil($thithi_deg/12)."-----".$planetThithiLord[$planet]."<BR>");
 	}
 	
 	if($inner==true){
@@ -5296,7 +5319,7 @@ function getMudakkuParigaaram($mudakku_idx)
 }
 
 function calculateBirthPanchang(){
-	global $moon_degree, $moon_house, $sun_house, $sun_degree, $dayofweek, $g_nak, $g_karan, $panchang,$g_nak_pad_idx, $g_thithi_idx, $g_yoga_idx, $g_nak_idx, $full_sun_deg;
+	global $moon_degree, $moon_house, $sun_house, $sun_degree, $dayofweek, $g_nak, $g_karan, $panchang,$g_nak_pad_idx, $g_thithi_idx, $g_yoga_idx, $g_nak_idx, $full_sun_deg, $nak_pad_idx;
 	
 	$tithi = array("Prathame/பிரதமை","Dwithiya/துவிதியை","Thrithiya/திருதியை","Chathurthi/சதுர்த்தி","Panchami/பஞ்சமி","Shrashti/சஷ்டி","Saptami/சப்தமி","Ashtami/அஷ்டமி","Navami/நவமி","Dashami/தசமி","Ekadashi/ஏகாதசி","Dwadashi/துவாதசி","Thrayodashi/திரயோதசி","Chaturdashi/சதுர்த்தசி","Poornima/பௌர்ணமி","Prathame/பிரதமை","Dwithiya/துவிதியை","Thrithiya/திருதியை","Chathurthi/சதுர்த்தி","Panchami/பஞ்சமி","Shrashti/சஷ்டி","Saptami/சப்தமி","Ashtami/அஷ்டமி","Navami/நவமி","Dashami/தசமி","Ekadashi/ஏகாதசி","Dwadashi/துவாதசி","Thrayodashi/திரயோதசி","Chaturdashi/சதுர்த்தசி","Amavasya/அமாவாசை");
 	

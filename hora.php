@@ -1,6 +1,6 @@
 <?php 
 
-require "lib.php";
+require_once "lib.php";
 
 $DEBUG= (int) isset($_GET['debug']) ? $_GET['debug'] : 0;
 $flag = (int)isset($_GET['flag']) ? $_GET['flag'] : 0;
@@ -571,7 +571,7 @@ if($DEBUG==1){
 //Log user acitivity
 if(isset($_COOKIE["phone"])) {
 	$activity = 'Hora';
-	logActivity($conn,$_COOKIE["phone"],$activity,date('Y-m-d H:i:s'));
+	//logActivity($conn,$_COOKIE["phone"],$activity,date('Y-m-d H:i:s'));
 }
 
 dbDisconnect($conn);
@@ -596,7 +596,7 @@ $_SESSION['horaplace'] = $place;
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
-    <script src="script.js"></script>
+    
     <script type="text/javascript">
 		
 	$(document).ready(function(){
