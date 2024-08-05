@@ -148,6 +148,7 @@ $g_mudakku_detail="";
 			y.style.display='none';
 			z1.style.display='none';
 			z2.style.display='none';
+			//btns.style.visibility='none';
 		}
 		
    </script>
@@ -967,6 +968,9 @@ function displayDetailsCol2()
 	$yogam	= getStr($panchang['yoga'],$LANG);
 	$karan = getStr($karan,$LANG);
 	
+	
+	[$guberaStarPaadham,$guberaRasi,$guberaRasiHouse, $guberaStarIdx] = getKubera();  //$guberaRasiHouse not used as of now. It will be used if we need to show some symbold in chart
+	
 	echo <<<EOL
 	
 		<div class="divTableRow">
@@ -990,6 +994,9 @@ function displayDetailsCol2()
 		</div>
 		<div class="divTableRow">
 			<div class='divTableTextHeading'>யோகி</div><div class='divTableTextMedium'>$yogi</div>
+		</div>
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>குபேர புள்ளி</div><div class='divTableTextMedium'>$guberaStarPaadham<BR>$guberaRasi</div>
 		</div>
 		<div class="divTableRow">
 			<div class='divTableTextHeading'>பஞ்ச பக்ஷி</div><div class='divTableTextMedium'>$g_pancha_pakshi</div>
@@ -1097,7 +1104,7 @@ EOL;
 	echo '</div>';
 }
 
-function displayStarLord()
+function displayStarLord_pdf()
 {
 	global $starlord_arr, $planetKaranaLord;
 	
@@ -1193,6 +1200,7 @@ echo <<<EOL
 
 EOL;
 }
+
 
 function displayChart1()
 {
@@ -1481,6 +1489,8 @@ foreach ($output as $key => $line)
 	//$sw_degree[$row[0]] = DECtoDMS(round($tot_degree[$key] - $sw_house[$key]*30,2));
 	$sw_degree[$row[0]] = round($tot_degree[$key] - $sw_house[$key]*30,2);
 	
+	$planetDeg_default[$row[0]][0] = (float)($row[2]);
+	
     if($count!=21){
 		$sw_dir[$key] = ($row[2] > 0) - ($row[2] < 0);
 	}
@@ -1710,8 +1720,11 @@ calculateBirthPanchang();
 //displayThithiSoonyam($panchang["thithi"]);
 //calculateBirthThithiSoonyam($panchang["thithi"]);
 calculateVimDasaBalance($moon_degree,$moon_house,$chart_time,$chart_time,$panchang['nak'],$nak_pad_idx, true);
-//displayButtons(true); //this will display button and calculate star lord as well
-displayStarLard(); //this will only calculate star lord
+calculateStarLord();
+resortStarLordArray(true);  //this is to sort the planets in correct order
+
+displayButtons(true); //this will display button and calculate star lord as well
+//displayStarLord(); //this will only calculate star lord
 calculateVimDasa();
 calculateCurrentDasaBukthi(true);
 calculateNavamsam();
@@ -1796,7 +1809,7 @@ else{
 		</div>
 
 			<div class="divTableRow">
-				<div class="divStarDetailCell" style="border:none;"><?php displayStarLord(); ?></div>
+				<div class="divStarDetailCell" style="border:none;"><?php displayStarLord_pdf(); ?></div>
 				<div class="divStarDetailCell" style="border:none;"><?php displayDasa(); ?></div>
 				<div class="divStarDetailCell" style="border:none;"><?php displayBukthi(); ?></div>
 			</div>

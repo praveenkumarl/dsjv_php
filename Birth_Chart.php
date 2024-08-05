@@ -76,6 +76,7 @@ $autoAnalysisMenu=0;
 $planetDeg = array();
 $planetDeg_transit = array();
 $planetDeg_default = array();
+$planetDeg_default_transit = array();
 $mandhi_degree=0;
 $mandhi_degree_transit=0;
 $panchang = array();
@@ -558,61 +559,33 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 		}
 		
 		function showDetailsDiv(e,type) {
-			var divName="";
-			
 			switch(type){
 				case 1:
 					divName = "thithiDetailsDiv";
-					document.getElementById("nakDetailsDiv").style.display = "none";
-					document.getElementById("karanaDetailsDiv").style.display = "none";
-					document.getElementById("yogiDetailsDiv").style.display = "none";
-					document.getElementById("ayogiDetailsDiv").style.display = "none";
-					document.getElementById("mudakkuDetailsDiv").style.display = "none";
 					break;
 				case 2:
 					divName = "karanaDetailsDiv";
-					document.getElementById("nakDetailsDiv").style.display = "none";
-					document.getElementById("thithiDetailsDiv").style.display = "none";
-					document.getElementById("yogiDetailsDiv").style.display = "none";
-					document.getElementById("ayogiDetailsDiv").style.display = "none";
-					document.getElementById("mudakkuDetailsDiv").style.display = "none";
 					break;
 				case 3:
 					divName = "yogiDetailsDiv";
-					document.getElementById("nakDetailsDiv").style.display = "none";
-					document.getElementById("thithiDetailsDiv").style.display = "none";
-					document.getElementById("karanaDetailsDiv").style.display = "none";
-					document.getElementById("ayogiDetailsDiv").style.display = "none";
-					document.getElementById("mudakkuDetailsDiv").style.display = "none";
+					break;
+				case 31:
+					divName = "kuberaDetailsDiv";
 					break;
 				case 4:
 					divName = "ayogiDetailsDiv";
-					document.getElementById("nakDetailsDiv").style.display = "none";
-					document.getElementById("thithiDetailsDiv").style.display = "none";
-					document.getElementById("karanaDetailsDiv").style.display = "none";
-					document.getElementById("yogiDetailsDiv").style.display = "none";
-					document.getElementById("mudakkuDetailsDiv").style.display = "none";
 					break;
 				case 5:
 					divName = "nakDetailsDiv";
-					document.getElementById("ayogiDetailsDiv").style.display = "none";
-					document.getElementById("thithiDetailsDiv").style.display = "none";
-					document.getElementById("karanaDetailsDiv").style.display = "none";
-					document.getElementById("yogiDetailsDiv").style.display = "none";
-					document.getElementById("mudakkuDetailsDiv").style.display = "none";
 					break;
 				case 6:
 					divName = "mudakkuDetailsDiv";
-					document.getElementById("nakDetailsDiv").style.display = "none";
-					document.getElementById("ayogiDetailsDiv").style.display = "none";
-					document.getElementById("thithiDetailsDiv").style.display = "none";
-					document.getElementById("karanaDetailsDiv").style.display = "none";
-					document.getElementById("yogiDetailsDiv").style.display = "none";
 					break;
 			}
 			
 			$(divName).delay(3000).fadeOut('slow');
-			document.getElementById(divName).style.display = "inline";
+			//document.getElementById(divName).style.display = "inline";
+			document.getElementById(divName).style.display = "block";
 			
 			//var left  = e.clientX - 100 + "px";
 			//var top  = e.clientY  + "px";
@@ -622,8 +595,11 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 		
 			var div = document.getElementById(divName);
 
-			div.style.left = left;
-			div.style.top = top;
+			//div.style.left = left;
+			//div.style.top = top;
+			div.style.left = 0;
+			div.style.top = 0;
+			//div.style.position = absolute;
 			//div.style.left = (e.screenX + window.scrolLeft);
 			//div.style.top = (e.screenY + window.scrolTop);
 		  
@@ -820,6 +796,91 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 	function hide(){
 		document.getElementById('anthramDiv').style.visibility='hidden';
 	}
+	
+	function toggleLanguage() {
+		if(document.getElementById('lang-toggle').innerText=='TAM'){
+			document.getElementById('lang-toggle').innerText = 'ENG';	
+			transliterateTamilToEnglish();
+		} else {
+			document.getElementById('lang-toggle').innerText = 'TAM';
+			transliterateEnglishToTamil();
+		}
+	}
+	
+	function transliterateEnglishToTamil() {
+		
+		let tamilToEnglish;
+
+		// Load the JSON file (example using fetch)
+		fetch('tm_en.json')
+			.then(response => response.json())
+			.then(mappingObject => {
+				// Access the mapping details
+				tamilToEnglish = mappingObject; // Assuming the entire object is the mapping
+
+				// Now that the data is available, proceed with the rest of your logic
+				const divs = document.querySelectorAll("div");
+
+				divs.forEach((div) => {
+					const tamilText = div.innerHTML.trim();
+					 //const pattern = new RegExp(Object.values(tamilToEnglish).join("|"), "gi");
+
+					// Check if the div contains an image
+					const isImage = div.querySelector("img") !== null;
+
+					if (!isImage) {
+						// Translate non-image div content
+						const pattern = /(?<=>)[^<]*(?=<)/g; // Matches text between ">" and "<"
+						div.innerHTML = tamilText.replace(pattern, (match) => {
+							for (const key in tamilToEnglish) {
+								if (tamilToEnglish[key] === match) {
+									return key;
+								}
+							}
+							return match;
+						});
+					}
+				});
+			})
+			.catch(error => {
+				console.error('Error loading translation mapping:', error);
+			});
+	}
+
+	
+	function transliterateTamilToEnglish() {
+		let tamilToEnglish;
+
+		// Load the JSON file (example using fetch)
+		fetch('tm_en.json')
+			.then(response => response.json())
+			.then(mappingObject => {
+				// Access the mapping details
+				tamilToEnglish = mappingObject; // Assuming the entire object is the mapping
+
+				// Now that the data is available, proceed with the rest of your logic
+				const divs = document.querySelectorAll("div");
+
+				divs.forEach((div) => {
+					const tamilText = div.innerHTML.trim();
+
+					// Check if the div contains an image
+					const isImage = div.querySelector("img") !== null;
+
+					if (!isImage) {
+						// Translate non-image div content
+						const pattern = new RegExp(Object.keys(tamilToEnglish).join("|"), "gi");
+						div.innerHTML = tamilText.replace(pattern, (match) => tamilToEnglish[match] || match);
+					}
+				});
+			})
+			.catch(error => {
+				console.error('Error loading translation mapping:', error);
+			});
+	}
+ 
+    // Execute the transliteration function once the page is loaded
+    //window.addEventListener('load', transliterateTamilToEnglish);
 				
 	</script>
 </head>
@@ -841,6 +902,10 @@ $dayofweek = date('w', strtotime($chart_date));
 $onePageURL="onepage_form.php?place=".$in_place."&name=".$in_name."&sex=".$in_sex.'&rowid='.$g_rowid.'&nDate='.$chart_date.'&nTime='.$chart_time;
 
 ?>
+
+<!-- <div class="container">
+    <button class='actionBtn' id="lang-toggle" onclick="toggleLanguage()">ENG</button>
+</div> -->
 
 <body onLoad="init();">
 <div id="karanamDiv" onclick="hide ()"><img src='images/karanam.png' width='100%' /></div>
@@ -947,7 +1012,7 @@ function updatePlanet_transit(array $planets,array $retro, $in_ragu_house)
 
 function updateMandhi_transit(array $out, array $in, $in_sun_degree, $in_day, $in_dayofweek,$in_sun_house)
 {	
-	global $transit_datetime,$transit_today_sunrise, $planetDeg_transit,$mandhi_degree_transit, $planetDeg_default;
+	global $transit_datetime,$transit_today_sunrise, $planetDeg_transit, $planetDeg_default_transit,$mandhi_degree_transit, $planetDeg_default;
 	
 	if(strtotime($transit_datetime) < strtotime($transit_today_sunrise)){
 		$in_dayofweek = $in_dayofweek - 1;
@@ -967,7 +1032,7 @@ function updateMandhi_transit(array $out, array $in, $in_sun_degree, $in_day, $i
 			$out[$key] = $out[$key] . " மா";
 			
 			$planetDeg_transit["மா"] = ($mandhi_degree_transit % 30);
-			$planetDeg_default["மா"] = ($mandhi_degree_transit % 30);
+			$planetDeg_default_transit["மா"] = ($mandhi_degree_transit % 30);
 		}
 	}
 	
@@ -980,18 +1045,61 @@ function updateMandhi_transit(array $out, array $in, $in_sun_degree, $in_day, $i
 
 function displayDegree_transit($in_sw_degree)
 {
-	global $out_planet_degree, $planetDeg_default, $planetDeg_transit;
+	global $out_planet_degree, $planetDeg_default_transit, $planetDeg_default, $planetDeg_transit;
 	
 	$txt="";
 	$planet="";
 	
-	foreach ($planetDeg_transit as $key => $val) {
-			$out_planet_degree[$key] = $val;
+	foreach ($in_sw_degree as $key => $val) {
+		if($val!=null) {
 			
-			$txt = $txt . " " . $key . "-" . $val;
+			switch (trim($key)) {
+				case "Sun":
+					$planet="சூரி";
+					break;
+				case "Moon":
+					$planet="சந்";
+					break;
+				case "Mercury":
+					$planet="புத";
+					break;
+				case "Venus":
+					$planet="சுக்";
+					break;
+				case "Mars":
+					$planet="செ";
+					break;
+				case "Jupiter":
+					$planet="குரு";
+					break;
+				case "Saturn":
+					$planet="சனி";
+					break;
+				//case "true Node":
+				case "mean Node":
+					$planet="ரா/கே";
+					break;
+				case "Ascendant":
+					$planet="லக்";
+					break;
+				case "mandhi":
+					$planet="மா";
+					break;
+				default:
+					break;
+			}
 			
-			$planetDeg_default[$planet] = $val;
+			$out_planet_degree[$planet] = $val;
+			
+			$txt = $txt . " " . $planet . "-" . $val;
+			
+			//$planetDeg_default_transit[$planet] = $val;
+			$planetDeg_default_transit[$planet] = $planetDeg_default_transit[$key][0];
+			unset($planetDeg_default_transit[$key]);
+		}
 	}
+		
+	$txt = $txt . " " . "மா-" . $planetDeg_transit['மா']; 
 	
 	return $txt;
 }
@@ -1240,7 +1348,7 @@ function displayHoroDetails()
 			echo "<div class='divPanchangHeading'>வாரம்</div>";
 			echo "<div class='divPanchang'>".explode('/',$panchang['vaaram'])[1]."</div>";
 		echo "</div>";
-		displayDetailsDiv('thi',$g_thithi_idx);
+		
 		echo "<div class='divTableRow'>";
 		echo "<div class='divPanchangHeading'>திதி</div>";
 		$g_thithi = explode('/',explode('[',$panchang['thithi'])[0])[1];
@@ -1254,12 +1362,15 @@ function displayHoroDetails()
 			echo "<div class='divPanchang' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'>".$g_thithi ." [". $g_paksham . "]" . "</div>";
 		}
 		echo "</div>";
+
+		displayDetailsDiv('thi',$g_thithi_idx);
 		
-		displayDetailsDiv('nak',ceil($nak_pad_idx)/4);
+		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
 			echo "<div class='divPanchang' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'>".explode('/',$panchang['nak'])[1]."</div>";
 		echo "</div>";
+		displayDetailsDiv('nak',ceil($nak_pad_idx)/4);
 		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>யோகம்</div>";
@@ -1314,6 +1425,15 @@ function displayHoroDetails()
 			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 3)' style='color:blue;cursor:pointer'>".$yogi_arr[1]."(".$yogi_arr[0].")</div>";
 		echo "</div>";
 		displayDetailsDiv('yogi',$g_yoga_idx);
+		[$guberaStarPaadham,$guberaRasi,$guberaRasiHouse, $guberaStarIdx] = getKubera();  //$guberaRasiHouse not used as of now. It will be used if we need to show some symbold in chart
+		
+		echo "<div class='divTableRow' style='background-color:yellow'>";
+			echo "<div class='divPanchangHeading'>குபேர புள்ளி</div>";
+			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 31)' style='color:blue;cursor:pointer'>" .$guberaStarPaadham . "<BR>". $guberaRasi . "</div>";
+		echo "</div>";
+
+		displayDetailsDiv('kubera',$guberaStarIdx);
+		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பஞ்ச பக்ஷி</div>";
 			$g_pancha_pakshi = getPanchaPakshi();
@@ -1338,14 +1458,16 @@ function displayHoroDetails()
 		echo "</div>";
 		    $mudakku_star = getMudakku(1);
 			$mudakku_rasi = getMudakku(2);
-			
+			$mudakku_star_idx = getMudakku(3);
+						
 			$mudakku_baavam = getBavam($mudakku_rasi);
-		displayDetailsDiv('mudakku',$mudakku_rasi.$mudakku_baavam);
+			
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeadingRed'>முடக்கு</div>";
 			$g_mudakku_detail = $mudakku_star." (".$mudakku_rasi.")<BR>".$mudakku_baavam."ஆம் வீடு";
 			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 6)' style='color:blue;cursor:pointer'>".$g_mudakku_detail."</div>";
 		echo "</div>";
+		displayDetailsDiv('mudakku',$mudakku_rasi.$mudakku_baavam);
 		/*echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>ராகு காலம்</div>";
 			echo "<div class='divPanchang'>".$otherPanchangDetails[0]."</div>";
@@ -1461,7 +1583,7 @@ function prepareWallpaper()
 echo <<<EOL
 	
   
-	<div class="wallpaper" id='wallpaper' style="display:none;position:fixed;margin:0px;top:0px;left:0px;background-color:white;z-index:99;width:100%;height:98%">
+	<div class="wallpaper" id='wallpaper' style="display:none;position:fixed;margin:0px;top:0px;left:0px;background-color:white;z-index:999;width:100%;height:98%">
 		<div class="x medium" style="z-index:100;text-align:right;color:blue;font-weight:bold">
 			<!-- <A href="javascript:downloadWallpaper('$in_name')">&nbsp;Download&nbsp;</a> -->
 			<A href="javascript:closeWallpaper()">&nbsp;CLOSE (X)&nbsp;</A>
@@ -1829,6 +1951,8 @@ foreach ($output as $key => $line)
 	//$sw_degree[$row[0]] = DECtoDMS(round($tot_degree[$key] - $sw_house[$key]*30,2));
 	$sw_degree[$row[0]] = round($tot_degree[$key] - $sw_house[$key]*30,2);
 	
+	$planetDeg_default[$row[0]][0] = (float)($row[1]);	
+	
     if($count!=21){
 		$sw_dir[$key] = ($row[2] > 0) - ($row[2] < 0);
 	}
@@ -1976,6 +2100,8 @@ foreach ($transit as $key => $line)
 	//$tr_sw_degree[$row[0]] = DECtoDMS(round($tot_degree_tr[$key] - $tr_sw_house[$key]*30,2));
 	$tr_sw_degree[$row[0]] = round($tot_degree_tr[$key] - $sw_house[$key]*30,2);
 	
+	$planetDeg_default_transit[$row[0]][0] = (float)($row[2]);
+	
     if($count!=21){
 		$tr_sw_dir[$key] = ($row[2] > 0) - ($row[2] < 0);
 	}
@@ -2044,6 +2170,7 @@ if($DEBUG==1){
 $chartdate=date("d/m/Y",strtotime($chart_date));
 
 $Planet_degree=displayDegree($sw_degree); 
+
 $Transit_Planet_degree=displayDegree_transit($tr_sw_degree);
 
 //$sw_degree = sortDegree($sw_degree);
@@ -2281,7 +2408,8 @@ EOL;
 								}*/
 					//NOTE: These functions should be called in these order because various global variables are filled which is dependent
 					//displayPanchang();
-					calculateStarLard();
+					calculateStarLord();
+					resortStarLordArray(true);  //this is to sort the planets in correct order
 					//displayBhavaChart();
 					calculateNavamsam();
 					displayNavamsam();
@@ -2291,7 +2419,7 @@ EOL;
 					//calculateBirthThithiSoonyam($panchang["thithi"]);
 					calculateVimDasaBalance($moon_degree,$moon_house,$chart_time,$chart_time,$panchang['nak'],$nak_pad_idx, true);
 					displayButtons(true); //this will calculate star lord as well 
-					displayStarLard_transit();
+					displayStarLord_transit();
 					calculateCurrentDasaBukthi(true);
 					
 					echo "<div class='html2pdf__page-break'></div>";

@@ -2,6 +2,7 @@
 include_once "lib.php";
 
 $key = isset($_GET['key']) ? $_GET['key'] : "-1";
+$_SESSION['menu_clicked'] = true;
 
 $userinfo = isset($_SESSION['userinfo']) ? $_SESSION['userinfo'] : "";
 

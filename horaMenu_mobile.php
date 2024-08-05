@@ -2,6 +2,7 @@
 include_once "lib.php";
 
 $usertype = $_SESSION['user_type'];
+$_SESSION['menu_clicked'] = true;
 
 if(strcmp($usertype,FREE)==0){
     echo <<<EOL

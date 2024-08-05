@@ -89,6 +89,9 @@ $g_nak_idx=-1;
 $g_dasaBalance=array();
 $g_dasaCurrent=array();
 $g_kariNaal ="";
+$next_day="";
+
+
 
 // ------- Swiss ephemeris // ------- 
 $libPath = './sweph/';
@@ -108,6 +111,9 @@ $_SESSION["date"] = date("d-m-Y",strtotime($chart_date));
 $_SESSION["time"] = $chart_time;
 
 $dayofweek = date('w', strtotime($chart_date));
+
+$next_day=date("Y-m-d",strtotime($chart_date. ' + 1 days'));
+$previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 
 ?>
 
@@ -129,12 +135,14 @@ $dayofweek = date('w', strtotime($chart_date));
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <script src="script.js"></script>
-	<script src="panchang.js"></script>
-	<script src="my_panchang.js"></script>
+	<script src="panchang.js?<?php echo date('ymdhis'); ?>"></script>
+	<script src="my_panchang.js?<?php echo date('ymdhis'); ?>"></script>
+	<script src="common.js?<?php echo date('ymdhis'); ?>"></script>
     <script type="text/javascript">
 	var timezone = '<?php echo $TZ; ?>';
 	
@@ -358,7 +366,8 @@ $dayofweek = date('w', strtotime($chart_date));
 			}
 			
 			$(divName).delay(3000).fadeOut('slow');
-			document.getElementById(divName).style.display = "inline";
+			//document.getElementById(divName).style.display = "inline";
+			document.getElementById(divName).style.display = "block";
 			
 			//var left  = e.clientX - 100 + "px";
 			//var top  = e.clientY  + "px";
@@ -368,8 +377,10 @@ $dayofweek = date('w', strtotime($chart_date));
 		
 			var div = document.getElementById(divName);
 
-			div.style.left = left;
-			div.style.top = top;
+			//div.style.left = left;
+			//div.style.top = top;
+			div.style.left = 0;
+			div.style.top = 0;
 			//div.style.position = absolute;
 			//div.style.left = (e.screenX + window.scrolLeft);
 			//div.style.top = (e.screenY + window.scrolTop);
@@ -411,13 +422,51 @@ $dayofweek = date('w', strtotime($chart_date));
 		
 		if(document.getElementById('dummy') != null){	//chart not loaded
 			if(document.getElementById('loader'))
-				document.querySelector("#loader").style.display = "none";
+				//document.querySelector("#loader").style.display = "none";
+				document.querySelector("#loader").style.visibility = "hidden";
 		}
 		else{
 			//document.querySelector("body").style.visibility = "hidden";
 			document.querySelector("#loader").style.visibility = "visible";
 		}
+		
+		//handleLongPress();
+		handleSwipe();
 	};
+	
+	function handleSwipe(){
+		const bodyElement = document.body;
+		const hammer = new Hammer(bodyElement);
+
+		// Listen for swipe events
+		hammer.on('swipe', function (event) {
+			switch (event.direction) {
+				case Hammer.DIRECTION_LEFT:
+					console.log('Left swipe detected');
+					window.location.href = 'index.php';
+					break;
+			}
+		});
+	}
+	
+	function handleLongPress(){
+		// Assuming you have an element with the ID 'my-element'
+		var myElement = document.getElementById('mybody');
+
+		// Initialize Hammer.js
+		var mc = new Hammer.Manager(myElement);
+
+		// Add the long press gesture
+		mc.add(new Hammer.Press({ event: 'longpress', time: 500 }));
+
+		// Handle the long press event
+		mc.on('longpress', function (ev) {
+			console.log('Long press detected!');
+			window.location.href = 'index.php'
+			// Perform your custom action here
+			// For example, show a modal or trigger some other behavior
+		});
+	}
 	
 	function genPanchang(place){
 			var url = "gen_panchang_form.php"+"?place="+place;
@@ -451,24 +500,81 @@ $dayofweek = date('w', strtotime($chart_date));
 		newdate = new Date(t.getFullYear(),t.getMonth(),t.getDate(),t.getHours(),t.getMinutes()); 
 		
 				
-				newdate = changeTimezone(newdate,timezone);
-				
-				  panchang.calculate(newdate, function() {
-						//document.writeln('<div class="divTableRow">');
-						//	document.writeln('<div class="divTablePanchangMedium" style="width:80px">'+formatDate(newdate)+'</div>');
-						//	document.writeln('<div class="divTablePanchangMedium" style="width:50px">'+panchang.Day.name+'</div>');
-						//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Nakshatra.name+" "+formatDateTime(panchang.Nakshatra.end)+' வரை'+displayNextNak(newdate,panchang.Nakshatra)+'</div>');
-						//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Tithi.name+' '+formatDateTime(panchang.Tithi.end)+' வரை'+displayNextThithi(newdate,panchang.Tithi)+'</div>');
-						//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Karna.name+' '+formatDateTime(panchang.Karna.start)+" முதல் "+formatDateTime(panchang.Karna.end)+' வரை'+displayNextKar(newdate,panchang.Karna)+'</div>');
-						//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Yoga.name+' '+formatDateTime(panchang.Yoga.start)+" முதல் "+formatDateTime(panchang.Yoga.end)+' வரை'+displayNextYoga(newdate,panchang.Yoga)+'</div>');
-						//document.writeln('</div>');
-						
-						document.getElementById('thithi').innerHTML = panchang.Tithi.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Tithi.start)+' முதல்<BR>'+formatDateTime(panchang.Tithi.end)+' வரை</div>';
-						document.getElementById('nak').innerHTML = panchang.Nakshatra.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Nakshatra.start)+' முதல்<BR>'+formatDateTime(panchang.Nakshatra.end)+' வரை</div>';
-						document.getElementById('yogam').innerHTML = panchang.Yoga.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Yoga.start)+' முதல்<BR>'+formatDateTime(panchang.Yoga.end)+' வரை</div>';
-						document.getElementById('karanam').innerHTML = panchang.Karna.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Karna.start)+' முதல்<BR>'+formatDateTime(panchang.Karna.end)+' வரை</div>';
+		newdate = changeTimezone(newdate,timezone);
+	
+		panchang.calculate(newdate, function() {
+			//document.writeln('<div class="divTableRow">');
+			//	document.writeln('<div class="divTablePanchangMedium" style="width:80px">'+formatDate(newdate)+'</div>');
+			//	document.writeln('<div class="divTablePanchangMedium" style="width:50px">'+panchang.Day.name+'</div>');
+			//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Nakshatra.name+" "+formatDateTime(panchang.Nakshatra.end)+' வரை'+displayNextNak(newdate,panchang.Nakshatra)+'</div>');
+			//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Tithi.name+' '+formatDateTime(panchang.Tithi.end)+' வரை'+displayNextThithi(newdate,panchang.Tithi)+'</div>');
+			//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Karna.name+' '+formatDateTime(panchang.Karna.start)+" முதல் "+formatDateTime(panchang.Karna.end)+' வரை'+displayNextKar(newdate,panchang.Karna)+'</div>');
+			//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Yoga.name+' '+formatDateTime(panchang.Yoga.start)+" முதல் "+formatDateTime(panchang.Yoga.end)+' வரை'+displayNextYoga(newdate,panchang.Yoga)+'</div>');
+			//document.writeln('</div>');
+			
+			document.getElementById('thithi').innerHTML = panchang.Tithi.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Tithi.start)+' முதல்<BR>'+formatDateTime(panchang.Tithi.end)+' வரை</div>';
+			document.getElementById('nak').innerHTML = panchang.Nakshatra.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Nakshatra.start)+' முதல்<BR>'+formatDateTime(panchang.Nakshatra.end)+' வரை</div>';
+			document.getElementById('yogam').innerHTML = panchang.Yoga.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Yoga.start)+' முதல்<BR>'+formatDateTime(panchang.Yoga.end)+' வரை</div>';
+			document.getElementById('karanam').innerHTML = panchang.Karna.name+'('+getKaranaPlanet(panchang.Karna.name)+')'+'<BR><div class="divSmall">'+formatDateTime(panchang.Karna.start)+' முதல்<BR>'+formatDateTime(panchang.Karna.end)+' வரை</div>';
+		});
 
-				  });
+		//storing initial end times for nak, thithi, yogam, karanam as new generation will result in changes to panchang object
+		nak_end = panchang.Nakshatra.end;
+		thithi_end = panchang.Tithi.end;
+		yogam_end = panchang.Yoga.end;
+		karanam_end = panchang.Karna.end;
+
+		//To add next nak
+		//newdate = new Date(t.getFullYear(),t.getMonth(),t.getDate(),t.getHours()+36); //adding 26 hours for thithi, nak, yogam
+		//newdate = new Date(panchang.Nakshatra.end.getFullYear(),panchang.Nakshatra.end.getMonth(),panchang.Nakshatra.end.getDate(),panchang.Nakshatra.end.getHours(),panchang.Nakshatra.end.getMinutes()+1); //adding 26 hours for thithi, nak, yogam
+		newdate = new Date(nak_end.getFullYear(),nak_end.getMonth(),nak_end.getDate(),nak_end.getHours(),nak_end.getMinutes()+1); //adding 1 minute from current nak to get next
+		newdate = changeTimezone(newdate,timezone);
+	
+		panchang.calculate(newdate, function() {
+			document.getElementById('nak').innerHTML = document.getElementById('nak').innerHTML + panchang.Nakshatra.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Nakshatra.start)+' முதல்<BR>'+formatDateTime(panchang.Nakshatra.end)+' வரை</div>';
+		});
+
+		//To add next karanam
+		newdate = new Date(karanam_end.getFullYear(),karanam_end.getMonth(),karanam_end.getDate(),karanam_end.getHours(), karanam_end.getMinutes()+1); //adding 1 mins to get next karanam
+		newdate = changeTimezone(newdate,timezone);
+	
+		panchang.calculate(newdate, function() {
+			document.getElementById('karanam').innerHTML = document.getElementById('karanam').innerHTML + panchang.Karna.name+'('+getKaranaPlanet(panchang.Karna.name)+')'+'<BR><div class="divSmall">'+formatDateTime(panchang.Karna.start)+' முதல்<BR>'+formatDateTime(panchang.Karna.end)+' வரை</div>';
+		});
+
+		//To add next thithi
+		newdate = new Date(thithi_end.getFullYear(),thithi_end.getMonth(),thithi_end.getDate(),thithi_end.getHours(),thithi_end.getMinutes()+1); //adding 1 min to get next thithi
+		newdate = changeTimezone(newdate,timezone);
+	
+		panchang.calculate(newdate, function() {
+			document.getElementById('thithi').innerHTML = document.getElementById('thithi').innerHTML + panchang.Tithi.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Tithi.start)+' முதல்<BR>'+formatDateTime(panchang.Tithi.end)+' வரை</div>';
+		});
+
+		//To add next yogam
+		newdate = new Date(yogam_end.getFullYear(),yogam_end.getMonth(),yogam_end.getDate(),yogam_end.getHours(),yogam_end.getMinutes()+1); //adding 1 min to get next yogam
+		newdate = changeTimezone(newdate,timezone);
+	
+		panchang.calculate(newdate, function() {
+			document.getElementById('yogam').innerHTML = document.getElementById('yogam').innerHTML + panchang.Yoga.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Yoga.start)+' முதல்<BR>'+formatDateTime(panchang.Yoga.end)+' வரை</div>';
+		});
+	}
+	
+	function getKaranaPlanet(karan) {
+		const karanaPlanetArray = {
+				"பவ": "செவ்வாய்",
+				"பாலவ": "ராகு",
+				"கௌலவ": "சனி",
+				"தைதுலை": "சுக்ரன்",
+				"கரசை": "சந்திரன்",
+				"வணிசை": "சூரியன்",
+				"பத்தரை": "கேது",
+				"சகுனி": "சனி",
+				"சதுஷ்பாத": "குரு",
+				"நாகவ": "ராகு",
+				"கிம்ஸ்துக்கினம்": "புதன்"
+		};
+
+		return karanaPlanetArray[karan];
 	}
 	
 	$(document).ready(function(){
@@ -579,15 +685,98 @@ $dayofweek = date('w', strtotime($chart_date));
        document.getElementById('muhurthamDiv').innerHTML = html_str;
        document.getElementById('muhurthamDiv').style.display = 'block';
      }
+	
+	function generateMuhurtam_default() {
+       var count = 0;
+          
+       mukurt_arr = [
+						["ருத்ர","அசுபமானது"],
+						["ஆஹி","அசுபமானது"],
+						["மித்ர","சுப"],
+						["பித்ரு","அசுபமானது"],
+						["வசு","சுப"],
+						["வராஹ","சுப"],
+						["விஸ்வேதேவா","சுப"],
+						["விதி","மங்களகரமானது (திங்கள் மற்றும் வெள்ளி தவிர)"],
+						["சுதாமுகீ","சுப"],
+						["புருஹூத","அசுபமானது"],
+						["வாஹிநீ","அசுபமானது"],
+						["நக்தனகரா","அசுபமானது"],
+						["வருண","சுப"],
+						["ஆர்யமன்","மங்களகரமானது (ஞாயிற்றுக்கிழமைகள் தவிர)"],
+						["பக","அசுபமானது"],
+						["கிரீச","சுப"],
+						["அஜபாத","அசுபமானது"],
+						["அஹிர்புத்ன்ய","சுப"],
+						["புஷ்ய","சுப"],
+						["அஸ்வினி","சுப"],
+						["யம","அசுபமானது"],
+						["அக்னி","சுப"],
+						["விதாத்ரு","சுப"],
+						["கண்ட","சுப"],
+						["அதிதி","சுப"],
+						["ஜீவ/அம்ருத","மிகவும் மங்களகரமானது"],
+						["விஷ்ணு","சுப"],
+						["த்யுமத்கத்யுதி","சுப"],
+						["பிரம்மா","மிகவும் மங்களகரமானது"],
+						["சமுத்ர","சுப"]
+					];
+      
+       var html_str='';
+      
+       html_str='<center><div class="divTable blueTable" style="width:100%;height:100%">';
+       html_str=html_str+'<div class="divTableRow"><div class="divAnthraHeading" colspan="3">முகூர்த்தங்கள்</div></div></div>';
+       html_str=html_str+'<center><div class="divTable blueTable" style="width:100%;height:100%">';
+	   
+	   //this is to negate sunrise calculation
+	   today_sunrise = '<?php echo $chart_date; ?>' + ' 06:00:00';
+	   
+	   
+	   tomm_sunrise = '<?php echo $next_day; ?>' + ' 06:00:00';
+	   
+	   todaysunrise = new Date(today_sunrise);
+	   tommsunrise = new Date(tomm_sunrise);
+	   muhurt_time = (tommsunrise.getTime() - todaysunrise.getTime()) / (1000 * 60 )/30;
+
+		start_time = new Date(todaysunrise.getTime());
+		
+		html_str = html_str+'<div class="divTableRow"><div class="divMuhurtHeading">ஆரம்பம்</div><div class="divMuhurtHeading">முடிவு</div><div class="divMuhurtHeading">முகூர்த்தம்</div><div class="divMuhurtHeading">பலன்</div></div>';
+
+       for (var i = 0; i < 30; i++) {
+		   end_time = new Date((start_time.getTime()+muhurt_time*60000));
+		   
+		   stime=String(start_time.getDate()).padStart(2, '0')+'-'+String(start_time.getMonth()+1).padStart(2, '0')+'-'+start_time.getFullYear()+' '+String(start_time.getHours()).padStart(2, '0')+':'+String(start_time.getMinutes()).padStart(2, '0');
+		   etime=String(end_time.getDate()).padStart(2, '0')+'-'+String(end_time.getMonth()+1).padStart(2, '0')+'-'+end_time.getFullYear()+' '+String(end_time.getHours()).padStart(2, '0')+':'+String(end_time.getMinutes()).padStart(2, '0');
+           //console.log(stime+'-'+etime+'   '+mukurt_arr[i]);
+		   
+		   if((mukurt_arr[i][1]).indexOf("அசுபமானது")!=-1){
+			   html_str = html_str + '<div class="divTableRow"><div class="divMurtaRed">'+stime+'</div><div class="divMurtaRed">'+etime+'</div><div class="divMurtaRed">'+mukurt_arr[i][0]+'</div><div class="divMurtaRed">'+mukurt_arr[i][1]+'</div></div>';
+		   }
+		   else if((mukurt_arr[i][1]).indexOf("மங்களகரமானது")!=-1){
+			   html_str = html_str + '<div class="divTableRow"><div class="divMurtaBrightGreen">'+stime+'</div><div class="divMurtaBrightGreen">'+etime+'</div><div class="divMurtaBrightGreen">'+mukurt_arr[i][0]+'</div><div class="divMurtaBrightGreen">'+mukurt_arr[i][1]+'</div></div>';
+		   }
+		   else{
+   			   html_str = html_str + '<div class="divTableRow"><div class="divMurtaGreen">'+stime+'</div><div class="divMurtaGreen">'+etime+'</div><div class="divMurtaGreen">'+mukurt_arr[i][0]+'</div><div class="divMurtaGreen">'+mukurt_arr[i][1]+'</div></div>';
+		   }
+          
+		   start_time = end_time;
+       }
+       
+       html_str=html_str+"</div></center>";
+      
+       document.getElementById('muhurthamDiv').innerHTML = html_str;
+       document.getElementById('muhurthamDiv').style.display = 'block';
+     }
 	 
 	 function hide(){
 		document.getElementById('muhurthamDiv').style.visibility='hidden';
 	}
+
 				
 	</script>
 </head>
 
-<body onLoad="init();">
+<body id='mybody' onLoad="init();">
 <div class="karanamDiv" id="karanamDiv" onclick="hideKaranamDiv()"><!-- <img src='images/karanam.png' /> --></div>
 <div class="muhurthamDiv" id="muhurthamDiv" onclick="this.style.display='none'"></div>
 <div id="loader" class="center"></div>
@@ -975,28 +1164,30 @@ function displayHoroDetails()
 			echo "<div class='divPanchang'>".explode('/',$panchang['vaaram'])[1]."</div>";
 		echo "</div>";
 		
-		displayDetailsDiv('thi',$g_thithi_idx);
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>திதி</div>";
 				echo "<div class='divPanchang' id='thithi' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'></div>";
-			/*$g_thithi = explode('/',explode('[',$panchang['thithi'])[0])[1];
+			$g_thithi = explode('/',explode('[',$panchang['thithi'])[0])[1];
 			
 			if(strpos($panchang['thithi'],"Amavasya/அமாவாசை")===0 || strpos($panchang['thithi'],"Poornima/பௌர்ணமி")===0){
 				$g_paksham = "";
-				echo "<div class='divPanchang' id='thithi' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'>".$g_thithi . $g_paksham . "<BR>". "</div>";
+				//echo "<div class='divPanchang' id='thithi' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'>".$g_thithi . $g_paksham . "<BR>". "</div>";
 			}
 			else{
 				$g_paksham = rtrim(explode('/',$panchang['thithi'])[2],']');
-				echo "<div class='divPanchang' id='thithi' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'>".$g_thithi ." [". $g_paksham . "]" . "</div>";
-			}*/
+				//echo "<div class='divPanchang' id='thithi' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'>".$g_thithi ." [". $g_paksham . "]" . "</div>";
+			}
 		echo "</div>";
 		
-		displayDetailsDiv('nak',ceil($nak_pad_idx)/4);
+		displayDetailsDiv('thi',$g_thithi_idx);
+		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
 			//echo "<div class='divPanchang' id='nak'>".explode('/',$panchang['nak'])[1]."<BR>".$panchang['nak-end-time']." வரை</div>";
 			echo "<div class='divPanchang' id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'></div>";
 		echo "</div>";
+		displayDetailsDiv('nak',ceil($nak_pad_idx)/4);
+		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>யோகம்</div>";
 			//echo "<div class='divPanchang' id='yogam'>".$panchang['yoga']."</div>";
@@ -1060,7 +1251,8 @@ function displayHoroDetails()
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>முகூர்த்தங்கள்</div>";
-			echo "<div class='divPanchang' onClick='generateMuhurtam(\"$today_sunrise\",\"$tomo_sunrise\");' style='color:blue;cursor:pointer'>Click to see</div>";
+			//echo "<div class='divPanchang' onClick='generateMuhurtam(\"$today_sunrise\",\"$tomo_sunrise\");' style='color:blue;cursor:pointer'>Click to see</div>";
+			echo "<div class='divPanchang' onClick='generateMuhurtam_default();' style='color:blue;cursor:pointer'>Click to see</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeadingRed'>அவயோகி</div>";
@@ -1265,9 +1457,6 @@ if($DEBUG==1){
 	echo "----------".getUTCtimestamp($birthTimestamp,$offset);
 }
 
-$next_day=date("Y-m-d",strtotime($chart_date. ' + 1 days'));
-$previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
-
 $today_sunrise = $chart_date . " " . getSunrise(strtotime($chart_date),floatval($lat), floatval($lon));
 $today_sunset = $chart_date . " " .  getSunset(strtotime($chart_date),floatval($lat), floatval($lon));
 $tomo_sunrise = $next_day . " " .  getSunrise(strtotime($next_day),floatval($lat), floatval($lon));
@@ -1411,11 +1600,13 @@ EOL;
 			
 					//displayUserInfoMobile($_SESSION['userinfo']);
 					include "panchangMenu_mobile.php";
+					//include "setDefaultHome.php";
+			
+
 echo <<<EOL
 			</div>
 		</div>
 		<div class='column-body' id='panchangBody'>
-		
 			<center>
 			<form name='updatePanchang' id='panchangForm' action='new_panchang.php?debug=$DEBUG' method='post'>
 				<input type='hidden' id='nPlace' name='nPlace' value='$place'>
@@ -1471,7 +1662,7 @@ EOL;
 					displayHoroDetails();
 					$thithi_soonyam_arr = updateThithiSoonyam($panchang["thithi"]);
 					displayTransitChart();
-					displayStarLard(true);
+					displayStarLord(true);
 					displayDisclaimer();
 					
 
@@ -1493,7 +1684,10 @@ dbDisconnect($conn);
 $_SESSION["place"] = $place;
 $_COOKIE['panchang_place']=$place;
 
+unset($_SESSION['menu_clicked']);
+
 ?>
 
+<div id='dummy'></div>
 </body>
 </html>

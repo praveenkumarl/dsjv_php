@@ -66,6 +66,7 @@ $cricketMenu=0;
 $autoAnalysisMenu=0;
 $planetDeg = array();
 $planetDeg_transit = array();
+$planetDeg_default = array();
 $mandhi_degree=0;
 $mandhi_degree_transit=0;
 $g_boy_nak = "";
@@ -4010,6 +4011,11 @@ EOL;
 			echo "<div class='divGirlPanchangHeading'>அவயோகி</div>";
 			echo "<div class='divGirlPanchang'>".getYogi($g_panchang_girl['yoga'])[2]."<BR>(".getYogi($g_panchang_girl['yoga'])[3].")</div>";
 		echo "</div>";
+		
+		echo "<div class='divTableRow'>";
+			echo "<div class='divGirlPanchangHeading'>வைநாசிகம்</div>";
+			echo "<div class='divGirlPanchang'>".getVainasigam(true)[0]."</div>";
+		echo "</div>";
 	echo "</div>";
 }
 
@@ -4115,6 +4121,11 @@ EOL;
 			echo "<div class='divBoyPanchangHeading'>அவயோகி</div>";
 			echo "<div class='divBoyPanchang'>".getYogi($g_panchang_boy['yoga'])[2]."<BR>(".getYogi($g_panchang_boy['yoga'])[3].")</div>";
 		echo "</div>";
+		
+		echo "<div class='divTableRow'>";
+			echo "<div class='divBoyPanchangHeading'>வைநாசிகம்</div>";
+			echo "<div class='divBoyPanchang'>".getVainasigam(false)[0]."</div>";
+		echo "</div>";
 	echo "</div>";
 }
 
@@ -4182,14 +4193,14 @@ function calculateAll(){
 	calculateVimDasaBalance($moon_degree,$moon_house,$chart_date,$chart_time,$g_panchang_girl['nak'],$g_girl_nak_pad_idx,true);		
 	//displayButtons(true); //starlord dasa buttons for girl
 	
-	displayStarLard();
+	displayStarLord();
 	calculateVimDasa();
 	calculateCurrentDasaBukthi(true); //for girl
 	//displayThithiSoonyam($g_panchang_boy["thithi"],false);
 	
 	calculateVimDasaBalance($transit_moon_degree,$transit_moon_house,$transit_date,$transit_time,$g_panchang_boy['nak'],$g_boy_nak_pad_idx,false);
 	//displayButtons(false); //starlord dasa buttons for boy
-	displayStarLard_boy();
+	displayStarLord_boy();
 	calculateVimDasa_boy();
 	calculateCurrentDasaBukthi(false); //for boy
 	//displayThithiSoonyam($g_panchang_boy["thithi"],false);

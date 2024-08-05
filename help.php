@@ -7,14 +7,6 @@ $userInfo = getUserInfo_mobile($key);
 $_SESSION['user_type'] = $userInfo['user_type'];
 
 
-$helpInfo_arr = ["device-id" => $key,
-				"Source Platform" => $_SERVER['HTTP_SEC_CH_UA_PLATFORM'],
-				"Memory content" => $_SERVER['HTTP_COOKIE'],
-				"User agent" => $_SERVER["HTTP_USER_AGENT"],
-				"Requested key" => $_SERVER['QUERY_STRING']//,
-				//"host" => $_SERVER['REQUEST_SCHEME'].'//'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']
-				];
-
 ?>
 
 <!doctype html>

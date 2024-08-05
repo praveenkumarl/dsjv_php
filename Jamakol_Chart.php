@@ -60,7 +60,7 @@ $orig_question = $_SESSION['orig_question'];
 
 $in_analysis = isset($_POST["analysis"]) ? $_POST["analysis"] : $_SESSION['orig_analysis'];
 
-if(strstr(strtolower($_SERVER['HTTP_REFERER']),"jamakol_input.php") or (strstr(strtolower($_SERVER['HTTP_REFERER']),"jamakol_chart.php")) && ($_POST['qChart'] !=1)){
+if(strstr(strtolower($_SERVER['HTTP_REFERER']),"jamakol_input.php") or (strstr(strtolower($_SERVER['HTTP_REFERER']),"jamakol_chart.php")) && (isset($_POST['qChart']) && $_POST['qChart'] !=1)){
 	$in_analysis = "";
 }
 
@@ -128,6 +128,25 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Jamakol_i
 	$saveMode=1;
 	$saveBtnTxt='Update';
 }
+
+// ------- Swiss ephemeris // ------- 
+$libPath = './sweph/';
+putenv("PATH=$libPath");
+// ------- Swiss ephemeris // ------- 
+
+if(!isset($_POST["qChart"]) || $_POST["qChart"]==0){
+	$chart_time = isset($_POST["nTime"]) ? $_POST["nTime"] : $_POST["in_time"];
+	$chart_date = isset($_POST["nDate"]) ? $_POST["nDate"] : $_POST["in_date"];
+}
+else{ //if questionChart requested
+	$chart_time = isset($_POST["qTime"]) ? $_POST["qTime"] : $_POST["in_time"];
+	$chart_date = isset($_POST["qDate"]) ? $_POST["qDate"] : $_POST["in_date"];
+}
+
+$_SESSION["date"] = date("d-m-Y",strtotime($chart_date));
+$_SESSION["time"] = $chart_time;
+
+$dayofweek = date('w', strtotime($chart_date));
 ?>
 
 <!doctype html>
@@ -135,7 +154,7 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Jamakol_i
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <title>PK Astro Jamakol</title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
@@ -371,15 +390,23 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Jamakol_i
 		if(document.getElementById('chart')){
 			document.querySelector(
 			  "#loader").style.display = "none";
-			document.querySelector(
-			  "chart").style.visibility = "visible";
+			//document.querySelector(
+			//  "chart").style.visibility = "visible";
 		}
 		else{
-			document.querySelector(
-			  "chart").style.visibility = "hidden";
+			//document.querySelector(
+			 // "chart").style.visibility = "hidden";
 			document.querySelector(
 			  "#loader").style.visibility = "visible";
 		}
+		
+		date='<?php echo $chart_date; ?>';
+		time='<?php echo $chart_time; ?>';
+		place='<?php echo $place; ?>';
+		
+		url = 'hora.php?date='+date+'&time='+time+'&place='+place;
+
+		$('#hora').load(url+' div#horaLordTxt'); //getting the current hora lord running the hora.php and extract only the lord text
 	});
 			
 
@@ -424,29 +451,6 @@ if(isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Jamakol_i
 	}
 	</script>
 </head>
-<?php
-
-
-// ------- Swiss ephemeris // ------- 
-$libPath = './sweph/';
-putenv("PATH=$libPath");
-// ------- Swiss ephemeris // ------- 
-
-if(!isset($_POST["qChart"]) || $_POST["qChart"]==0){
-	$chart_time = isset($_POST["nTime"]) ? $_POST["nTime"] : $_POST["in_time"];
-	$chart_date = isset($_POST["nDate"]) ? $_POST["nDate"] : $_POST["in_date"];
-}
-else{ //if questionChart requested
-	$chart_time = isset($_POST["qTime"]) ? $_POST["qTime"] : $_POST["in_time"];
-	$chart_date = isset($_POST["qDate"]) ? $_POST["qDate"] : $_POST["in_date"];
-}
-
-$_SESSION["date"] = date("d-m-Y",strtotime($chart_date));
-$_SESSION["time"] = $chart_time;
-
-$dayofweek = date('w', strtotime($chart_date));
-
-?>
 
 <body onLoad="init();" id="body">
 <div id="loader" class="center"></div>
@@ -1057,29 +1061,29 @@ function displayStarLard_jama()
 		}
 	}
 
-	echo "<center><div class='divTable blueTable' id='starlordHeadMutable_jama' style='height:32px;width:360px;display:none'>"; 
+	echo "<center><div class='divTable blueTable' id='starlordHeadMutable_jama' style='height:auto;display:none'>"; 
 		echo "<div class='divTableRow'>";
 			echo "<div class='divTableCell' colspan=3>";
-					echo "<H6 style='font-weight:bold'>ஜாம  கிரக நட் சாரம்</H6>";
+					echo "<H6 style='font-weight:bold'>ஜாம கிரக நட் சாரம்</H6>";
 					echo "</div>";
 		echo "</div>";
 	echo "</div></center>";
 
-	echo "<center><div class='divTable blueTable' id='starlordBodyMutable_jama' style='height:100%;width:360px;display:none'>"; 
+	echo "<center><div class='divTable blueTable' id='starlordBodyMutable_jama' style='height:auto;max-width: fit-content;display:none'>"; 
 	echo "<div class='divTableRow'>";
-				echo "<div class='divPanchangHeading'>Planet</div>";
-				echo "<div class='divPanchangHeading'>Star Padam</div>";
-				echo "<div class='divPanchangHeading'>Star lord</div>";
-				echo "<div class='divPanchangHeading'>Degree</div>";
+				echo "<div class='divPanchangHeadingSmall'>கிரகம்</div>";
+				echo "<div class='divPanchangHeadingSmall'>நக்ஷ் பா</div>";
+				echo "<div class='divPanchangHeadingSmall'>நக்ஷ் அதி</div>";
+				echo "<div class='divPanchangHeadingSmall'>பாகை</div>";
 		echo "</div>";
 	
 	foreach($planet_starlord as $planet => $data)
 	{
 		echo "<div class='divTableRow'>";
-				echo "<div class='divPanchangHeading'>$planet</div>";
-				echo "<div class='divPanchang'>$data[0]</div>";
-				echo "<div class='divPanchang'>$data[1]</div>";
-				echo "<div class='divPanchang'>" . DECtoDMS($data[2]) . "</div>";
+				echo "<div class='divPanchangHeadingSmall'>$planet</div>";
+				echo "<div class='divPanchangSmall'>".getValue($data[0],1)."</div>";
+				echo "<div class='divPanchangSmall'>$data[1]</div>";
+				echo "<div class='divPanchangSmall'>" . DECtoDMS($data[2]) . "</div>";
 		echo "</div>";
 	}
 	
@@ -1277,6 +1281,8 @@ foreach ($output as $key => $line)
 	//$sw_degree[$key] = DECtoDMS(round($tot_degree[$key] - $sw_house[$key]*30,2));
 	
 	$sw_degree[$row[0]] = DECtoDMS(round($tot_degree[$key] - $sw_house[$key]*30,2));
+	
+	$planetDeg_default[$row[0]][0] = (float)($row[2]);
 	
     if($count!=21){
 		$sw_dir[$key] = ($row[2] > 0) - ($row[2] < 0);
@@ -1615,7 +1621,7 @@ echo <<<EOL
 					<input type='button' class='actionBtn' id='strdtl' value='சாரம் (உள்)' Onclick="showStarLordTable();">
 					<input type='button' class='actionBtn' id='strdtl_jama' value='சாரம் (வெளி)'  Onclick="showStarLordTable_jama();">
 EOL;
-					displayStarLard();
+					displayStarLord();
 					displayStarLard_jama();
 					displayPanchang_jamakol();
 					

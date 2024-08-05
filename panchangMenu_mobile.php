@@ -1,6 +1,7 @@
 <?php
 include_once "lib.php";
 $usertype = $_SESSION['user_type'];
+$_SESSION['menu_clicked'] = true;
 
 if(strcmp($usertype,FREE)==0){
     echo <<<EOL
@@ -33,6 +34,7 @@ elseif(strcmp($usertype,JAMAKOL)==0){
 				  <a class='glow-button' href="planet_kaaragam.php">கிரக காரகம்</a>
 				</div>
           </div> 
+			<a href="index.php"><i class="fa fa-home fa-2x"></i></a>
 			<a href="javascript:location.reload();"><i class="fa fa-refresh fa-2x"></i></a>
 			<img src='images/dsjv_title.png' style='padding:10px;width:40%' />
 		</div>

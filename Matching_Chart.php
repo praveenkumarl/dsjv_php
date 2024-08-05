@@ -62,6 +62,8 @@ $cricketMenu=0;
 $autoAnalysisMenu=0;
 $planetDeg = array();
 $planetDeg_transit = array();
+$planetDeg_default = array();
+$planetDeg_default_transit = array();
 $mandhi_degree=0;
 $mandhi_degree_transit=0;
 $g_boy_nak = "";
@@ -101,6 +103,11 @@ $g_boyage=0;
 $g_mudakku_detail="";
 $vayadhotta_rasi_girl=0;
 $vayadhotta_rasi_boy=0;
+$g_planetVainasigamNak=array();
+$g_planetVainasigamNak_boy=array();
+
+$planet_starlord_transit=array();
+$planet_starlord=array();
 
 // ------- Swiss ephemeris // ------- 
 $libPath = './sweph/';
@@ -112,8 +119,8 @@ $chart_date = isset($_POST["nDate"]) ? $_POST["nDate"] : $_POST["in_date_girl"];
 $in_boyname = isset($_POST["boyname"]) ? $_POST["boyname"] : $_POST["nBoyName"];
 $in_girlname = isset($_POST["girlname"]) ? $_POST["girlname"] : $_POST["nGirlName"];
 
-$_SESSION["date"] = date("d-m-Y",strtotime($chart_date));
-$_SESSION["time"] = $chart_time;
+$_SESSION["girldate"] = $chart_date;
+$_SESSION["girltime"] = $chart_time;
 
 $dayofweek = date('w', strtotime($chart_date));
 
@@ -407,7 +414,7 @@ function updatePlanet_transit(array $planets,array $retro, $in_ragu_house)
 
 function updateMandhi_transit(array $out, array $in, $in_sun_degree, $in_day, $in_dayofweek,$in_sun_house)
 {	
-	global $transit_datetime,$transit_today_sunrise,$planetDeg_transit,$mandhi_degree_transit, $planetDeg_default;
+	global $transit_datetime,$transit_today_sunrise,$planetDeg_transit,$mandhi_degree_transit, $planetDeg_default_transit;
 	
 	if(strtotime($transit_datetime) < strtotime($transit_today_sunrise)){
 		$in_dayofweek = $in_dayofweek - 1;
@@ -427,7 +434,7 @@ function updateMandhi_transit(array $out, array $in, $in_sun_degree, $in_day, $i
 			$out[$key] = $out[$key] . " மா";
 			
 			$planetDeg_transit["மா"] = ($mandhi_degree_transit % 30);
-			$planetDeg_default["மா"] = ($mandhi_degree_transit % 30);
+			$planetDeg_default_transit["மா"] = ($mandhi_degree_transit % 30);
 		}
 	}
 	
@@ -3338,6 +3345,7 @@ function displayGirlBoyDetails()
 		$lagna_house, $transit_lagna_house, $today_sunrise, $g_girlage, $g_boyage,
 		$g_vayadhotta_rasi_girl,$g_vayadhotta_rasi_boy, $moon_house, $transit_moon_house ;
 	
+	echo "<BR>";
 	echo "<div class='divTable blueTable' style='height:40px'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
 				echo "<div class='divPanchangHeading' colspan='3'>";
@@ -3477,6 +3485,11 @@ function displayGirlBoyDetails()
 			echo "<div class='divPanchangHeading'>அவயோகி</div>";
 			echo "<div class='divGirlPanchang'>".getYogi($g_panchang_girl['yoga'])[2]."<BR>(".getYogi($g_panchang_girl['yoga'])[3].")</div>";
 			echo "<div class='divBoyPanchang'>".getYogi($g_panchang_boy['yoga'])[2]."<BR>(".getYogi($g_panchang_boy['yoga'])[3].")</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>வைநாசிகம்</div>";
+			echo "<div class='divGirlPanchang'>".getVainasigam(true)[0]."</div>";
+			echo "<div class='divBoyPanchang'>".getVainasigam(false)[0]."</div>";
 		echo "</div>";
 	echo "</div></center>";
 }
@@ -3680,6 +3693,8 @@ foreach ($output as $key => $line)
 	//$sw_degree[$row[0]] = DECtoDMS(round($tot_degree[$key] - $sw_house[$key]*30,2));
 	$sw_degree[$row[0]] = round($tot_degree[$key] - $sw_house[$key]*30,2);
 	
+	$planetDeg_default[$row[0]][0] = (float)($row[2]);
+	
     if($count!=21){
 		$sw_dir[$key] = ($row[2] > 0) - ($row[2] < 0);
 	}
@@ -3747,6 +3762,9 @@ $sw_planet = updateStrength($sw_planet);
 
 $transit_date = isset($_POST['in_date_boy']) ? $_POST['in_date_boy'] : date('Y-m-d');
 $transit_time = isset($_POST['in_time_boy']) ? $_POST['in_time_boy'] : date('H:i:s');
+
+$_SESSION['boydate']=$transit_date;
+$_SESSION['boytime']=$transit_time;
 
 //get boys lat/long
 $sql = "SELECT Latitude, Longitude, GMT_offset, GMT_offset_dsl,country FROM world_cities WHERE Place="."'".$place_boy."'"." AND TZ="."'".$TZ_boy."'";
@@ -3867,6 +3885,8 @@ foreach ($transit as $key => $line)
 	
 	$tr_sw_degree[$row[0]] = DECtoDMS(round($tot_degree[$key] - $tr_sw_house[$key]*30,2));
 	
+	$planetDeg_default_transit[$row[0]][0] = (float)($row[2]);
+	
     if($count!=21){
 		$tr_sw_dir[$key] = ($row[2] > 0) - ($row[2] < 0);
 	}
@@ -3936,7 +3956,7 @@ $tr_sw_planet = updateStrength($tr_sw_planet);
 
 $chartdate=date("d/m/Y",strtotime($chart_date));
 $Planet_degree=displayDegree($sw_degree);
-$Transit_Planet_degree=displayDegree($tr_sw_degree);
+$Transit_Planet_degree=displayDegree($tr_sw_degree,false); //false for outer/transit/boy chart data
 
 //$sw_degree = sortDegree($sw_degree);
 $sw_planet = sortDegree($sw_planet);
@@ -4106,8 +4126,8 @@ EOL;
 								/*if($autoAnalysisMenu==1){
 									echo "<div class='footer'>Scroll down for Auto Analysis details &#9660;</div>";
 								}*/
-					calculateStarLard();
-					calculateStarLard_boy();
+					calculateStarLord();
+					calculateStarLord_boy();
 					
 					calculateGirlPanchang();
 					calculateBoyPanchang();
@@ -4122,6 +4142,7 @@ EOL;
 					
 					displayGirlBoyDetails();
 
+					echo "<BR>";
 					echo <<<EOL
 					<div class="divTable blueTable" style="height:40px;">
 						<div class="divTableRow">

@@ -2,6 +2,7 @@
 include_once "lib.php";
 
 $key = isset($_GET['key']) ? $_GET['key'] : "-1";
+$_SESSION['menu_clicked'] = true;
 
 displayRegistrationMsg();
 return; //users are restricted to register on their own due to multiple phone registration. New page created for admin to register for users.

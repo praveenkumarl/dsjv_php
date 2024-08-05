@@ -7,9 +7,11 @@ $phone=isset($_SESSION["phone"]) ? $_SESSION["phone"] : 1;
 
 $chartInfo=array();
 
+$totalRecs=0;
+
 function getChartDetails()
 {
-	global $conn,$chartInfo, $phone;
+	global $conn,$chartInfo, $phone, $totalRecs;
 	
 	$cnt=0;
 	
@@ -26,6 +28,8 @@ function getChartDetails()
 	
 		if(($result = mysqli_query($conn, $sql))){
 			$count = mysqli_num_rows($result);
+			
+			$totalRecs = $count;
 
 			if($count>0){
 				
@@ -55,14 +59,14 @@ function getChartDetails()
 
 function displayHistory()
 {
-	global $chartInfo;
+	global $chartInfo,$totalRecs;
 	
 	getChartDetails();
 	
 echo <<<EOL
 	<center><div class="divTable blueTable" id="chart">
 
-		<!-- (A) HIDDEN HTML FORM -->
+		<!-- (SHOW CHART) HIDDEN HTML FORM -->
 		<form id="hiddenViewBirthChart" action="Birth_Chart.php" method="post" style="display:none;">
 		  <input type="hidden" id="place" name="place" required/>
 		  <input type="hidden" id="name" name="name" required/>
@@ -73,7 +77,8 @@ echo <<<EOL
 		  <input type="hidden" id="rowid" name="rowid" required/>
 		  <input type="hidden" id="notes" name="notes" required/>
 		</form>
-		<!-- (A) HIDDEN HTML FORM -->
+		
+		<!-- (DELETE CHART) HIDDEN HTML FORM -->
 		<form id="hiddenDeleteChart" action="deleteChart.php" method="post" style="display:none;">
 		  <input type="hidden" id="rowid" name="rowid" required/>
 		  <input type="hidden" id="charttype" name="charttype" required/>
@@ -85,7 +90,9 @@ echo <<<EOL
 		<BR>
 EOL;
 		
-			echo "<div class='divTable blueTable'>";
+			echo '<button class="actionBtn" id="prevButton">Prev</button>';
+			echo '<button class="actionBtn" id="nextButton">Next</button>';
+			echo "<div class='divTable blueTable' id='chart_table' style='height:auto'>";
 				echo "<div class='divTableRow'>";
 						echo "<div class='divChartHistoryHeading'>#</div>";
 						echo "<div class='divChartHistoryHeading'>பெ</div>";
@@ -97,7 +104,8 @@ EOL;
 				echo "</div>";
 				
 				if(isset($chartInfo['rowid'])){
-					for($i=0; $i<sizeof($chartInfo['rowid']); $i++){
+					//for($i=0; $i<sizeof($chartInfo['rowid']); $i++){
+					for($i=0; $i<$totalRecs; $i++){
 						$x=$chartInfo['rowid'][$i];
 						
 						$place = $chartInfo['place'][$i];
@@ -116,7 +124,7 @@ EOL;
 					}
 					
 					echo "</div>";
-					echo "<BR><P style='font-weight:bold; font-size:12px; text-align:center; width:100%'>மொத்தம் ".sizeof($chartInfo['rowid'])." ஜாதகங்கள்<BR>(திறக்க அதை தொடவும்/கிளிக் செய்யவும்)</P>";
+					echo "<BR><P style='font-weight:bold; font-size:12px; text-align:center; width:100%'>மொத்தம் " . "<span id='total'>" . $totalRecs . "</span>" . " ஜாதகங்கள்<BR>(திறக்க அதை தொடவும்/கிளிக் செய்யவும்)</P>";
 				}
 				else{
 					echo "</div>";
@@ -134,7 +142,7 @@ EOL;
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="canonical" href="https://html5-templates.com/" />
-    <title>PK Astro chart history</title>
+    <title>DSJV App</title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
 	
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
@@ -190,6 +198,24 @@ EOL;
 		$('#loader').show();
 	}
 	
+	function showSearchedChart()
+	{	
+		var str = document.getElementById('birth_detail').value;
+		alert(str); return;
+		document.getElementById("place").value = place;
+		document.getElementById("name").value = document.getElementById("col3"+rownum).innerHTML;
+		document.getElementById("sex").value = document.getElementById("col31"+rownum).innerHTML;
+		document.getElementById("in_date").value = document.getElementById("col5"+rownum).innerHTML;
+		document.getElementById("in_time").value = document.getElementById("col6"+rownum).innerHTML;
+		document.getElementById("lang").value = 'Tamil';
+		document.getElementById("rowid").value = rownum;
+		document.getElementById("notes").value = document.getElementById("col61"+rownum).innerHTML;
+		
+		document.getElementById("hiddenViewBirthChart").submit();
+		
+		$('#loader').show();
+	}
+	
 	function deleteRecord(rownum)
 	{
 		event.stopPropagation();
@@ -220,10 +246,116 @@ EOL;
 		window.open(url,'_self');
 	}
 	
-	$(document).ready(function() 
-	{
-		$('#loader').hide();
+	$(document).ready(function(){
+		
+	$('#loader').hide();
+	
+    $('.search-box input[type="text"]').on("keyup input", function(){
+        /* Get input value on change */
+        var inputVal = $(this).val();
+        var resultDropdown = $(this).siblings(".result");
+		
+		phone = '<?php echo $phone; ?>';
+	
+        if(inputVal.length>2){
+            $.get("backend-search_birth.php?phone="+phone, {term: inputVal}).done(function(data){
+                // Display the returned data in browser
+               resultDropdown.html(data);
+            });
+        } else{
+            resultDropdown.empty();
+        }
+    });
+    
+    // Set search input value on click of result item
+    //$(document).on("click", ".result p", function(){
+	$(document).on("click", ".result div", function(){
+        $(this).parents(".search-box").find('input[type="text"]').val($(this).text());
+        $(this).parent(".result").empty();
+		});
+		
+	  $("#name-filter").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#chart_table .divTableRow").each(function(index) {
+            if (index === 0) {
+                // Skip the header row
+                return;
+            }
+            var nameCell = $(this).find(".divChartHistory:eq(1)"); // Assuming name is the second column (index 1)
+            var nameText = nameCell.text().toLowerCase();
+            if (nameText.indexOf(value) > -1) {
+				if(value == 0){
+					location.reload();
+				}
+				else
+					$(this).show(); // Display matching rows
+				
+            } else {
+                $(this).hide(); // Hide non-matching rows
+            }
+        });
+		});
+	
 	});
+	
+	//pagination for the birth records table
+	    document.addEventListener('DOMContentLoaded', function () {
+        const itemsPerPage = 10; // Number of records per page
+        let currentPage = 1; // Initialize current page
+		
+		totalRecs = parseInt(document.getElementById('total').textContent,10);
+		
+		totalPages = Math.ceil(totalRecs / itemsPerPage);
+
+        // Get all rows (excluding the header row)
+        const rows = Array.from(document.querySelectorAll('#chart_table .divTableRow')).slice(1);
+
+        // Function to display data for the current page
+        function displayPage(pageNumber) {
+            const startIndex = (pageNumber - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+
+            // Hide all rows
+            rows.forEach((row) => {
+                row.style.display = 'none';
+            });
+
+            // Show rows for the current page
+            for (let i = startIndex; i < endIndex; i++) {
+                if (rows[i]) {
+                    rows[i].style.display = 'table-row';
+                }
+            }
+
+            // Disable "Previous" button if on the first page
+            document.getElementById('prevButton').disabled = pageNumber === 1;
+
+            // Disable "Next" button if on the last page
+            document.getElementById('nextButton').disabled = pageNumber === totalPages;
+        }
+
+        // Initial display (you can call this when the page loads)
+        displayPage(currentPage);
+
+        // Example: Add event listeners to pagination buttons (next and previous)
+        document.getElementById('nextButton').addEventListener('click', () => {
+            currentPage++;
+            displayPage(currentPage);
+        });
+
+        document.getElementById('prevButton').addEventListener('click', () => {
+            currentPage--;
+            displayPage(currentPage);
+        });
+    });
+	
+	function exportBirthCharts()
+	{	
+		var url = 'exportChartData.php?charttype=b&phone='+<?php echo $phone; ?>;
+		//alert(url);
+		window.open(url,'_self');
+	}
+
 		
     </script>
 </head>
@@ -243,8 +375,15 @@ EOL;
 		</div>
 	</div>
 	<div class='column-body'>
-		
-				<?php displayHistory() ?>					
+	
+	<?php
+	
+	echo '<center><BR><div class="divPanchangHeading">Search by Name: <input type="text" id="name-filter" placeholder="Enter name" style="display:inline;font-size: 14px; width: auto;"></div></center>';
+	
+	displayHistory(); 
+	?>
+	
+	<!-- <button class="actionBtn" onClick='exportBirthCharts();'>Download</button> -->
 
 	</div>
 </body>

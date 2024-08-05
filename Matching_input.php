@@ -28,6 +28,12 @@ if(isset($_GET["phone"])) {
 $girlname = isset($_SESSION['girlname']) ? $_SESSION['girlname'] : "";
 $boyname = isset($_SESSION['boyname']) ? $_SESSION['boyname'] : "";
 
+$girldate = isset($_SESSION['girldate']) ? $_SESSION['girldate'] : "";
+$girltime = isset($_SESSION['girltime']) ? $_SESSION['girltime'] : "";
+
+$boydate = isset($_SESSION['boydate']) ? $_SESSION['boydate'] : "";
+$boytime = isset($_SESSION['boytime']) ? $_SESSION['boytime'] : "";
+
 ?>
 
 <!doctype html>
@@ -35,13 +41,13 @@ $boyname = isset($_SESSION['boyname']) ? $_SESSION['boyname'] : "";
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="canonical" href="https://html5-templates.com/" />
     <title>PK Astro</title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
 	
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
-	<link rel="stylesheet" href="css/birth_chart_style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/matching_chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -77,6 +83,10 @@ function init(){
 	document.getElementById('place_boy').value = '<?php echo $place_boy; ?>';
 	document.getElementById('girlname').value = '<?php echo $girlname; ?>';
 	document.getElementById('boyname').value = '<?php echo $boyname; ?>';
+	document.getElementById('in_date_girl').value = '<?php echo $girldate; ?>';
+	document.getElementById('in_time_girl').value = '<?php echo $girltime; ?>';
+	document.getElementById('in_date_boy').value = '<?php echo $boydate; ?>';
+	document.getElementById('in_time_boy').value = '<?php echo $boytime; ?>';
 	updateNow();
 }
 
@@ -215,11 +225,15 @@ function updateNow() {
   } 
   var time = H+':'+M+':'+S;
 
-  document.getElementById('in_date_boy').value = today;
-  document.getElementById('in_time_boy').value = time; 
+  if(!document.getElementById('in_date_boy').value){
+	  document.getElementById('in_date_boy').value = today;
+	  document.getElementById('in_time_boy').value = time; 
+  }
   
-  document.getElementById('in_date_girl').value = today;
-  document.getElementById('in_time_girl').value = time; 
+  if(!document.getElementById('in_date_girl').value){
+	document.getElementById('in_date_girl').value = today;
+	document.getElementById('in_time_girl').value = time; 
+  }
 }
 
 	function openLoader() {
@@ -247,46 +261,46 @@ function updateNow() {
 		<div class='column-body'>
 					<div class="container">
 					
-						<center><div class="divTable blueTable" id="chart" style="width:360px">
+						<center><div class="divTable blueTable" id="chart">
 							<form name="chartInput" action="Matching_Chart.php" method="post" onsubmit="openLoader()">
-								<table style="width:100%; text-align: left">
+								<table style="width: max-content;text-align: left">
 									<tr>
 										<td colspan=2><P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">திருமண பொருத்தம்</P></td>
 									</tr>
 									<tr style="background-color: #FFFFFF">
-										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px;">*பெண் பெயர்:</H5></td>
-										<td><input type="text" name="girlname" id="girlname" autocomplete="off" placeholder="Enter girl name..." onfocus=this.value='' onBlur="girlnameOnBlur();" style="color:#000000;font-size:12px;font-weight:bold;width:175px;" />
+										<td><div class="divBirthInputLable">*பெ.பெயர்:</div></td>
+										<td><input type="text" name="girlname" id="girlname" autocomplete="off" placeholder="Enter girl name..." onfocus=this.value='' onBlur="girlnameOnBlur();" style="color:#000000;font-size:12px;font-weight:bold;" />
 										</td>
 									</tr>
 									<tr style="background-color: #FFFFFF">
-										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*பெண் பி.இடம்:</H5></td>
+										<td><div class="divBirthInputLable">*பெ.பி.இடம்:</div></td>
 										<td><div class="search-box"><input type="text" name="place_girl" id="place_girl" autocomplete="off" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" style="color:#000000;font-size:12px;font-weight:bold;width:175px;" /><div class="result"></div>
 										</td>
 									</tr>
 									<tr style="background-color: #FFFFFF">
-										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*பெண் பி.தேதி:</H5></td>
+										<td><div class="divBirthInputLable">*பெ.பி.தேதி:</div></td>
 										<td><input type="date" id="in_date_girl" name="in_date_girl" style="color:#000000;font-size:12px;font-weight:bold;width:100px;" /></td>
 									</tr>
 									<tr style="background-color: #FFFFFF">
-										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*பெண் பி.நேரம்:</H5></td>
+										<td><div class="divBirthInputLable">*பெ.பி.நேரம்:</div></td>
 										<td><input type="time" id="in_time_girl" name="in_time_girl" step="1" style="color:#000000;font-size:12px;font-weight:bold;width:100px;" /></td>
 									</tr>
 									<tr style="background-color: #FFFFFF">
-										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*ஆண் பெயர்:</H5></td>
+										<td><div class="divBirthInputLable">*ஆ.பெயர்:</div></td>
 										<td><input type="text" name="boyname" id="boyname" autocomplete="off" style="color:#000000;font-size:12px;font-weight:bold;width:175px;" placeholder="Enter boy name..." onfocus=this.value='' onBlur="boynameOnBlur();" />
 										</td>
 									</tr>
 									<tr style="background-color: #FFFFFF">
-										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*ஆண் பி.இடம்:</H5></td>
+										<td><div class="divBirthInputLable">*ஆ.பி.இடம்:</div></td>
 										<td><div class="search-box"><input type="text" name="place_boy" id="place_boy" autocomplete="off" style="color:#000000;font-size:12px;font-weight:bold;width:175px;" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" /><div class="result"></div>
 										</td>
 									</tr>
 									<tr style="background-color: #FFFFFF">
-										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*ஆண் பி.தேதி:</H5></td>
+										<td><div class="divBirthInputLable">*ஆ.பி.தேதி:</div></td>
 										<td><input type="date" id="in_date_boy" name="in_date_boy" style="color:#000000;font-size:12px;font-weight:bold;width:100px;" /></td>
 									</tr>
 									<tr style="background-color: #FFFFFF">
-										<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:12px">*ஆண் பி.நேரம்:</H5></td>
+										<td><div class="divBirthInputLable">*ஆ.பி.நேரம்:</div></td>
 										<td><input type="time" id="in_time_boy" name="in_time_boy" step="1" style="color:#000000;font-size:12px;font-weight:bold;width:100px;" /></td>
 									</tr>
 									

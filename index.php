@@ -2,6 +2,8 @@
 include_once "lib.php";
 
 $phone = isset($_SESSION['phone']) ? $_SESSION['phone'] : "9999999999";
+unset($_SESSION['menu_clicked']);
+$menuClicked =false;
 
 $key = '';
 
@@ -92,18 +94,20 @@ elseif(strcmp($_SESSION['user_type'],FREE)==0){
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="canonical" href="https://html5-templates.com/" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">	
 
-    <title>PK Astro Jamakol</title>
+    <title>DSJV app</title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
 	
-	<link rel="stylesheet" href="css/main.css">
-	<link rel="stylesheet" href="css/chart_style.css">
-	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+
     
 	<!-- <div id="google_translate_element"></div>
 	<script type="text/javascript">
@@ -112,7 +116,8 @@ elseif(strcmp($_SESSION['user_type'],FREE)==0){
 	}
 	</script>
 	<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> -->
-    <script src="script.js"></script>
+    <script src="script.js"?<?php echo date('ymdhis'); ?>></script>
+	<script src="common.js"?<?php echo date('ymdhis'); ?>></script>
     <script type="text/javascript">
  
 
@@ -134,21 +139,47 @@ elseif(strcmp($_SESSION['user_type'],FREE)==0){
 			
 		}
 		
-		/*if (document.readyState != "complete") {
-			document.querySelector("body").style.visibility = "hidden";
-			document.querySelector("#loader").style.visibility = "visible";
-		} else {
-			document.querySelector("#loader").style.display = "none";
-			document.querySelector("body").style.visibility = "visible";	
-			document.getElementById("msg").style.visibility = "none";
-		}*/
+		checkDefaultHome();
 	};
+	
+
+document.addEventListener('DOMContentLoaded', function () {
+    handleSwipe();
+});
+
+function handleSwipe(){
+	const bodyElement = document.body;
+    const hammer = new Hammer(bodyElement);
+
+    // Listen for swipe events
+    hammer.on('swipe', function (event) {
+        switch (event.direction) {
+            case Hammer.DIRECTION_LEFT:
+                console.log('Left swipe detected');
+				window.location.href = 'current_jamakol_chart.php';
+                break;
+            case Hammer.DIRECTION_RIGHT:
+                console.log('Right swipe detected');
+				window.location.href = 'new_panchang.php';
+                break;
+            case Hammer.DIRECTION_UP:
+                console.log('Up swipe detected');
+				window.location.href = 'hora.php';
+                break;
+            case Hammer.DIRECTION_DOWN:
+                console.log('Down swipe detected');
+				window.location.href = 'star_thaara_palan.php';
+                break;
+        }
+    });
+}
+
 		
     </script>
 </head>
 
 <body onLoad="init();">
-<div id="loader" class="center"></div>
+<!-- <div id="loader" class="center"></div> -->
 
 <div class="title"></div>
 
@@ -179,26 +210,37 @@ EOL;
 						else
 						{
 							include "indexMenu_mobile.php";
+							//include "setDefaultHome.php";
 						}
 				echo "</div>";
 					?>
 			</span>
 		</div>
-		<div class="column-body">
+
+		<div class="column-body" id='colbody'>
+		
+		<!-- <form>
+			<input type="radio" id="jamakol" name="defaultHome" value=1 style='width:auto' />
+			<label class='divBirthInputLable' for="jamakol" style='width:auto'>Jamakol</label>
+			<input type="radio" id="Panchang" name="defaultHome" style='width:auto' value=2 />
+			<label class='divBirthInputLable' for="Panchang" style='width:auto'>Panchang</label>
+			<button class='actionBtn' onClick="handleSelection()">Set Home</button>
+		</form> -->
 		
 		<?php
 		if(!isFreeUser($_SESSION['user_type'])){
 			echo <<<EOL
 			
-			<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">தற்போதய  ஜாமக்கோள்</P>
-			<DIV id='msg'>Please wait, jamakol chart is loading</DIV>
-			<div class='current-jama' id='current-jama' onClick='window.open("Jamakol_input.php","_self");' style='cursor: pointer;margin-top:-10px'>
+			<!-- <P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">தற்போதய  ஜாமக்கோள்</P>
+			<DIV id='msg'>Please wait, jamakol chart is loading</DIV> 
+			<div class='current-jama' id='current-jama' onClick='window.open("Jamakol_input.php","_self");' style='cursor: pointer;margin-top:-25px'> -->
 EOL;
-				include "live_jamakol_chart.php";
+				//include "live_jamakol_chart.php";
+				include "home_page.php";
 				
-			echo <<<EOL
-				</div>
-EOL;
+			//echo <<<EOL
+			//	</div>
+//EOL;
 		}
 		else{
 			echo <<<EOL
