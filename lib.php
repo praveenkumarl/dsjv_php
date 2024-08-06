@@ -1824,7 +1824,7 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 			
 			if(strtotime($current_date) >= strtotime($curr_bukthi_start_date) and strtotime($current_date) <= strtotime($curr_bukthi_end_date)){
 				echo "<div class='divTableRow'>";
-					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
+					echo "<div class='divBukthiHeading_boy'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divCurrentBukthi'>$curr_bukthi_start_date</div>";
 					echo "<div class='divCurrentBukthi'>$curr_bukthi_end_date</div>";
 				echo "</div>";
@@ -1836,14 +1836,14 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 			}
 			elseif(strtotime($transit_date) >= strtotime($curr_bukthi_start_date) and strtotime($transit_date) <= strtotime($curr_bukthi_end_date)){
 				echo "<div class='divTableRow'>";
-					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
+					echo "<div class='divBukthiHeading_boy'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divBirthBukthi'>$curr_bukthi_start_date</div>";
 					echo "<div class='divBirthBukthi'>$curr_bukthi_end_date</div>";
 				echo "</div>";
 		}
 			else{
 				echo "<div class='divTableRow'>";
-					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
+					echo "<div class='divBukthiHeading_boy'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divBukthi'>$curr_bukthi_start_date</div>";
 					echo "<div class='divBukthi'>$curr_bukthi_end_date</div>";
 				echo "</div>";
@@ -1867,7 +1867,7 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 		
 		if(strtotime($current_date) >= strtotime($curr_bukthi_start_date) and strtotime($current_date) <= strtotime($curr_bukthi_end_date)){
 				echo "<div class='divTableRow'>";
-					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
+					echo "<div class='divBukthiHeading_boy'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divCurrentBukthi'>$curr_bukthi_start_date</div>";
 					if($i==$curr_dasa_lord-1){
 						echo "<div class='divCurrentBukthi'>$dasa_end_date</div>";
@@ -1884,7 +1884,7 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 		}
 		elseif(strtotime($transit_date) >= strtotime($curr_bukthi_start_date) and strtotime($transit_date) <= strtotime($curr_bukthi_end_date)){
 				echo "<div class='divTableRow'>";
-					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
+					echo "<div class='divBukthiHeading_boy'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divBirthBukthi'>$curr_bukthi_start_date</div>";
 					if($i==$curr_dasa_lord-1){
 						echo "<div class='divBirthBukthi'>$dasa_end_date</div>";
@@ -1896,7 +1896,7 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 		}
 		else{
 			echo "<div class='divTableRow'>";
-				echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
+				echo "<div class='divBukthiHeading_boy'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 				echo "<div class='divBukthi'>$curr_bukthi_start_date</div>";
 				if($i==$curr_dasa_lord-1){
 					echo "<div class='divBukthi'>$dasa_end_date</div>";
@@ -2028,9 +2028,9 @@ function calculateVimDasa_boy()
 
 	echo "<center><div class='divTable blueTable' style='height:auto;display:none;' id='BukthiMatable_boy'>"; 
 		echo "<div class='divTableRow'>";
-			echo "<div class='divDasaHeading'>Dasa/Bukthi Lord</div>";
-			echo "<div class='divDasaHeading'>Start</div>";
-			echo "<div class='divDasaHeading'>End</div>";
+			echo "<div class='divDasaHeading_boy'>Dasa/Bukthi Lord</div>";
+			echo "<div class='divDasaHeading_boy'>Start</div>";
+			echo "<div class='divDasaHeading_boy'>End</div>";
 		echo "</div>";
 	
 	for($i=0; $i<9; $i++)
@@ -2045,9 +2045,9 @@ function calculateVimDasa_boy()
 			$dasa_start_date = $curr_dasa_start_date;
 			
 			echo "<div class='divTableRow'>";
-				echo "<div class='divDasaHeading'>".$dasa_lord_order_tamil[$i]."</div>";
-				echo "<div class='divDasa'>$curr_dasa_start_date</div>";
-				echo "<div class='divDasa'>$curr_dasa_end_date</div>";
+				echo "<div class='divDasaHeading_boy'>".$dasa_lord_order_tamil[$i]."</div>";
+				echo "<div class='divDasa_boy'>$curr_dasa_start_date</div>";
+				echo "<div class='divDasa_boy'>$curr_dasa_end_date</div>";
 			echo "</div>";
 			
 			$curr_dasa_start_date=date('d-m-Y',strtotime($curr_dasa_end_date. '+ 1 day'));
@@ -2065,9 +2065,9 @@ function calculateVimDasa_boy()
 		$curr_dasa_end_date = date('d-m-Y',strtotime($curr_dasa_start_date. '+ '.$dasa_lord_arr[$dasa_lord].' years'));
 		
 		echo "<div class='divTableRow'>";
-			echo "<div class='divDasaHeading'>".$dasa_lord_order_tamil[$i]."</div>";
-			echo "<div class='divDasa'>$curr_dasa_start_date</div>";
-			echo "<div class='divDasa'>$curr_dasa_end_date</div>";
+			echo "<div class='divDasaHeading_boy'>".$dasa_lord_order_tamil[$i]."</div>";
+			echo "<div class='divDasa_boy'>$curr_dasa_start_date</div>";
+			echo "<div class='divDasa_boy'>$curr_dasa_end_date</div>";
 		echo "</div>";
 		
 		$curr_dasa_start_date=date('d-m-Y',strtotime($curr_dasa_end_date. '+ 1 day'));
@@ -3547,14 +3547,18 @@ function displayButtons($inner)
 		if(strpos(debug_backtrace()[0]['file'],'Matching')!==false){
 			$class_name = "actionBtnGirl";
 		}
+		
+		$button_id = "buttons_inner";
 	}
 	else{
 		$class_name = 'actionBtnBoy';
 		$starlord_function = 'showStarLordTable_boy()';
 		$dasa_function = 'showDasaTable_boy()';
+		
+		$button_id = "buttons_outer";
 	}
 
-	echo "<center><div class='divTable blueTable' style='height:auto;display:none' id='buttons'>"; 
+	echo "<center><div class='divTable blueTable' style='height:auto;display:none' id='$button_id'>"; 
 		echo "<div class='divTableRow'>";
 			echo <<<EOL
 				<div class="divMenu" style="width:50%">

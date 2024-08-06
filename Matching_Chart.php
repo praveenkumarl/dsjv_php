@@ -271,6 +271,16 @@ $dayofweek = date('w', strtotime($chart_date));
 			  }
 		}
 		
+		function displayButtons()
+		{
+			var btns1 = document.getElementById("buttons_inner");
+			var btns2 = document.getElementById("buttons_outer");
+						
+			btns1.style.display='table';
+			btns2.style.display='table';
+			
+		}
+		
 		function displayAll()
 		{
 			var x = document.getElementById("DasaMatable");
@@ -320,7 +330,9 @@ $dayofweek = date('w', strtotime($chart_date));
 		
 		$(document).ready(function() 
 		{
+			displayButtons();
 			$('#loader').hide();
+			
 		});
 				
 	</script>
