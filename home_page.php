@@ -5,11 +5,11 @@ $super_admin_image="";
 $id="0";
 
 if(isset($_SESSION['userinfo']) && strcmp($_SESSION['userinfo']['user_type'],ADMIN)==0){
-	$super_admin_image = 'images/admin.png';
+	$super_admin_image = 'images/admin.jpg';
 	$id="51";
 }
 else if(isset($_SESSION['userinfo']) && strcmp($_SESSION['userinfo']['user_type'],SUPER)==0){
-	$super_admin_image = 'images/super.png';
+	$super_admin_image = 'images/super.jpg';
 	$id="5";
 }
 else{
@@ -133,21 +133,21 @@ else{
 echo<<<EOL
 	<table>
         <tr>
-            <td class="image-cell"><button id=1 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/jamakol.png')"> </td>
-            <td class="image-cell"><button id=2 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/panchang.png')"></td>
-            <td class="image-cell"><button id=3 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/birth.png')"></td>
+            <td class="image-cell"><button id=1 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/jamakol.jpg')"> </td>
+            <td class="image-cell"><button id=2 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/panchang.jpg')"></td>
+            <td class="image-cell"><button id=3 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/birth.jpg')"></td>
         </tr>
 		<tr>
-            <td class="image-cell"><button id=4 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/matching.png')"></td>
+            <td class="image-cell"><button id=4 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/matching.jpg')"></td>
 			<td class="image-cell"><button id='$id' class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('$super_admin_image')"></td>
-            <td class="image-cell"><button id=6 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/thaara_palan.png')"></td>
+            <td class="image-cell"><button id=6 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/thaara_palan.jpg')"></td>
 			
             
         </tr>
         <tr>
-            <td class="image-cell"><button id=7 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/hora.png')"></td>
-            <td class="image-cell"><button id=8 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/prasannam.png')"></td>
-            <td class="image-cell"><button id=9 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/planet_kaaragam.png')"></td>
+            <td class="image-cell"><button id=7 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/hora.jpg')"></td>
+            <td class="image-cell"><button id=8 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/prasannam.jpg')"></td>
+            <td class="image-cell"><button id=9 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/planet_kaaragam.jpg')"></td>
         </tr>
     </table>
 EOL;
