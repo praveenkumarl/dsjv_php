@@ -506,10 +506,11 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 
 		function displayAll()
 		{
-			var x = document.getElementById("DasaMatable");
-			var y = document.getElementById("BukthiMatable");
-			var z1 = document.getElementById("starlordHeadMutable");
-			var z2 = document.getElementById("starlordBodyMutable");
+			
+			document.getElementById("starlordHeadMutable").style.display='table';
+			document.getElementById("starlordBodyMutable").style.display='table';
+			document.getElementById("DasaMatable").style.display='table';
+			document.getElementById("BukthiMatable").style.display='table';
 			document.getElementById("starlordHeadMutable_transit").style.display='table';
 			document.getElementById("starlordBodyMutable_transit").style.display='table';
 			document.getElementById("thithiYogamKaranamHeadMutable").style.display='table';
@@ -519,11 +520,7 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 			
 			var btns = document.getElementById("buttons");
 			
-			btns.style.display='none';
-			x.style.display='table';
-			y.style.display='table';
-			z1.style.display='table';
-			z2.style.display='table';
+			btns.style.display='table';
 		}
 		
 		function generatePDF() {
@@ -2429,7 +2426,7 @@ EOL;
 
 echo <<<EOL
 						
-						<center><div class='divTable blueTable' style='height:auto;' id='buttons'>
+						<center><div class='divTable blueTable' style='height:auto;' id='notes'>
 							<br>
 							<div class='divTableRow'>
 								<div class="divTableCell" colspan='2'>
