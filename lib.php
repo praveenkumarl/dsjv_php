@@ -6869,7 +6869,11 @@ function getKubera(){
 	$second_athipathi_paatham = $planet_starlord[$second_athipathi][4];
 	
 	//Forumla to find the gubera paadham, (Moon paatham * $second_lord_star_paatham) / 108, reminder is the required point/paatham
-	$gubera_paatham = ($moon_paatham * $second_athipathi_paatham) % 108;
+	$gubera_paatham = ($moon_paatham * $second_athipathi_paatham) % 108 - 1;
+	
+	if($gubera_paatham==-1){
+		$gubera_paatham = 107;
+	}
 	
 	debug("moon-paatham=$moon_paatham--second_athipathi-paatham=$second_athipathi_paatham--kubera_paatham=$gubera_paatham");
 	debug(getValue(getStarPaatham($gubera_paatham),1));
