@@ -239,13 +239,6 @@ EOL;
         return confirm('Are you sure?');
     });
 	
-	function exportBirthCharts()
-	{	
-		var url = 'exportChartData.php?charttype=b&phone='+<?php echo $phone; ?>;
-		//alert(url);
-		window.open(url,'_self');
-	}
-	
 	$(document).ready(function(){
 		
 	$('#loader').hide();
@@ -274,33 +267,29 @@ EOL;
         $(this).parent(".result").empty();
 		});
 		
-	  $("#name-filter").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $("#chart_table .divTableRow").each(function(index) {
-            if (index === 0) {
-                // Skip the header row
-                return;
-            }
-            var nameCell = $(this).find(".divChartHistory:eq(1)"); // Assuming name is the second column (index 1)
-            var nameText = nameCell.text().toLowerCase();
-            if (nameText.indexOf(value) > -1) {
-				if(value == 0){
-					location.reload();
-				}
-				else
-					$(this).show(); // Display matching rows
-				
-            } else {
-                $(this).hide(); // Hide non-matching rows
-            }
-        });
+	 	 $("#name-filter").on("keyup", function() {
+		var value = $(this).val().toLowerCase().trim().normalize('NFC');
+		$("#chart_table .divTableRow").each(function(index) {
+			if (index === 0) {
+				// Skip the header row
+				return;
+			}
+			var nameCell = $(this).find(".divChartHistory:eq(1)"); // Assuming name is the second column (index 1)
+			var nameText = nameCell.text().toLowerCase().normalize('NFC');
+			if (nameText.includes(value)) {
+				$(this).show(); // Display matching rows
+			} else {
+				$(this).hide(); // Hide non-matching rows
+			}
 		});
+	});
+
 	
 	});
 	
 	//pagination for the birth records table
 	    document.addEventListener('DOMContentLoaded', function () {
-        const itemsPerPage = 10; // Number of records per page
+        const itemsPerPage = 50; // Number of records per page
         let currentPage = 1; // Initialize current page
 		
 		totalRecs = parseInt(document.getElementById('total').textContent,10);
@@ -349,12 +338,22 @@ EOL;
         });
     });
 	
-	function exportBirthCharts()
+	function old_exportBirthCharts()
 	{	
 		var url = 'exportChartData.php?charttype=b&phone='+<?php echo $phone; ?>;
 		//alert(url);
 		window.open(url,'_self');
 	}
+	
+	function exportBirthCharts() {
+		var url = 'exportChartData.php?charttype=b&phone=' + <?php echo $phone; ?>;
+		var a = document.createElement('a');
+		a.href = url;
+		a.download = 'birth_charts.csv';
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+}
 
 		
     </script>
@@ -383,7 +382,7 @@ EOL;
 	displayHistory(); 
 	?>
 	
-	<!-- <button class="actionBtn" onClick='exportBirthCharts();'>Download</button> -->
+	<button class="actionBtn" onClick='exportBirthCharts();'>Download</button>
 
 	</div>
 </body>
