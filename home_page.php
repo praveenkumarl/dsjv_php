@@ -80,13 +80,13 @@ else{
 				window.location.href = 'new_panchang.php';
 				break;
 			case "3":
-				window.location.href = 'Birth_input.php';
+				window.location.href = 'numerology.php';
 				break;
 			case "4":
 				window.location.href = 'Matching_input.php';
 				break;
 			case "5":
-				window.location.href = 'maintenance.php';
+				window.location.href = 'Birth_input.php';
 				break;
 			case "51":
 				window.location.href = 'admin.php';
@@ -135,11 +135,12 @@ echo<<<EOL
         <tr>
             <td class="image-cell"><button id=1 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/jamakol.jpg')"> </td>
             <td class="image-cell"><button id=2 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/panchang.jpg')"></td>
-            <td class="image-cell"><button id=3 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/birth.jpg')"></td>
+            <td class="image-cell"><button id=3 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/numerology.jpg')"></td>
         </tr>
 		<tr>
             <td class="image-cell"><button id=4 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/matching.jpg')"></td>
-			<td class="image-cell"><button id='$id' class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('$super_admin_image')"></td>
+			<!-- <td class="image-cell"><button id='$id' class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('$super_admin_image')"></td> -->
+			<td class="image-cell"><button id=5 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/birth.jpg')"></td>
             <td class="image-cell"><button id=6 class="home-button" onclick="toggle3DEffect(this.id)"  style="background-image: url('images/thaara_palan.jpg')"></td>
 			
             

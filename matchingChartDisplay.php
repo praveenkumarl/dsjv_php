@@ -179,7 +179,7 @@ getChartDetails();
 	<div class='column-body'>
 		<div class="container">
 		
-			<center><div class="divTable blueTable" id="chart" style="width:360px;">
+			<center><div class="divTable blueTable" id="chart">
 
 				<!-- (A) HIDDEN HTML FORM -->
 				<form id="hiddenViewMatchingChart" action="Matching_Chart.php" method="post" style="display:none;">
@@ -206,7 +206,7 @@ getChartDetails();
 				<BR><BR>		
 				
 <?php
-					echo "<div class='divTable blueTable' style='height:40px;width:95%'>";
+					echo "<div class='divTable blueTable' style='height:40px;'>";
 						echo "<div class='divTableRow'>";
 								echo "<div class='divChartHistoryHeading'>எண்</div>";
 								echo "<div class='divChartHistoryHeading'>பெ.பெயர்</div>";
@@ -244,7 +244,6 @@ getChartDetails();
 							echo "<BR><P style='color:#660000;font-weight:bold; font-size:14px; text-align:center; width:100%'>ஜாதகங்கள் இல்லை</P>";
 							
 						}
-					
 
 ?>
 				

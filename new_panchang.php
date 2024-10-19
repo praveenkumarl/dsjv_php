@@ -499,8 +499,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 
 		newdate = new Date(t.getFullYear(),t.getMonth(),t.getDate(),t.getHours(),t.getMinutes()); 
 		
-				
-		newdate = changeTimezone(newdate,timezone);
+		//newdate = changeTimezone(newdate,timezone);
 	
 		panchang.calculate(newdate, function() {
 			//document.writeln('<div class="divTableRow">');
@@ -528,7 +527,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		//newdate = new Date(t.getFullYear(),t.getMonth(),t.getDate(),t.getHours()+36); //adding 26 hours for thithi, nak, yogam
 		//newdate = new Date(panchang.Nakshatra.end.getFullYear(),panchang.Nakshatra.end.getMonth(),panchang.Nakshatra.end.getDate(),panchang.Nakshatra.end.getHours(),panchang.Nakshatra.end.getMinutes()+1); //adding 26 hours for thithi, nak, yogam
 		newdate = new Date(nak_end.getFullYear(),nak_end.getMonth(),nak_end.getDate(),nak_end.getHours(),nak_end.getMinutes()+1); //adding 1 minute from current nak to get next
-		newdate = changeTimezone(newdate,timezone);
+		//newdate = changeTimezone(newdate,timezone);
 	
 		panchang.calculate(newdate, function() {
 			document.getElementById('nak').innerHTML = document.getElementById('nak').innerHTML + panchang.Nakshatra.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Nakshatra.start)+' முதல்<BR>'+formatDateTime(panchang.Nakshatra.end)+' வரை</div>';
@@ -536,7 +535,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 
 		//To add next karanam
 		newdate = new Date(karanam_end.getFullYear(),karanam_end.getMonth(),karanam_end.getDate(),karanam_end.getHours(), karanam_end.getMinutes()+1); //adding 1 mins to get next karanam
-		newdate = changeTimezone(newdate,timezone);
+		//newdate = changeTimezone(newdate,timezone);
 	
 		panchang.calculate(newdate, function() {
 			document.getElementById('karanam').innerHTML = document.getElementById('karanam').innerHTML + panchang.Karna.name+'('+getKaranaPlanet(panchang.Karna.name)+')'+'<BR><div class="divSmall">'+formatDateTime(panchang.Karna.start)+' முதல்<BR>'+formatDateTime(panchang.Karna.end)+' வரை</div>';
@@ -544,15 +543,15 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 
 		//To add next thithi
 		newdate = new Date(thithi_end.getFullYear(),thithi_end.getMonth(),thithi_end.getDate(),thithi_end.getHours(),thithi_end.getMinutes()+1); //adding 1 min to get next thithi
-		newdate = changeTimezone(newdate,timezone);
+		//newdate = changeTimezone(newdate,timezone);
 	
 		panchang.calculate(newdate, function() {
 			document.getElementById('thithi').innerHTML = document.getElementById('thithi').innerHTML + panchang.Tithi.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Tithi.start)+' முதல்<BR>'+formatDateTime(panchang.Tithi.end)+' வரை</div>';
 		});
 
 		//To add next yogam
-		newdate = new Date(yogam_end.getFullYear(),yogam_end.getMonth(),yogam_end.getDate(),yogam_end.getHours(),yogam_end.getMinutes()+1); //adding 1 min to get next yogam
-		newdate = changeTimezone(newdate,timezone);
+		newdate = new Date(yogam_end.getFullYear(),yogam_end.getMonth(),yogam_end.getDate(),yogam_end.getHours(),yogam_end.getMinutes()+10); //adding 10 min to get next yogam
+		//newdate = changeTimezone(newdate,timezone);
 	
 		panchang.calculate(newdate, function() {
 			document.getElementById('yogam').innerHTML = document.getElementById('yogam').innerHTML + panchang.Yoga.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Yoga.start)+' முதல்<BR>'+formatDateTime(panchang.Yoga.end)+' வரை</div>';

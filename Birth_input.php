@@ -77,7 +77,7 @@ function getChartDetails()
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="canonical" href="https://html5-templates.com/" />
     <title>PK Astro Birth Chart</title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
@@ -125,7 +125,6 @@ function init(){
 }
 
 function validateForm() {
-
   let d = document.getElementById("in_date").value;
   let t = document.getElementById("in_time").value;
   
@@ -154,6 +153,8 @@ function validateForm() {
 	document.getElementById('name').style.borderColor = "red";
     return false;
   }
+  
+  document.forms["chartInput"].submit();
   
 }
 
@@ -276,7 +277,7 @@ function updateNow() {
 					</tr>
 					<tr>
 						<td></td>
-						<td><input type="checkbox" id="birthsave" name="birthsave" value=1 /><label class='divBirthInputLable' for="birthsave">Save</label></td>
+						<td><input type="checkbox" id="birthsave" name="birthsave" value=1 style="display:none" /><label class='divBirthInputLable' for="birthsave">Save</label></td>
 					</tr>
 					<!-- <tr style="background-color: #FFFFFF">
 						<td>
@@ -293,7 +294,12 @@ function updateNow() {
 						<td colspan="2" align="center"><div id="error" style="color:red;"></div></td>
 					</tr>
 					<tr  style="background-color: #FFFFFF">
-						<td colspan="2" align="center"><input type="submit" value="Submit" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();"></td>
+						<td align="center">
+							<button type="button" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="window.open('birthChartDisplay.php','_self');">History</button>
+						</td>
+						<td align="center">
+							<input type="button" value="Submit" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
+						</td>
 					</tr>
 					
 				</table>

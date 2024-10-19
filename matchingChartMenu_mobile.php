@@ -80,6 +80,7 @@ elseif(strcmp($usertype,PAID)==0){
 				<div class="dropdown1-content">
 				  <a class='glow-button' href="Jamakol_input.php" class='glow-button'>ஜாமக்கோள்</a>
 				  <a class='glow-button' href="Birth_input.php" class='glow-button'>பிறப்பு ஜாதகம்</a>
+				  <a class='glow-button' href="numerology.php">எண் கணிதம்</a>
 				  <a class='glow-button' href="planet_kaaragam.php" class='glow-button'>கிரக காரகம்</a>
 				  <a class='glow-button' href="hora.php" class='glow-button'>ஓரை</a>
 				  <a class='glow-button' href="star_thaara_palan.php" class='glow-button'>தாரா பலன்</d</a>
@@ -108,6 +109,7 @@ elseif(strcmp($usertype,SUPER)==0){
 				<div class="dropdown1-content">
 				  <a class='glow-button' href="Jamakol_input.php">ஜாமக்கோள்</a>
 				  <a class='glow-button' href="Birth_input.php">பிறப்பு ஜாதகம்</a>
+				  <a class='glow-button' href="numerology.php">எண் கணிதம்</a>
 				  <a class='glow-button' href="planet_kaaragam.php">கிரக காரகம்</a>
 				  <a class='glow-button' href="hora.php">ஓரை</a>
 				  <a class='glow-button' href="star_thaara_palan.php">தாரா பலன்</d</a>
@@ -135,6 +137,7 @@ elseif(strcmp($usertype,ADMIN)==0){
 				<div class="dropdown1-content">
 				  <a class='glow-button' href="Jamakol_input.php">ஜாமக்கோள்</a>
 				  <a class='glow-button' href="Birth_input.php">பிறப்பு ஜாதகம்</a>
+				  <a class='glow-button' href="numerology.php">எண் கணிதம்</a>
 				  <a class='glow-button' href="planet_kaaragam.php">கிரக காரகம்</a>
 				  <a class='glow-button' href="hora.php">ஓரை</a>
 				  <a class='glow-button' href="star_thaara_palan.php">தாரா பலன்</d</a>

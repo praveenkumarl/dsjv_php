@@ -772,7 +772,9 @@ panchang = {
      var year = d.getFullYear();
      var hr = d.getHours();
      hr += d.getMinutes()/60;
-     var tzone = d.getTimezoneOffset()/60*(-1);
+     //var tzone = d.getTimezoneOffset()/60*(-1);
+     var tzone = getTimezoneOffsetInHours(timezone,d);
+     console.log(tzone);
     }
     inpmin = Math.floor(d.getMinutes());
     if (inpmin < 10)inpmin = "0" + inpmin;
@@ -878,3 +880,15 @@ var z = floor(abs(fix360(Lmoon + ayanamsa))/30);
     if (cb) { cb();}
 }
 }
+
+function getTimezoneOffsetInHours(timezone, date) {
+   if (!date) {
+       date = new Date();
+   }
+   const utcDate = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }));
+   const targetDate = new Date(date.toLocaleString('en-US', { timeZone: timezone }));
+   
+   const offset = (targetDate - utcDate) / 1000 / 60 / 60;
+   return offset;
+}
+

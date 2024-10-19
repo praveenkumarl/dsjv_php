@@ -305,7 +305,8 @@ function updateNow() {
 									</tr>
 									
 									<tr  style="background-color: #FFFFFF">
-										<td colspan="2" align="center"><input type="submit" value="Submit" class="primary wide" style="text-align:center; font-weight:bold; background:#660000" onclick="return validateForm();"></td>
+										<td align="center"><button value="MatchBirth" class="primary wide" style="text-align:center; font-weight:bold; background:#660000" onclick="window.open('matchBirthChart.php')">MatchBirth</button></td>
+										<td align="center"><input type="submit" value="Submit" class="primary wide" style="text-align:center; font-weight:bold; background:#660000" onclick="return validateForm();"></td>
 									</tr>
 									
 									<tr style="background-color: #FFFFFF">

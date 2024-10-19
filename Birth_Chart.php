@@ -146,8 +146,10 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 	<script src="html2pdf.bundle.min.js" type="text/javascript"></script>
 
     <script src="script.js"></script>
-	
+	<script src="panchang.js?<?php echo date('ymdhis'); ?>"></script>
+	<script src="my_panchang.js?<?php echo date('ymdhis'); ?>"></script>
     <script type="text/javascript">
+	var timezone = '<?php echo $TZ; ?>';
 	
 /******** this code is to take screenshot of the chart **************	
 		var dataURL = {};  
@@ -211,7 +213,11 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 				$('#birth_info').append(detail);
 				$('#birthdetails').hide();
 				
+			const datetime = new Date('<?php echo $chart_date." ".$chart_time; ?>');
+			updatePanchangData(datetime);
+			
 			displayAll();
+			
 		});
 		
 		function validateForm() {
@@ -520,7 +526,8 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 			
 			var btns = document.getElementById("buttons");
 			
-			btns.style.display='table';
+			if(btns)
+				btns.style.display='table';
 		}
 		
 		function generatePDF() {
@@ -689,7 +696,6 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
            last_planet = Object.keys(dasa_period)[i];
        }
       
-       
        
        for (var i = 0; i < 9 - count; i++) {
            //console.log(Object.keys(dasa_period)[i]);
@@ -874,6 +880,52 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 			.catch(error => {
 				console.error('Error loading translation mapping:', error);
 			});
+	}
+	
+	function updatePanchangData(in_datetime){
+		//const t = new Date('<?php echo $chart_date." ".$chart_time; ?>');
+		const t = in_datetime;
+
+		newdate = new Date(t.getFullYear(),t.getMonth(),t.getDate(),t.getHours(),t.getMinutes()); 
+		
+		//newdate = changeTimezone(newdate,timezone);
+		//alert('updatePanchangData: in_datetime='+in_datetime+' newdate='+newdate+' timezone='+timezone);
+	
+		panchang.calculate(newdate, function() {
+			//document.writeln('<div class="divTableRow">');
+			//	document.writeln('<div class="divTablePanchangMedium" style="width:80px">'+formatDate(newdate)+'</div>');
+			//	document.writeln('<div class="divTablePanchangMedium" style="width:50px">'+panchang.Day.name+'</div>');
+			//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Nakshatra.name+" "+formatDateTime(panchang.Nakshatra.end)+' வரை'+displayNextNak(newdate,panchang.Nakshatra)+'</div>');
+			//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Tithi.name+' '+formatDateTime(panchang.Tithi.end)+' வரை'+displayNextThithi(newdate,panchang.Tithi)+'</div>');
+			//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Karna.name+' '+formatDateTime(panchang.Karna.start)+" முதல் "+formatDateTime(panchang.Karna.end)+' வரை'+displayNextKar(newdate,panchang.Karna)+'</div>');
+			//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Yoga.name+' '+formatDateTime(panchang.Yoga.start)+" முதல் "+formatDateTime(panchang.Yoga.end)+' வரை'+displayNextYoga(newdate,panchang.Yoga)+'</div>');
+			//document.writeln('</div>');
+
+			//alert(formatDateTime(changeTimezone(panchang.Yoga.start,timezone)));
+			
+			document.getElementById('thithi').innerHTML = panchang.Tithi.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Tithi.start)+' முதல்<BR>'+formatDateTime(panchang.Tithi.end)+' வரை</div>';
+			document.getElementById('nak').innerHTML = panchang.Nakshatra.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Nakshatra.start)+' முதல்<BR>'+formatDateTime(panchang.Nakshatra.end)+' வரை</div>';
+			document.getElementById('yogam').innerHTML = panchang.Yoga.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Yoga.start)+' முதல்<BR>'+formatDateTime(panchang.Yoga.end)+' வரை</div>';
+			document.getElementById('karanam').innerHTML = panchang.Karna.name+'('+getKaranaPlanet(panchang.Karna.name)+')'+'<BR><div class="divSmall">'+formatDateTime(panchang.Karna.start)+' முதல்<BR>'+formatDateTime(panchang.Karna.end)+' வரை</div>';
+		});
+	}
+	
+	function getKaranaPlanet(karan) {
+		const karanaPlanetArray = {
+			"பவ": "செவ்வாய்",
+			"பாலவ": "ராகு",
+			"கௌலவ": "சனி",
+			"தைதுலை": "சுக்ரன்",
+			"கரசை": "சந்திரன்",
+			"வணிசை": "சூரியன்",
+			"பத்தரை": "கேது",
+			"சகுனி": "சனி",
+			"சதுஷ்பாத": "குரு",
+			"நாகவ": "ராகு",
+			"கிம்ஸ்துக்கினம்": "புதன்"
+		};
+
+		return karanaPlanetArray[karan];
 	}
  
     // Execute the transliteration function once the page is loaded
@@ -1184,68 +1236,6 @@ function findMandhiHouse_transit($in_dayofweek,$in_sun_degree,$in_day)
 	return $mandhi_house;
 }
 
-function displayChart($in,$out)
-{
-
-echo <<<EOL
-	<div class="divTable blueTable" id="chart">
-		
-		<div class="divTableBody">
-			<div class="divTableRow">
-					<div class="divTableOuterCell">$out[11]</div>
-					<div class="divTableDummyCell"></div>
-					<div class="divTableOuterCell">$out[0]</div>
-					<div class="divTableDummyCell"></div>
-					<div class="divTableDummyCell"></div>
-					<div class="divTableOuterCell">$out[2]</div>
-			</div>
-			<div class="divTableRow">
-					<div class="divTableDummyCell"></div>
-					<div class="divTableCell">$in[11]<span class='symbol'>&#9795;</span></div>
-					<div class="divTableCell">$in[0]<span class='symbol'>&#9794;</span></div>
-					<div class="divTableCell">$in[1]<span class='symbol'>&#9792;</span></div>
-					<div class="divTableCell">$in[2]<span class='symbol'>&#9791;</span></div>
-					<div class="divTableDummyCell"></div>
-			</div>
-			<div class="divTableRow">
-					<div class="divTableDummyCell"></div>
-					<div class="divTableCell">$in[10]<span class='symbol'>&#9796;</span></div>
-					<div class="divTableCenterCell"></div>
-					<div class="divTableCenterCell"></div>
-					<div class="divTableCell">$in[3]<span class='symbol'>&#9790;</span></div>
-					<div class="divTableOuterCell">$out[3]</div>
-			</div>
-			<div class="divTableRow">
-					<div class="divTableOuterCell">$out[9]</div>
-					<div class="divTableCell">$in[9]<span class='symbol'>&#9796;</span></div>
-					<div class="divTableCenterCell"></div>
-					<div class="divTableCenterCell"></div>
-					<div class="divTableCell">$in[4]<span class='symbol'>&#9737;</span></div>
-					<div class="divTableDummyCell"></div>
-			</div>
-			<div class="divTableRow">
-					<div class="divTableDummyCell"></div>
-					<div class="divTableCell">$in[8]<span class='symbol'>&#9795;</span></div>
-					<div class="divTableCell">$in[7]<span class='symbol'>&#9794;</span></div>
-					<div class="divTableCell">$in[6]<span class='symbol'>&#9792;</span></div>
-					<div class="divTableCell">$in[5]<span class='symbol'>&#9791;</span></div>
-					<div class="divTableDummyCell"></div>
-			</div>
-			<div class="divTableRow">
-					<div class="divTableOuterCell">$out[8]</div>
-					<div class="divTableDummyCell"></div>
-					<div class="divTableDummyCell"></div>
-					<div class="divTableOuterCell">$out[6]</div>
-					<div class="divTableDummyCell"></div>
-					<div class="divTableOuterCell">$out[5]</div>
-			</div>
-		</div>	
-	</div>
-
-EOL;
-}
-
-
 function old_sortDegree($inArray)
 {
 	global $planetDeg,$mandhi_degree;
@@ -1292,7 +1282,8 @@ function displayHoroDetails()
 {
 	global $panchang, $in_name, $chart_date, $chart_time, $g_dasaBalance, $place, $g_thithi_soonyam_matching_arr,$g_dasaCurrent, $transit_date, $lagna_house, $country,$yogi_arr, 
 		$g_pancha_pakshi, $g_thithi, $g_paksham, $moon_house, $today_sunrise, $today_sunset, $otherPanchangDetails, $city,$g_nak, $g_thithi_idx, $g_yoga_idx, $in_place, $g_rowid, $in_sex,
-		$g_lagnam, $g_rasi, $nak_pad_idx, $g_ucha_details, $g_neecha_details, $sun_house, $sun_degree, $g_tamil_date_arr, $g_vayadhotta_lagna, $g_age, $g_mudakku_detail  ;
+		$g_lagnam, $g_rasi, $nak_pad_idx, $g_ucha_details, $g_neecha_details, $sun_house, $sun_degree, $g_tamil_date_arr, $g_vayadhotta_lagna, $g_age, $g_mudakku_detail,
+		$current_dasa_bukthi;
 	
 	echo "<div id='birthdetails'><div class='divTable blueTable' style='height:40px;' id='birthHead'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
@@ -1352,11 +1343,11 @@ function displayHoroDetails()
 		
 		if(strpos($panchang['thithi'],"Amavasya/அமாவாசை")===0 || strpos($panchang['thithi'],"Poornima/பௌர்ணமி")===0){
 			$g_paksham = "";
-			echo "<div class='divPanchang' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'>".$g_thithi . $g_paksham . "<BR>". "</div>";
+			echo "<div class='divPanchang'  id='thithi' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'>".$g_thithi . $g_paksham . "<BR>". "</div>";
 		}
 		else{
 			$g_paksham = rtrim(explode('/',$panchang['thithi'])[2],']');
-			echo "<div class='divPanchang' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'>".$g_thithi ." [". $g_paksham . "]" . "</div>";
+			echo "<div class='divPanchang'  id='thithi' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'>".$g_thithi ." [". $g_paksham . "]" . "</div>";
 		}
 		echo "</div>";
 
@@ -1365,20 +1356,20 @@ function displayHoroDetails()
 		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
-			echo "<div class='divPanchang' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'>".explode('/',$panchang['nak'])[1]."</div>";
+			echo "<div class='divPanchang'  id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'>".explode('/',$panchang['nak'])[1]."</div>";
 		echo "</div>";
 		displayDetailsDiv('nak',ceil($nak_pad_idx)/4);
 		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>யோகம்</div>";
-			echo "<div class='divPanchang'>".$panchang['yoga']."</div>";
+			echo "<div class='divPanchang' id='yogam'>".$panchang['yoga']."</div>";
 		echo "</div>";
 		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>கரணம்</div>";
 			$karan = explode('/',$panchang['karan'])[1];
 			//echo "<div class='divPanchang' OnClick='showKaranamDiv(event)' style='color:blue;cursor:pointer'>".$karan."(".getKaranaPlanet($karan).")</div>";
-			echo "<div class='divPanchang' OnClick='showDetailsDiv(event,2)' style='color:blue;cursor:pointer'>".$karan."(".getKaranaPlanet($karan).")</div>";
+			echo "<div class='divPanchang' id='karanam' OnClick='showDetailsDiv(event,2)' style='color:blue;cursor:pointer'>".$karan."(".getKaranaPlanet($karan).")</div>";
 		echo "</div>";
 		displayDetailsDiv('kar',$karan);
 		
@@ -1496,8 +1487,19 @@ function displayHoroDetails()
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>தற்போதைய தசா புக்தி</div>";
-			echo "<div class='divPanchang'>".$g_dasaCurrent[0]."</div>";
+			echo "<div class='divPanchang'>".$g_dasaCurrent[0] . "</div>";
 		echo "</div>";
+		
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>தற்போதைய தசா பலன்</div>";
+			echo "<div class='divPanchang'>". getDasaInfluencers($current_dasa_bukthi['dasa']) . "</div>";
+		echo "</div>";
+		
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>தற்போதைய புக்தி பலன்</div>";
+			echo "<div class='divPanchang'>". getDasaInfluencers($current_dasa_bukthi['bukthi']) . "</div>";
+		echo "</div>";
+		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பிறப்பு ஜாமக்கோள்</div>";
 echo <<<EOL

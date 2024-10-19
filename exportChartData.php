@@ -1,7 +1,7 @@
 <?php 
 session_start();
 // Library, this includes db config/db library functions 
-require "lib.php";
+require "db.php";
 
 $conn="";
 $g_phone=isset($_GET["phone"]) ? $_GET["phone"] : 1;
@@ -51,46 +51,65 @@ function exportJamaChart()
 
 function exportBirthChart()
 {
-	global $g_phone, $conn;
-	
-	$conn = dbConnect($conn);
-	
-	$sql = "SELECT rowid, phone, name, place, birth_date, birth_time FROM birth_chart WHERE phone='$g_phone' ORDER BY rowid DESC";
-	
-	// Fetch records from database 
-	$query = $conn->query($sql);
-	 
-	if($query->num_rows > 0){ 
-		$delimiter = ","; 
-		$filename = "pkastro_birthchart_" . date('Y-m-d') . ".txt"; 
-		 
-		// Create a file pointer 
-		$f = fopen('php://memory', 'w');
-		fprintf($f, chr(0xEF).chr(0xBB).chr(0xBF));
-		 
-		// Set column headers 
-		$fields = array('ROWID', 'PHONE', 'NAME', 'PLACE', 'BIRTH_DATE', 'BIRTH_TIME'); 
-		fputcsv($f, $fields, $delimiter); 
-		 
-		// Output each row of the data, format line as csv and write to file pointer 
-		while($row = $query->fetch_assoc()){ 
-			$lineData = array($row['rowid'], $row['phone'], $row['name'], $row['place'], $row['birth_date'], $row['birth_time']); 
-			fputcsv($f, $lineData, $delimiter); 
-		} 
-		 
-		// Move back to beginning of file 
-		fseek($f, 0); 
-		 
-		// Set headers to download file rather than displayed 
-		header('Content-Type: text/csv'); 
-		header('Content-Disposition: attachment; filename="' . $filename . '";'); 
-		 
-		//output all remaining data on a file pointer 
-		fpassthru($f); 
-	}
-	
-	dbDisconnect($conn);
+    global $g_phone, $conn;
+    
+    // Start output buffering
+    ob_start();
+    
+    $conn = dbConnect($conn);
+    
+    $sql = "SELECT rowid, phone, name, place, birth_date, birth_time FROM birth_chart WHERE phone='$g_phone' ORDER BY rowid DESC";
+    
+    // Fetch records from database 
+    $query = $conn->query($sql);
+     
+    if($query->num_rows > 0){ 
+        $delimiter = ","; 
+        $filename = "pkastro_birthchart_" . date('Y-m-d') . ".csv"; 
+         
+        // Create a file pointer 
+        $f = fopen('php://memory', 'w');
+        
+        // Set column headers 
+        //$fields = array('ROWID', 'PHONE', 'NAME', 'PLACE', 'BIRTH_DATE', 'BIRTH_TIME'); 
+		$fields = array('NAME', 'PLACE', 'BIRTH_DATE', 'BIRTH_TIME'); 
+        fputcsv($f, $fields, $delimiter); 
+         
+        // Output each row of the data, format line as csv and write to file pointer 
+        while($row = $query->fetch_assoc()){ 
+            //$lineData = array($row['rowid'], $row['phone'], $row['name'], $row['place'], $row['birth_date'], $row['birth_time']); 
+			$lineData = array($row['name'], $row['place'], $row['birth_date'], $row['birth_time']); 
+            fputcsv($f, $lineData, $delimiter); 
+        } 
+         
+        // Move back to beginning of file 
+        fseek($f, 0); 
+        
+        // Clean (erase) the output buffer and turn off output buffering
+        ob_end_clean();
+        
+        // Start a new output buffer to capture the CSV content
+        ob_start();
+        
+        // Set headers to download file rather than displayed 
+        header('Content-Type: text/csv'); 
+        header('Content-Disposition: attachment; filename="' . $filename . '";'); 
+        
+        // Output all remaining data on a file pointer 
+        fpassthru($f);
+        
+        // Get the CSV content from the output buffer
+        $csvContent = ob_get_clean();
+        
+        // Output the CSV content
+        echo $csvContent;
+    }
+    
+    dbDisconnect($conn);
 }
+
+
+
 
 function exportMatchingChart()
 {

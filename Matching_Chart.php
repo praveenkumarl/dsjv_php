@@ -334,11 +334,106 @@ $dayofweek = date('w', strtotime($chart_date));
 			$('#loader').hide();
 			
 		});
+		
+		function generateAnthram(in_start, in_end, dasa, bukthi) {
+       var anthram_arr = {};
+       var count = 0;
+ 
+       //var start = new Date(in_start).toLocaleDateString();
+	   var start = new Date(in_start);
+          
+       var dasa_period = {'கே': 7, 'சுக்': 20, 'சூரி': 6, 'சந்': 10, 'செ': 7, 'ரா': 18, 'குரு': 16, 'சனி': 19, 'புத': 17};
+       var index = Object.keys(dasa_period).indexOf(bukthi);
+       var last_planet = '';
+       var html_str='';
+      
+       //var link = document.createElement('link');
+       //    link.rel = 'stylesheet';
+        //   link.href = 'css/main.css';
+        //   document.head.appendChild(link);
+      
+       html_str='<center><div class="divTable blueTable" style="width:80%;height:auto">';
+       html_str=html_str+'<div class="divTableRow"><div class="divAnthraHeading" colspan="3">அந்தரம்</div></div></div>';
+       html_str=html_str+'<center><div class="divTable blueTable" style="width:80%;height:auto">';
+	   
+	   curr_date = new Date();
+       
+       console.log("Anthram");
+       for (var i = index; i <= index + 7; i++) {
+           if (i > 8) {
+             break;
+           }
+           //console.log(Object.keys(dasa_period)[i]);
+           var no_of_days = Math.round((dasa_period[dasa] * dasa_period[bukthi] * Object.values(dasa_period)[i]) / 14400 * 365.2425 * 24 * 60 * 60);
+           var end = new Date(new Date(start).getTime() + no_of_days * 1000);
+          
+           anthram_arr[Object.keys(dasa_period)[i]] = [start, end];
+           //console.log(start + " - " + end);
+          
+           temp1=new Date(start);
+           s_date = String(temp1.getDate()).padStart(2, '0')+'-'+String(temp1.getMonth()+1).padStart(2, '0')+'-'+temp1.getFullYear();
+           temp2=new Date(end);
+           e_date = String(temp2.getDate()).padStart(2, '0')+'-'+String(temp2.getMonth()+1).padStart(2, '0')+'-'+temp2.getFullYear();
+		   
+		   if(curr_date.getTime() > temp1.getTime() && curr_date.getTime() < temp2.getTime()){
+			   html_str = html_str + '<div class="divTableRow"><div class="divAnthraHeading">'+dasa+' / '+bukthi+' / '+Object.keys(dasa_period)[i]+'</div><div class="divCurrAnthra">'+s_date+'</div><div class="divCurrAnthra">'+e_date+'</div></div>';
+		   }
+		   else{
+			   html_str = html_str + '<div class="divTableRow"><div class="divAnthraHeading">'+dasa+' / '+bukthi+' / '+Object.keys(dasa_period)[i]+'</div><div class="divAnthra">'+s_date+'</div><div class="divAnthra">'+e_date+'</div></div>';
+		   }
+          
+           //start = new Date(new Date(end).getTime() + 24 * 60 * 60 * 1000);
+           start = end;
+          
+           count++;
+           last_planet = Object.keys(dasa_period)[i];
+       }
+      
+       
+       for (var i = 0; i < 9 - count; i++) {
+           //console.log(Object.keys(dasa_period)[i]);
+           var no_of_days = Math.round((dasa_period[dasa] * dasa_period[bukthi] * Object.values(dasa_period)[i]) / 14400 * 365.2425 * 24 * 60 * 60);
+           var end = new Date(new Date(start).getTime() + no_of_days * 1000);
+		   
+		   if(i==9-count-1) 
+		   { 
+				end = new Date(in_end);
+			}
+		   
+           anthram_arr[Object.keys(dasa_period)[i]] = [start, end];
+          
+           temp1=new Date(start);
+           s_date = String(temp1.getDate()).padStart(2, '0')+'-'+String(temp1.getMonth()+1).padStart(2, '0')+'-'+temp1.getFullYear();
+           temp2=new Date(end);
+           e_date = String(temp2.getDate()).padStart(2, '0')+'-'+String(temp2.getMonth()+1).padStart(2, '0')+'-'+temp2.getFullYear();
+          
+           if(curr_date.getTime() > temp1.getTime() && curr_date.getTime() < temp2.getTime()){
+			   html_str = html_str + '<div class="divTableRow"><div class="divAnthraHeading">'+dasa+' / '+bukthi+' / '+Object.keys(dasa_period)[i]+'</div><div class="divCurrAnthra">'+s_date+'</div><div class="divCurrAnthra">'+e_date+'</div></div>';
+		   }
+		   else{
+			   html_str = html_str + '<div class="divTableRow"><div class="divAnthraHeading">'+dasa+' / '+bukthi+' / '+Object.keys(dasa_period)[i]+'</div><div class="divAnthra">'+s_date+'</div><div class="divAnthra">'+e_date+'</div></div>';
+		   }
+          
+           //start = new Date(new Date(end).getTime() + 24 * 60 * 60 * 1000);
+           start = end;
+          
+           last_planet = Object.keys(dasa_period)[i];
+       }
+       //console.log(anthram_arr);
+       
+       html_str=html_str+"</div></center>";
+      
+       document.getElementById('anthramDiv').innerHTML = html_str;
+       document.getElementById('anthramDiv').style.display = 'block';
+      
+       return anthram_arr;
+     }
 				
 	</script>
 </head>
 
 <body onLoad="init();">
+<div class="anthramDiv" id="anthramDiv" onclick="this.style.display='none'"></div>
 <div id="loader" class="center"></div>
 
 <?php
@@ -537,7 +632,7 @@ function findMandhiHouse_transit($in_dayofweek,$in_sun_degree,$in_day)
 	return $mandhi_house;
 }
 
-function displayChart($in,$out)
+/*function displayChart($in,$out)
 {
 
 echo <<<EOL
@@ -596,7 +691,7 @@ echo <<<EOL
 	</div>
 
 EOL;
-}
+}*/
 
 
 /*function planetSort($inArray)

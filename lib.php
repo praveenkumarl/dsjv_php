@@ -11,6 +11,14 @@ include_once "db.php";
 $moon_longitude_data=array();
 $g_agas=null;
 
+/*
+//check if logged in and route it to default registration message
+if ((basename(($_SERVER['PHP_SELF']) !== 'freeuser.php' || $_SERVER['PHP_SELF'] !== 'new_loginPage.php' || $_SERVER['PHP_SELF'] !== 'new_logout.php' || $_SERVER['PHP_SELF']) !== 'athenticate.php' || $_SERVER['PHP_SELF'] !== 'athenticate_mobile.php') && !isLoggedIn()) {
+    header("Location: freeuser.php");
+    exit();
+}
+*/
+
 //constants
 
 const MIN_STAR_MATCH_COUNT = 7; //minimum matching
@@ -26,12 +34,14 @@ const PAID = "PAID";
 const BIRTH = "BIRTH";
 const MATCHING = "MATCH";
 const BIRTHMATCH = "BIRTHMATCH";
+const BIRTHPANCH = "BIRTHPANCH";
 const PANCHANG = "PANCHANG";
 const JAMAKOL = "JAMAKOL";
 const JAMA_MATCH = "JAMAMATCH";
 const SUPER = "SUPER";
 const ADMIN = "ADMIN";
 const PRASANNAM = "PRASANNAM";
+const NUMEROLOGY = "NUMEROLOGY";
 
 const VAINASIGAM_PAD_COUNT = 88;
 const ABHIJIT_PAD_COUNT = 84;
@@ -39,12 +49,16 @@ const ABHIJIT_PAD_COUNT = 84;
 $g_nak="";
 
 //usertype array used in drop down
-$usertype_arr = [PAID, MATCHING, BIRTH, BIRTHMATCH, JAMAKOL, JAMA_MATCH, PANCHANG, PRASANNAM, SUPER, ADMIN, FREE];
+$usertype_arr = [PAID, MATCHING, BIRTH, BIRTHMATCH, BIRTHPANCH, JAMAKOL, JAMA_MATCH, PANCHANG, PRASANNAM, NUMEROLOGY, SUPER, ADMIN, FREE];
 
 
 $DEBUG= isset($_SESSION['debug']) ? $_SESSION['debug'] : 0;
 
 echo '<head><link rel="stylesheet" href="css/main.css"></head>';
+
+function isLoggedIn() {
+    return isset($_SESSION['userinfo']);
+}
 
 function getSunrise($date,$lat,$long)
 {
@@ -1690,6 +1704,16 @@ function calculateVimBukthi($curr_dasa_lord, $bukthi_lord, $bukthi_start_date, $
 			$start = date('Y-m-d',strtotime($curr_bukthi_start_date));
 			$end = date('Y-m-d',strtotime($curr_bukthi_start_date. '+ '.$curr_bukthi_period.' seconds'));
 			
+			debug("<br>i=$i, curr=$curr_dasa_lord");
+			if($curr_dasa_lord==0 && $i==8){
+				$curr_bukthi_end_date=$dasa_end_date;
+				$end = date('Y-m-d',strtotime($curr_bukthi_end_date));
+			}
+			
+			debug("$start    $end    $curr_bukthi_end_date");
+	 
+			debug("curr_bukthi_period=".($curr_bukthi_period/(365.2425*24*60*60))."   curr_bukthi_start_date=$curr_bukthi_start_date      curr_bukthi_end_date=$curr_bukthi_end_date");
+			
 			debug("curr_bukthi_start_date=$curr_bukthi_start_date      curr_bukthi_end_date=$curr_bukthi_end_date");
 		   
 			if(strtotime($current_date) >= strtotime($curr_bukthi_start_date) and strtotime($current_date) <= strtotime($curr_bukthi_end_date)){
@@ -1817,13 +1841,27 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 		}
 		else{
 			$curr_bukthi_period = ($bukthi_lord_arr[$bukthi_lord_order[$curr_dasa_lord]]/120) * $bukthi_lord_arr[$bukthi_lord_order[$i]];
-			
 			$curr_bukthi_period = round($curr_bukthi_period * 365.2425);
-			
 			$curr_bukthi_end_date = date('d-m-Y',strtotime($curr_bukthi_start_date. '+ '.$curr_bukthi_period.' days'));
 			
+			$start = date('Y-m-d',strtotime($curr_bukthi_start_date));
+			$end = date('Y-m-d',strtotime($curr_bukthi_start_date. '+ '.$curr_bukthi_period.' seconds'));
+			
+			debug("<br>i=$i, curr=$curr_dasa_lord");
+			if($curr_dasa_lord==0 && $i==8){
+				$curr_bukthi_end_date=$dasa_end_date;
+				$end = date('Y-m-d',strtotime($curr_bukthi_end_date));
+			}
+			
+			debug("$start    $end    $curr_bukthi_end_date");
+	 
+			debug("curr_bukthi_period=".($curr_bukthi_period/(365.2425*24*60*60))."   curr_bukthi_start_date=$curr_bukthi_start_date      curr_bukthi_end_date=$curr_bukthi_end_date");
+			
+			debug("curr_bukthi_start_date=$curr_bukthi_start_date      curr_bukthi_end_date=$curr_bukthi_end_date");
+			
 			if(strtotime($current_date) >= strtotime($curr_bukthi_start_date) and strtotime($current_date) <= strtotime($curr_bukthi_end_date)){
-				echo "<div class='divTableRow'>";
+				//echo "<div class='divTableRow'>";
+				echo "<div class='divTableRow' onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
 					echo "<div class='divBukthiHeading_boy'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divCurrentBukthi'>$curr_bukthi_start_date</div>";
 					echo "<div class='divCurrentBukthi'>$curr_bukthi_end_date</div>";
@@ -1835,14 +1873,16 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 				$current_dasa_bukthi_boy['end_date'] = $curr_bukthi_end_date;
 			}
 			elseif(strtotime($transit_date) >= strtotime($curr_bukthi_start_date) and strtotime($transit_date) <= strtotime($curr_bukthi_end_date)){
-				echo "<div class='divTableRow'>";
+				//echo "<div class='divTableRow'>";
+				echo "<div class='divTableRow' onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
 					echo "<div class='divBukthiHeading_boy'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divBirthBukthi'>$curr_bukthi_start_date</div>";
 					echo "<div class='divBirthBukthi'>$curr_bukthi_end_date</div>";
 				echo "</div>";
 		}
 			else{
-				echo "<div class='divTableRow'>";
+				//echo "<div class='divTableRow'>";
+				echo "<div class='divTableRow' onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
 					echo "<div class='divBukthiHeading_boy'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divBukthi'>$curr_bukthi_start_date</div>";
 					echo "<div class='divBukthi'>$curr_bukthi_end_date</div>";
@@ -1861,12 +1901,21 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 		$curr_bukthi_period = round($curr_bukthi_period * 365.2425);
 		$curr_bukthi_end_date = date('d-m-Y',strtotime($curr_bukthi_start_date. '+ '.$curr_bukthi_period.' days'));
 		
+		$start = date('Y-m-d',strtotime($curr_bukthi_start_date));
+		$end = date('Y-m-d',strtotime($curr_bukthi_start_date. '+ '.$curr_bukthi_period.' seconds'));
+		
 		if($i==$curr_dasa_lord-1){
 			$curr_bukthi_end_date=$dasa_end_date;
+			$end = date('Y-m-d',strtotime($curr_bukthi_end_date));
 		}
 		
+		debug("$start    $end    $curr_bukthi_end_date");
+	 
+		debug("curr_bukthi_period=".($curr_bukthi_period/(365.2425*24*60*60))."   curr_bukthi_start_date=$curr_bukthi_start_date      curr_bukthi_end_date=$curr_bukthi_end_date");
+		
 		if(strtotime($current_date) >= strtotime($curr_bukthi_start_date) and strtotime($current_date) <= strtotime($curr_bukthi_end_date)){
-				echo "<div class='divTableRow'>";
+				//echo "<div class='divTableRow'>";
+				echo "<div class='divTableRow' onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
 					echo "<div class='divBukthiHeading_boy'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divCurrentBukthi'>$curr_bukthi_start_date</div>";
 					if($i==$curr_dasa_lord-1){
@@ -1883,7 +1932,8 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 				$current_dasa_bukthi_boy['end_date'] = $curr_bukthi_end_date;
 		}
 		elseif(strtotime($transit_date) >= strtotime($curr_bukthi_start_date) and strtotime($transit_date) <= strtotime($curr_bukthi_end_date)){
-				echo "<div class='divTableRow'>";
+				//echo "<div class='divTableRow'>";
+				echo "<div class='divTableRow' onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
 					echo "<div class='divBukthiHeading_boy'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divBirthBukthi'>$curr_bukthi_start_date</div>";
 					if($i==$curr_dasa_lord-1){
@@ -1895,7 +1945,8 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 				echo "</div>";
 		}
 		else{
-			echo "<div class='divTableRow'>";
+			//echo "<div class='divTableRow'>";
+			echo "<div class='divTableRow' onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
 				echo "<div class='divBukthiHeading_boy'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 				echo "<div class='divBukthi'>$curr_bukthi_start_date</div>";
 				if($i==$curr_dasa_lord-1){
@@ -5287,7 +5338,13 @@ function calculateThithiAllPlanets($inner=true)
 			$temp_paksham = "தேய்";
 		}
 		
-		$planetThithiLord[$planet] = getValue($thithi_arr[$temp_thithi_idx]) . " ($temp_paksham)"; //2nd argument is lang, which is defaulted to 1 (tamil)
+		if(isset($temp_paksham)){
+			$planetThithiLord[$planet] = getValue($thithi_arr[$temp_thithi_idx]) . " ($temp_paksham)"; //2nd argument is lang, which is defaulted to 1 (tamil)
+		}
+		else{
+			$temp_paksham="";
+			$planetThithiLord[$planet] = getValue($thithi_arr[$temp_thithi_idx]); //2nd argument is lang, which is defaulted to 1 (tamil)
+		}
 		
 		debug("planet=$planet---thithi-deg=$thithi_deg---temp_paksham----$temp_paksham---".ceil($thithi_deg/12)."-----".$planetThithiLord[$planet]."<BR>");
 	}
@@ -6208,10 +6265,19 @@ function displayHomePageButtons($in_usertype){
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'Birth_input.php\',\'_self\')">புதிய ஜாதகம்</button>';
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'birthChartDisplay.php\',\'_self\')">சேமித்த ஜாதகங்கள்</button>';
 			break;
+		case BIRTHPANCH:
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'Birth_input.php\',\'_self\')">புதிய ஜாதகம்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'birthChartDisplay.php\',\'_self\')">சேமித்த ஜாதகங்கள்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'new_panchangam.php\',\'_self\')">பஞ்சாங்கம்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'hora.php\',\'_self\')">ஹோரை</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'star_thaara_palan.php\',\'_self\')">நட் தாரா பலன் </button>';
+			break;
 		case PANCHANG:
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'new_panchangam.php\',\'_self\')">பஞ்சாங்கம்</button>';
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'hora.php\',\'_self\')">ஹோரை</button>';
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'star_thaara_palan.php\',\'_self\')">நட் தாரா பலன் </button>';
+			break;
+		case NUMEROLOGY:
 			break;
 		case JAMAKOL:
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'index.php\',\'_self\')">முகப்பு</button>';
@@ -6237,6 +6303,7 @@ function checkUserType($in_usertype){
 		case MATCHING:
 		case BIRTH:
 		case BIRTHMATCH:
+		case BIRTHPANCH:
 		case PANCHANG:
 		case JAMAKOL:
 		case JAMA_MATCH:
@@ -6927,6 +6994,112 @@ function getRasiNameFromPaatham($paatham){
 
 function getRasiHouseFromPaatham($paatham){
 	return (int)($paatham / 9);
+}
+
+function getDasaInfluencers($planet){
+	/*
+	"planet" => "bodhagan","vedhagan","paasagan","kaaragan";
+	
+	போதகன்:
+		தனது தசைகளில் வரும் புத்திகளில் தனது பலனைக் கொடுக்கும்
+	
+	வேதகன்:
+		பாவத்தின் பலனை மாறுபடச் செய்யும்.
+	
+	பாசகன்:
+		பாவத்தின் பலன் கிடைக்க உதவி செய்யும்.
+	
+	காரகன்:
+		சம்பாதித்த பொருளை கிடைக்க உதவி செய்யும்.
+	*/
+	
+	/*$influencers = [
+					  "சூரி" => ["செ","சுக்","சனி","குரு"],
+					  "சந்" => ["செ","சூரி","சுக்","சனி"],
+					  "செ" => ["சந்","புத","சூரி","சனி"],
+					  "குரு" => ["செ","சூரி","சனி","சந்"],
+					  "சுக்" => ["குரு","சனி","புத","சூரி"],
+					  "சனி" => ["சந்","செ","சுக்","குரு"],
+					  "புத" => ["குரு","செ","சந்","சுக்"],
+					  "ரா" => ["குரு","சூரி","புத","செ"],
+					  "கே" => ["புத","சந்","சுக்","சனி"],
+					];
+	*/
+	
+	$influencers = [
+					  "சூரி" => "போதகன் - செ<BR>வேதகன் - சுக்<BR>பாசகன் - சனி<BR>காரகன் - குரு",
+					  "சந்" => "போதகன் - செ<BR>வேதகன் - சூரி<BR>பாசகன் - சுக்<BR>காரகன் - சனி",
+					  "செ" => "போதகன் - சந்<BR>வேதகன் - புத<BR>பாசகன் - சூரி<BR>காரகன் - சனி",
+					  "குரு" => "போதகன் - செ<BR>வேதகன் - சூரி<BR>பாசகன் - சனி<BR>காரகன் - சந்",
+					  "சுக்" => "போதகன் - குரு<BR>வேதகன் - சனி<BR>பாசகன் - புத<BR>காரகன் - சூரி",
+					  "சனி" => "போதகன் - சந்<BR>வேதகன் - செ<BR>பாசகன் - சுக்<BR>காரகன் - குரு",
+					  "புத" => "போதகன் - குரு<BR>வேதகன் - செ<BR>பாசகன் - சந்<BR>காரகன் - சுக்",
+					  "ரா" => "போதகன் - குரு<BR>வேதகன் - சூரி<BR>பாசகன் - புத<BR>காரகன் - செ",
+					  "கே" => "போதகன் - புத<BR>வேதகன் - சந்<BR>பாசகன் - சுக்<BR>காரகன் - சனி",
+					];
+					
+	return $influencers[$planet];
+}
+
+function displayChart($in,$out)
+{
+
+echo <<<EOL
+	<div class="divTable blueTable" id="chart">
+		
+		<div class="divTableBody">
+			<div class="divTableRow">
+					<div class="divTableOuterCell">$out[11]</div>
+					<div class="divTableDummyCell"></div>
+					<div class="divTableOuterCell">$out[0]</div>
+					<div class="divTableDummyCell"></div>
+					<div class="divTableDummyCell"></div>
+					<div class="divTableOuterCell">$out[2]</div>
+			</div>
+			<div class="divTableRow">
+					<div class="divTableDummyCell"></div>
+					<div class="divTableCell">$in[11]<span class='symbol'>&#9795;</span></div>
+					<div class="divTableCell">$in[0]<span class='symbol'>&#9794;</span></div>
+					<div class="divTableCell">$in[1]<span class='symbol'>&#9792;</span></div>
+					<div class="divTableCell">$in[2]<span class='symbol'>&#9791;</span></div>
+					<div class="divTableDummyCell"></div>
+			</div>
+			<div class="divTableRow">
+					<div class="divTableDummyCell"></div>
+					<div class="divTableCell">$in[10]<span class='symbol'>&#9796;</span></div>
+					<div class="divTableCenterCell"></div>
+					<div class="divTableCenterCell"></div>
+					<div class="divTableCell">$in[3]<span class='symbol'>&#9790;</span></div>
+					<div class="divTableOuterCell">$out[3]</div>
+			</div>
+			<div class="divTableRow">
+					<div class="divTableOuterCell">$out[9]</div>
+					<div class="divTableCell">$in[9]<span class='symbol'>&#9796;</span></div>
+					<div class="divTableCenterCell"></div>
+					<div class="divTableCenterCell"></div>
+					<div class="divTableCell">$in[4]<span class='symbol'>&#9737;</span></div>
+					<div class="divTableDummyCell"></div>
+			</div>
+			<div class="divTableRow">
+					<div class="divTableDummyCell"></div>
+					<div class="divTableCell">$in[8]<span class='symbol'>&#9795;</span></div>
+					<div class="divTableCell">$in[7]<span class='symbol'>&#9794;</span></div>
+					<div class="divTableCell">$in[6]<span class='symbol'>&#9792;</span></div>
+					<div class="divTableCell">$in[5]<span class='symbol'>&#9791;</span></div>
+					<div class="divTableDummyCell"></div>
+			</div>
+			<div class="divTableRow">
+					<div class="divTableOuterCell">$out[8]</div>
+					<div class="divTableDummyCell"></div>
+					<div class="divTableDummyCell"></div>
+					<div class="divTableOuterCell">$out[6]</div>
+					<div class="divTableDummyCell"></div>
+					<div class="divTableOuterCell">$out[5]</div>
+			</div>
+		</div>	
+	</div>
+
+EOL;
 }
 
 ?>

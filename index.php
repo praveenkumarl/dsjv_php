@@ -71,7 +71,7 @@ $_SESSION['phone'] = isset($userInfo['phone']) ? $userInfo['phone'] : 1;
 if(strcmp($_SESSION['user_type'],PANCHANG)==0){
 	header("Location: new_panchang.php");
 }
-elseif(strcmp($_SESSION['user_type'],BIRTH)==0){
+elseif(strcmp($_SESSION['user_type'],BIRTH)==0 OR strcmp($_SESSION['user_type'],BIRTHPANCH)==0){
 	header("Location: Birth_input.php");
 }
 elseif(strcmp($_SESSION['user_type'],MATCHING)==0 OR strcmp($_SESSION['user_type'],BIRTHMATCH)==0){
@@ -82,6 +82,9 @@ elseif(strcmp($_SESSION['user_type'],MATCHING)==0 OR strcmp($_SESSION['user_type
 //}
 elseif(strcmp($_SESSION['user_type'],PRASANNAM)==0){
 	header("Location: prasannam_home.php");
+}
+elseif(strcmp($_SESSION['user_type'],NUMEROLOGY)==0){
+	header("Location: numerology.php");
 }
 elseif(strcmp($_SESSION['user_type'],FREE)==0){
 	header("Location: freeuser.php");
@@ -134,7 +137,10 @@ elseif(strcmp($_SESSION['user_type'],FREE)==0){
 		}
 		else{
 			//document.querySelector("body").style.visibility = "hidden";
-			document.querySelector("#loader").style.visibility = "visible";
+			if(document.querySelector("#loader"))
+				document.querySelector("#loader").style.visibility = "visible";
+			
+			if(document.querySelector("msg"))
 			document.getElementById("msg").style.visibility = "visible";
 			
 		}

@@ -151,6 +151,7 @@ $g_mudakku_detail="";
 			//btns.style.visibility='none';
 		}
 		
+		
    </script>
 
 </head>
@@ -1140,7 +1141,7 @@ EOL;
 	echo '</div>';
 }
 
-function displayChart($in,$out)
+function old_displayChart($in,$out)
 {
 
 echo <<<EOL

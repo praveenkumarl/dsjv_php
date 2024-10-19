@@ -59,6 +59,7 @@ elseif(strcmp($usertype,PAID)==0){
 				<div class="dropdown1-content">
 				  <a class='glow-button' href="Birth_input.php">பிறப்பு ஜாதகம்</a>
 				  <a class='glow-button' href="Matching_input.php">திருமண பொருத்தம்</a>
+				  <a class='glow-button' href="numerology.php">எண் கணிதம்</a>
 				  <a class='glow-button' href="planet_kaaragam.php">கிரக காரகம்</a>
 				  <a class='glow-button' href="hora.php">ஓரை</a>
 				  <a class='glow-button' href="star_thaara_palan.php">தாரா பலன்</a>
@@ -84,10 +85,11 @@ elseif(strcmp($usertype,SUPER)==0){
 				</button>
 				<div class="dropdown1-content">
 				  <a class='glow-button' href="Birth_input.php">பிறப்பு ஜாதகம்</a>
-				  <a class='glow-button' href="Matching_input.php">திருமண பொருத்தம்</div</a>
+				  <a class='glow-button' href="Matching_input.php">திருமண பொருத்தம்</a>
+				  <a class='glow-button' href="numerology.php">எண் கணிதம்</a>
 				  <a class='glow-button' href="planet_kaaragam.php">கிரக காரகம்</a>
 				  <a class='glow-button' href="hora.php">ஓரை</a>
-				  <a class='glow-button' href="star_thaara_palan.php">தாரா பலன்</d</a>
+				  <a class='glow-button' href="star_thaara_palan.php">தாரா பலன்</a>
 				  <a class='glow-button' href="new_panchang.php">பஞ்சாங்கம்</a>
 				  <a class='glow-button' href="prasannam_home.php">பிரசன்னம்</a>
 				  <a class='glow-button' href="maintenance.php">Manage</a>
@@ -110,10 +112,11 @@ elseif(strcmp($usertype,ADMIN)==0){
 				</button>
 				<div class="dropdown1-content">
 				  <a class='glow-button' href="Birth_input.php">பிறப்பு ஜாதகம்</a>
-				  <a class='glow-button' href="Matching_input.php">திருமண பொருத்தம்</div</a>
+				  <a class='glow-button' href="Matching_input.php">திருமண பொருத்தம்</a>
+				  <a class='glow-button' href="numerology.php">எண் கணிதம்</a>
 				  <a class='glow-button' href="planet_kaaragam.php">கிரக காரகம்</a>
 				  <a class='glow-button' href="hora.php">ஓரை</a>
-				  <a class='glow-button' href="star_thaara_palan.php">தாரா பலன்</d</a>
+				  <a class='glow-button' href="star_thaara_palan.php">தாரா பலன்</a>
 				  <a class='glow-button' href="new_panchang.php">பஞ்சாங்கம்</a>
 				  <a class='glow-button' href="prasannam_home.php">பிரசன்னம்</a>
 				  <a class='glow-button' href="maintenance.php">Manage</a>

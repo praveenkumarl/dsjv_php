@@ -4,56 +4,67 @@ require "lib.php";
 
 $conn="";
 $phone=isset($_SESSION["phone"]) ? $_SESSION["phone"] : 1;
+const REC_PER_PAGE = 10;
 
 $chartInfo=array();
+$total_pages=0;
+$total_records=0;
 
-function getChartDetails()
+function getChartDetails($page = 1, $records_per_page = REC_PER_PAGE)
 {
-	global $conn,$chartInfo, $phone;
-	
-	$cnt=0;
-	
-	$conn = dbConnect($conn);
-	
-	if($phone==1){
-		echo "ERROR: Missing phone number";
-		return;
-	}
+    global $conn, $chartInfo, $phone, $total_pages,$total_records;
 
-	try {
-		
-		$sql = "SELECT rowid, phone, question, analysis, place, birth_date, birth_time FROM jama_chart WHERE phone='$phone' ORDER BY rowid DESC";
-	
-		if(($result = mysqli_query($conn, $sql))){
-			$count = mysqli_num_rows($result);
+    $cnt = 0;
+    $conn = dbConnect($conn);
 
-			if($count>0){
-				
-				 while($row = $result->fetch_assoc()) {
-					$chartInfo["rowid"][$cnt] = intval($row["rowid"]);
-					$chartInfo["phone"][$cnt] = $row["phone"];
-					$chartInfo["question"][$cnt]= $row["question"];
-					$chartInfo["analysis"][$cnt]= $row["analysis"];
-					$chartInfo["place"][$cnt] = $row["place"];
-					$chartInfo["birth_date"][$cnt] = $row["birth_date"];
-					$chartInfo["birth_time"][$cnt] = $row["birth_time"];
-					
-					$cnt = $cnt + 1;
-				  }
-			}
-		}
-		
-	} catch (mysqli_sql_exception $exception) {
-		mysqli_rollback($conn);
+    if ($phone == 1) {
+        echo "ERROR: Missing phone number";
+        return;
+    }
 
-		throw $exception;
-	}
+    $offset = ($page - 1) * $records_per_page;
+
+    try {
+        $sql = "SELECT rowid, phone, question, analysis, place, birth_date, birth_time 
+                FROM jama_chart 
+                WHERE phone='$phone' 
+                ORDER BY rowid DESC 
+                LIMIT $offset, $records_per_page";
+
+        if (($result = mysqli_query($conn, $sql))) {
+            $count = mysqli_num_rows($result);
+
+            if ($count > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    $chartInfo["rowid"][$cnt] = intval($row["rowid"]);
+                    $chartInfo["phone"][$cnt] = $row["phone"];
+                    $chartInfo["question"][$cnt] = $row["question"];
+                    $chartInfo["analysis"][$cnt] = $row["analysis"];
+                    $chartInfo["place"][$cnt] = $row["place"];
+                    $chartInfo["birth_date"][$cnt] = $row["birth_date"];
+                    $chartInfo["birth_time"][$cnt] = $row["birth_time"];
+
+                    $cnt = $cnt + 1;
+                }
+            }
+        }
+    } catch (mysqli_sql_exception $exception) {
+        mysqli_rollback($conn);
+        throw $exception;
+    }
+
+	// Calculate total pages
+	$total_records_query = "SELECT COUNT(*) FROM jama_chart WHERE phone='$phone'";
+	$total_records_result = mysqli_query($conn, $total_records_query);
+	$total_records = mysqli_fetch_array($total_records_result)[0];
+	$total_pages = ceil($total_records / $records_per_page);
 	
-	dbDisconnect($conn);
+    dbDisconnect($conn);
 }
 
 
-getChartDetails();
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+getChartDetails($page);
 
 ?>
 
@@ -149,6 +160,23 @@ getChartDetails();
 	$(document).ready(function() 
 	{
 		$('#loader').hide();
+			
+		 $("#name-filter").on("keyup", function() {
+			var value = $(this).val().toLowerCase().trim().normalize('NFC');
+			$("#chart_table .divTableRow").each(function(index) {
+				if (index === 0) {
+					// Skip the header row
+					return;
+				}
+				var nameCell = $(this).find(".divChartHistory:eq(1)"); // Assuming name is the second column (index 1)
+				var nameText = nameCell.text().toLowerCase().normalize('NFC');
+				if (nameText.includes(value)) {
+					$(this).show(); // Display matching rows
+				} else {
+					$(this).hide(); // Hide non-matching rows
+				}
+			});
+		});
 	});
 		
     </script>
@@ -195,7 +223,20 @@ getChartDetails();
 					
 				
 <?php
-					echo "<div class='divTable blueTable' style='height:40px;'>";
+					echo '<center><BR><div class="divPanchangHeading">Search by Name: <input type="text" id="name-filter" placeholder="Enter name" style="display:inline;font-size: 14px; width: auto;"></div></center>';
+					echo '<Br>';
+					
+					// Display pagination buttons
+					echo "<div class='pagination'>";
+					if ($page > 1) {
+						echo "<a href='?page=" . ($page - 1) . "'><button class='actionBtn'>Prev</button></a>";
+					}
+					if ($page < $total_pages) {
+						echo " <a href='?page=" . ($page + 1) . "'><button class='actionBtn'>Next</button></a>";
+					}
+					echo "</div>";
+					
+					echo "<div class='divTable blueTable' id='chart_table' style='height:40px;'>";
 						echo "<div class='divTableRow'>";
 								echo "<div class='divChartHistoryHeading'>#</div>";
 								echo "<div class='divChartHistoryHeading'>கே</div>";
@@ -225,7 +266,7 @@ getChartDetails();
 
 
 							echo "</div>";
-							echo "<BR><P style='color:#660000;font-weight:bold; font-size:12px; text-align:center'>மொத்தம் ".sizeof($chartInfo['rowid'])." ஜாதகங்கள்<BR>(திறக்க அதை கிளிக் செய்யவும்)</P>";
+							echo "<BR><P style='color:#660000;font-weight:bold; font-size:12px; text-align:center'>மொத்தம் ".$total_records." ஜாதகங்கள்<BR>(திறக்க அதை கிளிக் செய்யவும்)</P>";
 						}
 						else{
 							echo "</div>";

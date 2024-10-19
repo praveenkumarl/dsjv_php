@@ -87,7 +87,8 @@ echo <<<EOL
 		<BR>
 			<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">சேமிக்கப்பட்ட ஜாதகங்கள்</P>
 			<!-- <input type='button' class='actionBtn' id='Download' value='download' onClick='exportBirthCharts();'> -->
-		<BR>
+		<button class='actionBtn' onClick='window.open("matchBirthChart.php")';>பொருத்தம்</button>
+		<BR><BR>
 EOL;
 		
 			echo '<button class="actionBtn" id="prevButton">Prev</button>';
