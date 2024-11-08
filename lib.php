@@ -2341,7 +2341,7 @@ function displayStarLord()
 		echo "</div>";
 
 	foreach($planet_starlord as $planet => $data)
-	{
+	{	
 		echo "<div class='divTableRow'>";
 			if((strcmp("சனி",$planet)==0 or strcmp("குரு",$planet)==0 or strcmp("செ",$planet)==0 or strcmp("சுக்",$planet)==0 or
 				//strcmp("புத",$planet)==0) and $planetDeg_default[$planet] < 0.0){
@@ -6184,48 +6184,54 @@ function getTamilMonthDay($sun_house,$sun_degree){
 }
 
 //currently works only for 2024
-function getTamilDate(){
-	global $chart_time, $chart_date, $sun_house,$sun_degree;
-	
-	include_once "eng_tamil_year_map.php";
-					 
-	$year = date('Y',strtotime($chart_date));
-	$month = (int) date('m',strtotime($chart_date));
-	$day = date('d',strtotime($chart_date));
-	
-	if(isset($eng_tam_map[$year]))  //if array exists
-	{
-		if($day < $eng_tam_map[$year][$month][1])
-		{
-			$tamil_month = $eng_tam_map[$year][$month-1][0];
-		}
-		else{
-			$tamil_month = $eng_tam_map[$year][$month][0];
-		}
-		
-		if($day - $eng_tam_map[$year][$month][1] >= 0){
-			$tamil_day = $day - $eng_tam_map[$year][$month][1] + 1;
-		}
-		else{
-			if($month==1){
-				$tamil_day = cal_days_in_month(CAL_GREGORIAN,12,$year)-$eng_tam_map[$year][$month-1][1]+$day+1;
-			}
-			else{
-				$tamil_day = cal_days_in_month(CAL_GREGORIAN,$month-1,$year)-$eng_tam_map[$year][$month-1][1]+$day+1;
-			}
-		}
-	}
-	else{
-		$month_day_arr = getTamilMonthDay($sun_house,$sun_degree);
-		$tamil_month = $month_day_arr[0];
-		$tamil_day = $month_day_arr[1];
-	}
-	
-	$tamil_year = getTamilYear($year, $tamil_month);
-	
-	setKariNaal($tamil_month,$tamil_day);
-
-	return $tamil_year . ', ' . $tamil_month . ' ' . $tamil_day;
+function getTamilDate() {
+    global $chart_time, $chart_date, $sun_house, $sun_degree, $today_sunrise;
+    include_once "eng_tamil_year_map.php";
+    
+   // Parse the time from chart_time
+    $chartHour = (int) date('H', strtotime($chart_time));
+    $chartMinute = (int) date('i', strtotime($chart_time));
+    
+     // Parse the sunrise time
+    list($sunriseDate, $sunriseTime) = explode(' ', $today_sunrise);
+    $sunriseHour = (int) date('H', strtotime($sunriseTime));
+    $sunriseMinute = (int) date('i', strtotime($sunriseTime));
+    
+    // Check if the time is before today's sunrise
+    if ($chartHour < $sunriseHour || ($chartHour == $sunriseHour && $chartMinute < $sunriseMinute)) {
+        // Subtract one day from the chart_date
+        $chart_date = date('Y-m-d', strtotime($chart_date . ' -1 day'));
+    }
+    
+    $year = date('Y', strtotime($chart_date));
+    $month = (int) date('m', strtotime($chart_date));
+    $day = date('d', strtotime($chart_date));
+    
+    if (isset($eng_tam_map[$year])) { // if array exists
+        if ($day < $eng_tam_map[$year][$month][1]) {
+            $tamil_month = $eng_tam_map[$year][$month-1][0];
+        } else {
+            $tamil_month = $eng_tam_map[$year][$month][0];
+        }
+        if ($day - $eng_tam_map[$year][$month][1] >= 0) {
+            $tamil_day = $day - $eng_tam_map[$year][$month][1] + 1;
+        } else {
+            if ($month == 1) {
+                $tamil_day = cal_days_in_month(CAL_GREGORIAN, 12, $year) - $eng_tam_map[$year][$month-1][1] + $day + 1;
+            } else {
+                $tamil_day = cal_days_in_month(CAL_GREGORIAN, $month-1, $year) - $eng_tam_map[$year][$month-1][1] + $day + 1;
+            }
+        }
+    } else {
+        $month_day_arr = getTamilMonthDay($sun_house, $sun_degree);
+        $tamil_month = $month_day_arr[0];
+        $tamil_day = $month_day_arr[1];
+    }
+    
+    $tamil_year = getTamilYear($year, $tamil_month);
+    setKariNaal($tamil_month, $tamil_day);
+    
+    return $tamil_year . ',<BR>' . $tamil_month . ' ' . $tamil_day;
 }
 
 function getTamilYear($eng_year,$tamil_month){
@@ -7102,5 +7108,127 @@ echo <<<EOL
 EOL;
 }
 
+function updateMatchingMark($conn,$rowid,$mark)
+{
+	startSqlTxn($conn);
+
+	try {
+		$sql = "UPDATE matching_chart SET mark='$mark' WHERE rowid='$rowid'";
+		
+		if(!mysqli_query($conn, $sql)){
+			echo "ERROR: Could not able to execute $sql. " . mysqli_error($conn);
+		}
+		
+		/* If code reaches this point without errors then commit the data in the database */
+		commitSqlTxn($conn);
+		
+	} catch (mysqli_sql_exception $exception) {
+		mysqli_rollback($conn);
+
+		throw $exception;
+	}
+}
+
+function displayNumerologyInfo(){
+	
+	echo<<<EOL
+		<center><img src='images/num_planets_letters.png' style='width:-webkit-fill-available;height:auto'></center>
+		<center><img src='images/num_friend_enemy.png' style='width:-webkit-fill-available;height:auto'></center>
+		<!-- Disabled as requested by Manikantan sir -->
+		<!-- <center><img src='images/num_rasi_chart.png' style='width:-webkit-fill-available;height:auto'></center> -->
+EOL;
+}
+
+function calculateVivahaChakra($sun_nakshatra, $moon_nakshatra) {
+    // Nakshatra sequence
+    $nakshatras = [
+        'அசுவினி', 'பரணி', 'கிருத்திகை', 'ரோகிணி', 'மிருகசிரீஷம்', 'திருவாதிரை', 'புனர்பூசம்', 'பூசம்',
+        'ஆயில்யம்', 'மகம்', 'பூரம்', 'உத்திரம்', 'ஹஸ்தம்', 'சித்திரை', 'சுவாதி', 'விசாகம்', 'அனுஷம்',
+        'கேட்டை', 'மூலம்', 'பூராடம்', 'உத்திராடம்', 'திருவோணம்', 'அவிட்டம்', 'சதயம்', 'பூரட்டாதி', 'உத்திரட்டாதி', 'ரேவதி'
+    ];
+
+    // Adjust the start index to be one before the sun's nakshatra
+    $sun_index = array_search($sun_nakshatra, $nakshatras);
+    $start_index = ($sun_index - 1 + count($nakshatras)) % count($nakshatras);
+
+    // Create houses and place Nakshatras
+    $houses = [];
+    for ($i = 0; $i < 9; $i++) {
+        $houses[$i + 1] = [
+            $nakshatras[($start_index + 3 * $i) % 27],
+            $nakshatras[($start_index + 3 * $i + 1) % 27],
+            $nakshatras[($start_index + 3 * $i + 2) % 27]
+        ];
+    }
+
+    // Check in which house the Moon's Nakshatra falls
+    $moon_house = 0;
+    foreach ($houses as $index => $house) {
+        if (in_array($moon_nakshatra, $house)) {
+            $moon_house = $index;
+            break;
+        }
+    }
+
+   // Results based on the house where Moon's Nakshatra is found
+    /*$results = [
+        1 => 'Collateral Damage to the Family',
+        2 => 'Wealthy and Blessed',
+        3 => 'Collateral Damage to the Girl\'s Family',
+        4 => 'Poverty and cursed',
+        5 => 'Gainful and Beneficial',
+        6 => 'Loss of Reputation and honour',
+        7 => 'Devastating results for the Girl',
+        8 => 'Completely Successful',
+        9 => 'Wonderful Pair and Blessed'
+    ];*/
+	
+	$results = [
+        1 => '<div class="vivagaResultRed">வேதனை<BR>இந்த நாள் விவாஹ சக்ரப்படி நன்றாக இல்லை</div>',
+        2 => '<div class="vivagaResultGreen">லட்சமி கடாட்சம்<BR>இந்த நாள் விவாஹ சக்ரப்படி நன்றாக உள்ளது</div>',
+        3 => '<div class="vivagaResultRed">வறுமை, பீடை<BR>இந்த நாள் விவாஹ சக்ரப்படி நன்றாக இல்லை</div>',
+        4 => '<div class="vivagaResultRed">இழப்பு, விரயம்<BR>இந்த நாள் விவாஹ சக்ரப்படி நன்றாக இல்லை</div>',
+        5 => '<div class="vivagaResultGreen">சர்வ சௌபாக்கியம்<BR>இந்த நாள் விவாஹ சக்ரப்படி நன்றாக உள்ளது</div>',
+        6 => '<div class="vivagaResultRed">அசிங்கம், அவமானம்<BR>இந்த நாள் விவாஹ சக்ரப்படி நன்றாக இல்லை</div>',
+        7 => '<div class="vivagaResultRed">வளர்ச்சி இல்லை<BR>இந்த நாள் விவாஹ சக்ரப்படி நன்றாக இல்லை</div>',
+        8 => '<div class="vivagaResultGreen">சகல சௌபாக்கியம்<BR>இந்த நாள் விவாஹ சக்ரப்படி நன்றாக உள்ளது</div>',
+        9 => '<div class="vivagaResultGreen">சகல சௌபாக்கியம்<BR>இந்த நாள் விவாஹ சக்ரப்படி நன்றாக உள்ளது</div>'
+    ];
+
+    // Define the houses to be displayed in red
+    $red_houses = [1, 3, 4, 6, 7];
+
+    // Define the order of display
+    $display_order = [7, 8, 9, 6, 1, 2, 5, 4, 3];
+
+    // Generate HTML for the Vivaha Chakra table
+    $html = '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size:10px; text-align:center;">';
+    foreach ($display_order as $house_number) {
+        $background_color = in_array($house_number, $red_houses) ? '#FADBD8' : '#D5F5E3';
+        $html .= "<div style='border: 1px solid #000; padding: 10px; background-color: $background_color;'>
+                    <strong>House $house_number</strong><br>" .
+                    implode('<br>', $houses[$house_number]) .
+                "</div>";
+    }
+    $html .= '</div>';
+	
+	
+
+    $result = [
+        'result' => $results[$moon_house] ?? 'Invalid Nakshatra',
+        'chart' => $html
+    ];
+	
+	displayVivahaChakram($result,$sun_nakshatra,$moon_nakshatra);
+}
+
+function displayVivahaChakram($result, $sunstar, $moonstar){
+	echo "<center>";
+	echo "<div class='divPanchangHeading' style='width: var(--chart-width)'>தற்போதய விவாஹ சக்ர பலன்<BR><BR>" . $result['result'];
+	echo "சூரியன் நின்ற நட்சத்திரம்: <U>$sunstar</U><BR>";
+	echo "சந்திரன் நின்ற நட்சத்திரம்: <U>$moonstar</U><BR><BR>";
+	echo $result['chart'];
+	echo "</center>";
+}
 ?>
 

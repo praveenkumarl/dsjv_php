@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <?php
 include_once "lib.php";
 
@@ -131,11 +131,12 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 	<link rel="stylesheet" href="css/birth_chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	
-	
+	<!-- this is used for swipe gestures, disabling this due to some side effects -->
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script> -->
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
@@ -431,7 +432,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		}
 		
 		//handleLongPress();
-		handleSwipe();
+		//handleSwipe();
 	};
 	
 	function handleSwipe(){
@@ -451,7 +452,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 	
 	function handleLongPress(){
 		// Assuming you have an element with the ID 'my-element'
-		var myElement = document.getElementById('mybody');
+		var myElement = document.getElementById('mybody1');
 
 		// Initialize Hammer.js
 		var mc = new Hammer.Manager(myElement);
@@ -685,7 +686,59 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
        document.getElementById('muhurthamDiv').style.display = 'block';
      }
 	
-	function generateMuhurtam_default() {
+function generateMuhurtam_default() {
+    var count = 0;
+    var mukurt_arr = [
+        ["ருத்ர", "அசுபமானது"], ["ஆஹி", "அசுபமானது"], ["மித்ர", "சுப"], ["பித்ரு", "அசுபமானது"], ["வசு", "சுப"],
+        ["வராஹ", "சுப"], ["விஸ்வேதேவா", "சுப"], ["விதி", "மங்களகரமானது (திங்கள் மற்றும் வெள்ளி தவிர)"],
+        ["சுதாமுகீ", "சுப"], ["புருஹூத", "அசுபமானது"], ["வாஹிநீ", "அசுபமானது"], ["நக்தனகரா", "அசுபமானது"],
+        ["வருண", "சுப"], ["ஆர்யமன்", "மங்களகரமானது (ஞாயிற்றுக்கிழமைகள் தவிர)"], ["பக", "அசுபமானது"], 
+        ["கிரீச", "சுப"], ["அஜபாத", "அசுபமானது"], ["அஹிர்புத்ன்ய", "சுப"], ["புஷ்ய", "சுப"], ["அஸ்வினி", "சுப"],
+        ["யம", "அசுபமானது"], ["அக்னி", "சுப"], ["விதாத்ரு", "சுப"], ["கண்ட", "சுப"], ["அதிதி", "சுப"],
+        ["ஜீவ/அம்ருத", "மிகவும் மங்களகரமானது"], ["விஷ்ணு", "சுப"], ["த்யுமத்கத்யுதி", "சுப"],
+        ["பிரம்மா", "மிகவும் மங்களகரமானது"], ["சமுத்ர", "சுப"]
+    ];
+
+    var html_str = '<div class="table-container">';
+    html_str += '<button class="close-btn" onclick="closeTable()">X</button>';
+    html_str += '<div class="scrollable-table">';
+    html_str += '<center><div class="divTable blueTable" style="width:100%;height:100%">';
+
+    // this is to negate sunrise calculation
+    today_sunrise = '<?php echo $chart_date; ?>' + ' 06:00:00';
+    tomm_sunrise = '<?php echo $next_day; ?>' + ' 06:00:00';
+    todaysunrise = new Date(today_sunrise);
+    tommsunrise = new Date(tomm_sunrise);
+    muhurt_time = (tommsunrise.getTime() - todaysunrise.getTime()) / (1000 * 60) / 30;
+    start_time = new Date(todaysunrise.getTime());
+    html_str = html_str + '<div class="divTableRow"><div class="divMuhurtHeading">ஆரம்பம்</div><div class="divMuhurtHeading">முடிவு</div><div class="divMuhurtHeading">முகூர்த்தம்</div><div class="divMuhurtHeading">பலன்</div></div>';
+
+    for (var i = 0; i < 30; i++) {
+        end_time = new Date((start_time.getTime() + muhurt_time * 60000));
+        stime = String(start_time.getDate()).padStart(2, '0') + '-' + String(start_time.getMonth() + 1).padStart(2, '0') + '-' + start_time.getFullYear() + ' ' + String(start_time.getHours()).padStart(2, '0') + ':' + String(start_time.getMinutes()).padStart(2, '0');
+        etime = String(end_time.getDate()).padStart(2, '0') + '-' + String(end_time.getMonth() + 1).padStart(2, '0') + '-' + end_time.getFullYear() + ' ' + String(end_time.getHours()).padStart(2, '0') + ':' + String(end_time.getMinutes()).padStart(2, '0');
+
+        if ((mukurt_arr[i][1]).indexOf("அசுபமானது") != -1) {
+            html_str = html_str + '<div class="divTableRow"><div class="divMurtaRed">' + stime + '</div><div class="divMurtaRed">' + etime + '</div><div class="divMurtaRed">' + mukurt_arr[i][0] + '</div><div class="divMurtaRed">' + mukurt_arr[i][1] + '</div></div>';
+        } else if ((mukurt_arr[i][1]).indexOf("மங்களகரமானது") != -1) {
+            html_str = html_str + '<div class="divTableRow"><div class="divMurtaBrightGreen">' + stime + '</div><div class="divMurtaBrightGreen">' + etime + '</div><div class="divMurtaBrightGreen">' + mukurt_arr[i][0] + '</div><div class="divMurtaBrightGreen">' + mukurt_arr[i][1] + '</div></div>';
+        } else {
+            html_str = html_str + '<div class="divTableRow"><div class="divMurtaGreen">' + stime + '</div><div class="divMurtaGreen">' + etime + '</div><div class="divMurtaGreen">' + mukurt_arr[i][0] + '</div><div class="divMurtaGreen">' + mukurt_arr[i][1] + '</div></div>';
+        }
+        start_time = end_time;
+    }
+
+    html_str = html_str + "</div></div></div>";
+    document.getElementById('muhurthamDiv').innerHTML = html_str;
+    document.getElementById('muhurthamDiv').style.display = 'block';
+}
+
+function closeTable() {
+    document.getElementById('muhurthamDiv').style.display = 'none';
+}
+
+
+	function generateMuhurtam_default1() {
        var count = 0;
           
        mukurt_arr = [
@@ -723,8 +776,8 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
       
        var html_str='';
       
-       html_str='<center><div class="divTable blueTable" style="width:100%;height:100%">';
-       html_str=html_str+'<div class="divTableRow"><div class="divAnthraHeading" colspan="3">முகூர்த்தங்கள்</div></div></div>';
+       html_str='<center><div class="divTable blueTable" style="width:100%;height:103px">';
+       //html_str=html_str+'<div class="divTableRow"><div class="divAnthraHeading" colspan="3">முகூர்த்தங்கள்</div></div></div>';
        html_str=html_str+'<center><div class="divTable blueTable" style="width:100%;height:100%">';
 	   
 	   //this is to negate sunrise calculation
@@ -775,9 +828,10 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 	</script>
 </head>
 
-<body id='mybody' onLoad="init();">
+<body id='mybody1' onLoad="init();">
 <div class="karanamDiv" id="karanamDiv" onclick="hideKaranamDiv()"><!-- <img src='images/karanam.png' /> --></div>
-<div class="muhurthamDiv" id="muhurthamDiv" onclick="this.style.display='none'"></div>
+<!-- <div class="muhurthamDiv" id="muhurthamDiv" onclick="this.style.display='none'"></div> -->
+<div class="muhurthamDiv" id="muhurthamDiv"></div>
 <div id="loader" class="center"></div>
 
 <?php
@@ -1149,6 +1203,7 @@ function displayHoroDetails()
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>த.தேதி</div>";
 			echo "<div class='divPanchang'>".getTamilDate()."</div>";
+			
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>நேரம்</div>";
@@ -1662,6 +1717,19 @@ EOL;
 					$thithi_soonyam_arr = updateThithiSoonyam($panchang["thithi"]);
 					displayTransitChart();
 					displayStarLord(true);
+					
+					echo "<BR>";
+					/***** Vivaha chakram *****/
+					//$sun_nakshatra = 'உத்திரம்';
+					//$moon_nakshatra = 'உத்திராடம்';
+					$sun_nakshatra = explode(' ',$planet_starlord['சூரி'][0])[0];
+					$moon_nakshatra = $g_nak;
+
+					debug("$sun_nakshatra,$moon_nakshatra");
+
+					$result = calculateVivahaChakra($sun_nakshatra, $moon_nakshatra);
+					/***** Vivaha chakram *****/
+
 					displayDisclaimer();
 					
 
@@ -1671,6 +1739,7 @@ echo <<<EOL
 					<div id='dummy'></div>
 		
 EOL;
+
 
 getStarLetters($g_nak);
 

@@ -193,11 +193,12 @@ getChartDetails();
 					<input type='hidden' id='in_time_boy' name='in_time_boy'>
 					<input type='hidden' id='mark' name='mark'>
 					<input type="hidden" id="lang" name="lang" required />
+					<input type="hidden" id="rowid" name="rowid" required />
 				</form>
 				<!-- (A) HIDDEN HTML FORM -->
 				<form id="hiddenDeleteChart" action="deleteChart.php" method="post" style="display:none;">
-				  <input type="hidden" id="rowid" name="rowid" required/>
-				  <input type="hidden" id="charttype" name="charttype" required/>
+				  <input type="hidden" id="rowid" name="rowid" required />
+				  <input type="hidden" id="charttype" name="charttype" required />
 				</form>
 				
 				<BR>

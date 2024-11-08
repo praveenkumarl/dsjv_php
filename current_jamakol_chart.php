@@ -9,7 +9,7 @@ if(isset($_GET['key']) and checkAdminKey($_GET['key'])){
 	$_SESISON['autojamakol'] = false; //true;
 }	
 
-function displayChart($sw_planet,$outside,$chart_date,$chart_time,$place)
+function displayJamaChart($sw_planet,$outside,$chart_date,$chart_time,$place)
 {
 	global $g_kathir_data;
 	//to display place in center of 2 cells
@@ -131,7 +131,7 @@ $_SESSION['debug'] = 0;
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
     
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script> -->
 	
     <script src="script.js"></script>
     <script type="text/javascript">
@@ -143,7 +143,7 @@ $_SESSION['debug'] = 0;
 	}
 	
 	document.addEventListener('DOMContentLoaded', function () {
-		handleSwipe();
+		//handleSwipe();
 	});
 	
 	function handleSwipe(){
@@ -195,8 +195,8 @@ EOL;
 }
 else{
 	$g_kathir_data = calculateKathirData($_SESSION['jamadata'][0], $_SESSION['jamadata'][1]); //calculate and returns the kathir data
-	displayChart($_SESSION['jamadata'][0],$_SESSION['jamadata'][1],$chart_date,$chart_time,$place);
-	echo '<P id="newChartText" style="color:blue;font-weight:bold; font-size:10px; font-align:center">Click chart to generate new chart</P>';
+	displayJamaChart($_SESSION['jamadata'][0],$_SESSION['jamadata'][1],$chart_date,$chart_time,$place);
+	echo '<P id="newChartText" style="color:blue;font-weight:bold; font-size:10px; font-align:center">Touch/click chart to generate new chart</P>';
 	unset($_SESSION['jamadata']);
 	
 }

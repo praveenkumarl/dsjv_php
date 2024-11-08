@@ -4,6 +4,8 @@ require "lib.php";
 $in_place_girl = isset($_POST["place_girl"]) ? $_POST["place_girl"] : $_POST["nPlace_girl"];
 $place_girl=strtok($in_place_girl,"|");
 $TZ_girl=strtok("|");
+$in_mark = isset($_POST["mark"]) ? $_POST["mark"] : -1;
+$in_rowid = isset($_POST["rowid"]) ? $_POST["rowid"] : -1;
 
 $phone = isset($_COOKIE["phone"]) ? $_COOKIE["phone"] : 1;
 
@@ -108,6 +110,9 @@ $g_planetVainasigamNak_boy=array();
 
 $planet_starlord_transit=array();
 $planet_starlord=array();
+$matching_percent=0;
+
+$g_seventh_house_disclaimer="";
 
 // ------- Swiss ephemeris // ------- 
 $libPath = './sweph/';
@@ -1132,10 +1137,9 @@ function naadiMatching(){
 
 //Girl/boy Sun/Sat/Rah/Kethu/Mars in 7th house, warning
 function matchingRule13(){
-	global $sw_planet, $tr_sw_planet,$g_matching_mark;
+	global $sw_planet, $tr_sw_planet,$g_matching_mark,$g_seventh_house_disclaimer;
 	
 	$result=true;
-	$reason="";
 	
 	$girl_sun = countHouses(findHouse($sw_planet,"லக்"),findHouse($sw_planet,"சூரி"));
 	$girl_sat = countHouses(findHouse($sw_planet,"லக்"),findHouse($sw_planet,"சனி"));
@@ -1152,16 +1156,19 @@ function matchingRule13(){
 	if($girl_sun == 7 || $girl_sat == 7 || $girl_rah == 7 || $girl_ket == 7 || $girl_mar == 7
 		|| $boy_sun == 7 || $boy_sat == 7 || $boy_rah == 7 || $boy_ket == 7 || $boy_mar == 7){
 		$result = false;
-		$reason = "7ஆம் இடத்தில் சுரி/சனி/ரா/கே/செ, மிக கவனமாக பொருத்தம் பார்த்து முடிவு எடுக்கவும்";
+		$g_matching_mark = $g_matching_mark-2;
+		$g_seventh_house_disclaimer = "7ஆம் இடத்தில் சுரி/சனி/ரா/கே/செ, மிக கவனமாக பொருத்தம் பார்த்து முடிவு எடுக்கவும்";
 	}
+}
+
+function display_7thHouse_disclaimer(){
+	global $g_seventh_house_disclaimer;
 	
-	if($result == false){
-		echo <<<EOL
-		<div class="divDisclaimer" colspan=3>
-			<H6 style='font-weight;color:red'>*$reason</H6>
-		</div>
+	echo <<<EOL
+	<div class="divDisclaimer" colspan=3>
+		<H6 style='font-weight;color:red'>*$g_seventh_house_disclaimer</H6>
+	</div>
 EOL;
-	}
 }
 
 
@@ -1273,10 +1280,9 @@ function checkRaasiAthipathiMatching()
 	return $result;
 }
 
-
 function displayMatchingResult()
 {
-	global $g_matching_mark;
+	global $g_matching_mark,$matching_percent;
 	
 	$matching_percent = ceil($g_matching_mark/TOTAL_MATCH_RULES * 100);
 	
@@ -4132,6 +4138,8 @@ echo <<<EOL
 											<input type='hidden' id='nGirlTime' name='nGirlTime' value='$chart_time'>
 											<input type='hidden' id='nBoyDate' name='nGirlDate' value='$transit_date'>
 											<input type='hidden' id='nBoyTime' name='nBoyTime' value='$transit_time'>
+											<input type='hidden' id='nMark' name='nMark' value='$in_mark'>
+											<input type='hidden' id='nRowid' name='nMark' value='$in_rowid'>
 											<div><H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">&#128105;Girl BD: <input type='date' id='nDate' name='nDate' style="background-color:var(--girl-chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$chart_date ></div>
 											<div>&#128105;Girl BT: <input type='time' id='nTime' name='nTime' style="background-color:var(--girl-chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$chart_time></H4></div>
 											<div><H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center"></div>
@@ -4275,10 +4283,12 @@ EOL;
 					matchingRule10();
 					matchingRule11($g_panchang_girl['thithi'], $g_panchang_boy['thithi']);
 					matchingRule12();
+					matchingRule13();
 					displayMatchingResult();
 					
 					echo "</div></center>";
-					matchingRule13();
+					if(strlen($g_seventh_house_disclaimer) > 0)
+						display_7thHouse_disclaimer();
 					displayDisclaimer();
 					
 					
@@ -4307,6 +4317,12 @@ if($cricketMenu==1){
 if(isset($_COOKIE["phone"])) {
 $activity = 'Matching|'.$in_girlname."|".$place_girl."|".$chart_date."|".$chart_time. "|" . $in_boyname. "|". $place_boy."|".$transit_date."|".$transit_time;
 	logActivity($conn,$_COOKIE["phone"],$activity);
+}
+
+debug("in_mark=$in_mark,matching_percent=$matching_percent");
+
+if((int)$in_mark != (int)$matching_percent){
+	updateMatchingMark($conn,$in_rowid,$matching_percent);
 }
 
 dbDisconnect($conn);

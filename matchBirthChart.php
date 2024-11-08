@@ -681,7 +681,7 @@ function getBoyChartDetails1()
 	
 	<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">திருமண பொருத்தம்</P>
 	
-	<form method="post" action="Matching_Chart.php">
+	<form method="post" action="Matching_Chart.php" target="_self">
 		<input type='hidden' id='nPlace_girl' name='nPlace_girl'>
 		<input type='hidden' id='nPlace_boy' name='nPlace_boy'>
 		<input type='hidden' id='nGirlName' name='nGirlName'>

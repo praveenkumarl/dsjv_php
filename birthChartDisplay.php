@@ -67,7 +67,7 @@ echo <<<EOL
 	<center><div class="divTable blueTable" id="chart">
 
 		<!-- (SHOW CHART) HIDDEN HTML FORM -->
-		<form id="hiddenViewBirthChart" action="Birth_Chart.php" method="post" style="display:none;">
+		<form id="hiddenViewBirthChart" action="Birth_Chart.php" method="post" style="display:none;" target="_top">
 		  <input type="hidden" id="place" name="place" required/>
 		  <input type="hidden" id="name" name="name" required/>
 		  <input type="hidden" id="sex" name="sex" required/>
@@ -76,6 +76,7 @@ echo <<<EOL
 		  <input type="hidden" id="lang" name="lang" required/>
 		  <input type="hidden" id="rowid" name="rowid" required/>
 		  <input type="hidden" id="notes" name="notes" required/>
+		  <input type="hidden" id="num" name="num" required/>
 		</form>
 		
 		<!-- (DELETE CHART) HIDDEN HTML FORM -->
@@ -120,6 +121,7 @@ EOL;
 							echo "<div class='divChartHistory' id='col5$x'>".$chartInfo['birth_date'][$i]."</div>";
 							echo "<div class='divChartHistory' id='col6$x'>".$chartInfo['birth_time'][$i]."</div>";
 							echo "<div class='divHidden' id='col61$x'>".$chartInfo['notes'][$i]."</div>";
+							echo "<div class='divChartHistory' id='col8$x'><input type='button' id='numButton' onClick='openNumerology($x)' value='NUM' style='color:red;font-size:10px;font-weight:bold;background-color:#ffffff;border:solid 1px black'></div>";
 							echo "<div class='divChartHistory' id='col7$x'><input type='button' id='delButton' onClick='deleteRecord($x)' style='color:black;font-size:10px;font-weight:bold;width:40px;background: url(images/delete.png);background-size:60%;background-repeat: no-repeat;background-position: center;color:#660000;background-color:#ffffff;'></div>";
 						echo "</div>";
 					}
@@ -184,6 +186,8 @@ EOL;
 	
 	function showChart(rownum,place)
 	{	
+		event.stopPropagation();
+		
 		//document.getElementById("place").value = document.getElementById("col4"+rownum).innerHTML;
 		document.getElementById("place").value = place;
 		document.getElementById("name").value = document.getElementById("col3"+rownum).innerHTML;
@@ -201,8 +205,10 @@ EOL;
 	
 	function showSearchedChart()
 	{	
+		event.preventDefault();
+		event.stopPropagation();
+		
 		var str = document.getElementById('birth_detail').value;
-		alert(str); return;
 		document.getElementById("place").value = place;
 		document.getElementById("name").value = document.getElementById("col3"+rownum).innerHTML;
 		document.getElementById("sex").value = document.getElementById("col31"+rownum).innerHTML;
@@ -236,55 +242,74 @@ EOL;
 		  }
 	}
 	
+	function openNumerology(rownum)
+	{	
+		event.preventDefault();
+		//document.getElementById("place").value = document.getElementById("col4"+rownum).innerHTML;
+		document.getElementById("place").value = place;
+		document.getElementById("name").value = document.getElementById("col3"+rownum).innerHTML;
+		document.getElementById("sex").value = document.getElementById("col31"+rownum).innerHTML;
+		document.getElementById("in_date").value = document.getElementById("col5"+rownum).innerHTML;
+		document.getElementById("in_time").value = document.getElementById("col6"+rownum).innerHTML;
+		document.getElementById("lang").value = 'Tamil';
+		document.getElementById("rowid").value = rownum;
+		document.getElementById("notes").value = document.getElementById("col61"+rownum).innerHTML;
+		document.getElementById("num").value = 1;
+		
+		document.getElementById("hiddenViewBirthChart").submit();
+		
+		$('#loader').show();
+	}
+	
+	
 	$('.confirmation').on('click', function () {
         return confirm('Are you sure?');
     });
 	
 	$(document).ready(function(){
 		
-	$('#loader').hide();
-	
-    $('.search-box input[type="text"]').on("keyup input", function(){
-        /* Get input value on change */
-        var inputVal = $(this).val();
-        var resultDropdown = $(this).siblings(".result");
+		$('#loader').hide();
 		
-		phone = '<?php echo $phone; ?>';
-	
-        if(inputVal.length>2){
-            $.get("backend-search_birth.php?phone="+phone, {term: inputVal}).done(function(data){
-                // Display the returned data in browser
-               resultDropdown.html(data);
-            });
-        } else{
-            resultDropdown.empty();
-        }
-    });
-    
-    // Set search input value on click of result item
-    //$(document).on("click", ".result p", function(){
-	$(document).on("click", ".result div", function(){
-        $(this).parents(".search-box").find('input[type="text"]').val($(this).text());
-        $(this).parent(".result").empty();
-		});
+		$('.search-box input[type="text"]').on("keyup input", function(){
+			/* Get input value on change */
+			var inputVal = $(this).val();
+			var resultDropdown = $(this).siblings(".result");
+			
+			phone = '<?php echo $phone; ?>';
 		
-	 	 $("#name-filter").on("keyup", function() {
-		var value = $(this).val().toLowerCase().trim().normalize('NFC');
-		$("#chart_table .divTableRow").each(function(index) {
-			if (index === 0) {
-				// Skip the header row
-				return;
-			}
-			var nameCell = $(this).find(".divChartHistory:eq(1)"); // Assuming name is the second column (index 1)
-			var nameText = nameCell.text().toLowerCase().normalize('NFC');
-			if (nameText.includes(value)) {
-				$(this).show(); // Display matching rows
-			} else {
-				$(this).hide(); // Hide non-matching rows
+			if(inputVal.length>2){
+				$.get("backend-search_birth.php?phone="+phone, {term: inputVal}).done(function(data){
+					// Display the returned data in browser
+				   resultDropdown.html(data);
+				});
+			} else{
+				resultDropdown.empty();
 			}
 		});
-	});
-
+		
+		// Set search input value on click of result item
+		//$(document).on("click", ".result p", function(){
+		$(document).on("click", ".result div", function(){
+			$(this).parents(".search-box").find('input[type="text"]').val($(this).text());
+			$(this).parent(".result").empty();
+			});
+			
+			 $("#name-filter").on("keyup", function() {
+			var value = $(this).val().toLowerCase().trim().normalize('NFC');
+			$("#chart_table .divTableRow").each(function(index) {
+				if (index === 0) {
+					// Skip the header row
+					return;
+				}
+				var nameCell = $(this).find(".divChartHistory:eq(1)"); // Assuming name is the second column (index 1)
+				var nameText = nameCell.text().toLowerCase().normalize('NFC');
+				if (nameText.includes(value)) {
+					$(this).show(); // Display matching rows
+				} else {
+					$(this).hide(); // Hide non-matching rows
+				}
+			});
+		});
 	
 	});
 	
@@ -354,7 +379,7 @@ EOL;
 		document.body.appendChild(a);
 		a.click();
 		document.body.removeChild(a);
-}
+	}
 
 		
     </script>

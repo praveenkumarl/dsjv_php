@@ -1,3 +1,4 @@
+<!doctype html>
 <?php 
 require_once "lib.php";
 
@@ -72,7 +73,7 @@ function getChartDetails()
 
 ?>
 
-<!doctype html>
+
 <html lang="en" class="no-js">
 <head>
     <meta charset="utf-8">
@@ -105,8 +106,10 @@ function getChartDetails()
         } else{
             resultDropdown.empty();
         }
+		
+		
     });
-    
+	    
 // Set search input value on click of result item
 	//$(document).on("click", ".result p", function(){
 	$(document).on("click", ".result div", function(){
@@ -117,7 +120,21 @@ function getChartDetails()
         $(this).parent(".result").empty();
 		$(this).parent("#lplace").hide();
     });
+	
+	if (window.self !== window.top) {    //called from Numerology.php 
+		console.log("This page is inside an iframe.");
+		document.getElementById('num').value = 1;
+		document.getElementById('historyBtn').style.display = 'none';
+		// Perform actions specific to iframe here
+	} else {
+		console.log("This page is not inside an iframe.");
+		// Perform actions specific to standalone page here
+	}
 });
+
+function openBirthHistory(){
+	window.open("birthChartDisplay.php","_self");
+}
 
 function init(){
 	document.getElementById('place').value = '<?php echo $place; ?>'; 
@@ -217,7 +234,7 @@ function updateNow() {
 }
 
 	
-	function openLoader() {
+	function showLoader() {
 		document.getElementById("loader").style.display = "block";
 	  }
 	
@@ -232,8 +249,8 @@ function updateNow() {
 <div class='column-menu'>
 <?php displayUserInfo($_SESSION['userinfo']);?>
 	<div class='desktop'>
-		<button class="menu" onClick="window.open('index.php','_self')">Home</button>
-		<button class='menu' onClick='window.open("birthChartDisplay.php","_self")'>Birth Chart history</button>
+		<button type="button" class="menu" onClick="window.open('index.php','_self')">Home</button>
+		<button type="button" class='menu' onClick='openBirthHistory();'>Birth Chart history</button>
 	</div>
 	<div class='mobile'>
 		<?php include "birthInputMenu_mobile.php"; ?>
@@ -242,7 +259,8 @@ function updateNow() {
 <div class='column-body'>
 	<center>
 		<div class="divTable blueTable" id="chart">
-			<form name="chartInput" id="chartInput" action="Birth_Chart.php" method="post" onsubmit="openLoader()">
+			<form name="chartInput" id="chartInput" action="Birth_Chart.php" method="post" onsubmit="showLoader()" target="_top">
+				<input type="hidden" name="num" id="num" value="0" />
 				<table style="width:100%; text-align: left">
 					<tr>
 						<td colspan=2><P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">பிறப்பு ஜாதகம்</P></td>
@@ -295,7 +313,7 @@ function updateNow() {
 					</tr>
 					<tr  style="background-color: #FFFFFF">
 						<td align="center">
-							<button type="button" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="window.open('birthChartDisplay.php','_self');">History</button>
+							<button type="button" id="historyBtn" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="openBirthHistory()">History</button>
 						</td>
 						<td align="center">
 							<input type="button" value="Submit" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">

@@ -1,12 +1,12 @@
+<!doctype html>
 <?php session_start();
 require "lib.php";
 
 $devInfo = $_GET;
 //array_csv_download(); exit;
-
 ?>
 
-<!doctype html>
+
 <html lang="en" class="no-js">
 <head>
     <meta charset="utf-8">
@@ -26,36 +26,18 @@ $devInfo = $_GET;
     <script type="module" src="https://cdn.jsdelivr.net/npm/translate/index.min.js"></script>
 	<script src="tz.js"></script>
 	 
-	<div id="google_translate_element"></div>
 	<script type="text/javascript">
 	
 	</script>
-	<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     <script src="script.js"></script>
 	
 	      <style>
-			.box {
-				position: relative;
-				margin-left: 20px;
-			}
-			.box::before {
-				position: absolute;
-				left: -20px;
-				content: attr(data-character); /* Use the data-character attribute */
-				height: 20px;
-				width: 20px;
-				border: 1px solid black;
-				background-color: blue;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				color: white;
-			}
+			
 			
 			.iframe-container {
 				position: relative;
-				width: 400px;
-				height: -webkit-fill-available;
+				width: 100%;
+				height: 450px;
 				overflow: hidden;
 			}
 			.iframe-container iframe {
@@ -63,8 +45,10 @@ $devInfo = $_GET;
 				top: -180px; /* Move the iframe content up by 102px */
 				left: 0;
 				width: 100%;
-				height: calc(100% + 102px); /* Adjust height to cover the moved content */
+				height: -webkit-fill-available; /* Adjust height to cover the moved content */
 			}
+
+
 		</style>
 	
     <script type="text/javascript">
@@ -75,35 +59,13 @@ $devInfo = $_GET;
 	}
 	
 	$(document).ready(function() {
-		var birthIframe = document.getElementById('birthIframe');
-		
-		if (birthIframe) {
-			birthIframe.addEventListener('load', function() {
-				setTimeout(() => {
-					var iframeContent = this.contentDocument || this.contentWindow.document;
-					
-					if (iframeContent) {
-						var saveButton = iframeContent.querySelector('input#save');
-						if (saveButton) {
-							console.log('Save button found, getting content');
-							getDivContent();
-						} else {
-							console.log('Save button not found.');
-						}
-					} else {
-						console.log('Unable to access iframe content.');
-					}
-				}, 100); // Adjust the delay as needed
-			});
-		} else {
-			console.log('birthIframe does not exist.');
+		if (document.referrer.includes('Birth_Chart.php') || document.referrer.includes('birthChartDisplay.php') ) {
+			getParams();
+			displayChart1(inData);
 		}
 	});
 
-
 	
-	
-		
 	var g_input = '';
 	var g_pyramid_number = '';
 	var g_date = '';
@@ -223,6 +185,25 @@ $devInfo = $_GET;
 		'ரா': [[67], [], [22,31,58,103], [94], [4,40,49,76,85], [13]],
 		'கே': [[70], [], [7,43,79,106], [25,52], [34,61,88,97], [16]],
 	};
+	
+function getParams(){
+	// Assume the URL is: https://example.com?name=Ashmitha&dob=11&chartdata=
+
+	// Get the URLSearchParams object
+	const urlParams = new URLSearchParams(window.location.search);
+
+	// Get the value of the 'name' parameter
+	g_name = urlParams.get('name'); // "Ashmitha"
+
+	// Get the value of the 'date' parameter
+	g_date = formatDate(urlParams.get('dob')); // "08-Aug-1960"
+	
+	// get chartdata which is in the format separated by pipe '|'
+	// "<span class='lagna'>லக்</span>-1°"|' செ-10°'|''|' புத-4° சூரி-22°'| ' சுக்-5° ரா-23°'| null, null| " <span class='indhu'>இந்</span>"| "<span class='retro'>சனி</span>-19° <span class='retro'>குரு</span>-0°4' "| null, "<span class='mandhi'>மா</span>-28° கே-23° <span class='moon'>சந்</span>-14° "| null
+	inData = urlParams.get('chartdata').split("|"); 
+
+	console.log(`Name: ${g_name}, Date: ${g_date}, chartdata: ${inData}`);
+}
 	
 function displayPyramidNumerology(name) {
     // Chaldean numerology values for each letter
@@ -630,6 +611,7 @@ function printPyramid(numbers){
 			for (let i = 0; i < g_name.length; i++) {
 				if (g_name[i] !== ' ') {
 					if (!outData[index]) {
+						var idx =null;
 						if(index == idx){
 							outData[index] = '<span class="chartNumRed">'+g_name[i].toUpperCase()+'</span>';
 						}
@@ -760,33 +742,13 @@ function printPyramid(numbers){
 		return sum;
 	}
 	
-	function getDivContent() {
-		var iframe = document.getElementById('birthIframe');
-		var iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-		var targetDiv = iframeDocument.querySelector('#chart'); // Replace with your div's class or ID
-		if (targetDiv) {
-			//document.getElementById('divContent').innerHTML = targetDiv.innerHTML;
-			console.log('Data fetched'); //birth chart generated
+	function checkDataAndDisplayChart(dataSource, callback) {
+		if (dataSource && dataSource.length > 0) {
+			callback(dataSource);
 		} else {
-			alert('Div not found!');
+			setTimeout(() => checkDataAndDisplayChart(dataSource, callback), 1000);
 		}
-		
-		//fetching session data from generated birth chart
-		fetch('get-session.php')
-			.then(response => response.json())
-			.then(data => {
-				console.log(data); // Outputs: <b>Hello, World!</b>
-				//document.getElementById('divContent').innerHTML = data.chartdata; // Insert HTML content into an element
-				displayChart1(data.chartdata);
-				
-				g_name = data.name;
-				g_date = formatDate(data.date);
-			})
-			.catch(error => {
-				console.error('Error:', error);
-			});
 	}
-	
 	
 	function displayChart1(inData) {
 		// Replace all null values with a space
@@ -857,13 +819,19 @@ function printPyramid(numbers){
 
 
 					document.getElementById('divContent').innerHTML = chartHTML;
-					document.getElementById('iframe-container').style.display = 'none';
+					//document.getElementById('iframe-container').style.display = 'none';
 					
 					document.getElementById('newButton').style.display = 'block';
 					
 		}, 100); // Adjust the timeout as needed
+		
+		var loader = document.getElementById('loader1');
+		loader.style.visibility = "hidden";
+		
+		document.getElementById("foot").style.display = 'block';
+		document.getElementById("iframe-container").style.display = 'none';
+		
 	}
-
 
 	function formatDate(dateStr) {
 		const months = {
@@ -904,10 +872,9 @@ function printPyramid(numbers){
 </head>
 
 <body onLoad="init();">
-
 	
 <div class="title" id='title'></div>
-
+<div id="loader1" class="center" style='visibility:hidden'></div>
 
 	<div class='column-menu'>
 		
@@ -921,11 +888,12 @@ function printPyramid(numbers){
 	</div>
 	<div class='column-body'>
 		<center>
-			<button class="glow-button" id='newButton' onclick="window.location.reload();" style="display:none; font-size:12px; width:-webkit-fill-available; line-height: normal;">New</button>
-			<button class="glow-button" id='calculatorBtn' onclick="window.open('numerologyCalc.php','_self')" style="width:-webkit-fill-available;line-height: normal;">Calculator</button>
+			<button type="button" class="glow-button" id='newButton' onclick="window.location.href = 'numerology.php';" style="display:none; font-size:12px; width:-webkit-fill-available; line-height: normal;">New</button>
+			<button type="button" class="glow-button" id='calculatorBtn' onclick="window.open('numerologyCalc.php','_self')" style="width:-webkit-fill-available;line-height: normal;">Calculator</button>
 		</center>
 		
 		<center><BR><p id='birthTitle' style="color:#660000;font-weight:bold; font-size:20px; text-align:center; margin:0px">DSJV எண் கணிதம்</p></center>
+		
 		<center><div class='name_number' id='name_number' style='text-align: -webkit-center;'></div></center>
 		<center><div style='display: flex; overflow-x: auto; white-space: nowrap; text_align:center'><div class='py' id='py'></div></div></center>
 		<BR>
@@ -941,8 +909,9 @@ function printPyramid(numbers){
 	
 	<BR>
 	
-	<center><p><span style='color:red;'>&#9679; பகை</span><span style='color:#32CD32'>&#9679; வசியம்</span></p></center>
-	<center><p>*Uses Chaldean method </p></center>
+	<center><div id="foot" style='display:none'><p><span style='color:red;'>&#9679; பகை</span><span style='color:#32CD32;'>&#9679; வசியம்</span></p>
+	<p style='display:none'>*Uses Chaldean method </p></div></center>
+	<?php displayNumerologyInfo(); ?>
 	
 </center>
 </body>

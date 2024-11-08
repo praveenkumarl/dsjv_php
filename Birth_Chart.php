@@ -2,6 +2,8 @@
 <?php
 include_once "lib.php";
 
+$num = isset($_POST["num"]) ? $_POST["num"] : 0;
+
 $phone = isset($_COOKIE["phone"]) ? $_COOKIE["phone"] : 1;
 
 $in_place = isset($_POST["place"]) ? $_POST["place"] : $_POST["nPlace"];
@@ -2214,9 +2216,9 @@ echo <<<EOL
 EOL;
 			displayUserInfo($_SESSION['userinfo']);
 echo <<<EOL
-				<button class='menu' onClick='window.open("index.php","_self")'>Home</button>
-				<button class='menu' onClick='window.open("Birth_input.php","_self")'>New Birth Chart</button>
-				<button class='menu' onClick='window.open("birthChartDisplay.php","_self")'>Birth Chart history</button>
+				<button type="button" class='menu' onClick='window.open("index.php","_self")'>Home</button>
+				<button type="button" class='menu' onClick='window.open("Birth_input.php","_self")'>New Birth Chart</button>
+				<button type="button" class='menu' onClick='window.open("birthChartDisplay.php","_self")'>Birth Chart history</button>
 			</div>
 			<div class='mobile'>
 EOL;
@@ -2311,7 +2313,7 @@ echo <<<EOL
 											
 											<button type='button' class='actionBtn' id='submit1' value='Submit' onClick='return genChart(this.form);'>Submit</button>
 											<input type='button' class='actionBtn' id='save' name='save' value='$saveBtnTxt' onClick='saveChart();'>
-											<button class='actionBtn' value='Download' onClick='loadOnePage("$onePageURL");'>Download</button>
+											<button type="button" class='actionBtn' value='Download' onClick='loadOnePage("$onePageURL");'>Download</button>
 											</form>
 											
 											<!-- <button style="background-color:gold;color:#660000;font-weight:bold;font-size:10px;" onclick="generatePDF()">Download</button> -->
@@ -2460,6 +2462,20 @@ if(isset($_COOKIE["phone"])) {
 }
 
 dbDisconnect($conn);
+
+$backtrace = debug_backtrace();
+
+if($num == 1){ //clicked numerology button in chart history	
+	$chartdata=join('|',$sw_planet);
+	// Create a DateTime object from the original date
+	$dateObject = new DateTime($chart_date);
+
+	// Format the date to DD-MM-YYYY
+	$newDateFormat = $dateObject->format('d/M/Y');
+	
+	$url = "numerology.php?referrer=Birth_Chart.php&name=$in_name&dob=".$newDateFormat."&chartdata=".$chartdata;
+	echo "<script>window.open(\"$url\",'_self')</script>";
+}
 
 $_POST["mTime"]="";
 $_SESSION["charttime"]="";

@@ -108,6 +108,7 @@ $g_boyage=0;
 $g_mudakku_detail="";
 $vayadhotta_rasi_girl=0;
 $vayadhotta_rasi_boy=0;
+$g_seventh_house_disclaimer="";
 
 // ------- Swiss ephemeris // ------- 
 $libPath = './sweph/';
@@ -174,7 +175,15 @@ $dayofweek = date('w', strtotime($chart_date));
 ****** this code is to take screenshot of the chart ***************/
 		$(document).ready(function(){
 			hideAll();
+			updateDateTime(); // Update only once when the page loads
 		});
+		
+		function updateDateTime() {
+			var now = new Date();
+			var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+			var formattedDateTime = now.toLocaleString('en-IN', options);
+			document.getElementById('currentDateTime').textContent = " | " + formattedDateTime;
+		}
 		
 		function init(){
 			
@@ -977,10 +986,9 @@ function naadiMatching(){
 
 //Girl/boy Sun/Sat/Rah/Kethu/Mars in 7th house, warning
 function matchingRule13(){
-	global $sw_planet, $tr_sw_planet,$g_matching_mark;
+	global $sw_planet, $tr_sw_planet,$g_matching_mark,$g_seventh_house_disclaimer;
 	
 	$result=true;
-	$reason="";
 	
 	$girl_sun = countHouses(findHouse($sw_planet,"லக்"),findHouse($sw_planet,"சூரி"));
 	$girl_sat = countHouses(findHouse($sw_planet,"லக்"),findHouse($sw_planet,"சனி"));
@@ -997,16 +1005,19 @@ function matchingRule13(){
 	if($girl_sun == 7 || $girl_sat == 7 || $girl_rah == 7 || $girl_ket == 7 || $girl_mar == 7
 		|| $boy_sun == 7 || $boy_sat == 7 || $boy_rah == 7 || $boy_ket == 7 || $boy_mar == 7){
 		$result = false;
-		$reason = "7ஆம் இடத்தில் சுரி/சனி/ரா/கே/செ, மிக கவனமாக பொருத்தம் பார்த்து முடிவு எடுக்கவும்";
+		$g_matching_mark = $g_matching_mark-2;
+		$g_seventh_house_disclaimer = "7ஆம் இடத்தில் சுரி/சனி/ரா/கே/செ, மிக கவனமாக பொருத்தம் பார்த்து முடிவு எடுக்கவும்";
 	}
+}
+
+function display_7thHouse_disclaimer(){
+	global $g_seventh_house_disclaimer;
 	
-	if($result == false){
-		echo <<<EOL
-		<div class="divDisclaimer" id='disclaimer' colspan=3>
-			<H6 style='font-weight;color:red'>*$reason</H6>
-		</div>
+	echo <<<EOL
+	<div class="divDisclaimer" id='disclaimer'>
+		<H6 style='font-weight;color:red'>*$g_seventh_house_disclaimer</H6>
+	</div>
 EOL;
-	}
 }
 
 function vasiyaMatching()
@@ -3932,8 +3943,7 @@ function displayDetailsGirl()
 	$boy_rasi = getRasi($transit_moon_house-1);
 			
 	echo <<<EOL
-		<BR>
-		<div class="divTable blueTable" id="chart" style="width:228px;">
+		<div class="divTable blueTable" id="chart" style="width:228px;margin-top:5px">
 			<div class="divTableRow">
 				<div class='divGirlPanchangHeading' style='width:30px'>பெயர்</div><div class='divGirlPanchang' style='width:30px'>$in_girlname</div>
 			</div>
@@ -4045,8 +4055,7 @@ function displayDetailsBoy()
 	$boy_rasi = getRasi($transit_moon_house-1);
 
 	echo <<<EOL
-		<BR>
-		<div class="divTable blueTable" id="chart" style="width:228px;">
+		<div class="divTable blueTable" id="chart" style="width:228px;margin-top:5px">
 			<div class="divTableRow">
 				<div class='divBoyPanchangHeading'>பெயர்</div><div class='divBoyPanchang'>$in_boyname</div>
 			</div>
@@ -4277,7 +4286,7 @@ EOL;
 }
 
 function displayRules(){	
-	global $g_panchang_girl,$g_panchang_boy;
+	global $g_panchang_girl,$g_panchang_boy, $g_seventh_house_disclaimer;
 	echo <<<EOL
 		<div class="divTable blueTable" style="height:40px;margin-top:10px;width:auto">
 			<div class="divTableRow">
@@ -4300,8 +4309,12 @@ EOL;
 	matchingRule11($g_panchang_girl['thithi'], $g_panchang_boy['thithi']);
 	matchingRule12();
 	matchingRule13();
-	
 	displayMatchingResult();
+					
+
+	if(strlen($g_seventh_house_disclaimer) > 0)
+		display_7thHouse_disclaimer();
+	displayDisclaimer();
 }
 
 calculateAll();
@@ -4309,49 +4322,48 @@ calculateAll();
 ?>
 
 <div id='onepage' style="width: max-content">
-	<div class="header-parent">
-	  <!-- <div class="header-left"><img src='images/dsjv_title.png' height="35px"></div> -->
-	  <div class="header-center"><div class='divTableTextOfficeName'>&#3059; &#2384; &#21328; &#10017;<BR><?php echo $office_name.'<BR>&#128241;'.$office_contact; ?></div></div>
-	  <!-- <div class="header-right"><img src='images/periyanayaki_astro_solutions.png' height="35px"></div> -->
-	</div>
-	<div class="header-image"></div>
-	
-<center><div class='divTableTextSloka' style='font-family: Verdana, Raavi, sans-serif;font-size:8px;width:100%;line-height:10px'>&#2384; ஜனனி ஜன்ம சௌக்யானாம் வர்தநீ குலஸம்பதாம்
- பதவி பூர்வ  புண்யாணாம் லிக்ய தே ஜன்ம பத்திரிகா !</div></center>
-	<center>
-		<div class="header">திருமணம் பொருத்தம்*</div>
-		<center><img src="images/srinivasa_kalyanam.jpg" height="10%" style='margin-top:10px'></center>
-		
-		<!-- <div class="divTableBody"> -->
-		<div class='divTable blueTable' style='width:95%' >
-			<div class="divTableRow">
-				<div class="divHoroDetailCell" style="border:none; padding:5px; width:300px"><?php displayGirlChart(); displayDetailsGirl(); ?></div>
-				<div class="divHoroDetailCell" style="border:none; padding:5px; width:350px"><?php displayMark(); displayRules(); ?></div>
-				<div class="divHoroDetailCell" style="border:none; padding:5px; width:300px"><?php displayBoyChart(); displayDetailsBoy(); ?></div>
-			</div>
-		</div>	
-
-		<div class="divTableRow">
-			<div class="divStarDetailCell" style="border:none;"><?php //displayStarLord(); ?></div>
-			<div class="divStarDetailCell" style="border:none;"><?php //displayDasa(); ?></div>
-			<div class="divStarDetailCell" style="border:none;"><?php //displayBukthi(); ?></div>
+		<div class="header-parent">
+		  <!-- <div class="header-left"><img src='images/dsjv_title.png' height="35px"></div> -->
+		  <div class="header-center"><div class='divTableTextOfficeName'>&#3059; &#2384; &#21328; &#10017;<BR><?php echo $office_name.'<BR>&#128241;'.$office_contact; ?></div></div>
+		  <!-- <div class="header-right"><img src='images/periyanayaki_astro_solutions.png' height="35px"></div> -->
 		</div>
+		<div class="header-image"></div>
+		
+	<center><div class='divTableTextSloka' style='font-family: Verdana, Raavi, sans-serif;font-size:8px;width:100%;line-height:10px'>&#2384; ஜனனி ஜன்ம சௌக்யானாம் வர்தநீ குலஸம்பதாம்
+	 பதவி பூர்வ  புண்யாணாம் லிக்ய தே ஜன்ம பத்திரிகா !</div></center>
+		<center>
+			<div class="header">திருமணம் பொருத்தம்*</div>
+			<center><img src="images/srinivasa_kalyanam.jpg" height="10%"></center>
 			
-		<?php //displayDisclaimer(); ?>
-	</center>
-	
-	<!-- this is to update the matching % at the top -->
-	<script>
-	document.getElementById('mark').style.backgroundColor ='<?php echo $g_matching_color; ?>'
-	document.getElementById('mark').innerHTML='<?php echo '*'.$g_matching_percent.'%'; ?>'; 
-	document.getElementById('disclaimer1').innerHTML = document.getElementById('disclaimer').innerHTML;
-</script>
-	
-<div class="PageFooter" style="width:-webkit-fill-available">தர்ம சாஸ்தா ஜோதிட வித்யாலயா & Periyanayaki Astro Solutions</div>
+			<!-- <div class="divTableBody"> -->
+			<div class='divTable blueTable' style='width:95%' >
+				<div class="divTableRow">
+					<div class="divHoroDetailCell" style="border:none; padding:5px; width:300px"><?php displayGirlChart(); displayDetailsGirl(); ?></div>
+					<div class="divHoroDetailCell" style="border:none; padding:5px; width:350px"><?php displayMark(); displayRules(); ?></div>
+					<div class="divHoroDetailCell" style="border:none; padding:5px; width:300px"><?php displayBoyChart(); displayDetailsBoy(); ?></div>
+				</div>
+			</div>	
+
+			<div class="divTableRow">
+				<div class="divStarDetailCell" style="border:none;"><?php //displayStarLord(); ?></div>
+				<div class="divStarDetailCell" style="border:none;"><?php //displayDasa(); ?></div>
+				<div class="divStarDetailCell" style="border:none;"><?php //displayBukthi(); ?></div>
+			</div>
+				
+			<?php //displayDisclaimer(); ?>
+		</center>
+		
+		<!-- this is to update the matching % at the top -->
+		<script>
+		document.getElementById('mark').style.backgroundColor ='<?php echo $g_matching_color; ?>'
+		document.getElementById('mark').innerHTML='<?php echo '*'.$g_matching_percent.'%'; ?>'; 
+		document.getElementById('disclaimer1').innerHTML = document.getElementById('disclaimer').innerHTML;
+	</script>
+
+	<div class="PageFooter" style="width:-webkit-fill-available">தர்ம சாஸ்தா ஜோதிட வித்யாலயா & Periyanayaki Astro Solutions
+		<span id="currentDateTime"></span>
+	</div>
 </div>
-
-
-
 
 
 <?php

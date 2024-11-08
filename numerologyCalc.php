@@ -460,7 +460,86 @@ function printPyramid(numbers){
 			return 'Invalid date format';
 		}
 	}
+	
+	/*document.addEventListener('DOMContentLoaded', function() {
+		var inputElement = document.getElementById('inputValue');
+		
+		// Function to update placeholder
+		function updatePlaceholder() {
+			var selectedType = document.querySelector('input[name="calcType"]:checked').value;
+			switch (selectedType) {
+				case 'name':
+					inputElement.placeholder = 'Enter name';
+					break;
+				case 'aadhar':
+					inputElement.placeholder = 'Enter Aadhaar Card Number';
+					break;
+				case 'vehicle':
+					inputElement.placeholder = 'Enter Vehicle Number';
+					break;
+				case 'phone':
+					inputElement.placeholder = 'Enter Phone Number';
+					break;
+				default:
+					inputElement.placeholder = 'Enter name/phone#/vehicle#';
+			}
+		}
 
+		// Add event listeners to radio buttons to update placeholder on change
+		var radioButtons = document.querySelectorAll('input[name="calcType"]');
+		radioButtons.forEach(function(radioButton) {
+			radioButton.addEventListener('change', updatePlaceholder);
+		});
+
+		// Update placeholder on initial load
+		updatePlaceholder();
+	});
+
+	function calculateMain() {
+		var selectedType = document.querySelector('input[name="calcType"]:checked').value;
+		var inputValue = document.getElementById('inputValue').value;
+
+		switch (selectedType) {
+			case 'name':
+				calculateForName(inputValue);
+				break;
+			case 'aadhar':
+				calculateForAadhar(inputValue);
+				break;
+			case 'vehicle':
+				calculateForVehicle(inputValue);
+				break;
+			case 'phone':
+				calculateForPhone(inputValue);
+				break;
+			default:
+				console.error('Invalid calculation type selected');
+		}
+	}
+
+	function calculateForName(value) {
+		displayPyramidNumerology(value);
+		console.log('Calculating for name:', value);
+		// display results
+	}
+
+	function calculateForAadhar(value) {
+		// Your logic for calculating Aadhaar card number
+		console.log('Calculating for Aadhaar card number:', value);
+		// display results
+	}
+
+	function calculateForVehicle(value) {
+		// Your logic for calculating vehicle number
+		console.log('Calculating for vehicle number:', value);
+		// display results
+	}
+
+	function calculateForPhone(value) {
+		// Your logic for calculating phone number
+		console.log('Calculating for phone number:', value);
+		// display results
+	}*/
 
 	
 
@@ -513,7 +592,83 @@ function printPyramid(numbers){
 		<div class='name_number' id='dob_result' style='text-align: -webkit-center;'></div>
 		<BR>
 		<p>*Uses Chaldean method </p>
+		<?php displayNumerologyInfo(); ?>
 	</div>	 
+	
+	<!-- <div class='column-body'>
+		<center>
+			<button class="glow-button" id='calculatorBtn' onclick="window.open('numerology.php','_self')" style="width:-webkit-fill-available;line-height: normal;">Birth Numerology</button>
+		</center>
+		<table style="width:100%; text-align: left">
+			<tr>
+				<td colspan=2>
+					<p style="color:#660000;font-weight:bold; font-size:20px; text-align:center; margin: 5px;">DSJV எண் கணிதம்</p>
+				</td>
+			</tr>
+			<tr style="background-color: #FFFFFF">
+				<td colspan=2>
+					<center>
+						<H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px;">*Name/Phone#/Vehicle#:</H5>
+					</center>
+				</td>
+			</tr>
+			<tr style="background-color: #FFFFFF">
+				<td>
+					<div style="text-align: left;line-height: 25px;">
+						<input type='radio' id='nameRadio' name='calcType' value='name' checked style='display:none'>
+						<label for='nameRadio'>Name</label>
+					</div>
+				</td>
+				<td>
+					<div style="text-align: left;line-height: 25px;">
+						<input type='radio' id='aadharRadio' name='calcType' value='aadhar' style='display:none'>
+						<label for='aadharRadio'>Aadhaar Card Number</label>
+					</div>
+				</td>
+			</tr>
+			<tr style="background-color: #FFFFFF">
+				<td>
+					<div style="text-align: left;line-height: 25px;">
+						<input type='radio' id='vehicleRadio' name='calcType' value='vehicle' style='display:none'>
+						<label for='vehicleRadio'>Vehicle Number</label>
+					</div>
+				</td>
+				<td>
+					<div style="text-align: left;line-height: 25px;">
+						<input type='radio' id='phoneRadio' name='calcType' value='phone' style='display:none'>
+						<label for='phoneRadio'>Phone Number</label>
+					</div>
+				</td>
+			</tr>
+			<tr style="background-color: #FFFFFF">
+				<td colspan=2>
+					<center>
+						<input type='text' name='inputValue' id='inputValue' style='width:100%;height:50px;color: black;font-weight: bold; background-color:gold' placeholder='Enter name/Aadhar#/vehicle#/phone#' />
+					</center>
+				</td>
+			</tr>
+			<tr style="background-color: #FFFFFF;text-align-last: center;">
+				<td colspan=2>
+					<button class='primary wide' onClick="calculateMain();" style="background:var(--menu-background)">Calculate</button>
+				</td>
+			</tr>
+			<tr style="background-color: #FFFFFF">
+				<td colspan=2>
+					<div class='name_number' id='name_number' style='text-align: -webkit-center;'></div>
+				</td>
+			</tr>
+		</table>
+		<div style='display: flex; overflow-x: auto; white-space: nowrap; text-align: center'>
+			<div class='py' id='py'></div>
+		</div>
+		<br>
+		<div class='name_number' id='dob_result' style='text-align: -webkit-center;'></div>
+		<br>
+		<p>*Uses Chaldean method </p>
+		<?php displayNumerologyInfo(); ?>
+	</div> -->
+
+
 	
 </center>
 </body>
