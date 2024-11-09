@@ -159,7 +159,8 @@ $_SESSION['user_type'] = $userInfo['user_type'];
 <iframe width="350" height="195" src="https://www.youtube.com/embed/MkdHsVMvBWI?si=vJSY9T1h6gHyvqJA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 <div class='help_video_heading'>DSJV App - மாத பஞ்சாங்கம் கணிக்கும் முறை</div>
 <iframe width="350" height="195" src="https://www.youtube.com/embed/vbeL6cQO4vs?si=UKEmoWBgbUSI8RMX" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
+<div class='help_video_heading'>DSJV App - 9 Nov 2024 Numerology feature update</div>
+<iframe width="350" height="195" src="https://www.youtube.com/embed/Nr7ikPlR_zY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 </center>
 </body>
 </html>
