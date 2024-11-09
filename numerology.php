@@ -59,9 +59,14 @@ $devInfo = $_GET;
 	}
 	
 	$(document).ready(function() {
-		if (document.referrer.includes('Birth_Chart.php') || document.referrer.includes('birthChartDisplay.php') ) {
-			getParams();
-			displayChart1(inData);
+		let referrer = document.referrer; 
+		const urlParams = new URLSearchParams(window.location.search); 
+		const fallbackReferrer = urlParams.get('referrer'); 
+		
+		if ((referrer.includes('Birth_Chart.php') || referrer.includes('birthChartDisplay.php')) || (fallbackReferrer === 'Birth_Chart.php' || fallbackReferrer === 'birthChartDisplay.php')) 
+		{ 
+			getParams(); 
+			displayChart1(inData); 
 		}
 	});
 
