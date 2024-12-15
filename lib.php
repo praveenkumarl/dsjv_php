@@ -1841,8 +1841,8 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 		}
 		else{
 			$curr_bukthi_period = ($bukthi_lord_arr[$bukthi_lord_order[$curr_dasa_lord]]/120) * $bukthi_lord_arr[$bukthi_lord_order[$i]];
-			$curr_bukthi_period = round($curr_bukthi_period * 365.2425);
-			$curr_bukthi_end_date = date('d-m-Y',strtotime($curr_bukthi_start_date. '+ '.$curr_bukthi_period.' days'));
+			$curr_bukthi_period = round($curr_bukthi_period * 365.2425*24*60*60);
+			$curr_bukthi_end_date = date('d-m-Y',strtotime($curr_bukthi_start_date. '+ '.$curr_bukthi_period.' seconds'));
 			
 			$start = date('Y-m-d',strtotime($curr_bukthi_start_date));
 			$end = date('Y-m-d',strtotime($curr_bukthi_start_date. '+ '.$curr_bukthi_period.' seconds'));
@@ -1898,8 +1898,8 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 	for($i=0; $i<$curr_dasa_lord; $i++)
 	{
 		$curr_bukthi_period = ($bukthi_lord_arr[$bukthi_lord_order[$curr_dasa_lord]]/120) * $bukthi_lord_arr[$bukthi_lord_order[$i]];
-		$curr_bukthi_period = round($curr_bukthi_period * 365.2425);
-		$curr_bukthi_end_date = date('d-m-Y',strtotime($curr_bukthi_start_date. '+ '.$curr_bukthi_period.' days'));
+		$curr_bukthi_period = round($curr_bukthi_period * 365.2425*24*60*60);
+		$curr_bukthi_end_date = date('d-m-Y',strtotime($curr_bukthi_start_date. '+ '.$curr_bukthi_period.' seconds'));
 		
 		$start = date('Y-m-d',strtotime($curr_bukthi_start_date));
 		$end = date('Y-m-d',strtotime($curr_bukthi_start_date. '+ '.$curr_bukthi_period.' seconds'));
@@ -2072,14 +2072,14 @@ function calculateVimDasa_boy()
 	echo "<center><div class='divTable blueTable' style='height:32px;display:none;' id='DasaMatable_boy'>"; 
 		echo "<div class='divTableRow'>";
 			echo "<div class='divTableOuterCell' colspan=3>";
-				echo "<H6 style='font-weight:bold'>Vim DasaBukthi/தசாபுக்தி</H6>";
+				echo "<H6 style='font-weight:bold'>தசாபுக்தி</H6>";
 				echo "</div>";
 		echo "</div>";
 	echo "</div></center>";
 
 	echo "<center><div class='divTable blueTable' style='height:auto;display:none;' id='BukthiMatable_boy'>"; 
 		echo "<div class='divTableRow'>";
-			echo "<div class='divDasaHeading_boy'>Dasa/Bukthi Lord</div>";
+			echo "<div class='divDasaHeading_boy'>தசா/புக்தி அதிபதி</div>";
 			echo "<div class='divDasaHeading_boy'>Start</div>";
 			echo "<div class='divDasaHeading_boy'>End</div>";
 		echo "</div>";
@@ -2665,103 +2665,6 @@ function getVainasigam($inner=true){
 	return $vainasigam_array;
 }
 
-function calculateNavamsam()
-{
-	global $planet_starlord, $g_navamsam_arr;
-	
-	//Arrnagement of rasi planets in navamsa chart arrangmenet notes
-	//Mesham to Katakam - சந் குரு கே - Mesham - padam1, Rishabam - padam2, Mithunam - padam3, Katakam - padham4
-	//Simham to Virichigam - செ சனி சுக் - Simham - padam1, Kanni - padam2, Thulaam - padam3, Virichigam - padham4
-	//Danusu to Meenam - சூரி ரா புத  - Danusu - padam1, Makaram - padam2, Kumbam - padam3, Meenam - padham4
-	
-	$rasi_idx1 = [	
-					array('சந்1','குரு1','கே1'), //mesham
-					array('சந்2','குரு2','கே2'), //rishabam
-					array('சந்3','குரு3','கே3'),  //mithunam
-					array('சந்4','குரு4','கே4'),  //katakam
-					array('செ1','சனி1','சுக்1'),  //simham
-					array('செ2','சனி2','சுக்2'),  //kanni
-					array('செ3','சனி3','சுக்3'),  //thulaam
-					array('செ4','சனி4','சுக்4'),  //virichigam
-					array('சூரி1','ரா1','புத1'),  //danusu
-					array('சூரி2','ரா2','புத2'),  //makaram
-					array('சூரி3','ரா3','புத3'),  //kumbam
-					array('சூரி4','ரா4','புத4')  //meenam
-				];
-				
-	$rasi_idx = [	
-					'சந்1' => 0,  // mesham
-					'குரு1' => 0 , // mesham
-					'கே1' => 0 , // mesham
-					'சந்2' => 1 , // rishabam
-					'குரு2' => 1 , // rishabam
-					'கே2' => 1 , // rishabam
-					'சந்3'  => 2 , // mithunam
-					'குரு3'  => 2 , // mithunam
-					'கே3'  => 2 , // mithunam
-					'சந்4'  => 3 , // katakam
-					'குரு4'  => 3 , // katakam
-					'கே4'  => 3 , // katakam
-					'செ1'  => 4 , // simham
-					'சனி1'  => 4 , // simham
-					'சுக்1'  => 4 , // simham
-					'செ2'  => 5 , // kanni
-					'சனி2'  => 5 , // kanni
-					'சுக்2'  => 5 , // kanni
-					'செ3'  => 6 , // thulaam
-					'சனி3'  => 6 , // thulaam
-					'சுக்3'  => 6 , // thulaam
-					'செ4'  => 7 , // virichigam
-					'சனி4'  => 7 , // virichigam
-					'சுக்4'  => 7 , // virichigam
-					'சூரி1'  => 8 , // danusu
-					'ரா1'  => 8 , // danusu
-					'புத1'  => 8 , // danusu
-					'சூரி2'  => 9 , // makaram
-					'ரா2'  => 9 , // makaram
-					'புத2'  => 9 , // makaram
-					'சூரி3'  => 10 , // kumbam
-					'ரா3'  => 10 , // kumbam
-					'புத3'  => 10 , // kumbam
-					'சூரி4'  => 11 , // meenam
-					'ரா4'  => 11 , // meenam
-					'புத4'  => 11  // meenam
-				];
-	
-$planet_padam = explode('(',$planet_starlord["லக்"][1])[0] . explode(' ',$planet_starlord["லக்"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " <span class='lagna'>லக்</span>";
-	
-	$planet_padam = explode('(',$planet_starlord["சூரி"][1])[0] . explode(' ',$planet_starlord["சூரி"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " சூரி";
-	
-	$planet_padam = explode('(',$planet_starlord["சந்"][1])[0] . explode(' ',$planet_starlord["சந்"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " <span class='moon'>சந்</span>";
-	
-	$planet_padam = explode('(',$planet_starlord["புத"][1])[0] . explode(' ',$planet_starlord["புத"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " புத";
-	
-	$planet_padam = explode('(',$planet_starlord["சுக்"][1])[0] . explode(' ',$planet_starlord["சுக்"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " சுக்";
-	
-	$planet_padam = explode('(',$planet_starlord["செ"][1])[0] . explode(' ',$planet_starlord["செ"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " செ";
-	
-	$planet_padam = explode('(',$planet_starlord["குரு"][1])[0] . explode(' ',$planet_starlord["குரு"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " குரு";
-	
-	$planet_padam = explode('(',$planet_starlord["சனி"][1])[0] . explode(' ',$planet_starlord["சனி"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " சனி";
-	
-	$planet_padam = explode('(',$planet_starlord["ரா"][1])[0] . explode(' ',$planet_starlord["ரா"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " ரா";
-	
-	$planet_padam = explode('(',$planet_starlord["கே"][1])[0] . explode(' ',$planet_starlord["கே"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " கே";
-	
-	$planet_padam = explode('(',$planet_starlord["மா"][1])[0] . explode(' ',$planet_starlord["மா"][0])[1];
-	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " மா";
-}
-
 function calculateStarLord()
 {
 	global $planetDeg,$sw_planet, $planet_starlord, $g_planetKaranaLord, $g_planetThithiLord, $g_planetYogamLord;
@@ -3212,6 +3115,7 @@ function getPanchaPakshi()
 {
 	global $panchang,$g_nak;
 	
+	//Array format Nak => sukla paksha Pakshi, krishna paksha pakshi
 	$pancha_pakshi = array("அசுவினி" =>array("வல்லூரு", "மயில்"),
 		"பரணி" => array("வல்லூரு","மயில்"),
 		"கிருத்திகை" => array("வல்லூரு","மயில்"),
@@ -3242,15 +3146,17 @@ function getPanchaPakshi()
 		
 		$g_nak = explode(' ',explode("/",$panchang['nak'])[1])[0];
 		
-		$paksham = rtrim(explode('/',$panchang['thithi'])[2],']');
+		//Manikandan sir said in his method, pakshi is same for both paksham.
+		/*$paksham = rtrim(explode('/',$panchang['thithi'])[2],']');
 		
 		if(strpos("வளர்",$paksham)===0){
 			return $pancha_pakshi[$g_nak][0];
 		}
 		else{
 			return $pancha_pakshi[$g_nak][1];
-		}
+		}*/
 		
+		return $pancha_pakshi[$g_nak][0];
 }
 
 
@@ -5523,6 +5429,9 @@ function getKaranaParigaaram($karan)
 	$details = "<DIV class='parigaaram-grid-container'>";
 	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>கரண விவரங்கள்</DIV>";
 		
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>கரணம்</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$kar."</DIV>";
+		
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>கரண பரிகாரம் கோவில்</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><img style='width:150px' src='images/karanam_gods/$kar.jpg' /></DIV>";
 			
@@ -6136,120 +6045,147 @@ function getSessionId()
 	return session_id();
 }
 
-function getTamilMonthDay($sun_house,$sun_degree){
-	global $today_sunrise, $today_sunset,$chart_time, $chart_date;
-	
-	$tamil_month_rasi_arr = [array("dummy","dummy",0,0),
-							 array("மேஷம்","சித்திரை",1.030851852,30),
-							 array("ரிஷபம்","வைகாசி",1.013010753,30),
-							 array("மிதுனம்","ஆனி",1.019695341,30),
-							 array("கடகம்","ஆடி",1.01516129,30),
-							 array("சிம்மம்","ஆவணி",1.001164875,30), 
-							 array("கன்னி","புரட்டாசி",1.015203704,30),
-							 array("துலாம்","ஐப்பசி",1.031101533,30),
-							 array("விருச்சிகம்","கார்த்திகை",1.017471264,30),
-							 array("தனுசு","மார்கழி",1.012001916,20),
-							 array("மகரம்","தை",1.015670498,30), 
-							 array("கும்பம்","மாசி",1.027816092,30),
-							 array("மீனம்","பங்குனி",1.011305556,30)
-							 ];
-							 
-	$month = $tamil_month_rasi_arr[$sun_house][1];
-	//$day = ceil($sun_degree / $tamil_month_rasi_arr[$sun_house][2]);
-	
-	if($sun_degree==0){
-		$sun_degree = 0.001;
-	}
-	
-	//this is to decide how many days to assume for the month
-	//$maxdays = round((strtotime($today_sunset) - strtotime($today_sunrise))/60/12/60*30);
-	$maxdays = ceil((strtotime($today_sunset) - strtotime($today_sunrise))/60/12/60*30);
-	
-	//$day = ceil($sun_degree * $tamil_month_rasi_arr[$sun_house][3]/30); //Rasi deg 30
-	$day = ceil($sun_degree * $maxdays/30); //Rasi deg 30
-	//$day = floor($sun_degree * $maxdays/30); //Rasi deg 30
-	
-	//increase day at sunrise
-		
-	if($day>$maxdays){
-		
-		$day=1;
-		$month = $tamil_month_rasi_arr[$sun_house+1][1];
-	}	
-	
-	
-	debug("maxdays_unrounded".((strtotime($today_sunset) - strtotime($today_sunrise))/60/12/60*30)."<BR>day_unrounded=".($sun_degree * $maxdays/30)."<BR>day=$day<BR>maxdays=$maxdays<BR>sun_degree=$sun_degree<BR>today_srise=$today_sunrise<BR>today_sset=$today_sunset");
-							 
-	return array($month,$day);
+function getTamilMonthDay($sun_house, $sun_degree) {
+    global $today_sunrise, $today_sunset;
+
+    $tamil_month_rasi_arr = [
+        array("dummy", "dummy", 0, 0),
+        array("மேஷம்", "சித்திரை", 1.030851852, 30),
+        array("ரிஷபம்", "வைகாசி", 1.013010753, 30),
+        array("மிதுனம்", "ஆனி", 1.019695341, 30),
+        array("கடகம்", "ஆடி", 1.01516129, 30),
+        array("சிம்மம்", "ஆவணி", 1.001164875, 30),
+        array("கன்னி", "புரட்டாசி", 1.015203704, 30),
+        array("துலாம்", "ஐப்பசி", 1.031101533, 30),
+        array("விருச்சிகம்", "கார்த்திகை", 1.017471264, 30),
+        array("தனுசு", "மார்கழி", 1.012001916, 20),
+        array("மகரம்", "தை", 1.015670498, 30),
+        array("கும்பம்", "மாசி", 1.027816092, 30),
+        array("மீனம்", "பங்குனி", 1.011305556, 30)
+    ];
+
+    $month = $tamil_month_rasi_arr[$sun_house][1];
+
+    if ($sun_degree == 0) {
+        $sun_degree = 0.001;
+    }
+
+    // Calculate the maximum days in the month based on the sun's rise and set times
+    $maxdays = ceil((strtotime($today_sunset) - strtotime($today_sunrise)) / 60 / 12 / 60 * 30);
+
+    // Calculate the day based on sun's degree in the house
+    $day = ceil($sun_degree * $maxdays / 30);
+
+    if ($day > $maxdays) {
+        $day = 1;
+        $month = $tamil_month_rasi_arr[$sun_house + 1][1];  // Move to next month
+    }
+
+    return array($month, $day);
 }
 
-//currently works only for 2024
+
 function getTamilDate() {
-    global $chart_time, $chart_date, $sun_house, $sun_degree, $today_sunrise;
+    global $chart_time, $chart_date, $sun_house, $sun_degree;
     include_once "eng_tamil_year_map.php";
-    
-   // Parse the time from chart_time
-    $chartHour = (int) date('H', strtotime($chart_time));
-    $chartMinute = (int) date('i', strtotime($chart_time));
-    
-     // Parse the sunrise time
-    list($sunriseDate, $sunriseTime) = explode(' ', $today_sunrise);
-    $sunriseHour = (int) date('H', strtotime($sunriseTime));
-    $sunriseMinute = (int) date('i', strtotime($sunriseTime));
-    
-    // Check if the time is before today's sunrise
-    if ($chartHour < $sunriseHour || ($chartHour == $sunriseHour && $chartMinute < $sunriseMinute)) {
-        // Subtract one day from the chart_date
-        $chart_date = date('Y-m-d', strtotime($chart_date . ' -1 day'));
-    }
-    
+
+    // Get the current year, month, and day
     $year = date('Y', strtotime($chart_date));
     $month = (int) date('m', strtotime($chart_date));
     $day = date('d', strtotime($chart_date));
-    
-    if (isset($eng_tam_map[$year])) { // if array exists
+
+    if (isset($eng_tam_map[$year])) { // If the map exists for the year
         if ($day < $eng_tam_map[$year][$month][1]) {
-            $tamil_month = $eng_tam_map[$year][$month-1][0];
+            $tamil_month = $eng_tam_map[$year][$month - 1][0];
         } else {
             $tamil_month = $eng_tam_map[$year][$month][0];
         }
+
         if ($day - $eng_tam_map[$year][$month][1] >= 0) {
             $tamil_day = $day - $eng_tam_map[$year][$month][1] + 1;
         } else {
+            // Calculate the Tamil day considering month-end transitions
             if ($month == 1) {
-                $tamil_day = cal_days_in_month(CAL_GREGORIAN, 12, $year) - $eng_tam_map[$year][$month-1][1] + $day + 1;
+                $tamil_day = cal_days_in_month(CAL_GREGORIAN, 12, $year) - $eng_tam_map[$year][$month - 1][1] + $day + 1;
             } else {
-                $tamil_day = cal_days_in_month(CAL_GREGORIAN, $month-1, $year) - $eng_tam_map[$year][$month-1][1] + $day + 1;
+                $tamil_day = cal_days_in_month(CAL_GREGORIAN, $month - 1, $year) - $eng_tam_map[$year][$month - 1][1] + $day + 1;
             }
         }
     } else {
+        // Fallback method when the map is not available
         $month_day_arr = getTamilMonthDay($sun_house, $sun_degree);
         $tamil_month = $month_day_arr[0];
         $tamil_day = $month_day_arr[1];
     }
-    
+
+    // Get the Tamil year based on the English year
     $tamil_year = getTamilYear($year, $tamil_month);
+
+    // Set the Tamil "Kari Naal" (Auspicious Day)
     setKariNaal($tamil_month, $tamil_day);
-    
-    return $tamil_year . ',<BR>' . $tamil_month . ' ' . $tamil_day;
+
+    return $tamil_year . ', ' . $tamil_month . ' ' . $tamil_day;
 }
 
-function getTamilYear($eng_year,$tamil_month){
-	global $sun_house;
-	$first_year = [907,967,1027,1087,1147,1207,1267,1327,1387,1447,1507,1567,1627,1687,1747,1807,1867,1927,1987,2047,2107,2167,2227,2287,2347,2407,2467,2527,2587,2647,2707,2767,2827,2887,2947,3007];
-	$year_names = ['பிரபவ','விபவ','சுக்ல','பிரமோதூத','பிரசோற்பத்தி','ஆங்கீரச','ஸ்ரீமுக','பவ','யுவ','தாது','ஈஸ்வர','வெகுதானிய','பிரமாதி','விக்கிரம','விஷு','சித்திரபானு','சுபானு','தாரண','பார்த்திப','விய','சர்வசித்து','சர்வதாரி','விரோதி','விக்ருதி','கர','நந்தன','விஜய','ஜய','மன்மத','துன்முகி','ஹேவிளம்பி','விளம்பி','விகாரி','சார்வரி','பிலவ','சுபகிருது','சோபகிருது','குரோதி','விசுவாசுவ','பரபாவ','பிலவங்க','கீலக','சௌமிய','சாதாரண','விரோதகிருது','பரிதாபி','பிரமாதீச','ஆனந்த','ராட்சச','நள','பிங்கள','காளயுக்தி','சித்தார்த்தி','ரௌத்திரி','துன்மதி','துந்துபி','ருத்ரோத்காரி','ரக்தாட்சி','குரோதன','அட்சய'];
-	$first_half=["தை","மாசி","பங்குனி"];
-	$second_half=["சித்திரை","வைகாசி","ஆனி","ஆடி","ஆவணி","புரட்டாசி","ஐப்பசி","கார்த்திகை","மார்கழி"];
-	
-	if(array_search($tamil_month,$second_half)===0 or array_search($tamil_month,$second_half)>0){
-		return $year_names[($eng_year-907)%60];
-		debug(__FUNCTION__.":".(($eng_year-907)%60));
-	}
-	else{
-		return $year_names[($eng_year-907-1)%60];
-		debug(__FUNCTION__.":".(($eng_year-907-1)%60));
-	}
+function getTamilYear1($eng_year, $tamil_month) {
+    global $sun_house;
+
+    // Tamil year names array
+    $year_names = [
+        'பிரபவ', 'விபவ', 'சுக்ல', 'பிரமோதூத', 'பிரசோற்பத்தி', 'ஆங்கீரச', 'ஸ்ரீமுக', 'பவ', 'யுவ', 'தாது',
+        'ஈஸ்வர', 'வெகுதானிய', 'பிரமாதி', 'விக்கிரம', 'விஷு', 'சித்திரபானு', 'சுபானு', 'தாரண', 'பார்த்திப',
+        'விய', 'சர்வசித்து', 'சர்வதாரி', 'விரோதி', 'விக்ருதி', 'கர', 'நந்தன', 'விஜய', 'ஜய', 'மன்மத', 'துன்முகி',
+        'ஹேவிளம்பி', 'விளம்பி', 'விகாரி', 'சார்வரி', 'பிலவ', 'சுபகிருது', 'சோபகிருது', 'குரோதி', 'விசுவாசுவ',
+        'பரபாவ', 'பிலவங்க', 'கீலக', 'சௌமிய', 'சாதாரண', 'விரோதகிருது', 'பரிதாபி', 'பிரமாதீச', 'ஆனந்த', 'ராட்சச',
+        'நள', 'பிங்கள', 'காளயுக்தி', 'சித்தார்த்தி', 'ரௌத்திரி', 'துன்மதி', 'துந்துபி', 'ருத்ரோத்காரி', 'ரக்தாட்சி',
+        'குரோதன', 'அட்சய'
+    ];
+
+    // Split the months into two halves for calculations
+    $first_half = ["தை", "மாசி", "பங்குனி"];
+    $second_half = ["சித்திரை", "வைகாசி", "ஆனி", "ஆடி", "ஆவணி", "புரட்டாசி", "ஐப்பசி", "கார்த்திகை", "மார்கழி"];
+
+    // Handle year transition carefully for early months
+    if (in_array($tamil_month, $second_half)) {
+        return $year_names[($eng_year - 907) % 60];
+    } else {
+        return $year_names[($eng_year - 907 - 1) % 60];
+    }
 }
+
+function getTamilYear($eng_year, $tamil_month) {
+    // Tamil year names array
+    $year_names = [
+        'பிரபவ', 'விபவ', 'சுக்ல', 'பிரமோதூத', 'பிரசோற்பத்தி', 'ஆங்கீரச', 'ஸ்ரீமுக', 'பவ', 'யுவ', 'தாது',
+        'ஈஸ்வர', 'வெகுதானிய', 'பிரமாதி', 'விக்கிரம', 'விஷு', 'சித்திரபானு', 'சுபானு', 'தாரண', 'பார்த்திப',
+        'விய', 'சர்வசித்து', 'சர்வதாரி', 'விரோதி', 'விக்ருதி', 'கர', 'நந்தன', 'விஜய', 'ஜய', 'மன்மத', 'துன்முகி',
+        'ஹேவிளம்பி', 'விளம்பி', 'விகாரி', 'சார்வரி', 'பிலவ', 'சுபகிருது', 'சோபகிருது', 'குரோதி', 'விசுவாசுவ',
+        'பரபாவ', 'பிலவங்க', 'கீலக', 'சௌமிய', 'சாதாரண', 'விரோதகிருது', 'பரிதாபி', 'பிரமாதீச', 'ஆனந்த', 'ராட்சச',
+        'நள', 'பிங்கள', 'காளயுக்தி', 'சித்தார்த்தி', 'ரௌத்திரி', 'துன்மதி', 'துந்துபி', 'ருத்ரோத்காரி', 'ரக்தாட்சி',
+        'குரோதன', 'அட்சய'
+    ];
+
+    // Tamil months starting from Chithirai
+    $tamil_months = ["சித்திரை", "வைகாசி", "ஆனி", "ஆடி", "ஆவணி", "புரட்டாசி", "ஐப்பசி", "கார்த்திகை", "மார்கழி", "தை", "மாசி", "பங்குனி"];
+
+    // Find the index of the given Tamil month
+    $month_index = array_search($tamil_month, $tamil_months);
+
+    if ($month_index === false) {
+        return "Invalid Tamil month.";
+    }
+
+    // Tamil year transitions in mid-April (Chithirai starts the new year)
+    // Months before Chithirai (Thai, Maasi, Panguni) belong to the current Tamil year
+    if ($month_index >= 0 && $month_index <= 8) { // Chithirai to Panguni
+        return $year_names[($eng_year - 907) % 60];
+    } else { // Thai and Masi
+        return $year_names[($eng_year - 907) % 60];
+    }
+}
+
+
+
 
 function displayHomePageButtons($in_usertype){
 	
@@ -7224,11 +7160,1878 @@ function calculateVivahaChakra($sun_nakshatra, $moon_nakshatra) {
 
 function displayVivahaChakram($result, $sunstar, $moonstar){
 	echo "<center>";
-	echo "<div class='divPanchangHeading' style='width: var(--chart-width)'>தற்போதய விவாஹ சக்ர பலன்<BR><BR>" . $result['result'];
+	echo "<div class='divPanchangHeading' id='vivahaChakram' style='widt@123
+	h: var(--chart-width)'>தற்போதய விவாஹ சக்ர பலன்<BR><BR>" . $result['result'];
 	echo "சூரியன் நின்ற நட்சத்திரம்: <U>$sunstar</U><BR>";
 	echo "சந்திரன் நின்ற நட்சத்திரம்: <U>$moonstar</U><BR><BR>";
 	echo $result['chart'];
 	echo "</center>";
 }
+
+
+function getProkeralaAuthToken()
+{
+	$curl = curl_init();
+
+	curl_setopt_array($curl, array(
+	  CURLOPT_URL => 'https://api.prokerala.com/token',
+	  CURLOPT_RETURNTRANSFER => true,
+	  CURLOPT_ENCODING => '',
+	  CURLOPT_MAXREDIRS => 10,
+	  CURLOPT_TIMEOUT => 0,
+	  CURLOPT_FOLLOWLOCATION => true,
+	  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	  CURLOPT_CUSTOMREQUEST => 'POST',
+	  CURLOPT_POSTFIELDS => 'client_secret=SI8Oj6gB6ElVSIOolaQqKM4h5l9nptFrmfLmS1zf&grant_type=client_credentials&client_id=fc7711e7-e6a3-4728-97df-b83a7d53ab47',
+	  CURLOPT_HTTPHEADER => array(
+		'Content-Type: application/x-www-form-urlencoded'
+	  ),
+	));
+
+	$response = curl_exec($curl);
+
+	curl_close($curl);
+	$auth_arr = json_decode($response,true);
+	
+	return $auth_arr['access_token'];
+}
+
+function getProkeralaPunchangDetail($in_lat,$in_long,$in_datetime,$in_lang)
+{
+	$curl = curl_init();
+	
+	$token = getProkeralaAuthToken();
+
+	curl_setopt_array($curl, array(
+	  //CURLOPT_URL => 'https://api.prokerala.com/v2/astrology/panchang?ayanamsa=1&coordinates=13.214747,80.097626&datetime=2023-02-01T20:58:21%2B05:30&la=ta',
+	  CURLOPT_URL => 'https://api.prokerala.com/v2/astrology/panchang?ayanamsa=1&coordinates='.$in_lat.','.$in_long.'&datetime='.$in_datetime.'&la='.$in_lang,
+	  CURLOPT_RETURNTRANSFER => true,
+	  CURLOPT_ENCODING => '',
+	  CURLOPT_MAXREDIRS => 10,
+	  CURLOPT_TIMEOUT => 0,
+	  CURLOPT_FOLLOWLOCATION => true,
+	  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	  CURLOPT_CUSTOMREQUEST => 'GET',
+	  CURLOPT_HTTPHEADER => array(
+		'Accept: application/xml',
+		'Authorization: Bearer '.$token
+	  ),
+	));
+
+	$response = curl_exec($curl);
+
+	curl_close($curl);
+	
+	$panchang_arr = json_decode($response, true);
+	
+	var_dump($panchang_arr);
+	
+	displayProkeralaDetailPanchang($panchang_arr);
+}
+
+function displayProkeralaDetailPanchang($in_arr)
+{
+	echo "<center><div class='divTable blueTable' style='height:40px;' id='panchangBody'>"; 
+	
+	foreach($in_arr['data'] as $heading => $value)
+	{
+		if(strpos($heading,"nakshatra")===0){
+			foreach($value[0] as $subhead => $subvalue){
+				echo "<div class='divTableRow'>";
+					echo "<div class='divPanchangHeading'>$subhead</div>";
+					echo "<div class='divPanchang'>$subvalue</div>";
+				echo "</div>";
+			}
+		}
+		else{
+			echo "<div class='divTableRow'>";
+				echo "<div class='divPanchangHeading'>$heading</div>";
+				echo "<div class='divPanchang'>$value</div>";
+			echo "</div>";
+		}
+	}
+	
+	echo "</div>";
+}
+
+function getProkeralaTamilCalenderDetail($date,$calendar,$in_lang)
+{
+	$curl = curl_init();
+	
+	$token = getProkeralaAuthToken();
+
+	curl_setopt_array($curl, array(
+	  //CURLOPT_URL => 'https://api.prokerala.com/v2/astrology/panchang?ayanamsa=1&coordinates=13.214747,80.097626&datetime=2023-02-01T20:58:21%2B05:30&la=ta',
+	  CURLOPT_URL => 'https://api.prokerala.com/v2/calendar?date='.$date.'&calendar='.$calendar.'&la='.$in_lang,
+	  CURLOPT_RETURNTRANSFER => true,
+	  CURLOPT_ENCODING => '',
+	  CURLOPT_MAXREDIRS => 10,
+	  CURLOPT_TIMEOUT => 0,
+	  CURLOPT_FOLLOWLOCATION => true,
+	  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+	  CURLOPT_CUSTOMREQUEST => 'GET',
+	  CURLOPT_HTTPHEADER => array(
+		'Accept: application/xml',
+		'Authorization: Bearer '.$token
+	  ),
+	));
+
+	$response = curl_exec($curl);
+
+	curl_close($curl);
+	
+	$panchang_arr = json_decode($response, true);
+	
+	return $panchang_arr;
+	
+	//displayProkeralaDetailPanchang($panchang_arr);
+}
+
+function runSwetest($args) {
+	// ------- Swiss ephemeris // ------- 
+	$libPath = './sweph/';
+	// ------- Swiss ephemeris // ------- 
+	
+	if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+		debug('RUNNING ON WINDOWS');
+		$swetestPath = 'swetest64.exe -edir'.$libPath;
+	} else {
+		debug('RUNNING ON LINUX');
+		$swetestPath = 'swetest';
+	}
+    // Path to swetest.exe
+    //$swetestPath = 'swetest.exe';
+
+    // Command execution
+    $command = $swetestPath . ' ' . $args;
+	
+    $output = shell_exec($command);
+
+    return $output;
+}
+/****** Divisional chart *******/
+/* Reference https://www.cosmicsquares.com/free-horoscope/shodasamsa-chart
+/********************************/
+
+function calculateD2Chart() {
+    global $planet_starlord;
+	
+	$d2_array = [
+					[0.0,15.0,4],  //male male
+					[15.0,30.0,3], //male female
+					[0.0,15.0,3],  //female male
+					[15.0,30.0,4], //female female
+				];
+
+    // Reset the divisional array
+    $g_divisional_arr = array_fill(0, 12, '');
+
+    // Loop through each planet to calculate divisional positions
+    foreach ($planet_starlord as $planet => $details) {
+        $degree = $details[2]; // Get the degree from the third element
+        $sign = floor($degree / 30.0) + 1; // Determine the sign
+        $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
+
+		if($sign % 2 == 1){ //male rasi
+			if($signDegree >$d2_array[0][0] and $signDegree <= $d2_array[0][1]){
+				$offset = $d2_array[0][2];
+			}
+			else if($signDegree >$d2_array[1][0] and $signDegree <= $d2_array[1][1]){
+				$offset = $d2_array[1][2];
+			}
+		}
+		else{  //female rasi
+			if($signDegree >$d2_array[0][0] and $signDegree <= $d2_array[0][1]){
+				$offset = $d2_array[2][2];
+			}
+			else if($signDegree >$d2_array[1][0] and $signDegree <= $d2_array[1][1]){
+				$offset = $d2_array[3][2];
+			}
+		}
+
+        // Store the calculated divisional position with degree
+		if(mb_strpos($planet,'லக்')!==false)
+		{
+			$g_divisional_arr[$offset] .= "<span class='lagna'>$planet</span>";
+		}
+		else{
+			if(isRetro($planet)[1] == -1)
+				$g_divisional_arr[$offset] .= " <span class='retro'>$planet</span>" ;
+			else
+				$g_divisional_arr[$offset] .= " $planet" ;
+		}
+    }
+
+    return $g_divisional_arr;
+}
+
+function calculateD3Chart() {
+    global $planet_starlord;
+	
+	$d3_array = [
+					[0.0,10.0,1],
+					[10.0,20.0,5],
+					[20.0,30.0,9]
+				];
+
+    // Reset the divisional array
+    $g_divisional_arr = array_fill(0, 12, '');
+
+    // Loop through each planet to calculate divisional positions
+    foreach ($planet_starlord as $planet => $details) {
+        $degree = $details[2]; // Get the degree from the third element
+        $sign = floor($degree / 30.0) + 1; // Determine the sign
+        $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
+
+		if($signDegree >$d3_array[0][0] and $signDegree <= $d3_array[0][1]){
+			$offset = targetHouse($sign,$d3_array[0][2]) - 1;
+		}
+		else if($signDegree >$d3_array[1][0] and $signDegree <= $d3_array[1][1]){
+			$offset = targetHouse($sign,$d3_array[1][2]) - 1;
+		}
+		else if($signDegree >$d3_array[2][0] and $signDegree <= $d3_array[2][1]){
+			$offset = targetHouse($sign,$d3_array[2][2]) - 1;
+		}
+		
+		if($offset < 0)
+			$offset = 11;
+
+        // Store the calculated divisional position with degree
+		if(mb_strpos($planet,'லக்')!==false)
+		{
+			$g_divisional_arr[$offset] .= "<span class='lagna'>$planet</span>";
+		}
+		else{
+			if(isRetro($planet)[1] == -1)
+				$g_divisional_arr[$offset] .= " <span class='retro'>$planet</span>" ;
+			else
+				$g_divisional_arr[$offset] .= " $planet" ;
+		}
+    }
+
+    return $g_divisional_arr;
+}
+
+function calculateD4Chart() {
+    global $planet_starlord;
+	
+	$d4_array = [
+					[0.0,7.5,1],
+					[7.5,15.0,4],
+					[15.0,22.5,7],
+					[22.5,30,10]
+				];
+
+    // Reset the divisional array
+    $g_divisional_arr = array_fill(0, 12, '');
+
+    // Loop through each planet to calculate divisional positions
+    foreach ($planet_starlord as $planet => $details) {
+        $degree = $details[2]; // Get the degree from the third element
+        $sign = floor($degree / 30.0) + 1; // Determine the sign
+        $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
+
+		if($signDegree >$d4_array[0][0] and $signDegree <= $d4_array[0][1]){
+			$offset = targetHouse($sign,$d4_array[0][2]) - 1;
+		}
+		else if($signDegree >$d4_array[1][0] and $signDegree <= $d4_array[1][1]){
+			$offset = targetHouse($sign,$d4_array[1][2]) - 1;
+		}
+		else if($signDegree >$d4_array[2][0] and $signDegree <= $d4_array[2][1]){
+			$offset = targetHouse($sign,$d4_array[2][2]) - 1;
+		}
+		else if($signDegree >$d4_array[3][0] and $signDegree <= $d4_array[3][1]){
+			$offset = targetHouse($sign,$d4_array[3][2]) - 1;
+		}
+		
+		if($offset < 0)
+			$offset = 11;
+
+        // Store the calculated divisional position with degree
+		if(mb_strpos($planet,'லக்')!==false)
+		{
+			$g_divisional_arr[$offset] .= "<span class='lagna'>$planet</span>";
+		}
+		else{
+			if(isRetro($planet)[1] == -1)
+				$g_divisional_arr[$offset] .= " <span class='retro'>$planet</span>" ;
+			else
+				$g_divisional_arr[$offset] .= " $planet" ;
+		}
+    }
+
+    return $g_divisional_arr;
+}
+
+function calculateD5Chart() {
+    global $planet_starlord;
+	
+	$d2_array = [
+					[0.0,6.0,0],  //male
+					[6.0,12.0,10], //male
+					[12.0,18.0,8],  //male
+					[18.0,24.0,2], //male
+					[24.0,30.0,6], //male
+					[0.0,6.0,1],  //female
+					[6.0,12.0,5], //female
+					[12.0,18.0,11],  //female
+					[18.0,24.0,9], //female
+					[24.0,30.0,7] //female
+				];
+
+    // Reset the divisional array
+    $g_divisional_arr = array_fill(0, 12, '');
+
+    // Loop through each planet to calculate divisional positions
+    foreach ($planet_starlord as $planet => $details) {
+        $degree = $details[2]; // Get the degree from the third element
+        $sign = floor($degree / 30.0) + 1; // Determine the sign
+        $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
+
+		if($sign % 2 == 1){ //male rasi
+			if($signDegree >$d2_array[0][0] and $signDegree <= $d2_array[0][1]){
+				$offset = $d2_array[0][2];
+			}
+			else if($signDegree >$d2_array[1][0] and $signDegree <= $d2_array[1][1]){
+				$offset = $d2_array[1][2];
+			}
+			else if($signDegree >$d2_array[2][0] and $signDegree <= $d2_array[2][1]){
+				$offset = $d2_array[2][2];
+			}
+			else if($signDegree >$d2_array[3][0] and $signDegree <= $d2_array[3][1]){
+				$offset = $d2_array[3][2];
+			}
+			else if($signDegree >$d2_array[4][0] and $signDegree <= $d2_array[4][1]){
+				$offset = $d2_array[4][2];
+			}
+		}
+		else{  //female rasi
+			if($signDegree >$d2_array[5][0] and $signDegree <= $d2_array[5][1]){
+				$offset = $d2_array[5][2];
+			}
+			else if($signDegree >$d2_array[6][0] and $signDegree <= $d2_array[6][1]){
+				$offset = $d2_array[6][2];
+			}
+			else if($signDegree >$d2_array[7][0] and $signDegree <= $d2_array[7][1]){
+				$offset = $d2_array[7][2];
+			}
+			else if($signDegree >$d2_array[8][0] and $signDegree <= $d2_array[8][1]){
+				$offset = $d2_array[8][2];
+			}
+			else if($signDegree >$d2_array[9][0] and $signDegree <= $d2_array[9][1]){
+				$offset = $d2_array[9][2];
+			}
+		}
+		
+		debug("<br>$planet---$sign($signDegree)----offset=$offset");
+
+		// Store the calculated divisional position with degree
+		if(mb_strpos($planet,'லக்')!==false)
+		{
+			$g_divisional_arr[$offset] .= "<span class='lagna'>$planet</span>";
+		}
+		else{
+			if(isRetro($planet)[1] == -1)
+				$g_divisional_arr[$offset] .= " <span class='retro'>$planet</span>" ;
+			else
+				$g_divisional_arr[$offset] .= " $planet" ;
+		}
+    }
+
+    return $g_divisional_arr;
+}
+
+function calculateD6Chart() {
+    global $planet_starlord;
+	
+	$d6_array = [
+					[0.0,5.0,0],  //male
+					[5.0,10.0,1], //male
+					[10.0,15.0,2],  //male
+					[15.0,20.0,3], //male
+					[20.0,25.0,4], //male
+					[25.0,30.0,5], //male
+					
+					[0.0,5.0,6],  //female
+					[5.0,10.0,7], //female
+					[10.0,15.0,8],  //female
+					[15.0,20.0,9], //female
+					[20.0,25.0,10], //female
+					[25.0,30.0,11], //female
+				];
+
+    // Reset the divisional array
+    $g_divisional_arr = array_fill(0, 12, '');
+
+    // Loop through each planet to calculate divisional positions
+    foreach ($planet_starlord as $planet => $details) {
+        $degree = $details[2]; // Get the degree from the third element
+        $sign = floor($degree / 30.0) + 1; // Determine the sign
+        $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
+
+		if($sign % 2 == 1){ //male rasi
+			if($signDegree >$d6_array[0][0] and $signDegree <= $d6_array[0][1]){
+				$offset = $d6_array[0][2];
+			}
+			else if($signDegree >$d6_array[1][0] and $signDegree <= $d6_array[1][1]){
+				$offset = $d6_array[1][2];
+			}
+			else if($signDegree >$d6_array[2][0] and $signDegree <= $d6_array[2][1]){
+				$offset = $d6_array[2][2];
+			}
+			else if($signDegree >$d6_array[3][0] and $signDegree <= $d6_array[3][1]){
+				$offset = $d6_array[3][2];
+			}
+			else if($signDegree >$d6_array[4][0] and $signDegree <= $d6_array[4][1]){
+				$offset = $d6_array[4][2];
+			}
+			else if($signDegree >$d6_array[5][0] and $signDegree <= $d6_array[5][1]){
+				$offset = $d6_array[5][2];
+			}
+		}
+		else{  //female rasi
+			if($signDegree >$d6_array[6][0] and $signDegree <= $d6_array[6][1]){
+				$offset = $d6_array[6][2];
+			}
+			else if($signDegree >$d6_array[7][0] and $signDegree <= $d6_array[7][1]){
+				$offset = $d6_array[7][2];
+			}
+			else if($signDegree >$d6_array[8][0] and $signDegree <= $d6_array[8][1]){
+				$offset = $d6_array[8][2];
+			}
+			else if($signDegree >$d6_array[9][0] and $signDegree <= $d6_array[9][1]){
+				$offset = $d6_array[9][2];
+			}
+			else if($signDegree >$d6_array[10][0] and $signDegree <= $d6_array[10][1]){
+				$offset = $d6_array[10][2];
+			}
+			else if($signDegree >$d6_array[11][0] and $signDegree <= $d6_array[11][1]){
+				$offset = $d6_array[11][2];
+			}
+		}
+		
+		debug("<br>$planet---$sign($signDegree)----offset=$offset");
+
+		// Store the calculated divisional position with degree
+		if(mb_strpos($planet,'லக்')!==false)
+		{
+			$g_divisional_arr[$offset] .= "<span class='lagna'>$planet</span>";
+		}
+		else{
+			if(isRetro($planet)[1] == -1)
+				$g_divisional_arr[$offset] .= " <span class='retro'>$planet</span>" ;
+			else
+				$g_divisional_arr[$offset] .= " $planet" ;
+		}
+    }
+
+    return $g_divisional_arr;
+}
+
+function calculateD7Chart() {
+    global $planet_starlord;
+	
+	$d7_array = [
+					[0.0, 4.286, 0],   //male
+					[4.286, 8.572, 1], //male
+					[8.572, 12.857, 2], //male
+					[12.857, 17.143, 3], //male
+					[17.143, 21.429, 4], //male
+					[21.429, 25.715, 5], //male
+					[25.715, 30.0, 6], //male
+
+					[0.0, 4.286, 6],   //female
+					[4.286, 8.572, 7], //female
+					[8.572, 12.857, 8], //female
+					[12.857, 17.143, 9], //female
+					[17.143, 21.429, 10], //female
+					[21.429, 25.715, 11], //female
+					[25.715, 30.0, 0]  //female
+				];
+
+
+    // Reset the divisional array
+    $g_divisional_arr = array_fill(0, 12, '');
+
+    // Loop through each planet to calculate divisional positions
+    foreach ($planet_starlord as $planet => $details) {
+        $degree = $details[2]; // Get the degree from the third element
+        $sign = floor($degree / 30.0) + 1; // Determine the sign
+        $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
+
+		if($sign % 2 == 1){ //male rasi
+			if($signDegree >$d7_array[0][0] and $signDegree <= $d7_array[0][1]){
+				$offset = $sign - 1 + $d7_array[0][2];
+			}
+			else if($signDegree >$d7_array[1][0] and $signDegree <= $d7_array[1][1]){
+				$offset = $sign - 1 + $d7_array[1][2];
+			}
+			else if($signDegree >$d7_array[2][0] and $signDegree <= $d7_array[2][1]){
+				$offset = $sign - 1 + $d7_array[2][2];
+			}
+			else if($signDegree >$d7_array[3][0] and $signDegree <= $d7_array[3][1]){
+				$offset = $sign - 1 + $d7_array[3][2];
+			}
+			else if($signDegree >$d7_array[4][0] and $signDegree <= $d7_array[4][1]){
+				$offset = $sign - 1 + $d7_array[4][2];
+			}
+			else if($signDegree >$d7_array[5][0] and $signDegree <= $d7_array[5][1]){
+				$offset = $sign - 1 + $d7_array[5][2];
+			}
+			else if($signDegree >$d7_array[6][0] and $signDegree <= $d7_array[6][1]){
+				$offset = $sign - 1 + $d7_array[6][2];
+			}
+		}
+		else{  //female rasi
+			if($signDegree >$d7_array[7][0] and $signDegree <= $d7_array[7][1]){
+				$offset = $sign - 1 + $d7_array[7][2];
+			}
+			else if($signDegree >$d7_array[8][0] and $signDegree <= $d7_array[8][1]){
+				$offset = $sign - 1 + $d7_array[8][2];
+			}
+			else if($signDegree >$d7_array[9][0] and $signDegree <= $d7_array[9][1]){
+				$offset = $sign - 1 + $d7_array[9][2];
+			}
+			else if($signDegree >$d7_array[10][0] and $signDegree <= $d7_array[10][1]){
+				$offset = $sign - 1 + $d7_array[10][2];
+			}
+			else if($signDegree >$d7_array[11][0] and $signDegree <= $d7_array[11][1]){
+				$offset = $sign - 1 + $d7_array[11][2];
+			}
+			else if($signDegree >$d7_array[12][0] and $signDegree <= $d7_array[12][1]){
+				$offset = $sign - 1 + $d7_array[12][2];
+			}
+			else if($signDegree >$d7_array[13][0] and $signDegree <= $d7_array[13][1]){
+				$offset = $sign - 1 + $d7_array[13][2];
+			}
+		}
+		
+		$offset = $offset % 12 ;
+		
+		debug("<br>$planet---$sign($signDegree)----offset=$offset");
+
+		// Store the calculated divisional position with degree
+		if(mb_strpos($planet,'லக்')!==false)
+		{
+			$g_divisional_arr[$offset] .= "<span class='lagna'>$planet</span>";
+		}
+		else{
+			if(isRetro($planet)[1] == -1)
+				$g_divisional_arr[$offset] .= " <span class='retro'>$planet</span>" ;
+			else
+				$g_divisional_arr[$offset] .= " $planet" ;
+		}
+    }
+
+    return $g_divisional_arr;
+}
+
+function calculateD8Chart() {
+    global $planet_starlord;
+	
+	$d8_array = [
+					[0.0, 3.75, 0],
+					[3.75, 7.5, 1],
+					[7.5, 11.25, 2],
+					[11.25, 15.0, 3],
+					[15.0, 18.75, 4],
+					[18.75, 22.5, 5],
+					[22.5, 26.25, 6],
+					[26.25, 30.0, 7],
+
+					[0.0, 3.75, 8],
+					[3.75, 7.5, 9],
+					[7.5, 11.25, 10],
+					[11.25, 15.0, 11],
+					[15.0, 18.75, 0],
+					[18.75, 22.5, 1],
+					[22.5, 26.25, 2],
+					[26.25, 30.0, 3],
+					
+					[0.0, 3.75, 4],
+					[3.75, 7.5, 5],
+					[7.5, 11.25, 6],
+					[11.25, 15.0, 7],
+					[15.0, 18.75, 8],
+					[18.75, 22.5, 9],
+					[22.5, 26.25, 10],
+					[26.25, 30.0, 11]
+				];
+
+
+
+    // Reset the divisional array
+    $g_divisional_arr = array_fill(0, 12, '');
+
+    // Loop through each planet to calculate divisional positions
+    foreach ($planet_starlord as $planet => $details) {
+        $degree = $details[2]; // Get the degree from the third element
+        $sign = floor($degree / 30.0) + 1; // Determine the sign
+        $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
+
+		if($sign % 3 == 1){ //sara rasi
+			if($signDegree >$d8_array[0][0] and $signDegree <= $d8_array[0][1]){
+				$offset = $d8_array[0][2];
+			}
+			else if($signDegree >$d8_array[1][0] and $signDegree <= $d8_array[1][1]){
+				$offset = $d8_array[1][2];
+			}
+			else if($signDegree >$d8_array[2][0] and $signDegree <= $d8_array[2][1]){
+				$offset = $d8_array[2][2];
+			}
+			else if($signDegree >$d8_array[3][0] and $signDegree <= $d8_array[3][1]){
+				$offset = $d8_array[3][2];
+			}
+			else if($signDegree >$d8_array[4][0] and $signDegree <= $d8_array[4][1]){
+				$offset = $d8_array[4][2];
+			}
+			else if($signDegree >$d8_array[5][0] and $signDegree <= $d8_array[5][1]){
+				$offset = $d8_array[5][2];
+			}
+			else if($signDegree >$d8_array[6][0] and $signDegree <= $d8_array[6][1]){
+				$offset = $d8_array[6][2];
+			}
+			else if($signDegree >$d8_array[7][0] and $signDegree <= $d8_array[7][1]){
+				$offset = $d8_array[7][2];
+			}
+		}
+		else if($sign % 3 == 2){  //sthira rasi
+			if($signDegree >$d8_array[8][0] and $signDegree <= $d8_array[8][1]){
+				$offset = $d8_array[8][2];
+			}
+			else if($signDegree >$d8_array[9][0] and $signDegree <= $d8_array[9][1]){
+				$offset = $d8_array[9][2];
+			}
+			else if($signDegree >$d8_array[10][0] and $signDegree <= $d8_array[10][1]){
+				$offset = $d8_array[10][2];
+			}
+			else if($signDegree >$d8_array[11][0] and $signDegree <= $d8_array[11][1]){
+				$offset = $d8_array[11][2];
+			}
+			else if($signDegree >$d8_array[12][0] and $signDegree <= $d8_array[12][1]){
+				$offset = $d8_array[12][2];
+			}
+			else if($signDegree >$d8_array[13][0] and $signDegree <= $d8_array[13][1]){
+				$offset = $d8_array[13][2];
+			}
+			else if($signDegree >$d8_array[14][0] and $signDegree <= $d8_array[14][1]){
+				$offset = $d8_array[14][2];
+			}
+			else if($signDegree >$d8_array[15][0] and $signDegree <= $d8_array[15][1]){
+				$offset = $d8_array[15][2];
+			}
+		}
+		else if($sign % 3 == 0){  //ubaya rasi
+			if($signDegree >$d8_array[16][0] and $signDegree <= $d8_array[16][1]){
+				$offset = $d8_array[16][2];
+			}
+			else if($signDegree >$d8_array[17][0] and $signDegree <= $d8_array[17][1]){
+				$offset = $d8_array[17][2];
+			}
+			else if($signDegree >$d8_array[18][0] and $signDegree <= $d8_array[18][1]){
+				$offset = $d8_array[18][2];
+			}
+			else if($signDegree >$d8_array[19][0] and $signDegree <= $d8_array[19][1]){
+				$offset = $d8_array[19][2];
+			}
+			else if($signDegree >$d8_array[20][0] and $signDegree <= $d8_array[20][1]){
+				$offset = $d8_array[20][2];
+			}
+			else if($signDegree >$d8_array[21][0] and $signDegree <= $d8_array[21][1]){
+				$offset = $d8_array[21][2];
+			}
+			else if($signDegree >$d8_array[22][0] and $signDegree <= $d8_array[22][1]){
+				$offset = $d8_array[22][2];
+			}
+			else if($signDegree >$d8_array[23][0] and $signDegree <= $d8_array[23][1]){
+				$offset = $d8_array[23][2];
+			}
+		}
+		
+		$offset = $offset % 12 ;
+		
+		debug("<br>$planet---$sign($signDegree)----offset=$offset");
+
+		// Store the calculated divisional position with degree
+		if(mb_strpos($planet,'லக்')!==false)
+		{
+			$g_divisional_arr[$offset] .= "<span class='lagna'>$planet</span>";
+		}
+		else{
+			if(isRetro($planet)[1] == -1)
+				$g_divisional_arr[$offset] .= " <span class='retro'>$planet</span>" ;
+			else
+				$g_divisional_arr[$offset] .= " $planet" ;
+		}
+    }
+
+    return $g_divisional_arr;
+}
+
+function calculateNavamsam()
+{
+	global $planet_starlord, $g_navamsam_arr;
+	
+	//Arrnagement of rasi planets in navamsa chart arrangmenet notes
+	//Mesham to Katakam - சந் குரு கே - Mesham - padam1, Rishabam - padam2, Mithunam - padam3, Katakam - padham4
+	//Simham to Virichigam - செ சனி சுக் - Simham - padam1, Kanni - padam2, Thulaam - padam3, Virichigam - padham4
+	//Danusu to Meenam - சூரி ரா புத  - Danusu - padam1, Makaram - padam2, Kumbam - padam3, Meenam - padham4
+	
+	$rasi_idx1 = [	
+					array('சந்1','குரு1','கே1'), //mesham
+					array('சந்2','குரு2','கே2'), //rishabam
+					array('சந்3','குரு3','கே3'),  //mithunam
+					array('சந்4','குரு4','கே4'),  //katakam
+					array('செ1','சனி1','சுக்1'),  //simham
+					array('செ2','சனி2','சுக்2'),  //kanni
+					array('செ3','சனி3','சுக்3'),  //thulaam
+					array('செ4','சனி4','சுக்4'),  //virichigam
+					array('சூரி1','ரா1','புத1'),  //danusu
+					array('சூரி2','ரா2','புத2'),  //makaram
+					array('சூரி3','ரா3','புத3'),  //kumbam
+					array('சூரி4','ரா4','புத4')  //meenam
+				];
+				
+	$rasi_idx = [	
+					'சந்1' => 0,  // mesham
+					'குரு1' => 0 , // mesham
+					'கே1' => 0 , // mesham
+					'சந்2' => 1 , // rishabam
+					'குரு2' => 1 , // rishabam
+					'கே2' => 1 , // rishabam
+					'சந்3'  => 2 , // mithunam
+					'குரு3'  => 2 , // mithunam
+					'கே3'  => 2 , // mithunam
+					'சந்4'  => 3 , // katakam
+					'குரு4'  => 3 , // katakam
+					'கே4'  => 3 , // katakam
+					'செ1'  => 4 , // simham
+					'சனி1'  => 4 , // simham
+					'சுக்1'  => 4 , // simham
+					'செ2'  => 5 , // kanni
+					'சனி2'  => 5 , // kanni
+					'சுக்2'  => 5 , // kanni
+					'செ3'  => 6 , // thulaam
+					'சனி3'  => 6 , // thulaam
+					'சுக்3'  => 6 , // thulaam
+					'செ4'  => 7 , // virichigam
+					'சனி4'  => 7 , // virichigam
+					'சுக்4'  => 7 , // virichigam
+					'சூரி1'  => 8 , // danusu
+					'ரா1'  => 8 , // danusu
+					'புத1'  => 8 , // danusu
+					'சூரி2'  => 9 , // makaram
+					'ரா2'  => 9 , // makaram
+					'புத2'  => 9 , // makaram
+					'சூரி3'  => 10 , // kumbam
+					'ரா3'  => 10 , // kumbam
+					'புத3'  => 10 , // kumbam
+					'சூரி4'  => 11 , // meenam
+					'ரா4'  => 11 , // meenam
+					'புத4'  => 11  // meenam
+				];
+	
+	$planet_padam = explode('(',$planet_starlord["லக்"][1])[0] . explode(' ',$planet_starlord["லக்"][0])[1];
+	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " <span class='lagna'>லக்</span>";
+	
+	$planet_padam = explode('(',$planet_starlord["சூரி"][1])[0] . explode(' ',$planet_starlord["சூரி"][0])[1];
+	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " சூரி";
+	
+	$planet_padam = explode('(',$planet_starlord["சந்"][1])[0] . explode(' ',$planet_starlord["சந்"][0])[1];
+	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " <span class='moon'>சந்</span>";
+	
+	$planet_padam = explode('(',$planet_starlord["புத"][1])[0] . explode(' ',$planet_starlord["புத"][0])[1];
+	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " புத";
+	
+	$planet_padam = explode('(',$planet_starlord["சுக்"][1])[0] . explode(' ',$planet_starlord["சுக்"][0])[1];
+	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " சுக்";
+	
+	$planet_padam = explode('(',$planet_starlord["செ"][1])[0] . explode(' ',$planet_starlord["செ"][0])[1];
+	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " செ";
+	
+	$planet_padam = explode('(',$planet_starlord["குரு"][1])[0] . explode(' ',$planet_starlord["குரு"][0])[1];
+	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " குரு";
+	
+	$planet_padam = explode('(',$planet_starlord["சனி"][1])[0] . explode(' ',$planet_starlord["சனி"][0])[1];
+	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " சனி";
+	
+	$planet_padam = explode('(',$planet_starlord["ரா"][1])[0] . explode(' ',$planet_starlord["ரா"][0])[1];
+	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " ரா";
+	
+	$planet_padam = explode('(',$planet_starlord["கே"][1])[0] . explode(' ',$planet_starlord["கே"][0])[1];
+	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " கே";
+	
+	$planet_padam = explode('(',$planet_starlord["மா"][1])[0] . explode(' ',$planet_starlord["மா"][0])[1];
+	$g_navamsam_arr[$rasi_idx[$planet_padam]] = $g_navamsam_arr[$rasi_idx[$planet_padam]] . " மா";
+}
+
+/*** D10 logic **************************************************************************/
+/* Every sign is divided into 
+10 parts of 3 deg. 
+For odd signs the dasamsa are calcuated from the same sign, counted zodiacally. 
+For even signs the dasamsa are calculated from the sign in the 9th house, counted 
+zodiacally. 
+*****************************************************************************************/
+function calculateD10Chart() {
+    global $planet_starlord;
+	
+	/*$d10_array = [
+		[0.0, 3.0, 0],
+		[3.0, 6.0, 1],
+		[6.0, 9.0, 2],
+		[9.0, 12.0, 3],
+		[12.0, 15.0, 4],
+		[15.0, 18.0, 5],
+		[18.0, 21.0, 6],
+		[21.0, 24.0, 7],
+		[24.0, 27.0, 8],
+		[27.0, 30.0, 9],
+
+		[0.0, 3.0, 8],
+		[3.0, 6.0, 9],
+		[6.0, 9.0, 10],
+		[9.0, 12.0, 11],
+		[12.0, 15.0, 1],
+		[15.0, 18.0, 2],
+		[18.0, 21.0, 3],
+		[21.0, 24.0, 4],
+		[24.0, 27.0, 5],
+		[27.0, 30.0, 6]
+	];*/
+	
+	$d10_array = [
+		[0.0, 3.0, 1],
+		[3.0, 6.0, 2],
+		[6.0, 9.0, 3],
+		[9.0, 12.0, 4],
+		[12.0, 15.0, 5],
+		[15.0, 18.0, 6],
+		[18.0, 21.0, 7],
+		[21.0, 24.0, 8],
+		[24.0, 27.0, 9],
+		[27.0, 30.0, 10]
+		];
+
+
+    // Reset the divisional array
+    $g_divisional_arr = array_fill(0, 12, '');
+
+    // Loop through each planet to calculate divisional positions
+    foreach ($planet_starlord as $planet => $details) {
+        $degree = $details[2]; // Get the degree from the third element
+        $sign = floor($degree / 30.0) + 1; // Determine the sign
+        $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
+
+		/*if($sign % 2 == 1){ //male rasi
+			if($signDegree >$d10_array[0][0] and $signDegree <= $d10_array[0][1]){
+				$offset = $sign - 1 + $d10_array[0][2];
+			}
+			else if($signDegree >$d10_array[1][0] and $signDegree <= $d10_array[1][1]){
+				$offset = $sign - 1 + $d10_array[1][2];
+			}
+			else if($signDegree >$d10_array[2][0] and $signDegree <= $d10_array[2][1]){
+				$offset = $sign - 1 + $d10_array[2][2];
+			}
+			else if($signDegree >$d10_array[3][0] and $signDegree <= $d10_array[3][1]){
+				$offset = $sign - 1 + $d10_array[3][2];
+			}
+			else if($signDegree >$d10_array[4][0] and $signDegree <= $d10_array[4][1]){
+				$offset = $sign - 1 + $d10_array[4][2];
+			}
+			else if($signDegree >$d10_array[5][0] and $signDegree <= $d10_array[5][1]){
+				$offset = $sign - 1 + $d10_array[5][2];
+			}
+			else if($signDegree >$d10_array[6][0] and $signDegree <= $d10_array[6][1]){
+				$offset = $sign - 1 + $d10_array[6][2];
+			}
+			else if($signDegree >$d10_array[7][0] and $signDegree <= $d10_array[7][1]){
+				$offset = $sign - 1 + $d10_array[7][2];
+			}
+			else if($signDegree >$d10_array[8][0] and $signDegree <= $d10_array[8][1]){
+				$offset = $sign - 1 + $d10_array[8][2];
+			}
+			else if($signDegree >$d10_array[9][0] and $signDegree <= $d10_array[9][1]){
+				$offset = $sign - 1 + $d10_array[9][2];
+			}
+		}
+		else if($sign % 2 == 0){  //female rasi
+			if($signDegree >$d10_array[10][0] and $signDegree <= $d10_array[10][1]){
+				$offset = $sign - 1 + $d10_array[10][2];
+			}
+			else if($signDegree >$d10_array[11][0] and $signDegree <= $d10_array[11][1]){
+				$offset = $sign - 1 + $d10_array[11][2];
+			}
+			else if($signDegree >$d10_array[12][0] and $signDegree <= $d10_array[12][1]){
+				$offset = $sign - 1 + $d10_array[12][2];
+			}
+			else if($signDegree >$d10_array[13][0] and $signDegree <= $d10_array[13][1]){
+				$offset = $sign - 1 + $d10_array[13][2];
+			}
+			else if($signDegree >$d10_array[14][0] and $signDegree <= $d10_array[14][1]){
+				$offset = $sign - 1 + $d10_array[14][2];
+			}
+			else if($signDegree >$d10_array[15][0] and $signDegree <= $d10_array[15][1]){
+				$offset = $sign - 1 + $d10_array[15][2];
+			}
+			else if($signDegree >$d10_array[16][0] and $signDegree <= $d10_array[16][1]){
+				$offset = $sign - 1 + $d10_array[16][2];
+			}
+			else if($signDegree >$d10_array[17][0] and $signDegree <= $d10_array[17][1]){
+				$offset = $sign - 1 + $d10_array[17][2];
+			}
+			else if($signDegree >$d10_array[18][0] and $signDegree <= $d10_array[18][1]){
+				$offset = $sign - 1 + $d10_array[18][2];
+			}
+			else if($signDegree >$d10_array[19][0] and $signDegree <= $d10_array[19][1]){
+				$offset = $sign - 1 + $d10_array[19][2];
+			}
+			*/
+			
+			foreach ($d10_array as $range) {
+				if ($signDegree > $range[0] && $signDegree <= $range[1]) {
+					if($sign % 2 == 1){ //male rasi
+						$offset = (0 + $sign -2 + $range[2]) % 12;
+						echo("<br>"."start=".$range[0]." end=".$range[1]." offset=$offset   rasi=".$range[2]);
+					}
+					else{ //female rasi
+						$offset = (8 + $sign -2 + $range[2]) % 12;
+						echo("<br>"."start=".$range[0]." end=".$range[1]." offset=$offset   rasi=".$range[2]);
+					}
+					break;
+				}
+			}
+		
+
+		// Store the calculated divisional position with degree
+		if(mb_strpos($planet,'லக்')!==false)
+		{
+			$g_divisional_arr[$offset] .= "<span class='lagna'>$planet</span>";
+		}
+		else{
+			if(isRetro($planet)[1] == -1)
+				$g_divisional_arr[$offset] .= " <span class='retro'>$planet</span>" ;
+			else
+				$g_divisional_arr[$offset] .= " $planet" ;
+		}
+    }
+
+    return $g_divisional_arr;
+}
+
+/*
+ருத்ராம்சம் - D11 விதிகள்
+படி 1: மேஷத்திலிருந்து ஒரு கிரகம் எத்தனையாது இராசியில் உள்ளது என்ற எண்ணிக்கையை குறித்துக் கொள்க.
+படி 2: பின்பு மேஷத்திலிருந்து எதிர்ப்புறமாக (ANTI CLOCK WISE) அதே எண்ணிக்கையில் எண்ண வேண்டும். எண்ணிக்கை முடியும் இராசியில் நிற்க.
+படி 3: இப்போது அந்த கிரகத்தின் பாகை ருத்ராம்சத்தின் 11 பிரிவில் எத்தனையாவது பங்கு என்று பார்க்கணும்.
+படி 4: இப்போது நீங்கள் எதிர்ப்புறமாக எண்ணி நின்ற இராசியில் இருந்து எத்தனையாவது பங்கில் கிரகம் உள்ளதோ. அத்தனை பங்கு எண்ணிக்கை)  
+முறை வலப்புறமாக  எண்ணி (CLOCK WISE) அந்த எண்ணிக்கை எந்த இராசியில் முடிகிறதோ, அந்த இராசியே ருத்ராம்சத்தில் கிரகம் அமையும் இராசி
+*/
+
+function calculateD11Chart() {
+    global $planet_starlord;
+
+    $d11_array = [
+        [0.0, 2.72777777778, 0],
+        [2.72777777778, 5.45444444444, 1],
+        [5.45444444444, 8.18111111111, 2],
+        [8.18111111111, 10.9088888889, 3],
+        [10.9088888889, 13.5855555556, 4],
+        [13.5855555556, 16.3625, 5],
+        [16.3625, 19.0902777778, 6],
+        [19.0902777778, 21.8180555556, 7],
+        [21.8180555556, 24.5458333333, 8],
+        [24.5458333333, 27.2736111111, 9],
+        [27.2736111111, 30.0, 10],
+    ];
+
+    // Reset the divisional array
+    $g_divisional_arr = array_fill(0, 12, '');
+
+    // Loop through each planet to calculate divisional positions
+    foreach ($planet_starlord as $planet => $details) {
+        $degree = $details[2]; // Get the degree from the third element
+        $sign = floor($degree / 30.0) + 1; // Determine the sign
+        $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
+
+        // Step 1: Count the number of signs from Aries
+        //$count = countHouses(0,$sign);
+		$count = $sign;
+
+        // Step 2: Calculate the anti-clockwise offset
+        $offset = 12 - $count;
+		
+
+        // Step 3: Determine the Rudramsa (D11) divisional chart position
+        foreach ($d11_array as $range) {
+            if ($signDegree > $range[0] && $signDegree <= $range[1]) {
+                $offset = ($offset + $range[2] + 1) % 12;
+				debug("<br>"."start=".$range[0]." end=".$range[1]." offset=$offset   rasi=".$range[2]);
+                break;
+            }
+        }
+
+        debug("<br>$planet---$sign($signDegree)----offset=$offset");
+
+        // Store the calculated divisional position with degree
+        if (mb_strpos($planet, 'லக்') !== false) {
+            $g_divisional_arr[$offset] .= "<span class='lagna'>$planet</span>";
+        } else {
+            if(isRetro($planet)[1] == -1)
+				$g_divisional_arr[$offset] .= " <span class='retro'>$planet</span>" ;
+			else
+				$g_divisional_arr[$offset] .= " $planet" ;
+        }
+    }
+
+    return $g_divisional_arr;
+}
+
+/*
+துவாதசாம்சம் - D12 விதிகள்
+
+/****** Divisional chart *******/
+/* Reference https://www.cosmicsquares.com/free-horoscope/shodasamsa-chart
+Dwadasamsa chart Calculation
+In D12 chart, each sign is divided into 12 parts of 2°30´. Each unit is called Dwadasamsa; Dwadasa -12, amsa- unit. There are about 144units for all 12 signs.
+
+1 Dwadasamsa= 30° /12- 2°30´.
+
+The planet’s longitude is noted accurately and the Dwadasamsa unit is mapped. D12 chart is created by positioning the planets based on the amsa. The chart counting will start from the same sign where the planet is placed in D1chart. 
+
+Example:  Lagna is in Scorpio at 7°,  Jupiter in Taurus at 28°47’ and Sun is in Pisces at 21°14’. In D12 chart,
+
+Lagna is in the 3rd amsa, so lagna is placed in Capricorn (3rd sign from Scorpio)
+
+Jupiter is in 12th amsa, it is placed in Aries(12th sign from Taurus)
+
+Sun is in 9th amsa, so it is placed in Scorpio (9th sign from Pisces)
+*/
+
+function calculateD12Chart() {
+    global $planet_starlord;
+
+    /*$divisional_chart_table = [
+		1 => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+		2 => [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1],
+		3 => [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2],
+		4 => [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3],
+		5 => [5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4],
+		6 => [6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5],
+		7 => [7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6],
+		8 => [8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7],
+		9 => [9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8],
+		10 => [10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+		11 => [11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+		12 => [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+	];*/
+
+	$degree_spans = [
+		[00.00,02.30,1],
+		[02.30,05.00,2],
+		[05.00,07.30,3],
+		[07.30,10.00,4],
+		[10.00,12.30,5],
+		[12.30,15.00,6],
+		[15.00,17.00,7],
+		[17.00,20.00,8],
+		[20.00,22.30,9],
+		[22.30,25.00,10],
+		[25.00,27.30,11],
+		[27.30,30.00,12]
+	];
+
+    // Reset the divisional array
+    $g_divisional_arr = array_fill(0, 12, '');
+
+    // Loop through each planet to calculate divisional positions
+    foreach ($planet_starlord as $planet => $details) {
+        $degree = $details[2]; // Get the degree from the third element
+        //$sign = floor($degree / 30.0) + 1; // Determine the sign
+		$sign = floor($degree / 30.0) ; // Determine the sign
+        $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
+
+        // Step 3: Determine the Rudramsa (D11) divisional chart position
+        foreach ($degree_spans as $range) {
+            if ($signDegree > $range[0] && $signDegree <= $range[1]) {
+                $offset = (($sign + $range[2]) % 12) - 1;
+				debug("<br>"."sign=$sign  start=".$range[0]." end=".$range[1]." offset=$offset   rasi=".$range[2]);
+                break;
+            }
+        }
+		
+		if($offset==-1) $offset=11;
+
+        debug("<br>range=".$range[2]." sign=".$sign." $planet---$sign($signDegree)----offset=$offset");
+
+        // Store the calculated divisional position with degree
+        if (mb_strpos($planet, 'லக்') !== false) {
+            $g_divisional_arr[$offset] .= "<span class='lagna'>$planet</span>";
+        } else {
+            if(isRetro($planet)[1] == -1)
+				$g_divisional_arr[$offset] .= " <span class='retro'>$planet</span>" ;
+			else
+				$g_divisional_arr[$offset] .= " $planet" ;
+        }
+    }
+
+    return $g_divisional_arr;
+}
+
+/*
+ஷோடசாம்ச - D16 விதிகள்
+
+/****** Divisional chart *******/
+/* Reference https://www.cosmicsquares.com/free-horoscope/shodasamsa-chart
+
+Shodasamsa Chart Calculation
+Each sign is divided into 16 pada of 1°52’30” each. This pada or amsa is called Shodasamsa. Lord Brahma, Lord Vishnu, Lord Shiva, Surya Deva are the deities of the Shodasamsas. This is the order followed for odd signs and it gets reversed in case of even signs; recurs 4 times in each sign for 16 amsas.
+
+The calculation for the chart is based on the nature of the sign a planet is positioned in D1 chart.
+
+If the planet is in a movable sign (Aries, Cancer, Libra and Capricorn) counting starts from Aries
+If the planet is in a fixed sign (Taurus, Leo, Scorpio, Aquarius) counting begins from Leo 
+and if the planet is in dual sign (Gemini, Virgo, Sagittarius, Pisces) counting starts from Sagittarius.
+
+*/
+
+function calculateD16Chart() {
+    global $planet_starlord;
+
+	$degree_spans = [
+		[0.00, 1.875, 1],
+		[1.875, 3.750, 2],
+		[3.750, 5.625, 3],
+		[5.625, 7.500, 4],
+		[7.500, 9.375, 5],
+		[9.375, 11.250, 6],
+		[11.250, 13.125, 7],
+		[13.125, 15.000, 8],
+		[15.000, 16.875, 9],
+		[16.875, 18.750, 10],
+		[18.750, 20.625, 11],
+		[20.625, 22.500, 12],
+		[22.500, 24.375, 13],
+		[24.375, 26.250, 14],
+		[26.250, 28.125, 15],
+		[28.125, 30.000, 16]
+	];
+
+
+    // Reset the divisional array
+    $g_divisional_arr = array_fill(0, 12, '');
+
+    // Loop through each planet to calculate divisional positions
+    foreach ($planet_starlord as $planet => $details) {
+        $degree = $details[2]; // Get the degree from the third element
+		$sign = floor($degree / 30.0) ; // Determine the sign
+        $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
+
+        // Step 3: Determine the Rudramsa (D11) divisional chart position
+        foreach ($degree_spans as $range) {
+            if ($signDegree > $range[0] && $signDegree <= $range[1]) {
+                if($sign == 0){
+					$offset = ((0 +  $range[2]) % 12) - 1;
+				}
+				else if($sign == 1){
+					$offset = ((4 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 2){
+					$offset = ((8 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 3){
+					$offset = ((0 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 4){
+					$offset = ((4 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 5){
+					$offset = ((8 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 6){
+					$offset = ((0 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 7){
+					$offset = ((4 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 8){
+					$offset = ((8 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 9){
+					$offset = ((0 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 10){
+					$offset = ((4 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 11){
+					$offset = ((8 +  $range[2]) % 12)- 1;
+				}
+				
+				debug( "<br>"."sign=$sign  start=".$range[0]." end=".$range[1]." offset=$offset   rasi=".$range[2]);
+                break;
+            }
+        }
+		
+		if($offset==-1) $offset=11;
+		
+		debug("<br>range=".$range[2]." sign=".$sign." $planet---$sign($signDegree)----offset=$offset");
+
+        // Store the calculated divisional position with degree
+        if (mb_strpos($planet, 'லக்') !== false) {
+            $g_divisional_arr[$offset] .= "<span class='lagna'>$planet</span>";
+        } else {
+			if(isRetro($planet)[1] == -1)
+				$g_divisional_arr[$offset] .= " <span class='retro'>$planet</span>" ;
+			else
+				$g_divisional_arr[$offset] .= " $planet" ;
+        }	
+    }
+	
+    return $g_divisional_arr;
+}
+
+/*
+விம்சம்சா - D20 விதிகள்
+
+/****** Divisional chart *******/
+/* Reference https://www.cosmicsquares.com/free-horoscope/vimsamsa-chart
+
+Vimsamsa chart Calculation
+Every sign of 30º is divided into 20 pada of 1º30΄ each. Each pada is called Vimsamsa. There are about 240 Vimsamsa for all the whole of zodiac. 
+
+D20 chart is calculated based on the nature of the sign a planet is located in the Natal chart,   
+
+For a planet placed in a movable sign, counting starts from Aries, 
+If a planet is in fixed sign, the counting starts from Sagittarius and
+If it is in dual sign, the counting starts from Leo.
+
+*/
+
+function calculateD20Chart() {
+    global $planet_starlord;
+
+	$degree_spans = [
+		[0.00, 1.50, 1],
+		[1.50, 3.00, 2],
+		[3.00, 4.50, 3],
+		[4.50, 6.00, 4],
+		[6.00, 7.50, 5],
+		[7.50, 9.00, 6],
+		[9.00, 10.50, 7],
+		[10.50, 12.00, 8],
+		[12.00, 13.50, 9],
+		[13.50, 15.00, 10],
+		[15.00, 16.50, 11],
+		[16.50, 18.00, 12],
+		[18.00, 19.50, 13],
+		[19.50, 21.00, 14],
+		[21.00, 22.50, 15],
+		[22.50, 24.00, 16],
+		[24.00, 25.50, 17],
+		[25.50, 27.00, 18],
+		[27.00, 28.50, 19],
+		[28.50, 30.00, 20]
+	];
+
+
+    // Reset the divisional array
+    $g_divisional_arr = array_fill(0, 12, '');
+
+    // Loop through each planet to calculate divisional positions
+    foreach ($planet_starlord as $planet => $details) {
+        $degree = $details[2]; // Get the degree from the third element
+		$sign = floor($degree / 30.0) ; // Determine the sign
+        $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
+
+        // Step 3: Determine the Rudramsa (D11) divisional chart position
+        foreach ($degree_spans as $range) {
+            if ($signDegree > $range[0] && $signDegree <= $range[1]) {
+                if($sign == 0){
+					$offset = ((0 +  $range[2]) % 12) - 1;
+				}
+				else if($sign == 1){
+					$offset = ((8 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 2){
+					$offset = ((4 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 3){
+					$offset = ((0 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 4){
+					$offset = ((8 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 5){
+					$offset = ((4 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 6){
+					$offset = ((0 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 7){
+					$offset = ((8 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 8){
+					$offset = ((4 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 9){
+					$offset = ((0 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 10){
+					$offset = ((8 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 11){
+					$offset = ((4 +  $range[2]) % 12)- 1;
+				}
+				
+				debug( "<br>planet=$planet" . " planetDegree=$signDegree" ." sign=$sign  start=".$range[0]." end=".$range[1]." offset=$offset   rasi=".$range[2]);
+                break;
+            }
+        }
+		
+		if($offset==-1) $offset=11;
+		
+		debug("<br>range=".$range[2]." sign=".$sign." $planet---$sign($signDegree)----offset=$offset");
+
+        // Store the calculated divisional position with degree
+        if (mb_strpos($planet, 'லக்') !== false) {
+            $g_divisional_arr[$offset] .= "<span class='lagna'>$planet</span>";
+        } else {
+			if(isRetro($planet)[1] == -1)
+				$g_divisional_arr[$offset] .= " <span class='retro'>$planet</span>" ;
+			else
+				$g_divisional_arr[$offset] .= " $planet" ;
+        }	
+    }
+	
+    return $g_divisional_arr;
+}
+
+/*
+சதுர்விம்ஷம்சா  - D24 விதிகள்
+
+/****** Divisional chart *******/
+/* Reference https://www.cosmicsquares.com/free-horoscope/chaturvimsamsa-chart
+
+Calculation
+This divisional chart divides each sign into 24 amsas called Siddhamsa or Chaturvimshamsa. 
+One siddhamsa is 1 º 15’. The whole zodiac has a total of about 288 Siddhamsa. 
+To create a D24 chart, the longitude of the planets in the natal chart are accurately mapped with 
+the corresponding Siddhamsa division and placed accordingly. Based on the nature of the sign, 
+the counting begins at Leo or Cancer and goes through the complete zodiac order in 2 cycles 
+to cover 24 amsas.
+
+*/
+
+function calculateD24Chart() {
+    global $planet_starlord;
+
+	$degree_spans = [
+		[0.00, 1.25, 1],
+		[1.25, 2.50, 2],
+		[2.50, 3.75, 3],
+		[3.75, 5.00, 4],
+		[5.00, 6.25, 5],
+		[6.25, 7.50, 6],
+		[7.50, 8.75, 7],
+		[8.75, 10.00, 8],
+		[10.00, 11.25, 9],
+		[11.25, 12.50, 10],
+		[12.50, 13.75, 11],
+		[13.75, 15.00, 12],
+		[15.00, 16.25, 13],
+		[16.25, 17.50, 14],
+		[17.50, 18.75, 15],
+		[18.75, 20.00, 16],
+		[20.00, 21.25, 17],
+		[21.25, 22.50, 18],
+		[22.50, 23.75, 19],
+		[23.75, 25.00, 20],
+		[25.00, 26.25, 21],
+		[26.25, 27.50, 22],
+		[27.50, 28.75, 23],
+		[28.75, 30.00, 24]
+	];
+
+    // Reset the divisional array
+    $g_divisional_arr = array_fill(0, 12, '');
+
+    // Loop through each planet to calculate divisional positions
+    foreach ($planet_starlord as $planet => $details) {
+        $degree = $details[2]; // Get the degree from the third element
+		$sign = floor($degree / 30.0) ; // Determine the sign
+        $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
+
+        // Step 3: Determine the Rudramsa (D11) divisional chart position
+        foreach ($degree_spans as $range) {
+            if ($signDegree > $range[0] && $signDegree <= $range[1]) {
+                if(($sign + 1) % 2 == 1){
+					$offset = ((4 +  $range[2]) % 12) - 1;
+				}
+				else{
+					$offset = ((3 +  $range[2]) % 12)- 1;
+				}
+				
+				debug( "<br>planet=$planet" . " planetDegree=$signDegree" ." sign=$sign  start=".$range[0]." end=".$range[1]." offset=$offset   rasi=".$range[2]);
+                break;
+            }
+        }
+		
+		if($offset==-1) $offset=11;
+		
+		debug("<br>range=".$range[2]." sign=".$sign." $planet---$sign($signDegree)----offset=$offset");
+
+        // Store the calculated divisional position with degree
+        if (mb_strpos($planet, 'லக்') !== false) {
+            $g_divisional_arr[$offset] .= "<span class='lagna'>$planet</span>";
+        } else {
+			if(isRetro($planet)[1] == -1)
+				$g_divisional_arr[$offset] .= " <span class='retro'>$planet</span>" ;
+			else
+				$g_divisional_arr[$offset] .= " $planet" ;
+        }	
+    }
+	
+    return $g_divisional_arr;
+}
+
+/*
+சப்தவிம்சாம்சம்  - D27 விதிகள்
+
+/****** Divisional chart *******/
+/* Reference https://www.cosmicsquares.com/free-horoscope/saptavimsamsa-chart
+
+Calculation
+This divisional chart divides each sign into 22 amsas called Nakshatramsa or Bhamsa. The meaning of the Sanskrit word Saptavimsha is twenty-seven. 
+One Bhamsa is 1 º 6’ 40”. The whole of the zodiac has a total of about 324 Bhamsas. 
+1Bhamsa = 30 º /27 = 1 º 6’40”
+To create a D27 chart, the longitude of the planets in the natal chart are accurately mapped with the corresponding Bhamsa division and placed accordingly.
+Any change in the time seconds might also result in a completely different chart. This is one of the reasons this chart is not much utilized. 
+Based on the nature of the sign, the counting begins. 
+
+Fiery signs, Aries, Leo, and Sagittarius: Counting starts from Aries.
+Earthly sign, Taurus, Virgo, and Capricorn - Counting starts from Cancer.
+Airy sign, Gemini, Libra, and Aquarius -Counting starts from Libra.
+Watery signs, Cancer, Scorpio, and Pisces - Counting starts from Capricorn.
+
+*/
+
+function calculateD27Chart() {
+    global $planet_starlord;
+
+	$degree_spans = [
+		[0.00, 1.11, 1],
+		[1.11, 2.22, 2],
+		[2.22, 3.33, 3],
+		[3.33, 4.44, 4],
+		[4.44, 5.55, 5],
+		[5.55, 6.66, 6],
+		[6.66, 7.77, 7],
+		[7.77, 8.88, 8],
+		[8.88, 10.00, 9],
+		[10.00, 11.11, 10],
+		[11.11, 12.22, 11],
+		[12.22, 13.33, 12],
+		[13.33, 14.44, 13],
+		[14.44, 15.55, 14],
+		[15.55, 16.66, 15],
+		[16.66, 17.77, 16],
+		[17.77, 18.88, 17],
+		[18.88, 20.00, 18],
+		[20.00, 21.11, 19],
+		[21.11, 22.22, 20],
+		[22.22, 23.33, 21],
+		[23.33, 24.44, 22],
+		[24.44, 25.55, 23],
+		[25.55, 26.66, 24],
+		[26.66, 27.77, 25],
+		[27.77, 28.88, 26],
+		[28.88, 30.00, 27]
+	];
+
+
+    // Reset the divisional array
+    $g_divisional_arr = array_fill(0, 12, '');
+
+    // Loop through each planet to calculate divisional positions
+    foreach ($planet_starlord as $planet => $details) {
+        $degree = $details[2]; // Get the degree from the third element
+		$sign = floor($degree / 30.0) ; // Determine the sign
+        $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
+
+        // Step 3: Determine the Rudramsa (D11) divisional chart position
+        foreach ($degree_spans as $range) {
+            if ($signDegree > $range[0] && $signDegree <= $range[1]) {
+                if($sign == 0){
+					$offset = ((0 +  $range[2]) % 12) - 1;
+				}
+				else if($sign == 1){
+					$offset = ((3 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 2){
+					$offset = ((6 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 3){
+					$offset = ((9 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 4){
+					$offset = ((0 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 5){
+					$offset = ((3 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 6){
+					$offset = ((6 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 7){
+					$offset = ((9 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 8){
+					$offset = ((0 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 9){
+					$offset = ((3 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 10){
+					$offset = ((6 +  $range[2]) % 12)- 1;
+				}
+				else if($sign == 11){
+					$offset = ((9 +  $range[2]) % 12)- 1;
+				}
+				
+				debug( "<br>planet=$planet" . " planetDegree=$signDegree" ." sign=$sign  start=".$range[0]." end=".$range[1]." offset=$offset   rasi=".$range[2]);
+                break;
+            }
+        }
+		
+		if($offset==-1) $offset=11;
+		
+		debug("<br>range=".$range[2]." sign=".$sign." $planet---$sign($signDegree)----offset=$offset");
+
+        // Store the calculated divisional position with degree
+        if (mb_strpos($planet, 'லக்') !== false) {
+            $g_divisional_arr[$offset] .= "<span class='lagna'>$planet</span>";
+        } else {
+			if(isRetro($planet)[1] == -1)
+				$g_divisional_arr[$offset] .= " <span class='retro'>$planet</span>" ;
+			else
+				$g_divisional_arr[$offset] .= " $planet" ;
+        }	
+    }
+	
+    return $g_divisional_arr;
+}
+
+/****** D30 Trimsamsa Divisional chart *******/
+/* Reference https://www.youtube.com/watch?v=Lcm9WaPl5o4
+
+The D30 (Trimshamsha) calculation logic is as follows:
+
+Divide the zodiac sign degrees (0°–30°) into Visham (odd) and Sam (even) categories.
+If the sign is odd (1, 3, 5, 7, 9, 11), use Visham spans to determine the house offset.
+If the sign is even (2, 4, 6, 8, 10, 12), use Sam spans to determine the house offset.
+Combine the sign number and the span-based offset to position the planet in the D30 chart.
+
+*/
+
+function calculateD30Chart() {
+    global $planet_starlord;
+
+	$degree_spans_odd = [
+		[0.00, 5.00, 1],   // Visham 0°–5° or Sam 0°–5°
+		[5.00, 10.00, 11], // Visham 6°–10°
+		[10.00, 18.00, 9], // Visham 11°–18°
+		[18.00, 25.00, 3], // Visham 19°–25°
+		[25.00, 30.00, 7], // Visham 26°–30°
+	];
+	
+	$degree_spans_even = [
+		[0.00, 5.00, 2],   // Sam 0°–5°
+		[5.00, 12.00, 6],  // Sam 6°–12°
+		[12.00, 20.00, 12],// Sam 13°–20°
+		[20.00, 25.00, 10],// Sam 21°–25°
+		[25.00, 30.00, 8], // Sam 26°–30°
+	];
+
+    // Reset the divisional array
+    $g_divisional_arr = array_fill(0, 12, '');
+
+    // Loop through each planet to calculate divisional positions
+    foreach ($planet_starlord as $planet => $details) {
+        $degree = $details[2]; // Get the degree from the third element
+		$sign = floor($degree / 30.0) + 1 ; // Determine the sign
+        $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
+
+		if($sign % 2 == 1) //odd
+		{
+			foreach ($degree_spans_odd as $range) {
+				if ($signDegree > $range[0] && $signDegree <= $range[1]) {
+					$offset = $range[2];
+					
+					debug( "<br>ODD - planet=$planet" . " planetDegree=$signDegree" ." sign=$sign  start=".$range[0]." end=".$range[1]." offset=$offset   rasi=".$range[2]);
+					break;
+				}
+			}
+		}
+		else{
+			foreach ($degree_spans_even as $range) {
+				if ($signDegree > $range[0] && $signDegree <= $range[1]) {
+					$offset = $range[2];
+					
+					debug( "<br>EVEN - planet=$planet" . " planetDegree=$signDegree" ." sign=$sign  start=".$range[0]." end=".$range[1]." offset=$offset   rasi=".$range[2]);
+					break;
+				}
+			}
+		}
+		
+		$offset = $offset - 1;
+		
+		debug("<br>range=".$range[2]." sign=".$sign." $planet---$sign($signDegree)----offset=$offset");
+
+        // Store the calculated divisional position with degree
+        if (mb_strpos($planet, 'லக்') !== false) {
+            $g_divisional_arr[$offset] .= "<span class='lagna'>$planet</span>";
+        } else {
+			if(isRetro($planet)[1] == -1)
+				$g_divisional_arr[$offset] .= " <span class='retro'>$planet</span>" ;
+			else
+				$g_divisional_arr[$offset] .= " $planet" ;
+        }	
+    }
+	
+    return $g_divisional_arr;
+}
+
+/****** D40 Khavedamsa Divisional chart *******/
+/* Reference https://www.cosmicsquares.com/free-horoscope/khavedamsa-chart
+
+Calculation
+Each sign of 30º is divided into 40 parts of 0º45΄ each called Khavedamsa or Chatvarimshamsha.   
+
+D40 is created based on the nature of the sign a planet is placed in a natal chart. 
+
+For odd signs, Aries, Gemini, Leo, Libra, Sagittarius & Aquarius- counting begins from Aries  
+even signs, Taurus, Cancer, Virgo, Scorpio & Capricorn & Pisces- counting begins from Libra. 
+To locate the correct house to place the planet.
+
+Check which Khavedamsa the planet falls in. If it is between 13-24, subtract 12 from the Khavedamsa, and it will denote the sign where the planet will go. 
+21st Khavedamsa-(21-12=9) count 9houses from the sign. 
+
+If it’s between 25-36, subtract 24 from the Khavedamsa, and it will denote the sign where the planet will go. 
+30th Khavedamsa= (30-24= 6) count 6 houses from the sign.
+
+*/
+
+function calculateD40Chart() {
+    global $planet_starlord;
+
+	$degree_spans = [
+		[0.00, 0.75, 1],
+		[0.75, 1.50, 2],
+		[1.50, 2.25, 3],
+		[2.25, 3.00, 4],
+		[3.00, 3.75, 5],
+		[3.75, 4.50, 6],
+		[4.50, 5.25, 7],
+		[5.25, 6.00, 8],
+		[6.00, 6.75, 9],
+		[6.75, 7.50, 10],
+		[7.50, 8.25, 11],
+		[8.25, 9.00, 12],
+		[9.00, 9.75, 13],
+		[9.75, 10.50, 14],
+		[10.50, 11.25, 15],
+		[11.25, 12.00, 16],
+		[12.00, 12.75, 17],
+		[12.75, 13.50, 18],
+		[13.50, 14.25, 19],
+		[14.25, 15.00, 20],
+		[15.00, 15.75, 21],
+		[15.75, 16.50, 22],
+		[16.50, 17.25, 23],
+		[17.25, 18.00, 24],
+		[18.00, 18.75, 25],
+		[18.75, 19.50, 26],
+		[19.50, 20.25, 27],
+		[20.25, 21.00, 28],
+		[21.00, 21.75, 29],
+		[21.75, 22.50, 30],
+		[22.50, 23.25, 31],
+		[23.25, 24.00, 32],
+		[24.00, 24.75, 33],
+		[24.75, 25.50, 34],
+		[25.50, 26.25, 35],
+		[26.25, 27.00, 36],
+		[27.00, 27.75, 37],
+		[27.75, 28.50, 38],
+		[28.50, 29.25, 39],
+		[29.25, 30.00, 40]
+	];
+
+
+    // Reset the divisional array
+    $g_divisional_arr = array_fill(0, 12, '');
+
+    // Loop through each planet to calculate divisional positions
+    foreach ($planet_starlord as $planet => $details) {
+        $degree = $details[2]; // Get the degree from the third element
+		$sign = floor($degree / 30.0) + 1 ; // Determine the sign
+        $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
+
+		foreach ($degree_spans as $range) {
+			if ($signDegree > $range[0] && $signDegree <= $range[1]) {
+				
+				if($sign % 2 == 1){ //odd
+					$offset = 0 + $range[2];
+				}
+				else{ //even
+					$offset = 6 + $range[2];
+				}
+				
+				debug( "<br>planet=$planet" . " planetDegree=$signDegree" ." sign=$sign  start=".$range[0]." end=".$range[1]." offset=$offset   rasi=".$range[2]);
+				break;
+			}
+		}
+		
+		$offset = ($offset - 1) % 12;
+		
+		debug("<br>range=".$range[2]." sign=".$sign." $planet---$sign($signDegree)----offset=$offset");
+
+        // Store the calculated divisional position with degree
+        if (mb_strpos($planet, 'லக்') !== false) {
+            $g_divisional_arr[$offset] .= "<span class='lagna'>$planet</span>";
+        } else {
+			if(isRetro($planet)[1] == -1)
+				$g_divisional_arr[$offset] .= " <span class='retro'>$planet</span>" ;
+			else
+				$g_divisional_arr[$offset] .= " $planet" ;
+        }	
+    }
+	
+    return $g_divisional_arr;
+}
+
+//returns if the plant is retro or not
+//returns array ["(வ)",-1] for retro and ["",1] for non retro planet
+function isRetro($planet){
+	global $sw_dir;
+	
+	$direction = 0;
+	
+	switch($planet)
+	{
+		case "செ":
+			$direction = $sw_dir[4];
+			break;
+		case "சுக்":
+			$direction = $sw_dir[3];
+			break;
+		case "புத":
+			$direction = $sw_dir[2];
+			break;
+		case "குரு":
+			$direction = $sw_dir[5];
+			break;
+		case "சனி":
+			$direction = $sw_dir[6];
+			break;
+		default:
+			break;
+	}
+	
+	if($direction < 0){
+		return ["(வ)",-1];
+	}
+	else{
+		return ["",1];
+	}
+}
+
+function displayVarga($data,$division)
+{	
+	$divisional_chartname_arr = [
+								0 => "dummy",
+								1 => "ராசி",
+								2 => "ஹோரா",
+								3 => "திரேக்காணம்",
+								4 => "சதுர்த்தாம்சம்",
+								5 => "பஞ்சாம்சம்",
+								6 => "ஷஷ்டாம்சம்",
+								7 => "சப்சாம்சம்",
+								8 => "அஷ்டாம்சம்",
+								9 => "நவாம்சம்",
+								10 => "தசாம்சம்",
+								11 => "ருத்ராம்சம்",
+								12 => "துவாதசாம்சம்",
+								16 => "ஷோடசாம்சம்",
+								20 => "விம்சாம்சம்",
+								24 => "சித்தாம்சம்",
+								27 => "சப்தவிம் சாம்சம்",
+								30 => "த்ரிம்சாம்சம்",
+								40 => "காவேடாம்சம்",
+								45 => "அக்ஷவேடாம்சம்",
+								60 => "ஷஷ்டியாம்சம்"
+							];
+
+	
+	$chartname = $divisional_chartname_arr[$division];
+	
+	echo <<<EOL
+		<div class="divTable blueTable" id="D$division" style='display:table'>
+			
+			<div class="divTableBody">
+				<div class="divTableRow">
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+				</div>
+				<div class="divTableRow">
+						<div class="divTableDummyCell"></div>
+						<div class="divTableCell">$data[11]</div>
+						<div class="divTableCell">$data[0]</div>
+						<div class="divTableCell">$data[1]</div>
+						<div class="divTableCell">$data[2]</div>
+						<div class="divTableDummyCell"></div>
+				</div>
+				<div class="divTableRow">
+						<div class="divTableDummyCell"></div>
+						<div class="divTableCell">$data[10]</div>
+						<div class="divTableCenterCell" style='font-size:10px'>D$division</div>
+						<div class="divTableCenterCell"></div>
+						<div class="divTableCell">$data[3]</div>
+						<div class="divTableDummyCell"></div>
+				</div>
+				<div class="divTableRow">
+						<div class="divTableDummyCell"></div>
+						<div class="divTableCell">$data[9]</div>
+						<div class="divTableCenterCell"></div>
+						<div class="divTableCenterCell" style='font-size:10px'>$chartname</div>
+						<div class="divTableCell">$data[4]</div>
+						<div class="divTableDummyCell"></div>
+				</div>
+				<div class="divTableRow">
+						<div class="divTableDummyCell"></div>
+						<div class="divTableCell">$data[8]</div>
+						<div class="divTableCell">$data[7]</div>
+						<div class="divTableCell">$data[6]</div>
+						<div class="divTableCell">$data[5]</div>
+						<div class="divTableDummyCell"></div>
+				</div>
+				<div class="divTableRow">
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+				</div>
+			</div>	
+		</div>
+
+EOL;
+}
+
+
 ?>
 

@@ -7,6 +7,13 @@ $userInfo = getUserInfo_mobile($key);
 $_SESSION['user_type'] = $userInfo['user_type'];
 
 
+$helpInfo_arr = ["device-id" => $key,
+				"Source Platform" => $_SERVER['HTTP_SEC_CH_UA_PLATFORM'],
+				"Memory content" => $_SERVER['HTTP_COOKIE'],
+				"Requested key" => $_SERVER['QUERY_STRING']//,
+				//"host" => $_SERVER['REQUEST_SCHEME'].'//'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF']
+				];
+
 ?>
 
 <!doctype html>
@@ -86,13 +93,6 @@ $_SESSION['user_type'] = $userInfo['user_type'];
 		  alert('Bwoser does not support Geolocation API');
 		}
 	}
-	
-	$(document).ready(function() {
-		var height = $(window).height();
-		var width = $(window).width();
-	
-		document.getElementById("sw").innerHTML = width+','+height;
-	});
 			
     </script>
 </head>

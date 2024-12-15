@@ -1,6 +1,11 @@
 <?php  
 include "lib.php";
 
+//$prokerala_calender = getProkeralaTamilCalenderDetail('2024-11-13','tamil','ta');
+
+//var_dump($prokerala_calender);
+//echo $prokerala_calender['year_name'] . ',' . $prokerala_calender['month_name'] . ',' . $prokerala_calender['day'];
+
 $g_prod_url_selected='';
 $g_preprod_url_selected='';
 $g_test_url_selected='';

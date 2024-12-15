@@ -839,6 +839,7 @@ function printPyramid(numbers){
 	}
 
 	function formatDate(dateStr) {
+		console.log('Incoming date: '+dateStr);
 		const months = {
 			'Jan': 'January',
 			'Feb': 'February',

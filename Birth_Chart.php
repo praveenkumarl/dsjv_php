@@ -887,7 +887,7 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 	function updatePanchangData(in_datetime){
 		//const t = new Date('<?php echo $chart_date." ".$chart_time; ?>');
 		const t = in_datetime;
-
+		
 		newdate = new Date(t.getFullYear(),t.getMonth(),t.getDate(),t.getHours(),t.getMinutes()); 
 		
 		//newdate = changeTimezone(newdate,timezone);
@@ -906,7 +906,7 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 			//alert(formatDateTime(changeTimezone(panchang.Yoga.start,timezone)));
 			
 			document.getElementById('thithi').innerHTML = panchang.Tithi.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Tithi.start)+' முதல்<BR>'+formatDateTime(panchang.Tithi.end)+' வரை</div>';
-			document.getElementById('nak').innerHTML = panchang.Nakshatra.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Nakshatra.start)+' முதல்<BR>'+formatDateTime(panchang.Nakshatra.end)+' வரை</div>';
+			document.getElementById('nak').innerHTML = panchang.Nakshatra.name+document.getElementById('nak').innerHTML+'<BR><div class="divSmall">'+formatDateTime(panchang.Nakshatra.start)+' முதல்<BR>'+formatDateTime(panchang.Nakshatra.end)+' வரை</div>';
 			document.getElementById('yogam').innerHTML = panchang.Yoga.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Yoga.start)+' முதல்<BR>'+formatDateTime(panchang.Yoga.end)+' வரை</div>';
 			document.getElementById('karanam').innerHTML = panchang.Karna.name+'('+getKaranaPlanet(panchang.Karna.name)+')'+'<BR><div class="divSmall">'+formatDateTime(panchang.Karna.start)+' முதல்<BR>'+formatDateTime(panchang.Karna.end)+' வரை</div>';
 		});
@@ -1319,11 +1319,12 @@ function displayHoroDetails()
 		
 		//$g_tamil_date_arr = getTamilMonthDay($sun_house,$sun_degree);
 		//$tamil_year = getTamilYear(date("Y",strtotime($chart_date)),$g_tamil_date_arr[0]);
-		echo "<div class='divTableRow'>";
+		/*echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>தமிழ் தேதி</div>";
 			//echo "<div class='divPanchang' style='font-weight:bold'>".$tamil_year.", ".$g_tamil_date_arr[0]." ".$g_tamil_date_arr[1]."</div>";
 			echo "<div class='divPanchang' style='font-weight:bold'>".getTamilDate()."</div>";
 		echo "</div>";
+		*/
 		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பிறந்த நேரம்</div>";
@@ -1358,7 +1359,8 @@ function displayHoroDetails()
 		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
-			echo "<div class='divPanchang'  id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'>".explode('/',$panchang['nak'])[1]."</div>";
+			//echo "<div class='divPanchang'  id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'>".explode('/',$panchang['nak'])[1]."</div>";
+			echo "<div class='divPanchang'  id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'>(".(ceil($nak_pad_idx/4/12)).")</div>";
 		echo "</div>";
 		displayDetailsDiv('nak',ceil($nak_pad_idx)/4);
 		
@@ -1717,6 +1719,7 @@ echo <<<EOL
 
 EOL;
 }
+
 
 function prepareBukthiTable(){
 	global $dasa_lord, $g_dasaCurrent, $g_bukthi_arr;
@@ -2424,9 +2427,9 @@ EOL;
 					calculateCurrentDasaBukthi(true);
 					
 					echo "<div class='html2pdf__page-break'></div>";
-					
 					getOtherPanchangamDetails();
 					displayHoroDetails();
+
 
 echo <<<EOL
 						
@@ -2513,6 +2516,61 @@ $_SESSION["in_place"] = $place;
 
 
 prepareWallpaper();
+
+$g_divisional_arr = array_fill(0, 12, '');
+
+// Calculate D2 (Hora) chart
+$d2_data = calculateD2Chart();
+displayVarga($d2_data,2);
+
+// Calculate D3 (Drekkana) chart
+$d3_data = calculateD3Chart();
+displayVarga($d3_data,3);
+
+$d4_data = calculateD4Chart();
+displayVarga($d4_data,4);
+
+$d5_data = calculateD5Chart();
+displayVarga($d5_data,5);
+
+$d6_data = calculateD6Chart();
+displayVarga($d6_data,6);
+
+$d7_data = calculateD7Chart();
+displayVarga($d7_data,7);
+
+$d8_data = calculateD8Chart();
+displayVarga($d8_data,8);
+
+displayVarga($g_navamsam_arr,9);
+
+$d10_data = calculateD10Chart();
+displayVarga($d10_data,10);
+
+$d11_data = calculateD11Chart();
+displayVarga($d11_data,11);
+
+$d12_data = calculateD12Chart();
+displayVarga($d12_data,12);
+
+$d16_data = calculateD16Chart();
+displayVarga($d16_data,16);
+
+$d20_data = calculateD20Chart();
+displayVarga($d20_data,20);
+
+$d24_data = calculateD24Chart();
+displayVarga($d24_data,24);
+
+$d27_data = calculateD27Chart();
+displayVarga($d27_data,27);
+
+$d30_data = calculateD30Chart();
+displayVarga($d30_data,30);
+
+$d40_data = calculateD40Chart();
+displayVarga($d40_data,40);
+
 ?>
 
 </body>

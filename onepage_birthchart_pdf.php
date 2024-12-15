@@ -123,9 +123,16 @@ $g_mudakku_detail="";
 		$(document).ready(function() 
 		{
 			$('#loader').hide();
+			updateDateTime(); // Update only once when the page loads
 			hideAll();
-			
 		});
+		
+		function updateDateTime() {
+			var now = new Date();
+			var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+			var formattedDateTime = now.toLocaleString('en-IN', options);
+			document.getElementById('currentDateTime').textContent = " | " + formattedDateTime;
+		}
 		
 		function hideAll()
 		{
@@ -139,8 +146,8 @@ $g_mudakku_detail="";
 			
 			//document.getElementById("DasaMatable_boy").style.display='none';
 			//document.getElementById("BukthiMatable_boy").style.display='none';
-			document.getElementById("starlordHeadMutable_boy").style.display='none';
-			document.getElementById("starlordBodyMutable_boy").style.display='none';
+			//document.getElementById("starlordHeadMutable_boy").style.display='none';
+			//document.getElementById("starlordBodyMutable_boy").style.display='none';
 			//var btns = document.getElementById("buttons");
 			
 			//btns.style.display='none';
@@ -1820,8 +1827,9 @@ else{
 	
 </div>
 
-<div class="PageFooter" style="width:-webkit-fill-available">தர்ம சாஸ்தா ஜோதிட வித்யாலயா & Periyanayaki Astro Solutions</div>
-
+<div class="PageFooter" style="width:-webkit-fill-available">தர்ம சாஸ்தா ஜோதிட வித்யாலயா & Periyanayaki Astro Solutions
+	<span id="currentDateTime"></span>
+</div>
 					
 <?php
 

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
+    <link rel="stylesheet" href="css/birth_chart_style.css?<?php echo date('ymdhis'); ?>">
+    <link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+    
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 8px solid blue;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #targetDiv {
+            flex-grow: 1;
+        }
+
+        .PageFooter {
+            width: 100%;
+            text-align: center;
+            z-index: 102;
+        }
+
+        @media print {
+            @page {
+                margin: 0;
+            }
+            body {
+                border: none;
+                box-shadow: none;
+            }
+            .PageFooter {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                text-align: center;
+                z-index: 102;
+            }
+        }
+		
+		.PageFooterPanchang {
+			position: fixed;
+			bottom: 30px;
+			text-align: center;
+			vertical-align: middle;
+			color: var(--text-color);
+			font-size: 10px;
+			height: 10px;
+			line-height: 15px;
+			border-top: 1px solid;
+			border-color: black;
+			font-family: Verdana, Raavi, sans-serif;
+			width: 210mm;
+			margin-left: 5px;
+			margin-right: 5px;
+		}
+    </style>
+     <script>
+        function loadStylesheet(href) {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = href + '?' + new Date().getTime(); // Append timestamp as query parameter
+            document.head.appendChild(link);
+        }
+
+        // Load stylesheets
+        loadStylesheet('css/main.css');
+        loadStylesheet('css/birth_chart_style.css');
+        loadStylesheet('style.css');
+        
+        window.onload = function() {
+            const content = localStorage.getItem('divContent');
+            if (content) {
+                document.getElementById('targetDiv').innerHTML = content;
+                // Clear the localStorage item after use if needed
+                localStorage.removeItem('divContent');
+            }
+            
+            updateDateTime();
+        };
+        
+        function updateDateTime() {
+            var now = new Date();
+            var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            var formattedDateTime = now.toLocaleString('en-IN', options);
+            document.getElementById('currentDateTime').textContent = " | " + formattedDateTime;
+        }
+        
+    </script>
+</head>
+<body>
+   <div class="panchangBorder" id="targetDiv" ></div>
+</body>
+<div class="PageFooterPanchang" style='border:none'>தர்ம சாஸ்தா ஜோதிட வித்யாலயா & Periyanayaki Astro Solutions
+                <span id="currentDateTime"></span></div>
+</html>

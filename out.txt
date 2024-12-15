@@ -1,0 +1,210 @@
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600
+swetest64.exe -edir./sweph/ -b1.1.1930 -s60s -ut -p0 -fPTLZ -g, -geopos0,0,0 -sid1 
+date (dmy) 1.1.1930 greg.   0:00:00 UT		version 2.10.03
+UT:  2425977.500000000     delta t: 24.415156 sec
+TT:  2425977.500282583   ayanamsa =   22°52'35.9059 (Lahiri)
+geo. long 0.000000, lat 0.000000, alt 0.000000
+Epsilon (m)       23°26'54.1910
+Sun            ,01.01.1930 0:00:00 UT, 256°58'52.7600,16 sa 58'52.7600

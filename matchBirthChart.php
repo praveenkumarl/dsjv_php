@@ -1,3 +1,4 @@
+<!doctype html>
 <?php 
 session_start();
 include_once "lib.php";
@@ -385,7 +386,6 @@ function getBoyChartDetails1()
 
 ?>
 
-<!doctype html>
 <html lang="en" class="no-js">
 <head>
     <meta charset="utf-8">
