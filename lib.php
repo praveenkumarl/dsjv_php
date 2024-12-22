@@ -2259,6 +2259,7 @@ function displayStarLord()
 				$planet_starlord[$planet][2] = $full_planet_deg;
 				$planet_starlord[$planet][3] = $deg;
 				$planet_starlord[$planet][4] = $starlord_idx;
+				$planet_starlord[$planet][5] = ceil($full_planet_deg/30.0);
 				
 				/*if(!(strpos($planets,"ரா.கா")===0 || strpos($planets,"ரா.கா")>0) && (strpos($planets,"ரா")===0 || strpos($planets,"ரா")>0)){
 					//echo $house. "-" . $planets ."<br>";
@@ -2295,10 +2296,12 @@ function displayStarLord()
 				$planet_starlord["ரா"][2] = ($full_planet_deg > 180) ? $full_planet_deg-180 : $full_planet_deg;
 				$planet_starlord["ரா"][3] = $deg;
 				$planet_starlord["ரா"][4] = $starlord_idx_ragu;
+				$planet_starlord["ரா"][5] = ceil($full_planet_deg/30.0);
 				
 				$planet_starlord["கே"][2] = $full_planet_deg;
 				$planet_starlord["கே"][3] = $deg;
 				$planet_starlord["கே"][4] = $starlord_idx;
+				$planet_starlord["கே"][5] = ceil($full_planet_deg/30.0);
 			}
 		}
 	}
@@ -8091,11 +8094,11 @@ function calculateD10Chart() {
 				if ($signDegree > $range[0] && $signDegree <= $range[1]) {
 					if($sign % 2 == 1){ //male rasi
 						$offset = (0 + $sign -2 + $range[2]) % 12;
-						echo("<br>"."start=".$range[0]." end=".$range[1]." offset=$offset   rasi=".$range[2]);
+						debug("<br>"."start=".$range[0]." end=".$range[1]." offset=$offset   rasi=".$range[2]);
 					}
 					else{ //female rasi
 						$offset = (8 + $sign -2 + $range[2]) % 12;
-						echo("<br>"."start=".$range[0]." end=".$range[1]." offset=$offset   rasi=".$range[2]);
+						debug("<br>"."start=".$range[0]." end=".$range[1]." offset=$offset   rasi=".$range[2]);
 					}
 					break;
 				}
@@ -8886,7 +8889,7 @@ function calculateD40Chart() {
 					$offset = 6 + $range[2];
 				}
 				
-				debug( "<br>planet=$planet" . " planetDegree=$signDegree" ." sign=$sign  start=".$range[0]." end=".$range[1]." offset=$offset   rasi=".$range[2]);
+				debug("<br>planet=$planet" . " planetDegree=$signDegree" ." sign=$sign  start=".$range[0]." end=".$range[1]." offset=$offset   rasi=".$range[2]);
 				break;
 			}
 		}
@@ -8908,6 +8911,142 @@ function calculateD40Chart() {
 	
     return $g_divisional_arr;
 }
+
+/****** D45 Akshavedamsa Divisional chart *******/
+/* Reference https://www.cosmicsquares.com/free-horoscope/akshavedamsa-chart
+
+Calculation
+Each sign is divided into 45 parts of 0 degrees 40’ each called Akshavedamsa. The whole zodiac system has about 540 Akshavedamsas.   
+
+D45 chart is created based on the nature of the sign a planet is placed in the natal chart,   
+
+For movable signs, Aries, Cancer, Libra, Capricorn- count from Aries  
+for fixed signs, Taurus, Leo, Scorpio, and Aquarius- count from Leo 
+for dual signs, Gemini, Virgo, Sagittarius, and Pisces- count from Sagittarius. 
+To locate the correct house to place the planet,
+
+Check which Akshavedamsa the planet falls in. If it is between 13-24, subtract 12 from the number, and it will denote the sign where the planet will go. 21st Akshavedamsa -(21-12=9) count 9 houses from the sign. 
+
+If it’s between 25-36, subtract 24 and 37-45, subtract 36, and it will denote the sign where the planet should go. 
+30th Akshavedamsa = (30-24= 6) count 6 houses from the sign.
+
+*/
+
+function calculateD45Chart() {
+    global $planet_starlord;
+
+	$degree_spans = [
+		[0.00, 0.67, 1],    [0.67, 1.33, 2],   [1.33, 2.00, 3],   [2.00, 2.67, 4],
+		[2.67, 3.33, 5],    [3.33, 4.00, 6],   [4.00, 4.67, 7],   [4.67, 5.33, 8],
+		[5.33, 6.00, 9],    [6.00, 6.67, 10],  [6.67, 7.33, 11],  [7.33, 8.00, 12],
+		[8.00, 8.67, 13],   [8.67, 9.33, 14],  [9.33, 10.00, 15], [10.00, 10.67, 16],
+		[10.67, 11.33, 17], [11.33, 12.00, 18],[12.00, 12.67, 19],[12.67, 13.33, 20],
+		[13.33, 14.00, 21], [14.00, 14.67, 22],[14.67, 15.33, 23],[15.33, 16.00, 24],
+		[16.00, 16.67, 25], [16.67, 17.33, 26],[17.33, 18.00, 27],[18.00, 18.67, 28],
+		[18.67, 19.33, 29], [19.33, 20.00, 30],[20.00, 20.67, 31],[20.67, 21.33, 32],
+		[21.33, 22.00, 33], [22.00, 22.67, 34],[22.67, 23.33, 35],[23.33, 24.00, 36],
+		[24.00, 24.67, 37], [24.67, 25.33, 38],[25.33, 26.00, 39],[26.00, 26.67, 40],
+		[26.67, 27.33, 41], [27.33, 28.00, 42],[28.00, 28.67, 43],[28.67, 29.33, 44],
+		[29.33, 30.00, 45]
+	];
+
+    // Reset the divisional array
+    $g_divisional_arr = array_fill(0, 12, '');
+
+    // Loop through each planet to calculate divisional positions
+    foreach ($planet_starlord as $planet => $details) {
+        $degree = $details[2]; // Get the degree from the third element
+		$sign = floor($degree / 30.0) + 1 ; // Determine the sign
+        $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
+
+		foreach ($degree_spans as $range) {
+			if ($signDegree > $range[0] && $signDegree <= $range[1]) {
+				
+				if($sign == 1 or $sign == 4 or $sign == 7 or $sign == 10){ //movable sign
+					$offset = 1 + $range[2] - 1;
+				}
+				else if($sign == 2 or $sign == 5 or $sign == 8 or $sign == 11){ //fixed sign
+					$offset = 5 + $range[2] - 1;
+				}
+				else{ //dual sign
+					$offset = 9 + $range[2] - 1;
+				}
+				
+				debug("<br>planet=$planet" . " planetDegree=$signDegree" ." sign=$sign  start=".$range[0]." end=".$range[1]." offset=$offset   rasi=".$range[2]);
+				break;
+			}
+		}
+		
+		$offset = ($offset - 1) % 12;
+		
+		debug("<br>range=".$range[2]." sign=".$sign." $planet---$sign($signDegree)----offset=$offset");
+
+        // Store the calculated divisional position with degree
+        if (mb_strpos($planet, 'லக்') !== false) {
+            $g_divisional_arr[$offset] .= "<span class='lagna'>$planet</span>";
+        } else {
+			if(isRetro($planet)[1] == -1)
+				$g_divisional_arr[$offset] .= " <span class='retro'>$planet</span>" ;
+			else
+				$g_divisional_arr[$offset] .= " $planet" ;
+        }	
+    }
+	
+    return $g_divisional_arr;
+}
+
+/****** D60 Sashtiamsa Divisional chart *******/
+/* Reference https://www.cosmicsquares.com/free-horoscope/shastiamsa-chart
+
+Calculation
+Sashtiamsa is 1/60th division of a sign; each Sashtiamsa is of 0degrees, 30’ minutes. Each Sashtiamsa is assigned to a deity. 
+Based on the nature of the deity/demigod assigned, there are Shuba Sashtiamsa and Kroora Sashtiamsas. 
+Planets in Shuba Sashtiamsa give good results, and planets in kroora Sashtiamsa give malefic results. 
+Madhya Sashtiamsas provide moderate results. The nomenclature of the deities is devised by Rishi Parasara.
+To create a D60 chart, see the longitude of a planet in a sign, consider only the degree, multiply it by 2. 
+Divide the resultant number by 12 and add 1 to the remainder. It will denote the sign where the planet will be placed in the D60 chart. 
+The Lord of the resultant sign is the planet’s Sashtiamsa dispositor. Here is a table on Sashtiamsa, deities, and degrees,
+
+*/
+
+function calculateD60Chart() {
+    global $planet_starlord;
+
+    // Reset the divisional array for 12 signs
+    $g_divisional_arr = array_fill(0, 12, '');
+
+    // Loop through each planet to calculate D60 positions
+    foreach ($planet_starlord as $planet => $details) {
+        $degree = $details[2]; // Planet's degree in full
+        $sign = floor($degree / 30.0) + 1; // Determine the sign (1 to 12)
+        $signDegree = fmod($degree, 30.0); // Degree within the sign
+
+        // Step 1: Multiply degree by 2, divide by 12, and add 1
+        $offset = floor(fmod(($signDegree * 2), 12)) + 1;
+		
+		$offset = targetHouse($sign,$offset)- 1;
+		
+		if($offset < 0)
+		{
+			$offset = 11;
+		}
+
+        debug("<br>Planet=$planet Degree=$signDegree Sign=$sign Offset=$offset");
+
+        // Store calculated position in divisional array
+        if (mb_strpos($planet, 'லக்') !== false) {
+            $g_divisional_arr[$offset] .= "<span class='lagna'>$planet</span>";
+        } else {
+            if (isRetro($planet)[1] == -1) {
+                $g_divisional_arr[$offset] .= " <span class='retro'>$planet</span>";
+            } else {
+                $g_divisional_arr[$offset] .= " $planet";
+            }
+        }
+    }
+    return $g_divisional_arr;
+}
+
 
 //returns if the plant is retro or not
 //returns array ["(வ)",-1] for retro and ["",1] for non retro planet
@@ -8947,36 +9086,18 @@ function isRetro($planet){
 
 function displayVarga($data,$division)
 {	
-	$divisional_chartname_arr = [
-								0 => "dummy",
-								1 => "ராசி",
-								2 => "ஹோரா",
-								3 => "திரேக்காணம்",
-								4 => "சதுர்த்தாம்சம்",
-								5 => "பஞ்சாம்சம்",
-								6 => "ஷஷ்டாம்சம்",
-								7 => "சப்சாம்சம்",
-								8 => "அஷ்டாம்சம்",
-								9 => "நவாம்சம்",
-								10 => "தசாம்சம்",
-								11 => "ருத்ராம்சம்",
-								12 => "துவாதசாம்சம்",
-								16 => "ஷோடசாம்சம்",
-								20 => "விம்சாம்சம்",
-								24 => "சித்தாம்சம்",
-								27 => "சப்தவிம் சாம்சம்",
-								30 => "த்ரிம்சாம்சம்",
-								40 => "காவேடாம்சம்",
-								45 => "அக்ஷவேடாம்சம்",
-								60 => "ஷஷ்டியாம்சம்"
-							];
-
+	global $divisional_chartname_arr;
 	
-	$chartname = $divisional_chartname_arr[$division];
+	$chartname = $divisional_chartname_arr[$division][0];
+	$chartdetail = $divisional_chartname_arr[$division][1];
+	
+	
+	echo "<center>";
+	echo "<P><B>$chartdetail</B></p>";
 	
 	echo <<<EOL
 		<div class="divTable blueTable" id="D$division" style='display:table'>
-			
+				
 			<div class="divTableBody">
 				<div class="divTableRow">
 						<div class="divTableDummyCell"></div>
@@ -9006,7 +9127,7 @@ function displayVarga($data,$division)
 						<div class="divTableDummyCell"></div>
 						<div class="divTableCell">$data[9]</div>
 						<div class="divTableCenterCell"></div>
-						<div class="divTableCenterCell" style='font-size:10px'>$chartname</div>
+						<div class="divTableCenterCell" style='font-size:2.5vw'>$chartname</div>
 						<div class="divTableCell">$data[4]</div>
 						<div class="divTableDummyCell"></div>
 				</div>
@@ -9030,8 +9151,339 @@ function displayVarga($data,$division)
 		</div>
 
 EOL;
+
+	echo "<center>";
 }
 
+function getAsthangam(){
+	global $g_asthangam_arr, $planet_starlord;
+	
+	$deg = -1.0;
+	
+	$sun_full_degree = $planet_starlord["சூரி"][2];
+	
+	// Loop through each planet to calculate D60 positions
+    foreach ($planet_starlord as $planet => $details) {
+		if(strpos("சூரி",$planet)!==false) continue; // not required to check on sun
+		
+        $degree = $details[2]; // Planet's degree in full
+
+        $diff = abs($sun_full_degree - $degree);
+		
+		switch($planet){
+			case "செ":
+				$deg = 17.0;
+				if($diff <= $deg){
+					array_push($g_asthangam_arr,$planet);
+				}
+				break;
+			case "குரு":
+				$deg = 11.0;
+				if($diff <= $deg){
+					array_push($g_asthangam_arr,$planet);
+				}
+				break;
+			case "சனி":
+				$deg = 15.0;
+				if($diff <= $deg){
+					array_push($g_asthangam_arr,$planet);
+				}
+				break;
+			case "புத":
+				$deg = 14.0;
+				if($diff <= $deg){
+					array_push($g_asthangam_arr,$planet);
+				}
+				break;
+			case "சுக்":
+				$deg = 14.0;
+				if($diff <= $deg){
+					array_push($g_asthangam_arr,$planet);
+				}
+				break;
+			default:
+				break;
+		}
+		
+		
+    }
+    return $g_asthangam_arr;
+}
+
+/********Astavarga calculation /
+// https://www.vedicastrologer.org/articles/vedic_astro_textbook.pdf
+/********/
+function calculateAshtavarga($planet) {
+    global $planet_starlord;
+
+    // Define favorable house mappings for all planets
+    $favorable_houses_map = array(
+		"சூரி" => array(
+			"சூரி" => array(1, 2, 4, 7, 8, 9, 10, 11),
+			"சந்" => array(3, 6, 10, 11),
+			"செ" => array(1, 2, 4, 7, 8, 9, 10, 11),
+			"புத" => array(3, 5, 6, 9, 10, 11, 12),
+			"குரு" => array(5, 6, 9, 11),
+			"சுக்" => array(6, 7, 12),
+			"சனி" => array(1, 2, 4, 7, 8, 9, 10, 11),
+			"லக்" => array(3, 4, 6, 10, 11, 12)
+		),
+		"சந்" => array(
+			"சூரி" => array(3, 6, 7, 8, 10, 11),
+			"சந்" => array(1, 3, 6, 7, 9, 10, 11),
+			"செ" => array(2, 3, 5, 6, 10, 11),
+			"புத" => array(1, 3, 4, 5, 7, 8, 10, 11),
+			"குரு" => array(1, 2, 4, 7, 8, 10, 11),
+			"சுக்" => array(3, 4, 5, 7, 9, 10, 11),
+			"சனி" => array(3, 5, 6, 11),
+			"லக்" => array(3, 6, 10, 11)
+		),
+		"செ" => array(
+			"சூரி" => array(3, 5, 6, 10, 11),
+			"சந்" => array(3, 6, 11),
+			"செ" => array(1, 2, 4, 7, 8, 10, 11),
+			"புத" => array(3, 5, 6, 11),
+			"குரு" => array(6, 10, 11, 12),
+			"சுக்" => array(6, 8, 11, 12),
+			"சனி" => array(1, 4, 7, 8, 9, 10, 11),
+			"லக்" => array(1, 3, 6, 10, 11)
+		),
+		"புத" => array(
+			"சூரி" => array(5, 6, 9, 11, 12),
+			"சந்" => array(2, 4, 6, 8, 10, 11),
+			"செ" => array(1, 2, 4, 7, 8, 9, 10, 11),
+			"புத" => array(1, 3, 5, 6, 9, 10, 11, 12),
+			"குரு" => array(6, 8, 11, 12),
+			"சுக்" => array(1, 2, 3, 4, 5, 8, 9, 11),
+			"சனி" => array(1, 2, 4, 7, 8, 9, 10, 11),
+			"லக்" => array(1, 2, 4, 6, 8, 10, 11)
+		),
+		"குரு" => array(
+			"சூரி" => array(1, 2, 3, 4, 7, 8, 9, 10, 11),
+			"சந்" => array(2, 5, 7, 9, 11),
+			"செ" => array(1, 2, 4, 7, 8, 10, 11),
+			"புத" => array(1, 2, 4, 5, 6, 9, 10, 11),
+			"குரு" => array(1, 2, 3, 4, 7, 8, 10, 11),
+			"சுக்" => array(2, 5, 6, 9, 10, 11),
+			"சனி" => array(3, 5, 6, 12),
+			"லக்" => array(1, 2, 4, 5, 6, 7, 9, 10, 11)
+		),
+		"சுக்" => array(
+			"சூரி" => array(8, 11, 12),
+			"சந்" => array(1, 2, 3, 4, 5, 8, 9, 11, 12),
+			"செ" => array(3, 4, 6, 9, 11, 12),
+			"புத" => array(3, 5, 6, 9, 11),
+			"குரு" => array(5, 8, 9, 10, 11),
+			"சுக்" => array(1, 2, 3, 4, 5, 8, 9, 10, 11),
+			"சனி" => array(3, 4, 5, 8, 9, 10, 11),
+			"லக்" => array(1, 2, 3, 4, 5, 8, 9, 11)
+		),
+		"சனி" => array(
+			"சூரி" => array(1, 2, 4, 7, 8, 10, 11),
+			"சந்" => array(3, 6, 11),
+			"செ" => array(3, 5, 6, 10, 11, 12),
+			"புத" => array(6, 8, 9, 10, 11, 12),
+			"குரு" => array(5, 6, 11, 12),
+			"சுக்" => array(6, 11, 12),
+			"சனி" => array(3, 5, 6, 11),
+			"லக்" => array(1, 3, 4, 6, 10, 11)
+		),
+		"லக்" => array(
+			"சூரி" => array(3, 4, 6, 10, 11, 12),
+			"சந்" => array(3, 6, 10, 11, 12),
+			"செ" => array(1, 3, 6, 10, 11),
+			"புத" => array(1, 2, 4, 6, 8, 10, 11),
+			"குரு" => array(1, 2, 4, 5, 6, 7, 9, 10, 11),
+			"சுக்" => array(1, 2, 3, 4, 5, 8, 9),
+			"சனி" => array(1, 3, 4, 6, 10, 11),
+			"லக்" => array(3, 6, 10, 11)
+		)
+	);
+
+
+    // Ensure the planet exists in the mapping
+    if (!isset($favorable_houses_map[$planet])) {
+        return array_fill(0, 12, null); // Return an empty array if the planet is not found
+    }
+
+    // Get the favorable houses for the given planet
+    $favorable_houses = $favorable_houses_map[$planet];
+
+    // Initialize Ashtavarga_arr with 12 positions
+    //$Ashtavarga_arr = array_fill(0, 12, null);
+	$Ashtavarga_arr = array_fill(0, 12, array());
+
+    // Populate Ashtavarga_arr dynamically for all sub-keys in $favorable_houses
+    foreach ($favorable_houses as $key => $houses) {
+        foreach ($houses as $favorable_house) {
+            // Calculate the index based on $lagna_house
+            //$index = targetHouse($planet_starlord[$key][5], $favorable_house) -1 ;
+			$index = targetHouse($favorable_house-1, $planet_starlord[$key][5]) ;
+            if ($index < 0){
+				debug("<br>index is $index, making it 11");
+				$index = 11;
+			}
+
+            // If the position is empty, assign the key (planet name); otherwise, append
+            /*if (is_null($Ashtavarga_arr[$index])) {
+                $Ashtavarga_arr[$index] = $key;
+            } else {
+                $Ashtavarga_arr[$index] .= "," . $key;
+            }*/
+			
+			debug("<br>index=$index----planet=$key------house=".$planet_starlord[$key][5]);
+			array_push($Ashtavarga_arr[$index],$key);
+        }
+    }
+
+    // Return the filled array
+    return $Ashtavarga_arr;
+}
+
+function displayAshtavargam($id,$planet,$data,$type=1)
+{	
+	global $g_astavargam_total_arr;
+	
+	$total = 0;
+	
+	echo "<center>";
+
+	
+	if($type==1){
+		$chartname = $planet;
+		$chartdetail = "பின்னாஷ்டக வர்கம் (" . $chartname . ")";
+	
+		$h0 = count($data[0]);
+		$h1 = count($data[1]);
+		$h2 = count($data[2]);
+		$h3 = count($data[3]);
+		$h4 = count($data[4]);
+		$h5 = count($data[5]);
+		$h6 = count($data[6]);
+		$h7 = count($data[7]);
+		$h8 = count($data[8]);
+		$h9 = count($data[9]);
+		$h10 = count($data[10]);
+		$h11 = count($data[11]);
+		
+		$total = $h0+$h1+$h2+$h3+$h4+$h5+$h6+$h7+$h8+$h9+$h10+$h11;
+		
+		if(strpos($planet,"லக்")===false){
+			$g_astavargam_total_arr[0] += $h0;
+			$g_astavargam_total_arr[1] += $h1;
+			$g_astavargam_total_arr[2] += $h2;
+			$g_astavargam_total_arr[3] += $h3;
+			$g_astavargam_total_arr[4] += $h4;
+			$g_astavargam_total_arr[5] += $h5;
+			$g_astavargam_total_arr[6] += $h6;
+			$g_astavargam_total_arr[7] += $h7;
+			$g_astavargam_total_arr[8] += $h8;
+			$g_astavargam_total_arr[9] += $h9;
+			$g_astavargam_total_arr[10] += $h10;
+			$g_astavargam_total_arr[11] += $h11;
+		}
+	}
+	else if($type==2) { //$type==2
+	
+		$chartname = $planet;
+		$chartdetail = "பின்னாஷ்டக வர்கம் (" . $chartname . ")";
+	
+		$h0 = join(', ',$data[0]);
+		$h1 = join(', ',$data[1]);
+		$h2 = join(', ',$data[2]);
+		$h3 = join(', ',$data[3]);
+		$h4 = join(', ',$data[4]);
+		$h5 = join(', ',$data[5]);
+		$h6 = join(', ',$data[6]);
+		$h7 = join(', ',$data[7]);
+		$h8 = join(', ',$data[8]);
+		$h9 = join(', ',$data[9]);
+		$h10 = join(', ',$data[10]);
+		$h11 = join(', ',$data[11]);
+
+		$total = "";
+	}
+	else if($type == 3){
+		$chartname = "";
+		$chartdetail = "சர்வாஷ்டக வர்கம்";
+		
+		$h0 = $data[0];
+		$h1 = $data[1];
+		$h2 = $data[2];
+		$h3 = $data[3];
+		$h4 = $data[4];
+		$h5 = $data[5];
+		$h6 = $data[6];
+		$h7 = $data[7];
+		$h8 = $data[8];
+		$h9 = $data[9];
+		$h10 = $data[10];
+		$h11 = $data[11];
+
+		$total = "";
+	}
+	
+	echo "<P><B>$chartdetail</B></p>";
+	
+	echo <<<EOL
+		<div class="divTable blueTable" id="$planet" style='display:table'>
+				
+			<div class="divTableBody">
+				<div class="divTableRow">
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+				</div>
+				<div class="divTableRow">
+						<div class="divTableDummyCell"></div>
+						<div class="divTableCell">$h11</div>
+						<div class="divTableCell">$h0</div>
+						<div class="divTableCell">$h1</div>
+						<div class="divTableCell">$h2</div>
+						<div class="divTableDummyCell"></div>
+				</div>
+				<div class="divTableRow">
+						<div class="divTableDummyCell"></div>
+						<div class="divTableCell">$h10</div>
+						<div class="divTableCenterCell" style='font-size:10px'>$chartname</div>
+						<div class="divTableCenterCell"></div>
+						<div class="divTableCell">$h3</div>
+						<div class="divTableDummyCell"></div>
+				</div>
+				<div class="divTableRow">
+						<div class="divTableDummyCell"></div>
+						<div class="divTableCell">$h9</div>
+						<div class="divTableCenterCell"></div>
+						<div class="divTableCenterCell" style='font-size:10px'>$total</div>
+						<div class="divTableCell">$h4</div>
+						<div class="divTableDummyCell"></div>
+				</div>
+				<div class="divTableRow">
+						<div class="divTableDummyCell"></div>
+						<div class="divTableCell">$h8</div>
+						<div class="divTableCell">$h7</div>
+						<div class="divTableCell">$h6</div>
+						<div class="divTableCell">$h5</div>
+						<div class="divTableDummyCell"></div>
+				</div>
+				<div class="divTableRow">
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+						<div class="divTableDummyCell"></div>
+				</div>
+			</div>	
+		</div>
+
+EOL;
+
+	echo "<center>";
+}
 
 ?>
 

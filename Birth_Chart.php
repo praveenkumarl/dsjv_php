@@ -123,6 +123,32 @@ $g_age=0;
 $g_mudakku_detail="";
 $full_sun_deg=0;
 $g_bhava_arr = array(null,null,null,null,null,null,null,null,null,null,null,null);
+$g_asthangam_arr = array();
+$g_astavargam_total_arr = array_fill(0,12,0);
+
+$divisional_chartname_arr = [
+								0 => ["dummy",""],
+								1 => ["ராசி","உடல், உடல் சார்ந்த விஷயங்கள் மற்றும் அனைத்து பொது விஷயங்கள்"],
+								2 => ["ஹோரா","செல்வம், குடும்பம்"],
+								3 => ["திரேக்காணம்","உடன்பிறப்புகள், இயற்கை"],
+								4 => ["சதுர்த்தாம்சம்","அதிர்ஷ்டம் மற்றும் சொத்து"],
+								5 => ["பஞ்சாம்சம்","அதிகாரம், புகழ், ஆன்மிகம்"],
+								6 => ["ஷஷ்டாம்சம்","உடல் உபாதை, வழக்கு, எதிரி"],
+								7 => ["சப்சாம்சம்","குழந்தைகள்/சந்ததியினர்"],
+								8 => ["அஷ்டாம்சம்","ஆயுள், திடீர் இழப்பு,<BR>எதிர்பாராத பிரச்சனைகள்"],
+								9 => ["நவாம்சம்","மனைவி, தர்மம் மற்றும் உறவுகள்"],
+								10 => ["தசாம்சம்","சமூகத்தில் செயல்கள், தொழில்"],
+								11 => ["ருத்ராம்சம்","இறப்பு,  அழிவு"],
+								12 => ["துவாதசாம்சம்","பெற்றோர்<BR>(தந்தைவழி மற்றும் தாய்வழி மரபுகள்)"],
+								16 => ["ஷோடசாம்சம்","வாகனங்கள், பயணம் மற்றும் வசதிகள்"],
+								20 => ["விம்சாம்சம்","ஆன்மீக நோக்கங்கள்"],
+								24 => ["சித்தாம்சம்","கல்வி, கற்றல் மற்றும் அறிவு<BR>(கல்வி சாதனைகள்)"],
+								27 => ["சப்தவிம்சாம்சம்","பலம் மற்றும் பலவீனம்"],
+								30 => ["த்ரிம்சாம்சம்","தீமைகள்"],
+								40 => ["காவேடாம்சம்","ஜாதகத்தில் சுப மற்றும் அசுப பலன்களுக்கு"],
+								45 => ["அக்ஷவேதாம்சம்","அனைத்து பொதுவான அறிகுறிகளுக்கும்<BR>(பூர்வீக குணம் மற்றும் நடத்தை)"],
+								60 => ["ஷஷ்டியாம்சம்","அனைத்து பொதுவான அறிகுறிகளுக்கும்<BR>(பூர்வீகத்தின் கடந்த பிறப்பு அல்லது கர்மா)"]
+							];
 
 if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_input.php')==false) or $default_save){
 	$saveMode=1;
@@ -220,6 +246,17 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 			
 			displayAll();
 			
+			// Show the D2 chart by default
+			const d2Chart = document.getElementById('D2');
+			if (d2Chart) {
+				d2Chart.style.display = 'block';
+			}
+			
+			// Show the lagna chart by default
+			const sunChart = document.getElementById('a1');
+			if (sunChart) {
+				sunChart.style.display = 'block';
+			}
 		});
 		
 		function validateForm() {
@@ -929,6 +966,36 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 
 		return karanaPlanetArray[karan];
 	}
+	
+	function showChart() {
+		// Hide all charts first
+		const charts = document.querySelectorAll('.varga-chart');
+		charts.forEach(chart => chart.style.display = 'none');
+
+		// Get selected value
+		const selectedChart = document.getElementById('vargaDropdown').value;
+
+		// Show the selected chart
+		if (selectedChart) {
+			document.getElementById(selectedChart).style.display = 'block';
+		}
+		
+	}
+	
+	function showAshtaChart() {
+		// Hide all charts first
+		const charts = document.querySelectorAll('.ashtavarga-chart');
+		charts.forEach(chart => chart.style.display = 'none');
+
+		// Get selected value
+		const selectedChart = document.getElementById('ashtaDropdown').value;
+
+		// Show the selected chart
+		if (selectedChart) {
+			document.getElementById(selectedChart).style.display = 'block';
+		}
+		
+	}
  
     // Execute the transliteration function once the page is loaded
     //window.addEventListener('load', transliterateTamilToEnglish);
@@ -1460,6 +1527,12 @@ function displayHoroDetails()
 			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 6)' style='color:blue;cursor:pointer'>".$g_mudakku_detail."</div>";
 		echo "</div>";
 		displayDetailsDiv('mudakku',$mudakku_rasi.$mudakku_baavam);
+		
+		$g_asthangam_arr = getAsthangam();
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeadingRed'>அஸ்தங்கம்</div>";
+			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 6)' style='color:blue;cursor:pointer'>".join(',',$g_asthangam_arr)."</div>";
+		echo "</div>";
 		/*echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>ராகு காலம்</div>";
 			echo "<div class='divPanchang'>".$otherPanchangDetails[0]."</div>";
@@ -2519,59 +2592,90 @@ prepareWallpaper();
 
 $g_divisional_arr = array_fill(0, 12, '');
 
-// Calculate D2 (Hora) chart
-$d2_data = calculateD2Chart();
-displayVarga($d2_data,2);
+$charts = [
+    2 => calculateD2Chart(),
+    3 => calculateD3Chart(),
+    4 => calculateD4Chart(),
+    5 => calculateD5Chart(),
+    6 => calculateD6Chart(),
+    7 => calculateD7Chart(),
+    8 => calculateD8Chart(),
+    9 => $g_navamsam_arr, // D-9 (Navamsa)
+    10 => calculateD10Chart(),
+    11 => calculateD11Chart(),
+    12 => calculateD12Chart(),
+    16 => calculateD16Chart(),
+    20 => calculateD20Chart(),
+    24 => calculateD24Chart(),
+    27 => calculateD27Chart(),
+    30 => calculateD30Chart(),
+    40 => calculateD40Chart(),
+    45 => calculateD45Chart(),
+    60 => calculateD60Chart()
+];
 
-// Calculate D3 (Drekkana) chart
-$d3_data = calculateD3Chart();
-displayVarga($d3_data,3);
-
-$d4_data = calculateD4Chart();
-displayVarga($d4_data,4);
-
-$d5_data = calculateD5Chart();
-displayVarga($d5_data,5);
-
-$d6_data = calculateD6Chart();
-displayVarga($d6_data,6);
-
-$d7_data = calculateD7Chart();
-displayVarga($d7_data,7);
-
-$d8_data = calculateD8Chart();
-displayVarga($d8_data,8);
-
-displayVarga($g_navamsam_arr,9);
-
-$d10_data = calculateD10Chart();
-displayVarga($d10_data,10);
-
-$d11_data = calculateD11Chart();
-displayVarga($d11_data,11);
-
-$d12_data = calculateD12Chart();
-displayVarga($d12_data,12);
-
-$d16_data = calculateD16Chart();
-displayVarga($d16_data,16);
-
-$d20_data = calculateD20Chart();
-displayVarga($d20_data,20);
-
-$d24_data = calculateD24Chart();
-displayVarga($d24_data,24);
-
-$d27_data = calculateD27Chart();
-displayVarga($d27_data,27);
-
-$d30_data = calculateD30Chart();
-displayVarga($d30_data,30);
-
-$d40_data = calculateD40Chart();
-displayVarga($d40_data,40);
 
 ?>
+
+ <!-- Dropdown list -->
+    <select id="vargaDropdown" onchange="showChart()">
+		<option value="D2" selected>D2 - <?php echo $divisional_chartname_arr[2][0]; ?></option>
+		<?php
+		foreach ($charts as $key => $data) {
+			if ($key != 2) { // Skip D2 since it's already displayed
+				$dropdown_string = 'D' . $key . ' - ' . $divisional_chartname_arr[$key][0];
+				echo "<option value='D$key'>$dropdown_string</option>";
+			}
+		}
+		?>
+	</select>
+
+    <!-- Div containers for each chart -->
+    <?php
+    foreach ($charts as $key => $data) {
+        echo "<div id='D$key' class='varga-chart'>";
+        displayVarga($data, $key);
+        echo "</div>";
+    }
+	?>
+
+ <!-- Dropdown list -->
+    <select id="ashtaDropdown" onchange="showAshtaChart()">
+		<?php
+		foreach (array("dummy","சூரி","சந்","செ","புத","குரு","சுக்","சனி","லக்","சர்வாஷ்டக வர்கம்") as $key => $data) {
+			if($key==0) continue;
+			$dropdown_string = $data . ' - ' . "பின்னாஷ்டக வர்கம்";
+			
+			if($key==1){
+				echo "<option value='a$key' selected>சூரி - பின்னாஷ்டக வர்கம்</option>";
+			}
+			else{
+				if($key==9) $dropdown_string = "சர்வாஷ்டக வர்கம்";
+				echo "<option value='a$key'>$dropdown_string</option>";
+			}
+		}
+		?>
+	</select>
+
+    <!-- Div containers for each chart -->
+    <?php
+    foreach (array("dummy","சூரி","சந்","செ","புத","குரு","சுக்","சனி","லக்","All") as $key => $data) {
+		if($key==0) continue;
+        echo "<div id='a$key' class='ashtavarga-chart'>";
+		
+		if($key==9){
+			displayAshtavargam($key, $data, $g_astavargam_total_arr,3);  //total or sarva ashtakavargam
+		}
+		else{
+			$ashtavarga_arr = calculateAshtavarga($data);
+			//displayAshtavargam($key, $data, $ashtavarga_arr,2); //display planets
+			displayAshtavargam($key, $data, $ashtavarga_arr,1); //display only parals
+		}
+		
+        echo "</div>";
+    }
+	?>
+
 
 </body>
 </html>
