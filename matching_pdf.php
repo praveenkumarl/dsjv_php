@@ -1005,7 +1005,8 @@ function matchingRule13(){
 	if($girl_sun == 7 || $girl_sat == 7 || $girl_rah == 7 || $girl_ket == 7 || $girl_mar == 7
 		|| $boy_sun == 7 || $boy_sat == 7 || $boy_rah == 7 || $boy_ket == 7 || $boy_mar == 7){
 		$result = false;
-		$g_matching_mark = $g_matching_mark-2;
+		//$g_matching_mark = $g_matching_mark-2;
+		$g_matching_mark = $g_matching_mark/2; //make it half to make sure final result is red due to this critical rule
 		$g_seventh_house_disclaimer = "7ஆம் இடத்தில் சுரி/சனி/ரா/கே/செ, மிக கவனமாக பொருத்தம் பார்த்து முடிவு எடுக்கவும்";
 	}
 }
@@ -1133,14 +1134,15 @@ function displayMatchingResult()
 {
 	global $g_matching_mark, $g_matching_percent, $g_matching_color;
 	
-	$g_matching_percent = ceil($g_matching_mark/TOTAL_MATCH_RULES * 100);
+	$g_matching_percent  = ceil($g_matching_mark/TOTAL_MATCH_RULES * 100);
 	
-	if($g_matching_percent >=70) //possible good match
+	//if($g_matching_percent >=70) //possible good match
+	if($g_matching_percent >=60) //possible good match
 	{
-		
 		$g_matching_color = "#0BDA51";
 	}
-	elseif($g_matching_percent >50 && $g_matching_percent <70) //average match
+	//elseif($g_matching_percent >50 && $g_matching_percent <70) //average match
+	elseif($g_matching_percent >=40 && $g_matching_percent <60) //average match
 	{	
 		$g_matching_color = "Orange";
 	}
@@ -4275,9 +4277,12 @@ function displayMark(){
 					Will be updated by Javascript end of page loading
 		</div>
 		<div style="text-align:left;width:120px">
-			<span id='boot-icon' class='bi bi-x-square-fill' style='color: red;'></span> தவிர்க்க (0-50)<BR>
-			<span id='boot-icon' class='bi bi-dash-square-fill' style='color: orange;'></span> சராசரி (50-69)<BR>
-			<span id='boot-icon' class='bi bi-check-square-fill' style='color: #0BDA51;'></span> உத்தமம் (70-100)
+			<!-- <span id='boot-icon' class='bi bi-x-square-fill' style='color: #ff8080;'></span> தவிர்க்க (0-50)<BR>
+			<span id='boot-icon' class='bi bi-dash-square-fill' style='color: #FFBF00;'></span> சராசரி (50-69)<BR>
+			<span id='boot-icon' class='bi bi-check-square-fill' style='color: #00FF00;'></span> உத்தமம் (70-100) -->
+			<span id='boot-icon' class='bi bi-x-square-fill' style='color: #ff8080;'></span> தவிர்க்க (0-40)<BR>
+			<span id='boot-icon' class='bi bi-dash-square-fill' style='color: #FFBF00;'></span> சராசரி (40-60)<BR>
+			<span id='boot-icon' class='bi bi-check-square-fill' style='color: #00FF00;'></span> உத்தமம் (60-100)
 		</div>
 		<div id='disclaimer1' style='width:150px'></div>
 		</center>

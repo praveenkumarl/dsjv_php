@@ -9214,7 +9214,7 @@ function getAsthangam(){
 // https://www.vedicastrologer.org/articles/vedic_astro_textbook.pdf
 /********/
 function calculateAshtavarga($planet) {
-    global $planet_starlord;
+    global $planet_starlord, $lagna_house;
 
     // Define favorable house mappings for all planets
     $favorable_houses_map = array(
@@ -9230,10 +9230,13 @@ function calculateAshtavarga($planet) {
 		),
 		"சந்" => array(
 			"சூரி" => array(3, 6, 7, 8, 10, 11),
-			"சந்" => array(1, 3, 6, 7, 9, 10, 11),
-			"செ" => array(2, 3, 5, 6, 10, 11),
+			"சந்" => array(1, 3, 6, 7, 9, 10, 11),  //1st version
+			//"சந்" => array(1, 3, 6, 7, 10, 11),   //2nd version
+			"செ" => array(2, 3, 5, 6, 10, 11),       //1st version
+			//"செ" => array(2, 3, 5, 6, 9, 10, 11),  //2nd version
 			"புத" => array(1, 3, 4, 5, 7, 8, 10, 11),
-			"குரு" => array(1, 2, 4, 7, 8, 10, 11),
+			"குரு" => array(1, 2, 4, 7, 8, 10, 11),    //1st version
+			//"குரு" => array(1, 4, 7, 8, 10, 11, 12), //2nd version
 			"சுக்" => array(3, 4, 5, 7, 9, 10, 11),
 			"சனி" => array(3, 5, 6, 11),
 			"லக்" => array(3, 6, 10, 11)
@@ -9271,7 +9274,8 @@ function calculateAshtavarga($planet) {
 		"சுக்" => array(
 			"சூரி" => array(8, 11, 12),
 			"சந்" => array(1, 2, 3, 4, 5, 8, 9, 11, 12),
-			"செ" => array(3, 4, 6, 9, 11, 12),
+			"செ" => array(3, 4, 6, 9, 11, 12),    //1st version
+			//"செ" => array(3, 5, 6, 9, 11, 12),  //2nd version
 			"புத" => array(3, 5, 6, 9, 11),
 			"குரு" => array(5, 8, 9, 10, 11),
 			"சுக்" => array(1, 2, 3, 4, 5, 8, 9, 10, 11),
@@ -9332,6 +9336,7 @@ function calculateAshtavarga($planet) {
             }*/
 			
 			debug("<br>index=$index----planet=$key------house=".$planet_starlord[$key][5]);
+			
 			array_push($Ashtavarga_arr[$index],$key);
         }
     }
@@ -9342,7 +9347,7 @@ function calculateAshtavarga($planet) {
 
 function displayAshtavargam($id,$planet,$data,$type=1)
 {	
-	global $g_astavargam_total_arr;
+	global $g_astavargam_total_arr, $lagna_house;
 	
 	$total = 0;
 	
@@ -9422,6 +9427,9 @@ function displayAshtavargam($id,$planet,$data,$type=1)
 
 		$total = "";
 	}
+	
+	// Add "Asc" to the appropriate house based on $lagna_house
+	${'h' . ($lagna_house - 1)} .= ' <span class="lagna">லக்</span>';
 	
 	echo "<P><B>$chartdetail</B></p>";
 	

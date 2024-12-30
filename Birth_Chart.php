@@ -336,7 +336,6 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 		}
 		
 		function init(){
-			
 		} 
 		
 		function updateNow() {
@@ -2674,8 +2673,8 @@ $charts = [
 		
         echo "</div>";
     }
+	
 	?>
-
 
 </body>
 </html>

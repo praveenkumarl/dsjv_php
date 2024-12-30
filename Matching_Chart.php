@@ -129,7 +129,6 @@ $_SESSION["girldate"] = $chart_date;
 $_SESSION["girltime"] = $chart_time;
 
 $dayofweek = date('w', strtotime($chart_date));
-
 ?>
 
 <html lang="en" class="no-js">
@@ -1157,7 +1156,8 @@ function matchingRule13(){
 	if($girl_sun == 7 || $girl_sat == 7 || $girl_rah == 7 || $girl_ket == 7 || $girl_mar == 7
 		|| $boy_sun == 7 || $boy_sat == 7 || $boy_rah == 7 || $boy_ket == 7 || $boy_mar == 7){
 		$result = false;
-		$g_matching_mark = $g_matching_mark-2;
+		//$g_matching_mark = $g_matching_mark-2;
+		$g_matching_mark = $g_matching_mark/2; //make it half to make sure final result is red due to this critical rule
 		$g_seventh_house_disclaimer = "7ஆம் இடத்தில் சுரி/சனி/ரா/கே/செ, மிக கவனமாக பொருத்தம் பார்த்து முடிவு எடுக்கவும்";
 	}
 }
@@ -1287,14 +1287,16 @@ function displayMatchingResult()
 	
 	$matching_percent = ceil($g_matching_mark/TOTAL_MATCH_RULES * 100);
 	
-	if($matching_percent >=70) //possible good match
+	//if($matching_percent >=70) //possible good match
+	if($matching_percent >=60) //possible good match
 	{
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading' style='text-align:left'>பொருத்த மதிப்பு</div>";
 			echo "<div class='divMatchingResultGreen'>$matching_percent%</div>";
 		echo "</div>";
 	}
-	elseif($matching_percent >50 && $matching_percent <70) //average match
+	//elseif($matching_percent >50 && $matching_percent <70) //average match
+	elseif($matching_percent >=40 && $matching_percent <60) //average match
 	{
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading' style='text-align:left'>பொருத்த மதிப்பு</div>";
@@ -1311,9 +1313,12 @@ function displayMatchingResult()
 	echo "<div class='divTableRow'>";
 		echo "<div class='divPanchangHeading' style='text-align:left'>மதிப்பு விவரம்</div>";
 		echo "<div class='divPanchang' style='text-align:left;line-height:15px'>
-		<span id='boot-icon' class='bi bi-x-square-fill' style='color: #ff8080;'></span> தவிர்க்க (0-50)<BR>
+		<!-- <span id='boot-icon' class='bi bi-x-square-fill' style='color: #ff8080;'></span> தவிர்க்க (0-50)<BR>
 		<span id='boot-icon' class='bi bi-dash-square-fill' style='color: #FFBF00;'></span> சராசரி (50-69)<BR>
-		<span id='boot-icon' class='bi bi-check-square-fill' style='color: #00FF00;'></span> உத்தமம் (70-100)
+		<span id='boot-icon' class='bi bi-check-square-fill' style='color: #00FF00;'></span> உத்தமம் (70-100) -->
+		<span id='boot-icon' class='bi bi-x-square-fill' style='color: #ff8080;'></span> தவிர்க்க (0-40)<BR>
+		<span id='boot-icon' class='bi bi-dash-square-fill' style='color: #FFBF00;'></span> சராசரி (40-60)<BR>
+		<span id='boot-icon' class='bi bi-check-square-fill' style='color: #00FF00;'></span> உத்தமம் (60-100)
 		</div>";
 	echo "</div>";
 	

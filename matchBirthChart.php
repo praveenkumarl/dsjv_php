@@ -1,10 +1,11 @@
 <!doctype html>
 <?php 
 session_start();
+
 include_once "lib.php";
 
 const AGE_LIMIT = 17;
-const REC_PER_PAGE = 10;
+const REC_PER_PAGE = 25;
 
 $conn="";
 $phone=isset($_SESSION["phone"]) ? $_SESSION["phone"] : 1;
@@ -109,13 +110,13 @@ function getGirlChartDetails($girlpage)
 				// Previous button
 				if ($girlpage > 1) {
 					$prevPage = $girlpage - 1;
-					echo '<a href="?boypage='.$g_boypage.'&girlpage=' . $prevPage . '">Previous</a> ';
+					echo '<a href="matchBirthChart.php?boypage='.$g_boypage.'&girlpage=' . $prevPage . '">Previous</a> ';
 				}
 
 				// Next button
 				if ($girlpage < $total_pages) {
 					$nextPage = $girlpage + 1;
-					echo '<a href="?boypage='.$g_boypage.'&girlpage=' . $nextPage . '">Next</a> ';
+					echo '<a href="matchBirthChart.php?boypage='.$g_boypage.'&girlpage=' . $nextPage . '">Next</a> ';
 				}
 
 				echo '</div>';
@@ -293,13 +294,13 @@ function getBoyChartDetails($boypage)
 				// Previous button
 				if ($boypage > 1) {
 					$prevPage = $boypage - 1;
-					echo '<a href="?girlpage='.$g_girlpage.'&boypage=' . $prevPage . '" onclick="updatePageState(' . $prevPage . ', ' . $g_girlpage . ')">Previous</a> ';
+					echo '<a href="matchBirthChart.php?girlpage='.$g_girlpage.'&boypage=' . $prevPage . '" onclick="updatePageState(' . $prevPage . ', ' . $g_girlpage . ')">Previous</a> ';
 				}
 
 				// Next button
 				if ($boypage < $total_pages) {
 					$nextPage = $boypage + 1;
-					echo '<a href="?girlpage='.$g_girlpage.'&boypage=' . $nextPage . '" onclick="updatePageState(' . $nextPage . ', ' . $g_girlpage . ')">Next</a> ';
+					echo '<a href="matchBirthChart.php?girlpage='.$g_girlpage.'&boypage=' . $nextPage . '" onclick="updatePageState(' . $nextPage . ', ' . $g_girlpage . ')">Next</a> ';
 				}
 
 				echo '</div>';
@@ -445,23 +446,6 @@ function getBoyChartDetails1()
 	var boyResult=null;
 	var girlResult=null;
 	
-	function showChart(rownum,place)
-	{	
-		//document.getElementById("place").value = document.getElementById("col4"+rownum).innerHTML;
-		document.getElementById("place").value = place;
-		document.getElementById("name").value = document.getElementById("col3"+rownum).innerHTML;
-		document.getElementById("sex").value = document.getElementById("col31"+rownum).innerHTML;
-		document.getElementById("in_date").value = document.getElementById("col5"+rownum).innerHTML;
-		document.getElementById("in_time").value = document.getElementById("col6"+rownum).innerHTML;
-		document.getElementById("lang").value = 'Tamil';
-		document.getElementById("rowid").value = rownum;
-		//document.getElementById("notes").value = document.getElementById("col61"+rownum).innerHTML;
-		
-		document.getElementById("hiddenViewBirthChart").submit();
-		
-		$('#loader').show();
-	}
-	
 	$(document).ready(function(){
 		
 		$('#loader').hide();
@@ -503,6 +487,38 @@ function getBoyChartDetails1()
 		});
 	});
 	
+	window.onload = function () {
+		// Restore currGirl and girlResult if available
+		const savedCurrGirl = sessionStorage.getItem('currGirl');
+		const savedGirlResult = sessionStorage.getItem('girlResult');
+
+		if (savedCurrGirl) {
+			currGirl = JSON.parse(savedCurrGirl); // Parse the JSON string back to an object
+			girlDiv = document.getElementById('girlResult');
+			girlDiv.innerHTML = savedGirlResult;
+
+			console.log('Restored currGirl:', currGirl);
+		} else {
+			console.log('No currGirl data found in sessionStorage.');
+		}
+
+		// Restore currBoy and boyResult if available
+		const savedCurrBoy = sessionStorage.getItem('currBoy');
+		const savedBoyResult = sessionStorage.getItem('boyResult');
+
+		if (savedCurrBoy) {
+			currBoy = JSON.parse(savedCurrBoy); // Parse the JSON string back to an object
+			boyDiv = document.getElementById('boyResult');
+			boyDiv.innerHTML = savedBoyResult;
+
+			console.log('Restored currBoy:', currBoy);
+		} else {
+			console.log('No currBoy data found in sessionStorage.');
+		}
+	};
+
+
+	
 	var girlCharts = [];
 	var boyCharts = [];
 	
@@ -513,36 +529,45 @@ function getBoyChartDetails1()
 		const result = boyCharts.find(element => element.rowid.trim() === String(rowid).trim());
 		console.log(result);
 		currBoy = result;
-		
+
 		boyDiv = document.getElementById('boyResult');
-		
 		if (result) {
 			boyDiv.innerHTML = `${result.name}<BR>${result.place.split('|')[0]}<BR>${result.birth_date}<BR>${result.birth_time}`;
-			// Set a session variable
+			
+			// Save currBoy object in sessionStorage
+			sessionStorage.setItem('currBoy', JSON.stringify(result));
+			
+			// Save boyDiv content in sessionStorage (if needed for display)
 			sessionStorage.setItem('boyResult', boyDiv.innerHTML);
 		} else {
 			boyDiv.innerHTML = 'No element found with the given rowid';
 		}
-		
+
 		checkSelection();
 	}
+
 	
 	function selectGirl(rowid) {
 		const result = girlCharts.find(element => element.rowid.trim() === String(rowid).trim());
 		console.log(result);
 		currGirl = result;
-		
+
 		girlDiv = document.getElementById('girlResult');
 		if (result) {
 			girlDiv.innerHTML = `${result.name}<BR>${result.place.split('|')[0]}<BR>${result.birth_date}<BR>${result.birth_time}`;
-			// Set a session variable
+			
+			// Save currGirl object in sessionStorage
+			sessionStorage.setItem('currGirl', JSON.stringify(result));
+			
+			// Save girlDiv content in sessionStorage (if needed for display)
 			sessionStorage.setItem('girlResult', girlDiv.innerHTML);
 		} else {
 			girlDiv.innerHTML = 'No element found with the given rowid';
 		}
-		
+
 		checkSelection();
 	}
+
 	
 	function checkSelection() {
 		var girlData = document.getElementById('girlResult').innerHTML;
@@ -580,6 +605,7 @@ function getBoyChartDetails1()
 			document.querySelectorAll('input[type="radio"]').forEach(radio => {
 				radio.checked = false;
 			});
+			
 			currBoy = null;
 			currGirl = null;
 			
@@ -597,6 +623,19 @@ function getBoyChartDetails1()
 			document.getElementById('girlResult').innerHTML = '';
 			sessionStorage.removeItem('girlResult');
 			sessionStorage.removeItem('boyResult');
+		});
+	});
+	
+	document.addEventListener("DOMContentLoaded", function() {
+		document.getElementById('submitBtn').addEventListener('click', function() {
+			event.preventDefault(); // Prevent the form from submitting
+			document.getElementById('submitDiv').style.display = 'none';
+			document.querySelectorAll('input[type="radio"]').forEach(radio => {
+				radio.checked = false;
+			});
+			
+			// Submit the form programmatically
+			document.getElementById("matchingForm").submit();
 		});
 	});
 	
@@ -681,7 +720,7 @@ function getBoyChartDetails1()
 	
 	<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">திருமண பொருத்தம்</P>
 	
-	<form method="post" action="Matching_Chart.php" target="_self">
+	<form id="matchingForm" method="post" action="Matching_Chart.php" target="_self">
 		<input type='hidden' id='nPlace_girl' name='nPlace_girl'>
 		<input type='hidden' id='nPlace_boy' name='nPlace_boy'>
 		<input type='hidden' id='nGirlName' name='nGirlName'>
