@@ -98,6 +98,9 @@ $g_nak_idx=-1;
 $g_ucha_details="";
 $g_neecha_details="";
 $g_mudakku_detail="";
+$g_asthangam_arr = array();
+$g_astavargam_total_arr = array_fill(0,12,0);
+
 ?>
 
 <!DOCTYPE html>
@@ -929,12 +932,18 @@ function displayDetailsCol3()
 	
 	$chadrashtamam = getRasi(targetHouse($moon_house-1,8));
 	
+	$g_asthangam_arr = getAsthangam();
+	$asthangam_detail = join(',',$g_asthangam_arr);
+	
 	echo <<<EOL
 		<div class="divTableRow">
 			<div class='divTableTextHeading'>உச்சம்</div><div class='divTableTextMedium'>$g_ucha_details</div>
 		</div>
 		<div class="divTableRow">
 			<div class='divTableTextHeading'>நீசம்</div><div class='divTableTextMedium'>$g_neecha_details</div>
+		</div>
+		<div class="divTableRow">
+			<div class='divTableTextHeading'>அஸ்தங்கம்</div><div class='divTableTextMedium'>$asthangam_detail</div>
 		</div>
 		<div class="divTableRow">
 			<div class='divTableTextHeading'>உங்கள் சந்திராஷ்டம ராசி</div><div class='divTableTextMedium'>$chadrashtamam</div>
@@ -961,7 +970,7 @@ function displayDetailsCol3()
 			<div class='divTableTextHeading'>நேரம் மண்டலம்</div><div class='divTableTextMedium'>$gmt_offset ($TZ)</div>
 		</div>
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>கணக்கீட்டு முறை</div><div class='divTableTextMedium'>திருக்கணிதம்<BR>லஹரி அயனாம்சம்)</div>
+			<div class='divTableTextHeading'>கணக்கீட்டு முறை</div><div class='divTableTextMedium'>திருக்கணிதம்<BR>லஹரி அயனாம்சம்</div>
 		</div>
 EOL;
 }

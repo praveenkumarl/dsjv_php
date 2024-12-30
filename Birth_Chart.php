@@ -100,7 +100,6 @@ $g_notes=isset($_POST["notes"]) ? $_POST["notes"] : (isset($_POST["hNotes"]) ? $
 $planet_starlord_transit=array();
 $planet_starlord=array();
 $g_navamsam_arr=array('','','','','','','','','','','','','');
-$g_bhava_arr = array();
 $saveMode=0;
 $saveBtnTxt='Save';
 $g_planetKaranaLord=array();
