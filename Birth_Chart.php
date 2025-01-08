@@ -124,6 +124,7 @@ $full_sun_deg=0;
 $g_bhava_arr = array(null,null,null,null,null,null,null,null,null,null,null,null);
 $g_asthangam_arr = array();
 $g_astavargam_total_arr = array_fill(0,12,0);
+$g_padham=0;
 
 $divisional_chartname_arr = [
 								0 => ["dummy",""],
@@ -1350,7 +1351,7 @@ function displayHoroDetails()
 	global $panchang, $in_name, $chart_date, $chart_time, $g_dasaBalance, $place, $g_thithi_soonyam_matching_arr,$g_dasaCurrent, $transit_date, $lagna_house, $country,$yogi_arr, 
 		$g_pancha_pakshi, $g_thithi, $g_paksham, $moon_house, $today_sunrise, $today_sunset, $otherPanchangDetails, $city,$g_nak, $g_thithi_idx, $g_yoga_idx, $in_place, $g_rowid, $in_sex,
 		$g_lagnam, $g_rasi, $nak_pad_idx, $g_ucha_details, $g_neecha_details, $sun_house, $sun_degree, $g_tamil_date_arr, $g_vayadhotta_lagna, $g_age, $g_mudakku_detail,
-		$current_dasa_bukthi;
+		$current_dasa_bukthi,$planet_starlord, $g_padham;
 	
 	echo "<div id='birthdetails'><div class='divTable blueTable' style='height:40px;' id='birthHead'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
@@ -1425,7 +1426,9 @@ function displayHoroDetails()
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
 			//echo "<div class='divPanchang'  id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'>".explode('/',$panchang['nak'])[1]."</div>";
-			echo "<div class='divPanchang'  id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'>(".(ceil($nak_pad_idx/4/12)).")</div>";
+			//echo "<div class='divPanchang'  id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'>(".(ceil($g_nak_idx/4/12)).")</div>";
+			$g_padham = explode(' ',explode('/',$panchang['nak'])[1])[1];
+			echo "<div class='divPanchang'  id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'> (".($g_padham).")</div>";
 		echo "</div>";
 		displayDetailsDiv('nak',ceil($nak_pad_idx)/4);
 		
@@ -2026,7 +2029,7 @@ foreach ($output as $key => $line)
 	//$sw_degree[$row[0]] = DECtoDMS(round($tot_degree[$key] - $sw_house[$key]*30,2));
 	$sw_degree[$row[0]] = round($tot_degree[$key] - $sw_house[$key]*30,2);
 	
-	$planetDeg_default[$row[0]][0] = (float)($row[1]);	
+	$planetDeg_default[$row[0]][0] = (float)($row[2]);	
 	
     if($count!=21){
 		$sw_dir[$key] = ($row[2] > 0) - ($row[2] < 0);
@@ -2672,6 +2675,7 @@ $charts = [
 		
         echo "</div>";
     }
+	@123
 	
 	?>
 

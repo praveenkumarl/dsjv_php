@@ -90,7 +90,7 @@ $g_dasaBalance=array();
 $g_dasaCurrent=array();
 $g_kariNaal ="";
 $next_day="";
-
+$g_padham=0;
 
 
 // ------- Swiss ephemeris // ------- 
@@ -513,10 +513,10 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Yoga.name+' '+formatDateTime(panchang.Yoga.start)+" முதல் "+formatDateTime(panchang.Yoga.end)+' வரை'+displayNextYoga(newdate,panchang.Yoga)+'</div>');
 			//document.writeln('</div>');
 			
-			document.getElementById('thithi').innerHTML = panchang.Tithi.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Tithi.start)+' முதல்<BR>'+formatDateTime(panchang.Tithi.end)+' வரை</div>';
-			document.getElementById('nak').innerHTML = panchang.Nakshatra.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Nakshatra.start)+' முதல்<BR>'+formatDateTime(panchang.Nakshatra.end)+' வரை</div>';
-			document.getElementById('yogam').innerHTML = panchang.Yoga.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Yoga.start)+' முதல்<BR>'+formatDateTime(panchang.Yoga.end)+' வரை</div>';
-			document.getElementById('karanam').innerHTML = panchang.Karna.name+'('+getKaranaPlanet(panchang.Karna.name)+')'+'<BR><div class="divSmall">'+formatDateTime(panchang.Karna.start)+' முதல்<BR>'+formatDateTime(panchang.Karna.end)+' வரை</div>';
+			document.getElementById('thithi').innerHTML = panchang.Tithi.name+'<BR><div class="divSmall"> '+formatDateTime(panchang.Tithi.start)+' முதல் <BR> '+formatDateTime(panchang.Tithi.end)+' வரை </div>';
+			document.getElementById('nak').innerHTML = panchang.Nakshatra.name+document.getElementById('nak').innerHTML+'<BR><div class="divSmall"> '+formatDateTime(panchang.Nakshatra.start)+' முதல் <BR> '+formatDateTime(panchang.Nakshatra.end)+' வரை </div>';
+			document.getElementById('yogam').innerHTML = panchang.Yoga.name+'<BR><div class="divSmall"> '+formatDateTime(panchang.Yoga.start)+' முதல் <BR>'+formatDateTime(panchang.Yoga.end)+' வரை </div>';
+			document.getElementById('karanam').innerHTML = panchang.Karna.name+'('+getKaranaPlanet(panchang.Karna.name)+')'+'<BR><div class="divSmall">'+formatDateTime(panchang.Karna.start)+' முதல் <BR>'+formatDateTime(panchang.Karna.end)+' வரை </div>';
 		});
 
 		//storing initial end times for nak, thithi, yogam, karanam as new generation will result in changes to panchang object
@@ -531,8 +531,9 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		newdate = new Date(nak_end.getFullYear(),nak_end.getMonth(),nak_end.getDate(),nak_end.getHours(),nak_end.getMinutes()+1); //adding 1 minute from current nak to get next
 		//newdate = changeTimezone(newdate,timezone);
 	
+		//To add next nak
 		panchang.calculate(newdate, function() {
-			document.getElementById('nak').innerHTML = document.getElementById('nak').innerHTML + panchang.Nakshatra.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Nakshatra.start)+' முதல்<BR>'+formatDateTime(panchang.Nakshatra.end)+' வரை</div>';
+			document.getElementById('nak').innerHTML = document.getElementById('nak').innerHTML + panchang.Nakshatra.name+'<BR><div class="divSmall"> '+formatDateTime(panchang.Nakshatra.start)+' முதல் <BR>'+formatDateTime(panchang.Nakshatra.end)+' வரை </div>';
 		});
 
 		//To add next karanam
@@ -540,7 +541,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		//newdate = changeTimezone(newdate,timezone);
 	
 		panchang.calculate(newdate, function() {
-			document.getElementById('karanam').innerHTML = document.getElementById('karanam').innerHTML + panchang.Karna.name+'('+getKaranaPlanet(panchang.Karna.name)+')'+'<BR><div class="divSmall">'+formatDateTime(panchang.Karna.start)+' முதல்<BR>'+formatDateTime(panchang.Karna.end)+' வரை</div>';
+			document.getElementById('karanam').innerHTML = document.getElementById('karanam').innerHTML + panchang.Karna.name+'('+getKaranaPlanet(panchang.Karna.name)+')'+'<BR><div class="divSmall"> '+formatDateTime(panchang.Karna.start)+' முதல் <BR>'+formatDateTime(panchang.Karna.end)+' வரை </div>';
 		});
 
 		//To add next thithi
@@ -548,7 +549,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		//newdate = changeTimezone(newdate,timezone);
 	
 		panchang.calculate(newdate, function() {
-			document.getElementById('thithi').innerHTML = document.getElementById('thithi').innerHTML + panchang.Tithi.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Tithi.start)+' முதல்<BR>'+formatDateTime(panchang.Tithi.end)+' வரை</div>';
+			document.getElementById('thithi').innerHTML = document.getElementById('thithi').innerHTML + panchang.Tithi.name+' <BR><div class="divSmall">'+formatDateTime(panchang.Tithi.start)+' முதல் <BR> '+formatDateTime(panchang.Tithi.end)+' வரை </div>';
 		});
 
 		//To add next yogam
@@ -556,7 +557,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		//newdate = changeTimezone(newdate,timezone);
 	
 		panchang.calculate(newdate, function() {
-			document.getElementById('yogam').innerHTML = document.getElementById('yogam').innerHTML + panchang.Yoga.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Yoga.start)+' முதல்<BR>'+formatDateTime(panchang.Yoga.end)+' வரை</div>';
+			document.getElementById('yogam').innerHTML = document.getElementById('yogam').innerHTML + panchang.Yoga.name+'<BR><div class="divSmall"> '+formatDateTime(panchang.Yoga.start)+' முதல் <BR>'+formatDateTime(panchang.Yoga.end)+' வரை </div>';
 		});
 	}
 	
@@ -1250,7 +1251,8 @@ function calculateBirthPanchang(){
 function displayHoroDetails()
 {
 	global $panchang, $in_name, $chart_date, $chart_time, $g_dasaBalance, $place, $g_thithi_soonyam_matching_arr,$g_dasaCurrent, $transit_date, $lagna_house, $country,$yogi_arr, 
-		$g_pancha_pakshi, $g_thithi, $g_paksham, $moon_house, $today_sunrise, $tomo_sunrise,$today_sunset,$city,$g_nak, $g_thithi_idx, $g_yoga_idx, $nak_pad_idx, $g_kariNaal, $lat,$lon;
+		$g_pancha_pakshi, $g_thithi, $g_paksham, $moon_house, $today_sunrise, $tomo_sunrise,$today_sunset,$city,$g_nak, $g_thithi_idx, $g_yoga_idx, $nak_pad_idx, $g_kariNaal, 
+		$lat,$lon, $g_padham ;
 	
 	echo "<div class='divTable blueTable' style='height:40px;' id='panchangDetailsHeading'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
@@ -1266,10 +1268,10 @@ function displayHoroDetails()
 			echo "<div class='divPanchangHeading'>ஆ.தேதி</div>";
 			echo "<div class='divPanchang' id='edate'>".date('d-m-Y',strtotime($chart_date))."</div>";
 		echo "</div>";
-		echo "<div class='divTableRow'>";
+		/*echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>த.தேதி</div>";
 			echo "<div class='divPanchang'>".getTamilDate()."</div>";
-		echo "</div>";
+		echo "</div>";*/
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>நேரம்</div>";
 			echo "<div class='divPanchang' id='time'>".date('h:i:s A',strtotime($chart_time))."</div>";
@@ -1303,7 +1305,9 @@ function displayHoroDetails()
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
 			//echo "<div class='divPanchang' id='nak'>".explode('/',$panchang['nak'])[1]."<BR>".$panchang['nak-end-time']." வரை</div>";
-			echo "<div class='divPanchang' id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'></div>";
+			//echo "<div class='divPanchang' id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'></div>";
+			$g_padham = explode(' ',explode('/',$panchang['nak'])[1])[1];
+			echo "<div class='divPanchang'  id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'> (".($g_padham).")</div>";
 		echo "</div>";
 		displayDetailsDiv('nak',ceil($nak_pad_idx)/4);
 		
@@ -1641,6 +1645,8 @@ foreach ($output as $key => $line)
 	//$sw_degree[$row[0]] = DECtoDMS(round($tot_degree[$key] - $sw_house[$key]*30,2));
 	$sw_degree[$row[0]] = round($tot_degree[$key] - $sw_house[$key]*30,2);
 	
+	$planetDeg_default[$row[0]][0] = (float)($row[2]);
+	
     if($count!=21){
 		$sw_dir[$key] = ($row[2] > 0) - ($row[2] < 0);
 	}
@@ -1697,7 +1703,7 @@ $sw_planet = updatePlanet($sw_planet,$sw_dir, $ragu_house);
 // Update Mandhi
 $sw_planet = updateMandhi($sw_planet,$sw_planet,$sun_degree,$day,$dayofweek,$sun_house);
 
-
+$Planet_degree=displayDegree($sw_degree); 
 
 $sw_planet = sortDegree($sw_planet);
 
@@ -1766,7 +1772,7 @@ echo <<<EOL
 					</H4>
 				<input type='button' id='sub_button' class='actionBtn' value='Submit' onClick="formSubmitButton();">
 				<input type='button' id='downloadPanchang' class='actionBtn' value='Generate' onClick="genPanchang('$place');" /> 
-				<input type='button' class='actionBtn' id='onePageBtn' onclick="displayOnePagePanchang()" value="One Page" />
+				<input type='button' class='actionBtn' id='onePageBtn' onclick="displayOnePagePanchang()" value="Download" />
 				<BR><BR>
 			</form>
 
@@ -1804,76 +1810,81 @@ echo <<<EOL
 					<BR><BR><BR>
 			</div>
 			<div class="divOnePagePanchangContainer" id="divContainer" style='display:none;'>
+			
 				<table>
 					<tr>
-						<td colspan="2">
-							<img src="images/panchangam_heading.png" alt="Panchangam" width='200px'' style='display:inline;'>
-						</td>
+						<td style='vertical-align: bottom;'><img src='images/dsjv_title.png' width='200px' height="35px" style='display:inline;'></td>
+						<td style='vertical-align: bottom;'>&#3059; &#2384; &#21328; &#10017<br><img src="images/panchangam_heading.png" alt="Panchangam" width='150px' style='display:inline;'></td>
+						<td style='vertical-align: bottom;'><img src='images/periyanayaki_astro_solutions.png' height="35px" style='display:inline;'></div></td>
 					</tr>
 					<tr>
-						<td colspan="2">
-							<div class="imgcaption" id="date" style="font-size:20px;font-weight:bold">date</div>
-							<div class="imgcaption" id="day_local" style="font-size:20px;font-weight:bold">day</div>
-							<div class="imgcaption" id="localPlace" style="font-size:20px;font-weight:bold">place</div>
+						<td colspan=5>
+							<div class="onepage_panchang_date" id="date">date</div>
+							<div class="onepage_panchang_day" id="day_local">day</div>
+							<div class="onepage_panchang_place" id="localPlace">place</div>
 							<!-- <img id="day_local" src="" alt="Captured Image" width='150px'' style='display:inline;'> -->
 						</td>
+						
 					</tr>
 					<tr>
-						<td style='padding:unset' colspan='2'>
+						<td style='padding:unset' colspan='5'>
 							<div class="image-with-caption">
 								<div class="imgcaption_small">திதி</div>
-								<img id="thithi_local" src="" alt="Captured Image" width='120px' style='filter: grayscale(100%); display:inline;'>
+								<img id="thithi_local" src="" alt="Captured Image" width='150px' style='filter: grayscale(100%); display:inline; border:1px solid black'>
 							</div>
 							<div class="image-with-caption">
 								<div class="imgcaption_small">நட்சத்திரம்</div>
-								<img id="nak_local" src="" alt="Captured Image" width='120px' style='filter: grayscale(100%);display:inline'>
+								<img id="nak_local" src="" alt="Captured Image" width='150px' style='filter: grayscale(100%);display:inline; border:1px solid black'>
 							</div>
 							<div class="image-with-caption">
 								<div class="imgcaption_small">யோகம்</div>
-								<img id="yogam_local" src="" alt="Captured Image" width='120px' style='filter: grayscale(100%);display:inline'>
+								<img id="yogam_local" src="" alt="Captured Image" width='150px' style='filter: grayscale(100%);display:inline; border:1px solid black'>
 							</div>
 							<div class="image-with-caption">
 								<div class="imgcaption_small">கரணம்</div>
-								<img id="kara_local" src="" alt="Captured Image" width='120px' style='filter: grayscale(100%);display:inline'>
+								<img id="kara_local" src="" alt="Captured Image" width='150px' style='filter: grayscale(100%);display:inline; border:1px solid black'>
 							</div>
 						</td>
 					</tr>
 					<tr>
-						<td colspan="5">
+						<td colspan="4">
 							<div class="panchangTextInline" id="lHorai"><div class="panchangTextInlineBold">ஹோரை</div></div>,
 							<div class="panchangTextInline" id="lPakshi"><div class="panchangTextInlineBold">பஞ்ச பக்ஷி	</div></div>,
 							<div class="panchangTextInline" id="lAmirYogam"><div class="panchangTextInlineBold">அமிர்தாதி யோகம்</div></div>,
+							
 							<div class="panchangTextInline" id="lNethram"><div class="panchangTextInlineBold">நேத்திரம்</div></div>,
-							<BR>
 							<div class="panchangTextInline" id="lJeevan"><div class="panchangTextInlineBold">ஜீவன்</div></div>,
 							<div class="panchangTextInline" id="lNokku"><div class="panchangTextInlineBold">நாள் நோக்கு</div></div>,
+							
 							<div class="panchangTextInline" id="lLagnam"><div class="panchangTextInlineBold">லக்கினம்</div></div>,
 							<div class="panchangTextInline" id="lRaasi"><div class="panchangTextInlineBold">ராசி</div></div>,
-							<BR>
 							<div class="panchangTextInline" id="lAbhijith"><div class="panchangTextInlineBold">அபிஜித்</div></div>,
+							
 							<div class="panchangTextInline" id="lAvayogi"><div class="panchangTextInlineBold">அவயோகி</div></div>,
 							<div class="panchangTextInline" id="lThithi_soonyam"><div class="panchangTextInlineBold">திதி சூ.</div></div>,
-							<BR>
 							<div class="panchangTextInline" id="lRahu_kaalam"><div class="panchangTextInlineBold">ரா.கா.</div></div>,
+							
 							<div class="panchangTextInline" id="lEma_kantam"><div class="panchangTextInlineBold">எ.க.</div></div>,
 							<div class="panchangTextInline" id="lKuligai"><div class="panchangTextInlineBold">குளி.</div></div>,
-							<BR>
 							<div class="panchangTextInline" id="lSoolai"><div class="panchangTextInlineBold">வா.சூ.</div></div>,
+							
 							<div class="panchangTextInline" id="lChandraashtamam"><div class="panchangTextInlineBold">சந்திராஷ்டமம்</div></div>,
-							<BR>
 							<div class="panchangTextInline" id="lSunrise"><div class="panchangTextInlineBold">சூரிய உதயம்</div></div>,
 							<div class="panchangTextInline" id="lSunset"><div class="panchangTextInlineBold">சூரிய அஸ்தமனம்</div></div>
 						</td>
 					</tr>
 					<tr>
-						<td style='padding:unset' colspan='3'>
+						<td style='padding:unset' colspan=1>
 							<div class="imgcaption">கோட்சாரம்</div><img id="chart" src="" alt="Captured Image" width='250px'>
 						</td>
+						<td style='padding:unset;align-content:center'><div class="imgcaption">கிரக சாரம்</div><img id="starlord" src="" alt="Captured Image" width='220px'></td>
+						 <td style='padding:unset;align-content:center'><div class="imgcaption">விவாஹ சக்ரம்</div><img id="vivaha" src="" alt="Captured Image" width='220px'></td>
+						<!-- <td style='padding:unset;align-content:center'><div class="imgcaption">கிரக சாரம்</div><img id="starlord" src="" alt="Captured Image" width='250px'></td> -->
 					</tr>
-					<tr>
-						<td style='padding:unset;align-content:center'><div class="imgcaption">கிரக சாரம்</div><img id="starlord" src="" alt="Captured Image" width='250px'></td>
-						<td style='padding:unset;align-content:center'><div class="imgcaption">விவாஹ சக்ரம்</div><img id="vivaha" src="" alt="Captured Image" width='250px'></td>
-					</tr>
+					<!-- <tr>
+						<td style='padding:unset;align-content:center'><div class="imgcaption">கிரக சாரம்</div><img id="starlord" src="" alt="Captured Image" width='220px'></td>
+						 <td style='padding:unset;align-content:center'><div class="imgcaption">விவாஹ சக்ரம்</div><img id="vivaha" src="" alt="Captured Image" width='220px'></td>
+					</tr> -->
 				</table>
 			<!-- Add more divs as needed -->
 			<!-- <button class='actionBtn' id='backBtn' onclick="displayOrigPanchang()" style='display:none'>Back</button> -->

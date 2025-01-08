@@ -2342,14 +2342,15 @@ function displayStarLord()
 				echo "<div class='divTableCell'>பாகை</div>";
 				echo "<div class='divTableCell'>ராசி பாகை</div>";
 		echo "</div>";
-
+	
 	foreach($planet_starlord as $planet => $data)
 	{	
 		echo "<div class='divTableRow'>";
 			if((strcmp("சனி",$planet)==0 or strcmp("குரு",$planet)==0 or strcmp("செ",$planet)==0 or strcmp("சுக்",$planet)==0 or
-				//strcmp("புத",$planet)==0) and $planetDeg_default[$planet] < 0.0){
-					strcmp("புத",$planet)==0) and $planetDeg[$planet] < 0.0){
-				echo "<div class='divPanchangHeadingSmall'>$planet(வ)</div>";
+				strcmp("புத",$planet)==0) and $planetDeg_default[$planet] < 0.0){
+					//strcmp("புத",$planet)==0) and $planetDeg[$planet] < 0.0){
+						
+				echo "<div class='divPanchangHeadingSmall'>$planet (வ)</div>";
 			}
 			else{
 				echo "<div class='divPanchangHeadingSmall'>$planet</div>";
@@ -2824,7 +2825,7 @@ function calculateStarLord()
 
 function displayStarLord_boy()
 {
-	global $planetDeg_transit,$tr_sw_planet, $g_planetKaranaLord_boy, $planet_starlord_boy;
+	global $planetDeg_transit,$tr_sw_planet, $g_planetKaranaLord_boy, $planet_starlord_boy, $planetDeg_default ;
 	
 	$planet_starlord = array();
 	
@@ -2944,7 +2945,13 @@ function displayStarLord_boy()
 	foreach($planet_starlord as $planet => $data)
 	{
 		echo "<div class='divTableRow'>";
-				echo "<div class='divPanchangHeading'>$planet</div>";
+				if((strcmp("சனி",$planet)==0 or strcmp("குரு",$planet)==0 or strcmp("செ",$planet)==0 or strcmp("சுக்",$planet)==0 or
+					strcmp("புத",$planet)==0) and $planetDeg_default[$planet] < 0.0){
+					echo "<div class='divPanchangHeadingSmall'>$planet (வ)</div>";
+				}
+				else{
+					echo "<div class='divPanchangHeadingSmall'>$planet</div>";
+				}
 				echo "<div class='divPanchang'>$data[0]</div>";
 				echo "<div class='divPanchang'>$data[1]</div>";
 				echo "<div class='divPanchang'>" . DECtoDMS($data[2]) . "</div>";
@@ -4893,7 +4900,7 @@ function calculateAbhijitAllPlanets($inner=true)
 						"Jyeshta 1/கேட் 1","Jyeshta 2/கேட் 2","Jyeshta 3/கேட் 3","Jyeshta 4/கேட் 4",
 						"Moola 1/மூலம் 1","Moola 2/மூலம் 2","Moola 3/மூலம் 3","Moola 4/மூலம் 4",
 						"Poorva Ashaada 1/பூரா 1","Poorva Ashaada 2/பூரா 2","Poorva Ashaada 3/பூரா 3","Poorva Ashaada 4/பூரா 4",
-						"Uthra Ashaada 1/உத்ரா 1","Uthra Ashaada 2/உத்ரா 2","Uthra Ashaada 3/உத்ரா 3","Uthra Ashaada 4/உத்ரா 4",
+						"Uthra Ashaada 1/உத்ராட 1","Uthra Ashaada 2/உத்ராட 2","Uthra Ashaada 3/உத்ராட 3","Uthra Ashaada 4/உத்ராட 4",
 						"Shraavan 1/திருவோ 1","Shraavan 2/திருவோ 2","Shraavan 3/திருவோ 3","Shraavan 4/திருவோ 4",
 						"Dhanishta 1/அவிட் 1","Dhanishta 2/அவிட் 2","Dhanishta 3/அவிட் 3","Dhanishta 4/அவிட் 4",
 						"Shathabhisha 1/சதய 1","Shathabhisha 2/சதய 2","Shathabhisha 3/சதய 3","Shathabhisha 4/சதய 4",

@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
     <link rel="stylesheet" href="css/birth_chart_style.css?<?php echo date('ymdhis'); ?>">
     <link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/onepage_panchang_style.css?<?php echo date('ymdhis'); ?>">
     
     <style>
         html, body {
@@ -19,13 +20,16 @@
             flex-direction: column;
             justify-content: space-between;
             border: 8px solid blue;
-            border-radius: 20px;
             padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+
         }
 
         #targetDiv {
-            flex-grow: 1;
+            /*flex-grow: 1;*/
+			display: table;
+			height: -webkit-fill-available;
+			width: -webkit-fill-available;
+}
         }
 
         .PageFooter {
@@ -103,7 +107,7 @@
     </script>
 </head>
 <body>
-   <div class="panchangBorder" id="targetDiv" ></div>
+   <div class="panchangBorder" id="targetDiv"></div>
 </body>
 <div class="PageFooterPanchang" style='border:none'>தர்ம சாஸ்தா ஜோதிட வித்யாலயா & Periyanayaki Astro Solutions
                 <span id="currentDateTime"></span></div>

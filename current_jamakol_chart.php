@@ -93,8 +93,8 @@ $place = explode("|",$in_place)[0];
 date_default_timezone_set($TZ);
 
 $chart_date= date("Y-m-d");
-//$chart_time= date("H:i:s");
-$chart_time=date("H:i:s",strtotime(' +2 minutes 31 seconds')); // to adjust server time for live chart only
+$chart_time= date("H:i:s");
+//$chart_time=date("H:i:s",strtotime(' +2 minutes 31 seconds')); // to adjust server time for live chart only
 $chartNow=1;
 
 $nQuestion="";
