@@ -975,7 +975,256 @@ function closeTable() {
 		onePageBtn.style.display = 'initial';
 	}
 	
-				
+	function translateLanguage() {
+	  var div1 = document.getElementById('languageSelector');
+	  
+	  var language = div1.value;
+	  
+	  if (language === 'english') {
+		   setSelectedOption("english");
+			transliterateTamilToEnglish();  // Function for English transliteration
+	  } else if (language === 'hindi') {
+		  setSelectedOption('hindi');
+			transliterateTamilToHindi();    // Function for Hindi transliteration
+	  }
+	  else{
+		  location.reload();
+	  }
+	}
+	
+	function transliterateTamilToHindi(){
+		//no hindi as of now
+	}
+	
+	function setSelectedOption(lang) {
+	  var dropdown = document.getElementById('languageSelector');
+	  var options = dropdown.getElementsByTagName('option');
+
+	 // alert(options[1].value);
+
+	  /*for (var i = 0; i < options.length; i++) {
+		if (options[i].value === lang) {
+			alert(options[i].value);
+			options[i].selected = true;
+		}
+		else{
+			options[i].selected = false;
+		}
+	  }*/
+	  
+		isProgrammaticChange = true; // Set flag to indicate programmatic change
+      dropdown.value = lang; // Update the dropdown value directly
+      console.log("Dropdown updated to:", dropdown.value);
+	}
+	
+	function transliterateTamilToEnglish(){
+		 // Translation mapping
+		const tamilToEnglish = {
+				'பிறப்பு ஜாதகம்':'பிறப்பு ஜாதகம்',
+				'திருமண பொருத்தம்':'திருமண பொருத்தம்',
+				'எண் கணிதம்':'எண் கணிதம்',
+				'கிரக காரகம்':'கிரக காரகம்',
+				'ஓரை':'ஓரை',
+				'தாரா பலன்':'தாரா பலன்',
+				'பிரசன்னம்':'பிரசன்னம்',
+				'பிரதமை' : 'Prathame',
+				'துவிதியை' : 'Dwithiya',
+				'திருதியை' : 'Thrithiya',
+				'சதுர்த்தி' : 'Chathurthi',
+				'பஞ்சமி' : 'Panchami',
+				'சஷ்டி' : 'Shrashti',
+				'சப்தமி' : 'Saptami',
+				'அஷ்டமி' : 'Ashtami',
+				'நவமி' : 'Navami',
+				'தசமி' : 'Dashami',
+				'ஏகாதசி' : 'Ekadashi',
+				'துவாதசி' : 'Dwadashi',
+				'திரயோதசி' : 'Thrayodashi',
+				'சதுர்த்தசி' : 'Chaturdashi',
+				'பௌர்ணமி' : 'Poornima',
+				'அமாவாசை' : 'Amavasya',
+				'பவ' : 'Pava',
+				'பாலவ' : 'Paalaava',
+				'கௌலவ' : 'Koulava',
+				'தைதுலை' : 'Thaithulai',
+				'கரசை' : 'Karasai',
+				'வணிசை' : 'Vanisai',
+				'பத்தரை' : 'Patharai',
+				'சகுனி' : 'Sakuni',
+				'சதுஷ்பாத' : 'Sadhushpaadha',
+				'நாகவ' : 'Naakava',
+				'கிம்ஸ்துக்கினம்' : 'Kimstukkina',
+				'அசுவினி' : 'Aswini',
+				'பரணி' : 'Bharani',
+				'கிருத்திகை' : 'Krittikai',
+				'ரோகிணி' : 'Rohini',
+				'மிருகசிரீஷம்' : 'Mirugasirisham',
+				'திருவாதிரை' : 'Thiruvathirai',
+				'புனர்பூசம்' : 'Punarpoosam',
+				'பூசம்' : 'Poosam',
+				'ஆயில்யம்' : 'Ayilyam',
+				'மகம்' : 'Magam',
+				'பூரம்' : 'Puram',
+				'உத்திரம்' : 'Uthiram',
+				'ஹஸ்தம்' : 'Hastham',
+				'சித்திரை' : 'Chithirai',
+				'சுவாதி' : 'Suvathi',
+				'விசாகம்' : 'Visakam',
+				'அனுஷம்' : 'Anusham',
+				'கேட்டை' : 'Kettai',
+				'மூலம்' : 'Moolam',
+				'பூராடம்' : 'Pooradam',
+				'உத்திராடம்' : 'Uthiradam',
+				'திருவோணம்' : 'Thiruvonam',
+				'அவிட்டம்' : 'Avittam',
+				'சதயம்' : 'Sadayam',
+				'பூரட்டாதி' : 'Poorattathi',
+				'உத்திரட்டாதி' : 'Uthirattathi',
+				'ரேவதி' : 'Revathi',
+				'கொடுக்கப்பட்டுள்ள': 'Provided',
+				'சப்தவிம்சாம்சம்': 'Sapthavimshamsha',
+				'செவ்வாய்க்கிழமை': 'Tuesday',
+				'ஞாயிற்றுக்கிழமை': 'Sunday',
+				'மேஷத்திலிருந்து': 'From Mesha',
+				'ருத்ராம்சத்தின்': 'Of Rudramsha',
+				'ருத்ராம்சத்தில்': 'In Rudramsha',
+				'சதுர்விம்ஷம்சா': 'Chaturvimshamsha',
+				'நட்சத்திரங்கள்': 'Stars',
+				'எண்ணிக்கையில்': 'In Number',
+				'எதிர்ப்புறமாக': 'Opposite',
+				'வெள்ளிக்கிழமை': 'Friday',
+				'ஆய்வுகளையும்': 'Studies',
+				'சித்தார்த்தி': 'Siddharthi',
+				'திங்கட்கிழமை': 'Monday',
+				'துவாதசாம்சம்': 'Dwadashamsha',
+				'பிரசோற்பத்தி': 'Fertility',
+				'பொருத்தங்கள்': 'Compatibility',
+				'எம கண்டம்':'Ema Kantam',
+				'ராகு காலம்':'Rahu Kaalam',
+				'விஷ்கம்பம்': 'Vishkambham',
+				'ப்ரீதி': 'Preethi',
+				'ஆயுஷ்மான்': 'Aayushman',
+				'செளபாக்யம்': 'Saubhaghyam',
+				'சோபனம்': 'Shobhanam',
+				'அதி கண்டம்': 'Adhikandam',
+				'சுகர்மம்': 'Sugarmam',
+				'திருதி': 'Thiruthi',
+				'சூலம்': 'Soolam',
+				'கண்டம்': 'Kandam',
+				'விருத்தி': 'Viruthi',
+				'துருவம்': 'Dhruvam',
+				'வ்யாகதம்': 'Vyaghatham',
+				'ஹர்ஷணம்': 'Harshanam',
+				'வஜ்ரம்': 'Vajram',
+				'சித்தி': 'Siddhi',
+				'வியதீபாதம்': 'Vyateepatham',
+				'வரீயான்': 'Variyan',
+				'பரிகம்': 'Parigham',
+				'சிவம்': 'Shivam',
+				'சித்தம்': 'Siddham',
+				'சாத்தியம்': 'Saadhyam',
+				'சுபம்': 'Shubham',
+				'சுப்பிரம்': 'Subram',
+				'பிராம்மியம்': 'Brahmiyam',
+				'ஐந்திரம்': 'Aindram',
+				'வைதிருதி': 'Vaidhriti',
+				'முகூர்த்தங்கள்':'Muhurthas',
+				'அமிர்த':'Amirtha',
+				'சித்த': 'Chitha',
+				'மரண': 'Marana',
+				'பிரபலாரிஷ்ட': 'Prabalaarishta',
+				'நட்சத்திரம்': 'Star',
+				'ஆ.தேதி': 'Date',
+				'தற்போதய ஹோரை': 'Current Horai',
+				'வார சூலை': 'Vaara Soolai',
+				'அமிர்தாதி': 'Amirthathi',
+				'அவயோகி': 'Avayogi',
+				'சூன்யம்':'Soonyam',
+				'குளிகை': 'Kulika',
+				'அபிஜித்':'Abhijith',
+				'ஜீவன்': 'Jeevan',
+				'இடம்':'Place',
+				'யோகம்':'Yogam',
+				'கரணம்': 'Karanam',
+				'சந்திரன்': 'Moon',
+				'சூரியன்': 'Sun',
+				'செவ்வாய்': 'Mars',
+				'புதன்': 'Mercury',
+				'வியாழன்': 'Jupiter',
+				'சுக்ரன்': 'Venus',
+				'சனி': 'Saturn',
+				'ராகு': 'Rahu',
+				'கேது': 'Ketu',
+				'மேஷம்': 'Aries',
+				'ரிஷபம்': 'Taurus',
+				'மிதுனம்': 'Gemini',
+				'கடகம்': 'Cancer',
+				'சிம்மம்': 'Leo',
+				'கன்னி': 'Virgo',
+				'துலாம்': 'Libra',
+				'விருச்சிகம்': 'Scorpio',
+				'தனுசு': 'Sagittarius',
+				'மகரம்': 'Capricorn',
+				'கும்பம்': 'Aquarius',
+				'மீனம்': 'Pisces',
+				'யோகி': 'Yogi',
+				'வாரம்': 'Weekday',
+				'லக்கினம்': 'Ascendant',
+				'ஜாதகம்': 'Horoscope',
+				'திசை': 'Dasa',
+				'அந்தரம்': 'Antar',
+				'வழியாக': 'Through',
+				'சூட்சுமம்': 'Subtle',
+				'நேரம்': 'Time',
+				'பிறந்த தேதி': 'Birth Date',
+				'பெயர்': 'Name',
+				'விவரங்கள்': 'Details',
+				'ராசி': 'Rasi',
+				'கே': 'Ke',
+				'சுக்': 'Ve',
+				'சூரி': 'Su',
+				'சந்': 'Mo',
+				'செ': 'Ma',
+				'ரா': 'Ra',
+				'குரு': 'Gu',
+				'புத': 'Me',
+				'சனி': 'Sa',
+				'புஷ்': 'Push',
+				'திதி': 'Thithi',
+				'முதல்': 'Start',
+				'வரை': 'End'
+			};
+
+			// Get all div elements on the page
+			//const divs = document.querySelectorAll(".divTableCell, .divTableOuterCell, .divPanchang");
+			const divs = document.querySelectorAll("div");
+
+			// Iterate through each div
+			divs.forEach((div) => {
+				 // Exclude divs with the class 'search-box'
+				  if (div.classList.contains('search-box')) {
+					  document.getElementById('place').value = '<?php echo $place; ?>';
+					return; // Skip this div
+				  }
+				//const tamilText = div.textContent.trim(); // Get the text content of the div
+				const tamilText = div.innerHTML.trim(); // Get the text content of the div
+				//const englishTranslation = tamilToEnglish[tamilText] || tamilText; // Translate or keep original if not found
+				//div.textContent = englishTranslation; // Update the div content
+
+				// Create a regular expression pattern from the keys in the mapping
+				const pattern = new RegExp(Object.keys(tamilToEnglish).join("|"), "gi");
+
+				// Replace Tamil words with English using the regular expression
+				//div.textContent = tamilText.replace(pattern, (match) => tamilToEnglish[match] || match);
+				div.innerHTML = tamilText.replace(pattern, (match) => tamilToEnglish[match] || match);
+
+			});
+	}
+	
+
+	// Execute the transliteration function once the page is loaded
+	//window.addEventListener('load', transliterateTamilToEnglish);
+	
 	</script>
 </head>
 
@@ -1738,6 +1987,11 @@ echo <<<EOL
 				<input type='hidden' id='nPlace' name='nPlace' value='$place'>
 				<input type='hidden' id='place_flag' name='place_flag' value=0>
 					<H4 style="color:#000000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; width:parent;">
+						<select id="languageSelector" class='langDropdown' onChange="translateLanguage()">
+						  <option value="tamil">Tamil</option>
+						  <option value="english">English</option>
+						  <option value="hindi">Hindi</option>
+						</select>
 						<TABLE style='width:inherit'>
 						<CENTER><P style="color:#660000;font-weight:bold; font-size:16px; background-color:white;width:200px;">பஞ்சாங்கம்</P></CENTER>
 						<TR>
@@ -1904,7 +2158,10 @@ $_COOKIE['panchang_place']=$place;
 
 unset($_SESSION['menu_clicked']);
 
+
 ?>
+
+<!-- <button class='actionBtn' id='Translate' onClick='transliterateTamilToEnglish()'>English</button> -->
 
 <div id='dummy'></div>
 
