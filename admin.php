@@ -16,6 +16,11 @@ $conn="";
 $imei="";
 $appInfo=array();
 $userInfo=array();
+$topActivityInfo=array();
+
+$results_per_page = 15; // number of results per page
+if (isset($_GET["page"])) { $page  = $_GET["page"]; } else { $page=1; };
+$start_from = ($page-1) * $results_per_page;
 
 $DEBUG= (int) isset($_SESSION['debug']) ? $_SESSION['debug'] : 0;
 
@@ -79,7 +84,7 @@ function getAppInfo()
 
 function getUserDetails()
 {
-	global $conn,$userInfo;
+	global $conn,$userInfo, $page, $results_per_page, $start_from;
 	
 	$cnt=0;
 	
@@ -87,7 +92,7 @@ function getUserDetails()
 
 	try {
 		
-		$sql = "SELECT rowid,name,phone,imei,last_login,user_type,registered_date FROM user ORDER BY last_login DESC";
+		$sql = "SELECT rowid,name,phone,imei,last_login,user_type,registered_date FROM user ORDER BY registered_date DESC LIMIT $start_from, $results_per_page";
 	
 		if(($result = mysqli_query($conn, $sql))){
 			$count = mysqli_num_rows($result);
@@ -153,6 +158,41 @@ function getTopActivityDetails()
 	dbDisconnect($conn);
 }
 
+function getTopActivitySummary()
+{
+	global $conn,$topActivityInfo;
+	
+	$cnt=0;
+	
+	$conn = dbConnect($conn);
+
+	try {
+		
+		$sql = "SELECT activity_name,activity_count FROM most_performed_activity";
+	
+		if(($result = mysqli_query($conn, $sql))){
+			$count = mysqli_num_rows($result);
+
+			if($count>0){
+				
+				 while($row = $result->fetch_assoc()) {
+					$topActivityInfo["activity_name"][$cnt] = $row["activity_name"];
+					$topActivityInfo["activity_count"][$cnt] = $row["activity_count"];
+					
+					$cnt = $cnt + 1;
+				  }
+			}
+		}
+		
+	} catch (mysqli_sql_exception $exception) {
+		mysqli_rollback($conn);
+
+		throw $exception;
+	}
+	
+	dbDisconnect($conn);
+}
+
 function get_nearest_timezone($cur_lat, $cur_long, $country_code = '') {
     $timezone_ids = ($country_code) ? DateTimeZone::listIdentifiers(DateTimeZone::PER_COUNTRY, $country_code)
                                     : DateTimeZone::listIdentifiers();
@@ -192,6 +232,19 @@ function get_nearest_timezone($cur_lat, $cur_long, $country_code = '') {
     return 'unknown';
 }
 
+function getUserTotal(){
+	global $conn,$results_per_page;
+	
+	$conn = dbConnect($conn);
+	
+	$sql = "SELECT COUNT(rowid) AS total FROM user";
+	$result = $conn->query($sql);
+	$row = $result->fetch_assoc();
+	$total_pages = ceil($row["total"] / $results_per_page); // calculate total pages with results
+	
+	return $total_pages;
+}
+
 //timezone for one NY co-ordinate
 
 debug("<BR>TEST - " . get_nearest_timezone(-38.451931,145.238983));
@@ -202,6 +255,7 @@ debug("<BR>TEST - " . get_nearest_timezone(19.076090, 72.854118,'IN'));
 getAppInfo();
 getUserDetails();
 getTopActivityDetails();
+getTopActivitySummary();
 ?>
 
 <!doctype html>
@@ -434,10 +488,19 @@ function getTamilDate(){
 
 					echo "</div>";
 					
+					//Print pages for user detail	
+					$total_pages = getUserTotal();
+					  
+					for ($i=1; $i<=$total_pages; $i++) {  // print links for all pages
+						if ($i==$page)
+							echo "<a style='display:box;border: 1px solid; background-color:black;color:white;width:auto;font-size:20px;padding:3px' href='admin.php?page=".$i."'>".$i."</a> ";
+						else
+							echo "<a style='display:box;border: 1px solid; background-color:gold;color:white;width:auto;font-size:20px;padding:3px' href='admin.php?page=".$i."'>".$i."</a> ";
+					};
+					
 					echo '<BR><BR><BR>';
-					echo '<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">Activity log</P>';
-					echo '<BR><BR>';
-				
+					
+					echo "<P style='color:#660000;font-weight:bold; font-size:20px; width:300px;text-align:center'>Activity log</P>";
 					echo "<div class='divTable blueTable' style='height:40px;'>";
 						echo "<div class='divTableRow'>";
 								echo "<div class='divPanchangHeading' style='width:30%'>Activity Time</div>";
@@ -452,6 +515,27 @@ function getTamilDate(){
 									echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$activityInfo['activity_time'][$i]."</div>";
 									echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$activityInfo['name'][$i]."</div>";
 									echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$activityInfo['activity'][$i]."</div>";
+								
+								echo "</div>";
+						}
+
+
+					echo "</div>";
+					echo "<BR><BR>";
+				
+					echo '<P style="color:#660000;font-weight:bold; font-size:20px; width:300px;text-align:center">Activity Summary</P>';
+					echo "<div class='divTable blueTable' style='height:40px;'>";
+						echo "<div class='divTableRow'>";
+								echo "<div class='divPanchangHeading' style='width:30%'>Activity</div>";
+								echo "<div class='divPanchangHeading' style='width:5%'>Count</div>";
+						echo "</div>";
+						
+						for($i=0; $i<sizeof($topActivityInfo['activity_name']); $i++){
+							
+								echo "<div class='divTableRow'>";
+								
+									echo "<div class='divPanchang'>".$topActivityInfo['activity_name'][$i]."</div>";
+									echo "<div class='divPanchang'>".$topActivityInfo['activity_count'][$i]."</div>";
 								
 								echo "</div>";
 						}

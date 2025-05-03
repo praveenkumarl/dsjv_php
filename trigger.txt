@@ -1,0 +1,1 @@
+-edir./sweph/ -b12.02.2025 -ut06:38:27 -p0123456m -n1 -sid1 -eswe -fPls -g, -head -house80.2785,13.0878,P

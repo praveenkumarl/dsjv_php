@@ -112,6 +112,7 @@ $g_planetVainasigamNak_boy=array();
 $planet_starlord_transit=array();
 $planet_starlord=array();
 $matching_percent=0;
+$g_bhava_arr = array(null,null,null,null,null,null,null,null,null,null,null,null);
 
 $g_seventh_house_disclaimer="";
 
@@ -2702,7 +2703,7 @@ function matchingRule8($display)
 	$ooru = ["பரணி", "பூசம்", "பூரம்", "அனுஷம்", "பூராடம்", "உத்திரட்டாதி"];
 	$paatha = ["அசுவினி", "ஆயில்யம்", "மகம்", "கேட்டை", "மூலம்", "ரேவதி"];
 	
-	$rajju_type = ["dummy","சிரசு","கண்ட","உதர", "ஊரு", "பாத"];
+	$rajju_type = ["dummy","தலை","கழுத்து","வயிறு", "தொடை", "கால்"];
 	
 	/**** rajju பொருத்தம் **********
 	
@@ -3801,7 +3802,18 @@ foreach ($output as $key => $line)
 	
 	if($DEBUG==1){ var_dump($row);}
     
-	if($count>8 && $count!=21) {continue;}
+	if($count>8 && $count!=21) {
+		if($count > 8 and $count <= 20){
+			$house = preg_replace('!\s+!', ' ', $row[0]);
+			$house = preg_replace('!\s+!', ' ', $row[0]);
+			$house = explode(' ',$house)[1];
+			$g_bhava_arr[$house-1] = array(round((float)trim($row[1]),4),DECtoDMS(fmod($row[1],30.0)));
+			array_push($g_bhava_arr[$house-1],"");
+		}
+		
+		continue;
+	}
+	
 	//$sw_planet[$key] = $row[0];
     $tot_degree[$key] = $row[1];
 	

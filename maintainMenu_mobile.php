@@ -22,6 +22,7 @@ if(strcmp($usertype,SUPER)==0){
 				  <a class='glow-button' href="new_panchang.php">பஞ்சாங்கம்</a>
 				  <a class='glow-button' href="prasannam_home.php">பிரசன்னம்</a>
 				  <a class='glow-button' href="new_registration_mobile_admin.php">User Registration</a>
+				  <a class='glow-button' href="addPlace.php">Add Place</a>
 				</div>
 			</div> 
 			<a href="index.php"><i class="fa fa-home fa-2x"></i></a>
@@ -50,6 +51,7 @@ elseif(strcmp($usertype,ADMIN)==0){
 				  <a class='glow-button' href="new_panchang.php">பஞ்சாங்கம்</a>
 				  <a class='glow-button' href="prasannam_home.php">பிரசன்னம்</a>
 				  <a class='glow-button' href="admin.php">Admin</a>
+				  <a class='glow-button' href="addPlace.php">Add Place</a>
 				  <a class='glow-button' href="new_registration_mobile_admin.php">User Registration</a>
 				</div>
 			</div> 

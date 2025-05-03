@@ -57,10 +57,10 @@ date_default_timezone_set($TZ);
 	const month = <?php echo $month; ?>;  //1 - jan
 	
 	generatePanchang(month,year);
-
   
 </script>
 
+<div id="panchangContainer"></div>
 
 <div class="PageFooter" style="width:-webkit-fill-available">தர்ம சாஸ்தா ஜோதிட வித்யாலயா & Periyanayaki Astro Solutions</div>
 </body>

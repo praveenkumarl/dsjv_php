@@ -96,7 +96,9 @@ function getChartDetails()
 		$(document).ready(function(){
     $('.search-box input[type="text"]').on("keyup input", function(){
         /* Get input value on change */
-        var inputVal = $(this).val();
+        //var inputVal = $(this).val();
+		var inputVal = $(this).val().trim();
+		document.getElementById('place').value=inputVal;
         var resultDropdown = $(this).siblings(".result");
         if(inputVal.length>2){
             $.get("backend-search.php", {term: inputVal}).done(function(data){
@@ -125,6 +127,7 @@ function getChartDetails()
 		console.log("This page is inside an iframe.");
 		document.getElementById('num').value = 1;
 		document.getElementById('historyBtn').style.display = 'none';
+		document.getElementById('nameNumerologyWarning').style.display = 'block';
 		// Perform actions specific to iframe here
 	} else {
 		console.log("This page is not inside an iframe.");
@@ -268,6 +271,7 @@ function updateNow() {
 					<tr style="background-color: #FFFFFF">
 						<td><div class="divBirthInputLable">*பெயர்</div></td>
 						<td><input type="text" name="name" id="name" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Enter name..." onfocus=this.value='' onBlur="nameOnBlur();" />
+							<div id='nameNumerologyWarning' class='error' style='display:none;background-color:white;color:red;font-size:12px'>பெயரில் புள்ளி பயன்படுத்த வேண்டாம்</div>
 						</td>
 					</tr>
 					<tr style="background-color: #FFFFFF">

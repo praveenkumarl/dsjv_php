@@ -3,17 +3,21 @@ require "lib.php";
 require "plib.php";
 
 date_default_timezone_set("Asia/Kolkata");
+$TZ = date_default_timezone_get();
 
 $DEBUG= (int) isset($_GET['debug']) ? $_GET['debug'] : 0;
 
 $time = isset($_POST["in_time"]) ? $_POST["in_time"] : date("H:i");
 $date = isset($_POST["in_date"]) ? $_POST["in_date"] : date("Y-m-d");
 
+
 if(isset($_POST['star'])){
-	$star = isset($_POST['temp']) && $_POST['temp']==1  ? getStar($date,$time) : $_POST['star'];
+	//$star = isset($_POST['temp']) && $_POST['temp']==1  ? getStar($date,$time) : $_POST['star'];
+	$star = isset($_POST['temp']) && $_POST['temp']==1  ? 'Aswini' : $_POST['star'];
 }
 else{
-	$star = getStar($date,$time);
+	//$star = getStar($date,$time);
+	$star = 'Aswini';
 }
 
 if(isset($_GET["phone"])) {
@@ -55,45 +59,6 @@ function getStar($date,$time)
 	return $temp_arr[0];
 }
 
-
-function calculateThaaraPalan($inStar){
-	
-	$thaarapalan = array();
-	
-	$star_arr = array("dummy","Aswini","Bharani","Krithika","Rohini","Mrigashirsha","Arudra", "Punarvasu","Pushyami","Ashlesha","Magha","Poorva Phalguni","Uthra phalguni","Hastha","Chitra","Swaathi","Vishaakha","Anuraadha","Jyeshta","Moola","Poorva Ashaada","Uthra Ashaada","Shraavan","Dhanishta","Shathabhisha","Poorva bhadrapada","Uthra bhadrapada","Revathi");
-	//$star_arr_result = array("dummy","Aswini/அசுவினி","Bharani/பரணி","Krithika/கிருத்திகை","Rohini/ரோகிணி","Mrigashirsha/மிருகசிரீஷம்","Arudra/திருவாதிரை","Punarvasu/புனர்பூசம்","Pushyami/பூசம்","Ashlesha/ஆயில்யம்","Magha/மகம்","Poorva Phalguni/பூரம்","Uthra phalguni/உத்திரம்","Hastha/ஹஸ்தம்","Chitra/சித்திரை","Swaathi/சுவாதி","Vishaakha/விசாகம்","Anuraadha/அனுஷம்","Jyeshta/கேட்டை","Moola/மூலம்","Poorva Ashaada/பூராடம்","Uthra Ashaada/உத்திராடம்","Shraavan/திருவோணம்","Dhanishta/அவிட்டம்","Shathabhisha/சதயம்","Poorva bhadrapada/பூரட்டாதி","Uthra bhadrapada/உத்திரட்டாதி","Revathi/ரேவதி");
-	$star_arr_result = array("dummy","அசுவினி","பரணி","கிருத்திகை","ரோகிணி","மிருகசிரீஷம்","திருவாதிரை","புனர்பூசம்","பூசம்","ஆயில்யம்","மகம்","பூரம்","உத்திரம்","ஹஸ்தம்","சித்திரை","சுவாதி","விசாகம்","அனுஷம்","கேட்டை","மூலம்","பூராடம்","உத்திராடம்","திருவோணம்","அவிட்டம்","சதயம்","பூரட்டாதி","உத்திரட்டாதி","ரேவதி");
-	foreach ($star_arr as $key => $value){
-		if($key==0) {continue;}
-		
-		$start_pos = array_search($inStar,$star_arr);
-		$end_pos = array_search($value,$star_arr);
-		
-		if($start_pos > 1 && $start_pos>$end_pos){
-			//echo $value . (27-$start_pos+$end_pos+1) . "<br>";
-			debug("[" . $inStar . "=" . $start_pos . "]" . "[" . $value . "=" . (27-$start_pos+$end_pos+1) . "]" . "<br>");
-			$thaarapalan[$star_arr_result[$key]] = 27-$start_pos+$end_pos+1;
-			
-			if((27-$start_pos+$end_pos+1)==22) {
-				debug("<span style='color:white;background-color:red;font-size:11pt'>VAINASIKA STAR - ". $value . "</span><br>");
-				$thaarapalan['VAINASIKA'] = $star_arr_result[$key];
-			}
-			continue;
-		}
-		else{
-			debug("[" . $inStar . "=" . $start_pos . "]" . "[" . $value . "=" . ($end_pos-$start_pos+1) . "]" . "<br>");
-			$thaarapalan[$star_arr_result[$key]] = $end_pos-$start_pos+1;
-		}
-		
-		if(($end_pos-$start_pos+1)==22) {
-			debug("<span style='color:white;background-color:red;font-size:11pt'>VAINASIKA STAR - ". $value . "</span><br>");
-			$thaarapalan['VAINASIKA'] = $star_arr_result[$key];
-		}
-	}
-	
-	return $thaarapalan;
-}
-
 function displayThaaraPalan(){
 	global $star;
 	
@@ -104,12 +69,12 @@ function displayThaaraPalan(){
 	
 	debug($thaarapalan_arr);
 
-	echo "<div class='divTable blueTable' style='width:95%'>";
+	echo "<div class='divTable blueTable'>";
 	echo "<div class='divTableRow'>";
-			echo "<div class='divThaaraPalanHeading'>Star/நட்</div>";
-			echo "<div class='divThaaraPalanHeading'>Thaara palan#</div>";
-			echo "<div class='divThaaraPalanHeading'>Thaara palan</div>";
-			echo "<div class='divThaaraPalanHeading'>Thaara palan detail</div>";
+			echo "<div class='divThaaraPalanHeading'>நக்ஷ்</div>";
+			echo "<div class='divThaaraPalanHeading'>தாரை#</div>";
+			echo "<div class='divThaaraPalanHeading'>தாரை</div>";
+			echo "<div class='divThaaraPalanHeading'>விளக்கம்</div>";
 	echo "</div>";
 	
 	foreach($thaarapalan_arr as $key => $value)
@@ -146,6 +111,12 @@ function displayThaaraPalan(){
 						echo "<div class='divThaaraPalanRedBright'>வைநாசிக நட்சத்திரம்</div>";
 						echo "<div class='divThaaraPalanRedBright'>நல்லதல்ல</div>";
 					}
+					else if($value == 11){
+						//echo "<div class='divThaaraPalanRedBright'>".($value % 9)."</div>";
+						echo "<div class='divThaaraPalanRedBright'>$value</div>";
+						echo "<div class='divThaaraPalanRedBright'>சமுதாய பகை நட்சத்திரம்</div>";
+						echo "<div class='divThaaraPalanRedBright'>நல்லதல்ல</div>";
+					}
 					else{
 						//echo "<div class='divThaaraPalanGreen'>".($value % 9)."</div>";
 						echo "<div class='divThaaraPalanGreen'>$value</div>";
@@ -163,6 +134,7 @@ function displayThaaraPalan(){
 			
 		echo "</div>";
 	}
+	
 	
 	echo "</div>";
 }
@@ -199,24 +171,55 @@ dbDisconnect($conn);
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	 
     <script src="script.js"></script>
+	<script src="panchang.js"></script>
+	<script src="my_panchang.js"></script>
     <script type="text/javascript">
 		
 
-function init(){
+	function init(){
+		
+	}
+
+	function formSubmitButton(){
+		document.thaaraForm.temp.value = 1;
+		document.forms["thaaraForm"].submit();
+	}
+
+	function formSubmitDropdown(){
+		//document.thaaraForm.temp.value = 0;
+		//document.thaaraForm.in_date.value = "";
+		//document.thaaraForm.in_time.value = "";
+		document.forms["thaaraForm"].submit();
+	}
+
+	function updatePanchangData(){
+		const t = new Date('<?php echo $date." ".$time; ?>');
+		var timezone = '<?php echo $TZ; ?>';
+
+		newdate = new Date(t.getFullYear(),t.getMonth(),t.getDate(),t.getHours(),t.getMinutes()); 
+				
+		newdate = changeTimezone(newdate,timezone);
+		
+		panchang.calculate(newdate, function() {
+			var objSelect = document.getElementById("star");
+			//Set selected
+			setSelectedValue(objSelect,panchang.Nakshatra.name);
+		});
+	}
 	
-}
-
-function formSubmitButton(){
-	document.thaaraForm.temp.value = 1;
-	document.forms["thaaraForm"].submit();
-}
-
-function formSubmitDropdown(){
-	//document.thaaraForm.temp.value = 0;
-	//document.thaaraForm.in_date.value = "";
-	//document.thaaraForm.in_time.value = "";
-	document.forms["thaaraForm"].submit();
-}
+	function setSelectedValue(selectObj, valueToSet) {
+		for (var i = 0; i < selectObj.options.length; i++) {
+			if (selectObj.options[i].text== valueToSet) {
+				selectObj.options[i].selected = true;
+				return;
+			}
+		}
+	}
+	
+	$(document).ready(function(){
+		updatePanchangData();
+	}); 
+	
 		
     </script>
 </head>

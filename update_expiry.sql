@@ -1,4 +1,4 @@
-CREATE TRIGGER `update_expiry` AFTER UPDATE ON `user`
+CREATE TRIGGER `update_user` AFTER UPDATE ON `user`
  FOR EACH ROW BEGIN
 
 declare end_date DATETIME;

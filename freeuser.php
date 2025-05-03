@@ -11,7 +11,7 @@ $userinfo = isset($_SESSION['userinfo']) ? $_SESSION['userinfo'] : ['name'=>'Fre
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="canonical" href="https://html5-templates.com/" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>PK Astro Thaara palan</title>
+    <title>DSJV Freeuser msg</title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
 	
 	<link rel="stylesheet" href="css/main.css">
@@ -28,15 +28,11 @@ $userinfo = isset($_SESSION['userinfo']) ? $_SESSION['userinfo'] : ['name'=>'Fre
 			
 			</div>
 			<div class='mobile'>
-			
+				
 			</div>
 	</div>
-	<div class='column-body'>
-		<div style='width:100%;height:100%;vertical-align:middle;text-align:center'>		
-			<P style='font-size:20px;color:red'>Contact admin to activate</P>
-			<img src='images/dsjv_title.png' style='padding:10px;' />
-		</div>	 
-	</div>
+	<?php displayRegistrationMsg(); ?>
+		
 </body>
 
 </html>

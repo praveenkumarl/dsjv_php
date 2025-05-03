@@ -47,38 +47,10 @@ function getUserDetails()
 
 getUserDetails();
 
-var_dump($userInfo);
-
 session_destroy();
 
 header('Location: index.php?key='.$userInfo['imei'][0]);
 
+
 ?>
 
-<!doctype html>
-<html lang="en" class="no-js">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="canonical" href="https://html5-templates.com/" />
-    <title>PK Astro admin page</title>
-    <meta name="description" content="One stop website for Jamakol Prasannam">
-	
-	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
-	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
-	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
-	<link href='https://fonts.googleapis.com/css?family=Julius Sans One' rel='stylesheet'>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
-    
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7102258981747108" crossorigin="anonymous"></script>
-
-    <script src="script.js"></script>
-    <script type="text/javascript">
-		
-    </script>
-</head>
-
-</html>

@@ -16,7 +16,7 @@ if($conn === false){
 if(isset($_REQUEST["term"])){
     // Prepare a select statement
     //$sql = "SELECT Name FROM user WHERE Name LIKE ?";
-	$sql = "SELECT Name,phone FROM user WHERE (Name LIKE ?) or (Phone LIKE ?)";
+	$sql = "SELECT Name,phone,imei FROM user WHERE (Name LIKE ?) or (Phone LIKE ?)";
     
     if($stmt = mysqli_prepare($conn, $sql)){
         // Bind variables to the prepared statement as parameters
@@ -38,7 +38,7 @@ if(isset($_REQUEST["term"])){
                 while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 					 //echo "<p id='search'>" . $row["Name"] . "</p>";
 					 //echo "<div id='search' style='display:box;background:gold;border-color: red;border: 1px solid;'>" . $row["Name"] . "</div>";
-					 echo "<div id='search' style='display:box;background:gold;border-color: red;border: 1px solid;'>" . $row["Name"] . "|" . $row["phone"] . "</div>";
+					 echo "<div id='search' style='display:box;background:gold;border-color: red;border: 1px solid;'>" . $row["Name"] . "|" . $row["phone"] . "|" . $row["imei"] . "</div>";
                 }
             } else{
                 echo "<p id='search_err'>No matches found</p>";

@@ -49,7 +49,7 @@ elseif(!strcmp($phone,"9999999999")==0){
 	$_SESSION['userinfo']=$userInfo;
 }
 elseif(isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'],'admin.php')>0){ //this else is to allow login from admin page for other users (Act As)
-	$userInfo = getUserInfo_mobile($key);
+	$userInfo = getUserInfo_mobile($_GET['key']);
 	
 	if(!empty($userInfo)){
 		$_SESSION['logged']=true;
@@ -77,9 +77,12 @@ elseif(strcmp($_SESSION['user_type'],BIRTH)==0 OR strcmp($_SESSION['user_type'],
 elseif(strcmp($_SESSION['user_type'],MATCHING)==0 OR strcmp($_SESSION['user_type'],BIRTHMATCH)==0){
 	header("Location: Matching_input.php");
 }
-//elseif(strcmp($_SESSION['user_type'],MATCHING)==0 OR strcmp($_SESSION['user_type'],JAMA_MATCH)==0){
-	//header("Location: Jamakol_input.php");
-//}
+elseif(strcmp($_SESSION['user_type'],JAMAKOL)==0){
+	header("Location: Jamakol_input.php");
+}
+elseif(strcmp($_SESSION['user_type'],JAMA_MATCH)==0){
+	header("Location: Jamakol_input.php");
+}
 elseif(strcmp($_SESSION['user_type'],PRASANNAM)==0){
 	header("Location: prasannam_home.php");
 }
@@ -89,6 +92,8 @@ elseif(strcmp($_SESSION['user_type'],NUMEROLOGY)==0){
 elseif(strcmp($_SESSION['user_type'],FREE)==0){
 	header("Location: freeuser.php");
 }
+
+$expiry_date = $_SESSION['userinfo']['expiry_date'];
 
 ?>
 
@@ -125,7 +130,8 @@ elseif(strcmp($_SESSION['user_type'],FREE)==0){
  
 
 	function init(){
-
+		//generateServerIssueAlert();
+		generateExpiryAlert();
 	}
 		
 	document.onreadystatechange = function() {
@@ -180,12 +186,76 @@ function handleSwipe(){
     });
 }
 
+	function generateExpiryAlert() {
+		var expiry_date_str = '<?php echo date("d-m-Y", strtotime($expiry_date)); ?>';
+		var expiry_date_parts = expiry_date_str.split('-');
+		var expiry_date = new Date(expiry_date_parts[2], expiry_date_parts[1] - 1, expiry_date_parts[0]);
+		var today = new Date();
+		today.setHours(0, 0, 0, 0);
+
+		// Calculate the difference in milliseconds
+		var timeDiff = expiry_date - today;
+		var daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+		//if (daysLeft > 0 && daysLeft <= 30) {
+		if (daysLeft <= 30) {
+			// Get the last shown time from localStorage
+			var lastShownTime = localStorage.getItem('expiryAlertLastShown');
+			var currentTime = new Date().getTime();
+
+			if (lastShownTime && currentTime - lastShownTime < 1 * 60 * 60 * 1000) {
+				// If last shown is within the last 2 hours, do nothing
+				return;
+			}
+
+			// Update localStorage with the current time
+			localStorage.setItem('expiryAlertLastShown', currentTime);
+
+			var formatted_expiry_date = expiry_date_parts[0] + '-' + expiry_date_parts[1] + '-' + expiry_date_parts[2];
+			if(daysLeft > 0){
+				var message_tam = 'இன்னும் ' + daysLeft + ' நாட்களே உள்ளன!!!.<BR>DSJV App ன் உங்கள் சந்தா ' + formatted_expiry_date + ' அன்று முடிகிறது. நீட்டிக்க நிர்வாகியைத் தொடர்பு கொள்ளவும்.<BR> &#128241; திருமதி. சௌம்யா<BR>(+91 7305731547)';
+				var message = 'Only ' + daysLeft + ' days left!!!.<BR>Your DSJV App subscription is going to expire on ' + formatted_expiry_date + '. Please contact admin to extend. <BR>&#128241; Mrs. Sowmya<BR>(+91 7305731547)';
+			}
+			else{
+				var message_tam = 'உங்கள் DSJV App ன் சந்தா ' + formatted_expiry_date + ' அன்று முடிந்துவிட்டது. புதுப்பிக்க நிர்வாகியைத் தொடர்பு கொள்ளவும்.<BR> &#128241; திருமதி. சௌம்யா (+91 7305731547>';
+				var message = 'Your DSJV App subscription expired on <BR>' + formatted_expiry_date + '. Please contact admin to renew. <BR> &#128241; Mrs. Sowmya<BR>(+91 7305731547)';
+			}
+
+			var html_str = '<div class="table-container">';
+			html_str += '<button class="close-btn" onclick="closeTable()">X</button>';
+			html_str += '<div class="scrollable-table">';
+			html_str += '<center><div class="divTable blueTable" style="width:100%;height:100%">';
+			html_str += '<div class="divTableRow"><div class="divExpiryAlertHeading"><BR><BR><SPAN style="color:red; font-size: 26px">IMPORTANT ALERT</SPAN><BR><BR>' + message_tam + '<br><br>' + message + '</div></div>';
+			html_str += '</div></div></div>';
+
+			document.getElementById('expiryAlertDiv').innerHTML = html_str;
+			document.getElementById('expiryAlertDiv').style.display = 'block';
+		}
+	}
+	
+	function generateServerIssueAlert() {
+			var html_str = '<div class="table-container">';
+			html_str += '<div class="scrollable-table">';
+			html_str += '<center><div class="divTable blueTable" style="width:100%;height:100%">';
+			html_str += '<div class="divTableRow"><div class="divExpiryAlertHeading"><BR><BR><SPAN style="color:red; font-size: 26px">***UPDATE***<BR>There is an issue in the server which is causing this error. Working with service provider. Server பிரச்சினை இருப்பதால் app வேலை செய்யவில்லை. சர்வர் கம்பெனியுடன் வேலை செய்துகொண்டுள்ளேன். விரைவில் சரி செய்யப்படும்.</SPAN><BR><BR>' + '</div></div>';
+			html_str += '</div></div></div>';
+
+			document.getElementById('expiryAlertDiv').innerHTML = html_str;
+			document.getElementById('expiryAlertDiv').style.display = 'block';
+	}
+
+
+	function closeTable() {
+		document.getElementById('expiryAlertDiv').style.display = 'none';
+	}
+
 		
     </script>
 </head>
 
 <body onLoad="init();">
 <!-- <div id="loader" class="center"></div> -->
+<div class="expiryAlertDiv" id="expiryAlertDiv"></div>
 
 <div class="title"></div>
 

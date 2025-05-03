@@ -10,12 +10,27 @@ if(isset($_POST['name'])){
 	//$user_name=isset($_POST['name']) ? $_POST['name'] : $_GET['name'];
 	$user_name=isset($_POST['name']) ? explode('|',$_POST['name'])[1] : explode('|',$_GET['name'])[1];
 	//$sql = "SELECT name,phone,imei,last_login,user_type,registered_date from user where name='$user_name'";
-	$sql = "SELECT rowid,name,phone,imei,last_login,user_type,registered_date from user where (name LIKE '%$user_name%') OR (phone LIKE '%$user_name%')";
+	//$sql = "SELECT rowid,name,phone,imei,last_login,user_type,registered_date from user where (name LIKE '%$user_name%') OR (phone LIKE '%$user_name%')";
+	
+	$sql = "SELECT user.rowid, user.name, user.phone, user.imei, user.last_login, user.user_type, user.registered_date, user_trial.expiry_date
+        FROM user
+        JOIN user_trial ON user.imei = user_trial.imei
+        WHERE (user.name LIKE '%$user_name%') OR (user.phone LIKE '%$user_name%')";
 }
 elseif(isset($_GET['rowid'])){
 	$rowid=isset($_POST['rowid']) ? $_POST['rowid'] : $_GET['rowid'];
-	$sql = "SELECT rowid,name,phone,imei,last_login,user_type,registered_date from user where rowid='$rowid'";
+	//$sql = "SELECT rowid,name,phone,imei,last_login,user_type,registered_date from user where rowid='$rowid'";
+	$sql = "SELECT user.rowid, user.name, user.phone, user.imei, user.last_login, user.user_type, user.registered_date, user_trial.expiry_date
+        FROM user
+        JOIN user_trial ON user.imei = user_trial.imei
+        WHERE user.rowid = '$rowid'";
+	/*$sql = "SELECT user.rowid, user.name, user.phone, user.imei, user.last_login, user.user_type, user.registered_date, user_trial.expiry_date
+        FROM user
+        JOIN user_trial ON user.imei = user_trial.imei
+        WHERE user.imei = '$imei'";*/
 }
+
+//echo $sql;
 
 $usertype=isset($_SESSION['usertype']) ? $_SESSION['usertype'] : "";
 
@@ -38,19 +53,21 @@ function getUserDetails()
 
 			if($count>0){
 				
-				 while($row = $result->fetch_assoc()) {
+				while ($row = $result->fetch_assoc()) {
 					$userInfo["rowid"][$cnt] = $row["rowid"];
 					$userInfo["Name"][$cnt] = $row["name"];
 					$userInfo["phone"][$cnt] = $row["phone"];
-					$userInfo["imei"][$cnt]= $row["imei"];
+					$userInfo["imei"][$cnt] = $row["imei"];
 					$userInfo["last_login"][$cnt] = $row["last_login"];
 					$userInfo["user_type"][$cnt] = $row["user_type"];
 					$userInfo["registered_date"][$cnt] = $row["registered_date"];
-					
+					$userInfo["expiry_date"][$cnt] = $row["expiry_date"];  // Added expiry_date here
+
 					$old_usertype = $row["user_type"];
-					
+
 					$cnt = $cnt + 1;
-				  }
+				}
+
 			}
 		}
 		
@@ -163,7 +180,7 @@ function deleteUser(in_phone){
 			$id = $userInfo['rowid'][$i];
 				echo "<div class='divTableRow'>";
 					echo "<div class='divPanchangHeading'>ID</div>";
-					echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'><input type='textbox' name='Name' value='".$userInfo['rowid'][$i]."' readonly></div>";
+					echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'><input type='textbox' name='rowid' value='".$userInfo['rowid'][$i]."' readonly></div>";
 				echo "</div>";
 				echo "<div class='divTableRow'>";
 					echo "<div class='divPanchangHeading'>Name</div>";
@@ -177,6 +194,10 @@ function deleteUser(in_phone){
 				echo "<div class='divTableRow'>";
 					echo "<div class='divPanchangHeading'>imei</div>";
 					echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'><input type='textbox' name='imei' value='".$userInfo['imei'][$i]."' ></div>";
+				echo "</div>";
+				echo "<div class='divTableRow'>";
+					echo "<div class='divPanchangHeading'>Expiry</div>";
+					echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'><input type='date' name='expiry_date' value='".$userInfo['expiry_date'][$i]."' ></div>";
 				echo "</div>";
 				echo "<div class='divTableRow'>";
 					echo "<div class='divPanchangHeading'>User Type</div>";

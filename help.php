@@ -1,6 +1,17 @@
 <?php session_start();
 require "lib.php";
 
+require_once 'vendor/autoload.php';  // if using Composer
+
+use phpseclib3\Net\SSH2;
+
+if (function_exists('exec')) {
+    echo "exec() is enabled.";
+} else {
+    echo "exec() is disabled.";
+}
+
+
 $key = isset($_COOKIE['key']) ? $_COOKIE['key'] : $_GET['key'];
 
 $userInfo = getUserInfo_mobile($key);

@@ -204,8 +204,16 @@ function openUserInfo(rowid){
 	<div class='column-body'>
 			<center><div class="divTable blueTable" id="chart">
 					<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">User detail</P>
-				
+			
 <?php
+			echo "<form name='userInfo' action='userInfo.php' method='post'>";
+			echo "<H3>Type Name to search</H3>";
+			echo "<div class='search-box'><input type='text' name='name' id='name' autocomplete='off' style='background:#ffffff' placeholder='Search name...' onfocus=this.value='' onBlur='placeOnBlur();' /><div class='result'></div>";
+			echo "<input type='Submit' id='btSubmit' value='Submit' style='background-color:gold;color:#660000;font-weight:bold;font-size:10px;'>";
+			echo "</form>";
+			
+			
+			echo "<BR><BR>";
 			////////////////// PRINT USER DETAILS ////////////////////////////////////////////////
 					echo "<div class='divTable blueTable' style='height:40px;'>";
 						echo "<div class='divTableRow'>";
@@ -213,7 +221,7 @@ function openUserInfo(rowid){
 							echo "<div class='divPanchangHeading'>Name</div>";
 							echo "<div class='divPanchangHeading'>phone</div>";
 							echo "<div class='divPanchangHeading'>imei</div>";
-							echo "<div class='divPanchangHeading'>last_login</div>";
+							//echo "<div class='divPanchangHeading'>last_login</div>";
 							echo "<div class='divPanchangHeading'>user_type</div>";
 							echo "<div class='divPanchangHeading'>reg_date</div>";
 						echo "</div>";
@@ -239,7 +247,7 @@ function openUserInfo(rowid){
 									echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$userInfo['Name'][$i]."</div>";
 									echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$userInfo['phone'][$i]."</div>";
 									echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$userInfo['imei'][$i]."</div>";
-									echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$userInfo['last_login'][$i]."</div>";
+									//echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$userInfo['last_login'][$i]."</div>";
 									echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$userInfo['user_type'][$i]."</div>";
 									echo "<div class='divPanchang' style='color:black;font-size:10px;font-weight:bold;width:40px;'>".$userInfo['registered_date'][$i]."</div>";
 									if(strcmp($_SESSION['userinfo']['user_type'],'ADMIN')==0){
@@ -263,16 +271,10 @@ function openUserInfo(rowid){
 							echo "<a style='display:box;border: 1px solid; background-color:gold;color:white;width:auto;font-size:20px;padding:3px' href='maintenance.php?page=".$i."'>".$i."</a> ";
 					};
 					echo "<BR><BR>";
-					echo "<form name='userInfo' action='userInfo.php' method='post'>";
-					echo "<H3>Type Name to search</H3>";
-					echo "<div class='search-box'><input type='text' name='name' id='name' autocomplete='off' style='background:#ffffff' placeholder='Search name...' onfocus=this.value='' onBlur='placeOnBlur();' /><div class='result'></div>";
-					echo "<input type='Submit' id='btSubmit' value='Submit' style='background-color:gold;color:#660000;font-weight:bold;font-size:10px;'>";
-					echo "</form>";
 					
-					
-					echo "<BR><BR>";
 ?>
-				
+			<P><A href='current_expiry_report.html' style='color:blue;'>Upcoming expiry report</A></P>
+			<P><A href='previous_expiry_report.html' style='color:blue;'>Expired report</A></P>
 				<BR><BR><BR><BR><BR><BR>
 			</div></center>
 	  </div>
