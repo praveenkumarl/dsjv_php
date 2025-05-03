@@ -624,8 +624,9 @@ div.blueTable {
 }
 
 .header-center { 
-    float: left;
-    width: 500px;
+    /*float: left;*/
+	display: inline;
+    width: 100%;
 	height: 25px;
 	padding-top:10px;
     text-align: -webkit-center;
@@ -643,23 +644,7 @@ div.blueTable {
 	font-weight: 800;
 	line-height: 8px;
 	font-family: Verdana, Raavi, sans-serif;
-	
-}
-
-.PageFooter
-{
-	text-align: center;
-	vertical-align: middle;
-	color: black;
-	font-size: 10px;
-	height: 10px;
-	line-height: 10px;
-	border-top:1px solid;
-	border-color: black;
-	font-family: Verdana, Raavi, sans-serif;
-	width:210mm;
-	margin-left: 5px;
-	margin-right: 5px;
+	width:auto;
 }
 
 

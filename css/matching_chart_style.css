@@ -9,6 +9,14 @@
 	--chart-inner-font-weight: 600;
 	--chart-width: clamp(320px, 2vw, 600px);
 	--chart-height: clamp(350px, 2vw, 600px);	
+	
+	--bukthiHeadBoy-color: var(--boy-chart-background);
+	--dasaHeadBoy-color: var(--boy-chart-background);
+	--dasaHeadBoy-color: var(--boy-chart-background);
+	
+	--bukthiHead-color: var(--girl-chart-background);
+	--dasaHead-color: var(--girl-chart-background);
+	--dasaHead-color: var(--girl-chart-background);
 }
 
 /*normal mode*/
@@ -620,6 +628,73 @@ div.blueTable {
 	font-size: 8px;
 	color: black;
 	width: 150px;
+	height: 20%;
+	padding:5px;
+}
+
+
+.divDasaHeading_boy 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px #660000;
+
+	background-color: var(--dasaHeadBoy-color);
+	font-size: var(--dasabukthi-fontsize);
+	color: black;
+	width: 120px;
+	height: 20%;
+	padding:5px;
+	
+	font-weight: bold;
+}
+
+.divDasa_boy 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px #660000;
+
+	background-color:  var(--dasaHeadBoy-color);
+	font-size: var(--dasabukthi-fontsize);
+	color: black;
+	width: 120px;
+	height: 20%;
+	padding:5px;
+	
+	font-weight: bold;
+}
+
+.divBukthiHeading_boy 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px #660000;
+
+	background-color: var(--bukthiHeadBoy-color);
+	font-size: var(--dasabukthi-fontsize);
+	color: black;
+	width: 120px;
+	height: 20%;
+	padding:5px;
+	
+	font-weight: bold;
+}
+
+.divBukthi_boy 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px #660000;
+
+	background-color: #FFFFFF;
+	font-size: var(--dasabukthi-fontsize);
+	color: black;
+	width: 120px;
 	height: 20%;
 	padding:5px;
 }

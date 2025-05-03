@@ -474,6 +474,7 @@ div.blueTable {
 	#color:red;
 	font-weight: normal;
 	font-family: Verdana, Raavi, sans-serif;
+	font-weight: bold;
 }
 
 .moon
@@ -581,6 +582,20 @@ div.blueTable {
 	font-family: Verdana, Raavi, sans-serif;
 }
 
+.divTableTextMediumBold 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid .1px black;
+	background-color: #ffffff;
+	font-size: 8px;
+	color: black;
+	padding:3px;
+	font-weight:bold;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
 .divTableTextBig
 { 
 	display: table-cell;
@@ -685,25 +700,6 @@ div.blueTable {
 	margin-left:5px;
 	margin-right:5px;
 }
-
-.PageFooter
-{
-	position:fixed;
-	bottom:10px;
-	text-align: center;
-	vertical-align: middle;
-	color: black;
-	font-size: 10px;
-	height: 10px;
-	line-height: 15px;
-	border-top:1px solid;
-	border-color: black;
-	font-family: Verdana, Raavi, sans-serif;
-	width:210mm;
-	margin-left: 5px;
-	margin-right: 5px;
-}
-
 
 .thithi_soonyam {
 	font-size:9px;

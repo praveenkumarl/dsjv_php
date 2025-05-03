@@ -9,8 +9,8 @@
 	--menu-heading-color: black;
 	--historytableHead-background: var(--menu-background);
 	--historytableHead-color: var(--menu-text-color);
-	--dasaHead-color: #FCD71E;
-	--bukthiHead-color: #FCD71E;
+	--dasaHead-color: gold;
+	--bukthiHead-color: gold;
 	--currentBukthi-color: yellow;
 	--birthBukthi-color: silver;
 	
@@ -18,8 +18,8 @@
 	
 	--button-background: #1F45FC ;
 	--button-text-color: white;
-	--anthraHead-color: #FCD71E;
-	--muhurtHead-color: #FCD71E;
+	--anthraHead-color: gold;
+	--muhurtHead-color: gold;
 	
 	--panchang-head-fontsize: clamp(12px,2vw,14px);
 	--panchang-body-fontsize: clamp(12px,2vw,14px);
@@ -2280,11 +2280,11 @@ input, select, textarea {
 		-moz-appearance: none;
 		-webkit-appearance: none;
 		-ms-appearance: none;
-		appearance: none;
-		display: block;
+		appearance: auto;
+		display: inline-block;
 		float: left;
 		margin-right: -2em;
-		opacity: 0;
+		opacity: 1;
 		width: 1em;
 		z-index: -1;
 	}
@@ -3741,7 +3741,7 @@ div.error {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 	background-color: var(--details-background);
 	font-size: var(--panchang-head-fontsize);
 	color: black;
@@ -3755,7 +3755,7 @@ div.error {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 	background-color: var(--details-background);
 	font-size: var(--panchang-bodysmall-fontsize);
 	line-height: 12px;
@@ -3772,7 +3772,7 @@ div.error {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 	background-color: #99ff66;
 	font-size: var(--panchang-bodysmall-fontsize);
 	line-height: 12px;
@@ -3789,7 +3789,7 @@ div.error {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 
 	background-color: var(--details-background);
 	font-size: var(--panchang-head-fontsize);
@@ -3806,7 +3806,7 @@ div.error {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 	background-color: #ffffff;
 	font-size: var(--panchang-body-fontsize);
 	line-height: 14px;
@@ -3821,7 +3821,7 @@ div.error {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 	background-color: #ffffff;
 	font-size: var(--panchang-bodysmall-fontsize);
 	line-height: 12px;
@@ -3836,7 +3836,7 @@ div.error {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 	background-color: #99ff66;
 	font-size: var(--panchang-bodysmall-fontsize);
 	line-height: 12px;
@@ -3851,7 +3851,7 @@ div.error {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 
 	background-color: #ff8080;
 	font-size: var(--panchang-body-fontsize);
@@ -3866,7 +3866,7 @@ div.error {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 
 	background-color: #99ff66;
 	font-size: var(--panchang-body-fontsize);
@@ -3881,7 +3881,7 @@ div.error {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 
 	background-color: var(--historytableHead-background);
 	font-size: var(--chartHistoryHeading-fontsize);
@@ -3897,7 +3897,7 @@ div.error {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 
 	background-color: #ffffff;
 	font-size: var(--chartHistory-fontsize);
@@ -3997,7 +3997,7 @@ div.error {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 
 	background-color: var(--dasaHead-color);
 	font-size: var(--dasabukthi-fontsize);
@@ -4014,7 +4014,7 @@ div.error {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 
 	background-color:  var(--dasaHead-color);
 	font-size: var(--dasabukthi-fontsize);
@@ -4031,7 +4031,7 @@ div.error {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 
 	background-color: var(--bukthiHead-color);
 	font-size: var(--dasabukthi-fontsize);
@@ -4048,7 +4048,7 @@ div.error {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 
 	background-color: #FFFFFF;
 	font-size: var(--dasabukthi-fontsize);
@@ -4063,7 +4063,7 @@ div.error {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 3px #660000;
+	border:solid 3px black;
 
 	background-color: var(--currentBukthi-color);
 	font-size: var(--dasabukthi-fontsize);
@@ -4078,7 +4078,7 @@ div.error {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 3px #660000;
+	border:solid 3px black;
 
 	background-color: var(--birthBukthi-color);
 	font-size: var(--dasabukthi-fontsize);
@@ -4093,7 +4093,7 @@ div.error {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 
 	background-color:  #ffffff;
 	font-size: 11px;
@@ -4266,7 +4266,7 @@ div.error {
 	text-align: center;
 	position: relative;
 	display: block;
-	color: #660000;
+	color: black;
 	width: 100%;
 	height: 100%;
 	background-color: white;
@@ -4365,12 +4365,15 @@ div.error {
 
 .userinfo
 {
-	display: table-cell;
+	display: inline-flex;
+	flex: auto;
+	flex-flow: column;
+	justify-content: center;
 	background-color: var(--menu-background);
 	height: auto;
 	width: 100%;
 	line-height: 16px;
-	font-size: calc(16px - 4px);
+	font-size: min(4vw, 10px);
 	font-family: Arial, sans-serif;
 	vertical-align: middle;
 	color: var(--menu-text-color);
@@ -4415,7 +4418,7 @@ div.error {
 
 .envWeb
 {
-	display: block;
+	display: flex;
 	padding:0.3%;
 }
 
@@ -4666,6 +4669,47 @@ textarea {
 	z-index: 10;
 }
 
+.destinyPointDetailsDiv{
+	position: fixed;
+	display: none;
+	width: 100%;
+	height: 100%;
+	background-color: gold;
+	align-content: center;
+	z-index: 10;
+}
+
+.athrishtaPointDetailsDiv{
+	position: fixed;
+	display: none;
+	width: 100%;
+	height: 100%;
+	background-color: gold;
+	align-content: center;
+	z-index: 10;
+}
+
+.dhurathrishtaPointDetailsDiv{
+	position: fixed;
+	display: none;
+	width: 100%;
+	height: 100%;
+	background-color: gold;
+	align-content: center;
+	z-index: 10;
+}
+
+
+.rasiDetailsDiv{
+	position: fixed;
+	display: none;
+	width: 100%;
+	height: 100%;
+	background-color: gold;
+	align-content: center;
+	z-index: 10;
+}
+
 .thithiDetailsDiv{
 	position: fixed;
 	display: none;
@@ -4744,7 +4788,7 @@ parigaraDiv{
 	display: table-cell;
 	text-align:justify-content;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 
 	background-color: var(--details-background);
 	font-size: var(--thaarapalan-fontsize);
@@ -4761,7 +4805,7 @@ parigaraDiv{
 	display: table-cell;
 	text-align:justify-content;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 	line-height: 16px;
 	background-color: White;
 	font-size: var(--thaarapalan-fontsize);
@@ -4776,7 +4820,7 @@ parigaraDiv{
 	display: table-cell;
 	text-align:justify-content;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 	line-height: 16px;
 	background-color: #FADBD8;
 	font-size: var(--thaarapalan-fontsize);
@@ -4791,7 +4835,7 @@ parigaraDiv{
 	display: table-cell;
 	text-align:justify-content;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 	line-height: 16px;
 	background-color: #D5F5E3;
 	font-size: var(--thaarapalan-fontsize);
@@ -4806,7 +4850,7 @@ parigaraDiv{
 	display: table-cell;
 	text-align:justify-content;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 	line-height: 16px;
 	background-color: #FC0000;
 	font-size: var(--thaarapalan-fontsize);
@@ -4821,7 +4865,7 @@ parigaraDiv{
 	display: table-cell;
 	text-align:justify-content;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px black;
 	line-height: 16px;
 	background-color: #0FFC00;
 	font-size: var(--thaarapalan-fontsize);
@@ -4841,7 +4885,7 @@ parigaraDiv{
 	font-size: 10px;
 	color: black;
 	width: auto;
-	height: 20%;
+	height: auto;
 	padding:5px;
 }
 
@@ -4865,7 +4909,7 @@ parigaraDiv{
 	display: table-cell;
 	text-align:left;
 	vertical-align:middle;
-	#border:solid 1px #660000;
+	#border:solid 1px black;
 
 	background-color: var(--details-background);
 	font-size: 12px;
@@ -4880,7 +4924,7 @@ parigaraDiv{
 { 
 	display: table-cell;
 	vertical-align:middle;
-	#border:solid 1px #660000;
+	#border:solid 1px black;
 
 	background-color: var(--details-background);
 	font-size: 12px;
@@ -4956,7 +5000,7 @@ parigaraDiv{
   font-weight: bold;
   color: white;
   text-shadow: 2px 2px 4px #000000;
-  user-select: none; 
+  /*user-select: none; */
 }
 
 .anthramDiv{
@@ -4980,7 +5024,7 @@ parigaraDiv{
 	font-size: 11px;
 	color: black;
 	width: auto;
-	height: 20%;
+	height: auto;
 	padding:5px;
 	font-weight: bold;
 }
@@ -5025,6 +5069,36 @@ parigaraDiv{
 	z-index: 10;
 }
 
+.expiryAlertDiv
+{
+	position: fixed;
+	display: none;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.7);
+	align-content: center;
+	z-index: 10;
+}
+
+.divExpiryAlertHeading
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:top;
+	border:solid 1px #000000;
+	background-color: var(--muhurtHead-color);
+	opacity: 0.9;
+	/*font-size: 8px;*/
+	font-size: calc(21px - 4px);
+	color: black;
+	width: 80px;
+	height: auto;
+	padding:40px;
+	font-weight: bold;
+	line-height: normal;
+}
+
+
 .divMuhurtHeading 
 { 
 	display: table-cell;
@@ -5037,7 +5111,7 @@ parigaraDiv{
 	font-size: 2vw;
 	color: black;
 	width: 80px;
-	height: 20%;
+	height: auto;
 	padding:5px;
 	font-weight: bold;
 }
@@ -5052,7 +5126,7 @@ parigaraDiv{
 	font-size: 2vw;
 	color: black;
 	width: 80px;
-	height: 20%;
+	height: auto;
 	padding:5px;
 	font-weight: bold;
 	background-color: #FADBD8;
@@ -5068,7 +5142,7 @@ parigaraDiv{
 	font-size: 2vw;
 	color: black;
 	width: 80px;
-	height: 20%;
+	height: auto;
 	padding:5px;
 	font-weight: bold;
 	background-color: #0FFC00;
@@ -5084,7 +5158,7 @@ parigaraDiv{
 	font-size: 2vw;
 	color: black;
 	width: 80px;
-	height: 20%;
+	height: auto;
 	padding:5px;
 	font-weight: bold;
 	background-color: #D5F5E3;
@@ -5216,4 +5290,347 @@ parigaraDiv{
     left: 0;
     width: 100vw; /* Full width of the viewport */
     height: 100vh; /* Full height of the viewport */
+}
+
+.smallText
+{
+	font-size: 8px;
+}
+
+.py {
+	font-size:clamp(12px,2vw,14px);
+	font-weight:bold;
+	width:-webkit-fill-available;
+	height:auto;
+	font-family: monospace;
+	text-align: center;
+	padding-left:20px;
+	inline-size: min-content;
+}
+
+.name_number{
+	font-size:clamp(12px,2vw,14px);
+	font-weight:bold;
+	width:auto;
+	height:auto;
+	font-family: monospace;
+	color:blue;
+}
+
+.name_total{
+	font-size:16px;
+	background-color:#FFE4E1;
+	display: block;
+    border: outset;
+    padding: 5px;
+    text-align: center;
+}
+
+.pyramid_number{
+	font-size:16px;
+	background-color:#7FFFD4;
+	display: block;
+    border: outset;
+    padding: 5px;
+    text-align: center;
+}
+
+.pyramid_chars{
+	font-size:16px;
+	background-color:#7FFFD4;
+	display: inline-block;
+    border: solid 1px black;
+    padding: 5px;
+    text-align: center;
+	color: blue;
+}
+
+.pyramid_number_inside{
+	font-size:16px;
+	display: inline-block;
+    border: solid 1px black;
+    padding: 5px;
+    text-align: center;
+	color: white;
+	background-color: blue;
+}
+
+.pulse {
+	display: inline-block;
+	animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+	0% { transform: scale(1); }
+	50% { transform: scale(1.5); }
+	100% { transform: scale(1); }
+}
+
+/******* this is used in birthMatch page to display the bride/groom data side by side *******/
+.search-container {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.search-box-girl, .search-box-boy {
+    width: 45%;
+}
+
+.selected-items-container-girl, .selected-items-container-boy {
+    width: 45%;
+    margin-top: 10px;
+}
+/******* this is used in birthMatch page to display the bride/groom data side by side *******/
+
+.chartNumRed {
+	color: white;
+    background-color: red;
+    font-size: 15px;
+    display: inline-block;
+    width: 15px;
+}
+
+.chartNumGreen {
+	color: white;
+    background-color: #32CD32;
+    font-size: 15px;
+    display: inline-block;
+    width: 15px;
+}
+
+.table-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;  /* Make it fit the width of the page */
+    margin-top: 103px;
+    height: 90%; /* Adjust the height as needed */
+    border: 1px solid #ddd;
+    overflow: hidden;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.scrollable-table {
+    height: 100%;
+    overflow-y: auto;
+    padding-right: 5px; /* Hide scrollbar */
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    width: 60px;
+    height: 60px;
+    padding: 5px;
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0.5;
+}
+
+.close-btn:hover {
+    background-color: darkred;
+}
+
+.vivagaResultRed{
+	margin: 10px;
+	background-color: Red;
+	color: white;
+	height: 50px;
+	align-content: center;
+}
+
+.vivagaResultGreen{
+	margin: 10px;
+	background-color: Green;
+	color: white;
+	height: 50px;
+	align-content: center;
+}
+
+.divOnePagePanchangContainer
+{
+	position: fixed;
+	display: none;
+	width: 100%;
+	height: 100%;
+	background-color: white;
+	align-content: flex-start;
+	z-index: 101;
+	margin-top: -103px;
+}
+
+.image-with-caption {
+    display: inline-block;
+    align-items: center;
+    margin: 5px;
+	
+}
+
+.image-with-caption .caption {
+    margin-bottom: 10px; /* Adjust spacing as needed */
+    color: black;
+	padding-top: 5px;
+	background-color: gold;
+}
+
+.imgcaption {
+	font-size: 12px;
+    color: blue;
+	padding: 5px;
+	font-weight: bold;
+}
+
+.imgcaption_small {
+	font-size: 10px;
+    margin-bottom: 10px; /* Adjust spacing as needed */
+    color: blue;
+	padding-top: 2px;
+	font-weight: bold;
+	background-color: gold;
+    height: 20px;
+    align-content: center;
+}
+
+.image-with-caption img {
+    max-width: 100%;
+    height: auto;
+}
+
+.panchangTextInline {
+	display: inline-table;
+	margin-bottom: 10px; /* Adjust spacing as needed */
+	font-size: 12px;
+    color: black;
+}
+
+.panchangTextInlineBold {
+	display: inline;
+	margin-bottom: 10px; /* Adjust spacing as needed */
+	font-size: 12px;
+    color: black;
+	font-weight: bold;
+	color: blue;
+}
+
+.PageFooter
+{
+	position:fixed;
+	bottom:10px;
+	text-align: center;
+	vertical-align: middle;
+	color: var(--text-color);
+	font-size: 10px;
+	height: 10px;
+	line-height: 15px;
+	border-top:1px solid;
+	border-color: black;
+	font-family: Verdana, Raavi, sans-serif;
+	width:210mm;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.panchangBorder {
+    border: 5px double lightblue; /* Use transparent for initial color */
+    padding: 20px;
+    margin: 20px;
+	text-align: center;
+	width: auto;
+    height: auto;
+}
+
+
+.varga-chart { display: none; }
+
+.ashtavarga-chart { display: none; }
+
+.onepage_panchang_date {
+	font-size: 32px;
+    font-weight: bold;
+    color: blue;
+	padding: 5px;
+	background-color: gold;
+}
+
+.onepage_panchang_day {
+	font-size: 32px;
+    font-weight: bold;
+    color: blue;
+	padding: 5px;
+	background-color: gold;
+}
+
+.onepage_panchang_place {
+	font-size: 24px;
+    font-weight: bold;
+    color: blue;
+	padding: 5px;
+	background-color: gold;
+}
+
+.langDropdown {
+	display:inline-grid;
+	width:auto;
+	float:right;
+	font-size:10px;
+	font-weight:bold;
+	color:blue;
+	background-color:gold;
+}
+
+.langButton {
+	background-color: var(--menu-background) ;
+	color:var(--button-text-color) !important;
+	font-weight:bold !important;
+	font-size: var(--actionBtn-fontsize) !important;
+	width:30px;
+	height:25px;
+	text-align: center;
+	text-box-trim: trim-both;
+}
+
+.langButton:hover {
+  background-color: blue; /* Hover background color */
+}
+
+.langButton:active {
+  background-color: #d0d0d0; /* Active/click background color */
+}
+
+.tabButton {
+  background-color: #f1f1f1;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 5px 5px;
+  font-size: 10px;
+  color: black;
+  text-box-trim: trim-both;
+}
+
+.tabButton:hover {
+  background-color: #ddd;
+}
+
+.tabButton.active {
+  background-color: #ccc;
+}
+
+.tabContent {
+  display: none;
+  padding: 0px;
+}
+
+.tabContent.active {
+  display: block; /* shown when active */
+}
+
+.tableWrapper {
+  width: auto;
+  overflow-x: auto; 
+  margin: auto;
+  place-items: center;
 }
