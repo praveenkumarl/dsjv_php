@@ -10,6 +10,7 @@ include_once "db.php";
 
 $moon_longitude_data=array();
 $g_agas=null;
+$rearranged_arr;
 
 /*
 //check if logged in and route it to default registration message
@@ -51,10 +52,39 @@ $g_nak="";
 //usertype array used in drop down
 $usertype_arr = [PAID, MATCHING, BIRTH, BIRTHMATCH, BIRTHPANCH, JAMAKOL, JAMA_MATCH, PANCHANG, PRASANNAM, NUMEROLOGY, SUPER, ADMIN, FREE];
 
+$timestamp = date('ymdhis');
 
 $DEBUG= isset($_SESSION['debug']) ? $_SESSION['debug'] : 0;
 
 echo '<head><link rel="stylesheet" href="css/main.css"></head>';
+
+$nak_array = array("dummy","Aswini 1/அசுவினி 1","Aswini 2/அசுவினி 2","Aswini 3/அசுவினி 3","Aswini 4/அசுவினி 4",
+						"Bharani 1/பரணி 1","Bharani 2/பரணி 2","Bharani 3/பரணி 3","Bharani 4/பரணி 4",
+						"Krithika 1/கிருத்திகை 1","Krithika 2/கிருத்திகை 2","Krithika 3/கிருத்திகை 3","Krithika 4/கிருத்திகை 4",
+						"Rohini 1/ரோகிணி 1","Rohini 2/ரோகிணி 2","Rohini 3/ரோகிணி 3","Rohini 4/ரோகிணி 4",
+						"Mrigashirsha 1/மிருகசிரீஷம் 1","Mrigashirsha 2/மிருகசிரீஷம் 2","Mrigashirsha 3/மிருகசிரீஷம் 3","Mrigashirsha 4/மிருகசிரீஷம் 4",
+						"Arudra 1/திருவாதிரை 1","Arudra 2/திருவாதிரை 2","Arudra 3/திருவாதிரை 3","Arudra 4/திருவாதிரை 4",
+						"Punarvasu 1/புனர்பூசம் 1","Punarvasu 2/புனர்பூசம் 2","Punarvasu 3/புனர்பூசம் 3","Punarvasu 4/புனர்பூசம் 4",
+						"Pushyami 1/பூசம் 1","Pushyami 2/பூசம் 2","Pushyami 3/பூசம் 3","Pushyami 4/பூசம் 4",
+						"Ashlesha 1/ஆயில்யம் 1","Ashlesha 2/ஆயில்யம் 2","Ashlesha 3/ஆயில்யம் 3","Ashlesha 4/ஆயில்யம் 4",
+						"Magha 1/மகம் 1","Magha 2/மகம் 2","Magha 3/மகம் 3","Magha 4/மகம் 4",
+						"Poorva Phalguni 1/பூரம் 1","Poorva Phalguni 2/பூரம் 2","Poorva Phalguni 3/பூரம் 3","Poorva Phalguni 4/பூரம் 4",
+						"Uthra phalguni 1/உத்திரம் 1","Uthra phalguni 2/உத்திரம் 2","Uthra phalguni 3/உத்திரம் 3","Uthra phalguni 4/உத்திரம் 4",
+						"Hastha 1/ஹஸ்தம் 1","Hastha 2/ஹஸ்தம் 2","Hastha 3/ஹஸ்தம் 3","Hastha 4/ஹஸ்தம் 4",
+						"Chitra 1/சித்திரை 1","Chitra 2/சித்திரை 2","Chitra 3/சித்திரை 3","Chitra 4/சித்திரை 4",
+						"Swaathi 1/சுவாதி 1","Swaathi 2/சுவாதி 2","Swaathi 3/சுவாதி 3","Swaathi 4/சுவாதி 4",
+						"Vishaakha 1/விசாகம் 1","Vishaakha 2/விசாகம் 2","Vishaakha 3/விசாகம் 3","Vishaakha 4/விசாகம் 4",
+						"Anuraadha 1/அனுஷம் 1","Anuraadha 2/அனுஷம் 2","Anuraadha 3/அனுஷம் 3","Anuraadha 4/அனுஷம் 4",
+						"Jyeshta 1/கேட்டை 1","Jyeshta 2/கேட்டை 2","Jyeshta 3/கேட்டை 3","Jyeshta 4/கேட்டை 4",
+						"Moola 1/மூலம் 1","Moola 2/மூலம் 2","Moola 3/மூலம் 3","Moola 4/மூலம் 4",
+						"Poorva Ashaada 1/பூராடம் 1","Poorva Ashaada 2/பூராடம் 2","Poorva Ashaada 3/பூராடம் 3","Poorva Ashaada 4/பூராடம் 4",
+						"Uthra Ashaada 1/உத்திராடம் 1","Uthra Ashaada 2/உத்திராடம் 2","Uthra Ashaada 3/உத்திராடம் 3","Uthra Ashaada 4/உத்திராடம் 4",
+						"Shraavan 1/திருவோணம் 1","Shraavan 2/திருவோணம் 2","Shraavan 3/திருவோணம் 3","Shraavan 4/திருவோணம் 4",
+						"Dhanishta 1/அவிட்டம் 1","Dhanishta 2/அவிட்டம் 2","Dhanishta 3/அவிட்டம் 3","Dhanishta 4/அவிட்டம் 4",
+						"Shathabhisha 1/சதயம் 1","Shathabhisha 2/சதயம் 2","Shathabhisha 3/சதயம் 3","Shathabhisha 4/சதயம் 4",
+						"Poorva bhadrapada 1/பூரட்டாதி 1","Poorva bhadrapada 2/பூரட்டாதி 2","Poorva bhadrapada 3/பூரட்டாதி 3","Poorva bhadrapada 4/பூரட்டாதி 4",
+						"Uthra bhadrapada 1/உத்திரட்டாதி 1","Uthra bhadrapada 2/உத்திரட்டாதி 2","Uthra bhadrapada 3/உத்திரட்டாதி 3","Uthra bhadrapada 4/உத்திரட்டாதி 4",
+						"Revathi 1/ரேவதி 1","Revathi 2/ரேவதி 2","Revathi 3/ரேவதி 3","Revathi 4/ரேவதி 4");
 
 function isLoggedIn() {
     return isset($_SESSION['userinfo']);
@@ -706,7 +736,8 @@ function displayUserInfo($userinfo)
 			echo $userinfo['user_type'];
 		echo "</div>";
 		echo "<div class='userinfo'>";
-			echo $userinfo['expiry_date'];
+			//echo $userinfo['expiry_date'];
+			echo date("d-m-Y", strtotime($userinfo['expiry_date']));
 		echo "</div>";
 	echo "</div>";
 	
@@ -725,7 +756,8 @@ function displayUserInfoMobile($userinfo)
 			echo $userinfo['user_type'];
 		echo "</div>";
 		echo "<div class='userinfoMobile' style='width:auto'>";
-			echo $userinfo['expiry_date'];
+			//echo $userinfo['expiry_date'];
+			echo date("d-m-Y", strtotime($userinfo['expiry_date']));
 		echo "</div>";
 	echo "</div>";
 }
@@ -812,7 +844,8 @@ function sortDegree($inArray) // new function
 					if(strpos($inArray[$house],'retro">'.$planet)>0 || strpos($inArray[$house],'retro">'.$planet)===0){
 						$outArray[$house] = $outArray[$house] . " " . "<span class='retro'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
 						
-						//updateBhavaArray($planetDeg[$planet],$planet,$house);
+						//updateBhavaArray($planetDeg[$planet],"$planet(வ)" . "-". $planetDeg[$planet],$house);
+						updateBhavaArray($planetDeg[$planet],"$planet(வ)",$house);
 					}
 					else{
 						//$outArray[$house] = $outArray[$house] . " " . $planet . "-". $planetDeg[$planet];
@@ -820,18 +853,21 @@ function sortDegree($inArray) // new function
 						if(strpos($planet,'லக்')>0 || strpos($planet,"லக்")===0){
 							$outArray[$house] = $outArray[$house] . " " . "<span class='lagna'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
 							
-							//updateBhavaArray($planetDeg[$planet],$planet,$house);
+							//updateBhavaArray($planetDeg[$planet],"$planet" . "-". $planetDeg[$planet],$house);
+							updateBhavaArray($planetDeg[$planet],"$planet",$house);
 						}
 						elseif(strpos($planet,'மா')>0 || strpos($planet,"மா")===0){
 							$outArray[$house] = $outArray[$house] . " " . "<span class='mandhi'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
 							
-							//updateBhavaArray($planetDeg[$planet],$planet,$house);
+							//updateBhavaArray($planetDeg[$planet],"$planet" . "-". $planetDeg[$planet],$house);
+							updateBhavaArray($planetDeg[$planet],"$planet",$house);
 						}
 						elseif(strpos($planet,'சந்')>0 || strpos($planet,"சந்")===0){
 							//$outArray[$house] = $outArray[$house] . " " . "<span>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
 							$outArray[$house] = $outArray[$house] . " " . "<span class='moon'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
 							
-							//updateBhavaArray($planetDeg[$planet],$planet,$house);
+							//updateBhavaArray($planetDeg[$planet],"$planet" . "-". $planetDeg[$planet],$house);
+							updateBhavaArray($planetDeg[$planet],"$planet",$house);
 						}
 						elseif(strpos($planet,'உத')>0 || strpos($planet,"உத")===0){
 							if($planetDeg[$planet]>=0.0){
@@ -877,7 +913,8 @@ function sortDegree($inArray) // new function
 						else{
 							$outArray[$house] = $outArray[$house] . " " . $planet . "-". DECtoDMS_jamakol($planetDeg[$planet]);
 							
-							//updateBhavaArray($planetDeg[$planet],$planet,$house);
+							//updateBhavaArray($planetDeg[$planet],"$planet" . "-". $planetDeg[$planet],$house);
+							updateBhavaArray($planetDeg[$planet],"$planet",$house);
 							
 						}
 					}
@@ -889,7 +926,8 @@ function sortDegree($inArray) // new function
 					if(strpos($inArray[$house],'retro">'.$planet)>0 || strpos($inArray[$house],'retro">'.$planet)===0){
 						$outArray[$house] = "<span class='retro'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house];
 						
-						//updateBhavaArray($planetDeg[$planet],$planet,$house);
+						//updateBhavaArray($planetDeg[$planet],"$planet" . "-". $planetDeg[$planet],$house);
+						updateBhavaArray($planetDeg[$planet],"$planet",$house);
 						
 					}
 					else{
@@ -898,18 +936,21 @@ function sortDegree($inArray) // new function
 						if(strpos($planet,'லக்')>0 || strpos($planet,"லக்")===0){
 							$outArray[$house] =  "<span class='lagna'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house];
 							
-							//updateBhavaArray($planetDeg[$planet],$planet,$house);
+							//updateBhavaArray($planetDeg[$planet],"$planet" . "-". $planetDeg[$planet],$house);
+							updateBhavaArray($planetDeg[$planet],"$planet",$house);
 						}
 						elseif(strpos($planet,'மா')>0 || strpos($planet,"மா")===0){
 							$outArray[$house] = "<span class='mandhi'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house];
 							
-							//updateBhavaArray($planetDeg[$planet],$planet,$house);
+							//updateBhavaArray($planetDeg[$planet],"$planet" . "-". $planetDeg[$planet],$house);
+							updateBhavaArray($planetDeg[$planet],"$planet",$house);
 						}
 						elseif(strpos($planet,'சந்')>0 || strpos($planet,"சந்")===0){
 							//$outArray[$house] = "<span>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house] ;
 							$outArray[$house] = "<span class='moon'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house] ;
 							
-							//updateBhavaArray($planetDeg[$planet],$planet,$house);
+							//updateBhavaArray($planetDeg[$planet],"$planet" . "-". $planetDeg[$planet],$house);
+							updateBhavaArray($planetDeg[$planet],"$planet",$house);
 						}
 						elseif(strpos($planet,'உத')>0 || strpos($planet,"உத")===0){
 							if($planetDeg[$planet]>=0.0){
@@ -955,7 +996,8 @@ function sortDegree($inArray) // new function
 						else{
 							$outArray[$house] = $planet . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house] ;
 							
-							//updateBhavaArray($planetDeg[$planet],$planet,$house);
+							//updateBhavaArray($planetDeg[$planet],"$planet" . "-". $planetDeg[$planet],$house);
+							updateBhavaArray($planetDeg[$planet],"$planet",$house);
 						}
 					}
 				}
@@ -1186,7 +1228,7 @@ function getRasi($in_house)
 
 function updateRahuEmma(array $inside, $weekday, $sun_degree, $lang)
 {
-	global $DEBUG, $planetDeg; //$planetDeg is global array
+	global $DEBUG, $planetDeg, $previous_day,$chart_date,$chart_time,$next_day; //$planetDeg is global array
 	
 	if($DEBUG==1) {
 		echo "<BR>updateRahuEmma before update</BR>";
@@ -1194,37 +1236,188 @@ function updateRahuEmma(array $inside, $weekday, $sun_degree, $lang)
 		echo "<BR>updateRahuEmma before update</BR>";
 	}
 	
-	if(strcmp($lang,"Tamil")===0){
+	$datetime = new DateTime($chart_date . ' ' . $chart_time);
+	$date = $datetime->format('Y-m-d'); // Extract date
+
+	// Define the correct boundaries
+	$today_day_start = new DateTime("$date 06:00:00"); // Today at 6 AM
+	$today_night_start = new DateTime("$date 18:00:00"); // Today at 6 PM
+	$tomorrow_morning_end = new DateTime("$next_day 05:59:59"); // Tomorrow at 6 AM
+	$yesterday_morning_end = new DateTime("$previous_day 05:59:59"); // Tomorrow at 6 AM
+	
+	if($datetime < $today_day_start){
+		if($weekday > 0){
+			$weekday = $weekday - 1;
+		}
+		else{
+			$weekday = 6; //move to Saturday if $weekday is Sunday (0)
+		}
 		
+	}
+	
+	//updating Ema kantam
+	if(strcmp($lang,"Tamil")===0){
 		switch($weekday)
 		{
 			case 0: //sun
-				$inside[0] = $inside[0] . "R.K" . "-" . $sun_degree; //mesham
-				$inside[5] = $inside[5] . "எ.க" . "-" . $sun_degree; //kanni
+				// Daytime condition (6 AM to 5:59 PM) 
+				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
+					$inside[5] = $inside[5] . "எ.க" . "-" . $sun_degree; //12:00-1:30
+				} else {
+					// Nighttime (6 PM to 5:59 AM) 
+					$inside[11] = $inside[11] . "எ.க" . "-" . $sun_degree; //6:00-7:30
+				}
+				
+				//$inside[5] = $inside[5] . "எ.க" . "-" . $sun_degree; //kanni
 				break;
 			case 1: //mon
-				$inside[9] = $inside[9] . "R.K" . "-" . $sun_degree; //makaram
-				$inside[6] = $inside[6] . "எ.க" . "-" . $sun_degree; //thulam
+				// Daytime condition (6 AM to 5:59 PM)
+				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
+					$inside[6] = $inside[6] . "எ.க" . "-" . $sun_degree; //10:30-12:00
+				} else {
+					// Nighttime (6 PM to 5:59 AM) 
+					$inside[2] = $inside[2] . "எ.க" . "-" . $sun_degree; //3:00-4:30
+				}
+				
+				//$inside[6] = $inside[6] . "எ.க" . "-" . $sun_degree; //thulam
 				break;
 			case 2: //tue
-				$inside[2] = $inside[2] . "R.K" . "-" . $sun_degree; //mithunam
-				$inside[8] = $inside[8] . "எ.க" . "-" . $sun_degree; //thanusu
+				// Daytime condition (6 AM to 5:59 PM)
+				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
+					$inside[8] = $inside[8] . "எ.க" . "-" . $sun_degree; //9:00-10:30
+				} else {
+					// Nighttime (6 PM to 5:59 AM) 
+					$inside[3] = $inside[3] . "எ.க" . "-" . $sun_degree; //1:30-3:00
+				}
+				
+				//$inside[8] = $inside[8] . "எ.க" . "-" . $sun_degree; //thanusu
 				break;
 			case 3: //wed
-				$inside[5] = $inside[5] . "R.K" . "-" . $sun_degree; //kanni
-				$inside[9] = $inside[9] . "எ.க" . "-" . $sun_degree; //makaram
+				// Daytime condition (6 AM to 5:59 PM)
+				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
+					$inside[9] = $inside[9] . "எ.க" . "-" . $sun_degree; //7:30-9:00
+				} else {
+					// Nighttime (6 PM to 5:59 AM)
+					$inside[5] = $inside[5] . "எ.க" . "-" . $sun_degree; //12:00-1:30
+				}
+				
+				//$inside[9] = $inside[9] . "எ.க" . "-" . $sun_degree; //makaram
 				break;
 			case 4: //thu
-				$inside[3] = $inside[3] . "R.K" . "-" . $sun_degree; //katakam
-				$inside[11] = $inside[11] . "எ.க" . "-" . $sun_degree; //meenam
+				// Daytime condition (6 AM to 5:59 PM)
+				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
+					$inside[11] = $inside[11] . "எ.க" . "-" . $sun_degree; //6:00-7:30
+				} else {
+					// Nighttime (6 PM to 5:59 AM) 
+					$inside[6] = $inside[6] . "எ.க" . "-" . $sun_degree; //10:30-12:00
+				}
+				
+				//$inside[11] = $inside[11] . "எ.க" . "-" . $sun_degree; //meenam
 				break;
 			case 5: //fri
-				$inside[6] = $inside[6] . "R.K" . "-" . $sun_degree; //thulam
-				$inside[2] = $inside[2] . "எ.க" . "-" . $sun_degree; //mithunam
+				// Daytime condition (6 AM to 5:59 PM)
+				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
+					$inside[2] = $inside[2] . "எ.க" . "-" . $sun_degree; //3:00-4:30
+				} else {
+					// Nighttime (6 PM to 5:59 AM) 
+					$inside[8] = $inside[8] . "எ.க" . "-" . $sun_degree; //9:00-10:30
+				}
+				
+				//$inside[2] = $inside[2] . "எ.க" . "-" . $sun_degree; //mithunam
 				break;
 			case 6: //sat
-				$inside[8] = $inside[8] . "R.K" . "-" . $sun_degree; //thanusu
-				$inside[3] = $inside[3] . "எ.க" . "-" . $sun_degree; //katakam
+				// Daytime condition (6 AM to 5:59 PM)
+				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
+					$inside[3] = $inside[3] . "எ.க" . "-" . $sun_degree; //1:30-3:00
+				} else {
+					// Nighttime (6 PM to 5:59 AM) 
+					$inside[9] = $inside[9] . "எ.க" . "-" . $sun_degree; //7:30-9:00
+				}
+				
+				//$inside[3] = $inside[3] . "எ.க" . "-" . $sun_degree; //katakam
+				break;
+			default: //none
+				break;
+		}
+	}	
+	
+	debug($datetime->format('Y-m-d H:i:s') . $today_day_start->format('Y-m-d H:i:s') . $today_night_start->format('Y-m-d H:i:s'));
+	
+	//using R.K for Rahu Kaalam because using ரா.கா is causing issues when we replace raahu(ரா) later. 
+	//So finnally I replace R.K to tamil
+	if(strcmp($lang,"Tamil")===0){
+		switch($weekday)
+		{
+			case 0: //sun
+				// Daytime condition (6 AM to 5:59 PM)
+				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
+					$inside[0] = $inside[0] . "R.K" . "-" . $sun_degree;
+				} else {
+					// Nighttime (6 PM to 5:59 AM) 
+					$inside[6] = $inside[6] . "R.K" . "-" . $sun_degree;
+				}
+				
+				//$inside[0] = $inside[0] . "R.K" . "-" . $sun_degree; //mesham
+				break;
+			case 1: //mon
+				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
+					$inside[9] = $inside[9] . "R.K" . "-" . $sun_degree; //9:30-10:00
+				} else {
+					// Nighttime (6 PM to 5:59 AM)
+					$inside[5] = $inside[5] . "R.K" . "-" . $sun_degree; //12:00-1:30
+				}
+				
+				//$inside[9] = $inside[9] . "R.K" . "-" . $sun_degree; //makaram
+				break;
+			case 2: //tue
+				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
+					$inside[2] = $inside[2] . "R.K" . "-" . $sun_degree; //3:00-4:30
+				} else {
+					// Nighttime (6 PM to 5:59 AM)
+					$inside[8] = $inside[8] . "R.K" . "-" . $sun_degree; //9:00-10:30
+				}
+				
+				//$inside[2] = $inside[2] . "R.K" . "-" . $sun_degree; //mithunam
+				break;
+			case 3: //wed
+				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
+					$inside[5] = $inside[5] . "R.K" . "-" . $sun_degree; //12:00-1:30
+				} else {
+					// Nighttime (6 PM to 5:59 AM)
+					$inside[0] = $inside[0] . "R.K" . "-" . $sun_degree; //4:30-6:00
+				}
+				
+				//$inside[5] = $inside[5] . "R.K" . "-" . $sun_degree; //kanni
+				break;
+			case 4: //thu
+				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
+					$inside[3] = $inside[3] . "R.K" . "-" . $sun_degree; //1:30-3:00
+				} else {
+					// Nighttime (6 PM to 5:59 AM)
+					$inside[9] = $inside[9] . "R.K" . "-" . $sun_degree; //7:30-9:00
+				}
+				
+				//$inside[3] = $inside[3] . "R.K" . "-" . $sun_degree; //katakam
+				break;
+			case 5: //fri
+				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
+					$inside[6] = $inside[6] . "R.K" . "-" . $sun_degree; //10:30-12:00
+				} else {
+					// Nighttime (6 PM to 5:59 AM)
+					$inside[2] = $inside[2] . "R.K" . "-" . $sun_degree; //3:00-4:30
+				}
+				
+				//$inside[6] = $inside[6] . "R.K" . "-" . $sun_degree; //thulam
+				break;
+			case 6: //sat
+			if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
+					$inside[8] = $inside[8] . "R.K" . "-" . $sun_degree; //9:00-10:30
+				} else {
+					// Nighttime (6 PM to 5:59 AM)
+					$inside[3] = $inside[3] . "R.K" . "-" . $sun_degree; //1:30-3:00
+				}
+				
+				//$inside[8] = $inside[8] . "R.K" . "-" . $sun_degree; //thanusu
 				break;
 			default: //none
 				break;
@@ -1234,9 +1427,6 @@ function updateRahuEmma(array $inside, $weekday, $sun_degree, $lang)
 		$planetDeg["எ.க"]=$sun_degree;
 		
 		asort($planetDeg);
-	}
-	elseif(strpos($lang,"English")===0){
-		
 	}
 	
 	if($DEBUG==1) {
@@ -2172,37 +2362,342 @@ function resortStarLordArray($inner=true){
 
 function displayStarLord()
 {
-	global $planetDeg,$sw_planet, $planet_starlord, $g_planetKaranaLord, $g_planetThithiLord, $g_planetYogamLord, $g_planetVainasigamNak, $g_planetAbhijitNak,$planetDeg_default;
+	global $planetDeg,$sw_planet, $planet_starlord, $g_planetKaranaLord, $g_planetThithiLord, $g_planetYogamLord, 
+	$g_planetVainasigamNak, $g_planetAbhijitNak,$planetDeg_default, $g_nak, $g_padham, $rearranged_arr, $nak_array ;
 	
 	//$planet_starlord = array();
 	
-	$nak_array = array("dummy","Aswini 1/அசுவினி 1","Aswini 2/அசுவினி 2","Aswini 3/அசுவினி 3","Aswini 4/அசுவினி 4",
-						"Bharani 1/பரணி 1","Bharani 2/பரணி 2","Bharani 3/பரணி 3","Bharani 4/பரணி 4",
-						"Krithika 1/கிருத்திகை 1","Krithika 2/கிருத்திகை 2","Krithika 3/கிருத்திகை 3","Krithika 4/கிருத்திகை 4",
-						"Rohini 1/ரோகிணி 1","Rohini 2/ரோகிணி 2","Rohini 3/ரோகிணி 3","Rohini 4/ரோகிணி 4",
-						"Mrigashirsha 1/மிருகசிரீஷம் 1","Mrigashirsha 2/மிருகசிரீஷம் 2","Mrigashirsha 3/மிருகசிரீஷம் 3","Mrigashirsha 4/மிருகசிரீஷம் 4",
-						"Arudra 1/திருவாதிரை 1","Arudra 2/திருவாதிரை 2","Arudra 3/திருவாதிரை 3","Arudra 4/திருவாதிரை 4",
-						"Punarvasu 1/புனர்பூசம் 1","Punarvasu 2/புனர்பூசம் 2","Punarvasu 3/புனர்பூசம் 3","Punarvasu 4/புனர்பூசம் 4",
-						"Pushyami 1/பூசம் 1","Pushyami 2/பூசம் 2","Pushyami 3/பூசம் 3","Pushyami 4/பூசம் 4",
-						"Ashlesha 1/ஆயில்யம் 1","Ashlesha 2/ஆயில்யம் 2","Ashlesha 3/ஆயில்யம் 3","Ashlesha 4/ஆயில்யம் 4",
-						"Magha 1/மகம் 1","Magha 2/மகம் 2","Magha 3/மகம் 3","Magha 4/மகம் 4",
-						"Poorva Phalguni 1/பூரம் 1","Poorva Phalguni 2/பூரம் 2","Poorva Phalguni 3/பூரம் 3","Poorva Phalguni 4/பூரம் 4",
-						"Uthra phalguni 1/உத்திரம் 1","Uthra phalguni 2/உத்திரம் 2","Uthra phalguni 3/உத்திரம் 3","Uthra phalguni 4/உத்திரம் 4",
-						"Hastha 1/ஹஸ்தம் 1","Hastha 2/ஹஸ்தம் 2","Hastha 3/ஹஸ்தம் 3","Hastha 4/ஹஸ்தம் 4",
-						"Chitra 1/சித்திரை 1","Chitra 2/சித்திரை 2","Chitra 3/சித்திரை 3","Chitra 4/சித்திரை 4",
-						"Swaathi 1/சுவாதி 1","Swaathi 2/சுவாதி 2","Swaathi 3/சுவாதி 3","Swaathi 4/சுவாதி 4",
-						"Vishaakha 1/விசாகம் 1","Vishaakha 2/விசாகம் 2","Vishaakha 3/விசாகம் 3","Vishaakha 4/விசாகம் 4",
-						"Anuraadha 1/அனுஷம் 1","Anuraadha 2/அனுஷம் 2","Anuraadha 3/அனுஷம் 3","Anuraadha 4/அனுஷம் 4",
-						"Jyeshta 1/கேட்டை 1","Jyeshta 2/கேட்டை 2","Jyeshta 3/கேட்டை 3","Jyeshta 4/கேட்டை 4",
-						"Moola 1/மூலம் 1","Moola 2/மூலம் 2","Moola 3/மூலம் 3","Moola 4/மூலம் 4",
-						"Poorva Ashaada 1/பூராடம் 1","Poorva Ashaada 2/பூராடம் 2","Poorva Ashaada 3/பூராடம் 3","Poorva Ashaada 4/பூராடம் 4",
-						"Uthra Ashaada 1/உத்திராடம் 1","Uthra Ashaada 2/உத்திராடம் 2","Uthra Ashaada 3/உத்திராடம் 3","Uthra Ashaada 4/உத்திராடம் 4",
-						"Shraavan 1/திருவோணம் 1","Shraavan 2/திருவோணம் 2","Shraavan 3/திருவோணம் 3","Shraavan 4/திருவோணம் 4",
-						"Dhanishta 1/அவிட்டம் 1","Dhanishta 2/அவிட்டம் 2","Dhanishta 3/அவிட்டம் 3","Dhanishta 4/அவிட்டம் 4",
-						"Shathabhisha 1/சதயம் 1","Shathabhisha 2/சதயம் 2","Shathabhisha 3/சதயம் 3","Shathabhisha 4/சதயம் 4",
-						"Poorva bhadrapada 1/பூரட்டாதி 1","Poorva bhadrapada 2/பூரட்டாதி 2","Poorva bhadrapada 3/பூரட்டாதி 3","Poorva bhadrapada 4/பூரட்டாதி 4",
-						"Uthra bhadrapada 1/உத்திரட்டாதி 1","Uthra bhadrapada 2/உத்திரட்டாதி 2","Uthra bhadrapada 3/உத்திரட்டாதி 3","Uthra bhadrapada 4/உத்திரட்டாதி 4",
-						"Revathi 1/ரேவதி 1","Revathi 2/ரேவதி 2","Revathi 3/ரேவதி 3","Revathi 4/ரேவதி 4");
+	$nak_lord = array("dummy","கே","கே","கே","கே",
+						"சுக்","சுக்","சுக்","சுக்",
+						"சூரி","சூரி","சூரி","சூரி",
+						"சந்","சந்","சந்","சந்",
+						"செ","செ","செ","செ",
+						"ரா","ரா","ரா","ரா",
+						"குரு","குரு","குரு","குரு",
+						"சனி","சனி","சனி","சனி",
+						"புத","புத","புத","புத",
+						"கே","கே","கே","கே",
+						"சுக்","சுக்","சுக்","சுக்",
+						"சூரி","சூரி","சூரி","சூரி",
+						"சந்","சந்","சந்","சந்",
+						"செ","செ","செ","செ",
+						"ரா","ரா","ரா","ரா",
+						"குரு","குரு","குரு","குரு",
+						"சனி","சனி","சனி","சனி",
+						"புத","புத","புத","புத",
+						"கே","கே","கே","கே",
+						"சுக்","சுக்","சுக்","சுக்",
+						"சூரி","சூரி","சூரி","சூரி",
+						"சந்","சந்","சந்","சந்",
+						"செ","செ","செ","செ",
+						"ரா","ரா","ரா","ரா",
+						"குரு","குரு","குரு","குரு",
+						"சனி","சனி","சனி","சனி",
+						"புத","புத","புத","புத");
+
+	foreach($planetDeg as $planet => $deg)
+	{
+		foreach($sw_planet as $house => $planets)
+		{
+			//starlord calculation
+			$full_planet_deg = ($house * 30 + $deg);
+			$full_planet_deg_ragu = ($full_planet_deg > 180) ? $full_planet_deg-180 : $full_planet_deg;
+			$starlord_idx = ceil($full_planet_deg/3.333333);
+			$starlord_idx_ragu = ceil($full_planet_deg_ragu/3.333333);
+			
+			if(strpos($planets,$planet)===0 || strpos($planets,$planet)>0){
+				
+				//$planet_starlord[$planet][0] = $nak_array[$starlord_idx];
+				$planet_starlord[$planet][0] = explode('/',$nak_array[$starlord_idx])[1]; //display tamil star name
+				
+				if($starlord_idx==7 || $starlord_idx==9 || $starlord_idx==12 || $starlord_idx==14 || $starlord_idx==24 || $starlord_idx==26 || $starlord_idx==28 || 
+				$starlord_idx==30 || $starlord_idx==43 || $starlord_idx==45 || $starlord_idx==48 || $starlord_idx==50 || $starlord_idx==60 || $starlord_idx==62 || 
+				$starlord_idx==64 || $starlord_idx==66 || $starlord_idx==79 || $starlord_idx==81 || $starlord_idx==84 || $starlord_idx==86 || $starlord_idx==96 || 
+				$starlord_idx==98 || $starlord_idx==100 || $starlord_idx==102){
+					$planet_starlord[$planet][1] = $nak_lord[$starlord_idx];
+					$planet_starlord[$planet][6] = "புஷ்";
+				}
+				else{
+					$planet_starlord[$planet][1] = $nak_lord[$starlord_idx];
+					$planet_starlord[$planet][6] ='';
+				}
+				
+				$planet_starlord[$planet][2] = $full_planet_deg;
+				$planet_starlord[$planet][3] = $deg;
+				$planet_starlord[$planet][4] = $starlord_idx;
+				$planet_starlord[$planet][5] = ceil($full_planet_deg/30.0);
+				
+				/*if(!(strpos($planets,"ரா.கா")===0 || strpos($planets,"ரா.கா")>0) && (strpos($planets,"ரா")===0 || strpos($planets,"ரா")>0)){
+					//echo $house. "-" . $planets ."<br>";
+					//echo $planet_starlord[$planet][1];
+					
+					$planet_starlord[$planet][1] = $nak_lord[$starlord_idx];
+					$planet_starlord[$planet][2] = ($full_planet_deg > 180) ? $full_planet_deg-180 : $full_planet_deg;
+					$planet_starlord[$planet][3] = $deg;
+					
+					echo "|".$planet_starlord[$planet][2]."-".$planet."|";
+					echo "|".$planet_starlord[$planet][3]."-".$planet."|";
+				}*/
+			}
+			
+
+			//if((strpos($planets,"ரா")===0 || strpos($planets,"ரா")>0) && (strpos($planets,"கே")===0 || strpos($planets,"கே")>0))
+			if(strpos($planet,"ரா")===0 && (strpos($planets,"கே")===0 || strpos($planets,"கே")>0))
+			{
+				//$planet_starlord["ரா"][0] = $nak_array[$starlord_idx_ragu];
+				$planet_starlord["ரா"][0] = explode('/',$nak_array[$starlord_idx_ragu])[1]; //display tamil star name
+				//$planet_starlord["கே"][0] = $nak_array[$starlord_idx];
+				$planet_starlord["கே"][0] = explode('/',$nak_array[$starlord_idx])[1]; //display tamil star name
+				
+				if($starlord_idx_ragu==7 || $starlord_idx_ragu==9 || $starlord_idx_ragu==12 || $starlord_idx_ragu==14 || $starlord_idx_ragu==24 || $starlord_idx_ragu==26 || $starlord_idx_ragu==28 || 
+				$starlord_idx_ragu==30 || $starlord_idx_ragu==43 || $starlord_idx_ragu==45 || $starlord_idx_ragu==48 || $starlord_idx_ragu==50 || $starlord_idx_ragu==60 || $starlord_idx_ragu==62 || 
+				$starlord_idx_ragu==64 || $starlord_idx_ragu==66 || $starlord_idx_ragu==79 || $starlord_idx_ragu==81 || $starlord_idx_ragu==84 || $starlord_idx_ragu==86 || $starlord_idx_ragu==96 || 
+				$starlord_idx_ragu==98 || $starlord_idx_ragu==100 || $starlord_idx_ragu==102){
+					$planet_starlord["ரா"][1] = $nak_lord[$starlord_idx_ragu];
+					$planet_starlord["ரா"][6] = "புஷ்";
+				}
+				else{
+					$planet_starlord["ரா"][1] = $nak_lord[$starlord_idx_ragu];
+				}
+				
+				if($starlord_idx==7 || $starlord_idx==9 || $starlord_idx==12 || $starlord_idx==14 || $starlord_idx==24 || $starlord_idx==26 || $starlord_idx==28 || 
+				$starlord_idx==30 || $starlord_idx==43 || $starlord_idx==45 || $starlord_idx==48 || $starlord_idx==50 || $starlord_idx==60 || $starlord_idx==62 || 
+				$starlord_idx==64 || $starlord_idx==66 || $starlord_idx==79 || $starlord_idx==81 || $starlord_idx==84 || $starlord_idx==86 || $starlord_idx==96 || 
+				$starlord_idx==98 || $starlord_idx==100 || $starlord_idx==102){
+					$planet_starlord["கே"][1] = $nak_lord[$starlord_idx];
+					$planet_starlord["கே"][6] = "புஷ்";
+				}
+				else{
+					
+					$planet_starlord["கே"][1] = $nak_lord[$starlord_idx];
+					$planet_starlord["கே"][6] = "";
+				}
+				
+				$planet_starlord["ரா"][2] = ($full_planet_deg > 180) ? $full_planet_deg-180 : $full_planet_deg;
+				$planet_starlord["ரா"][3] = $deg;
+				$planet_starlord["ரா"][4] = $starlord_idx_ragu;
+				$planet_starlord["ரா"][5] = ceil($full_planet_deg/30.0);
+				
+				$planet_starlord["கே"][2] = $full_planet_deg;
+				$planet_starlord["கே"][3] = $deg;
+				$planet_starlord["கே"][4] = $starlord_idx;
+				$planet_starlord["கே"][5] = ceil($full_planet_deg/30.0);
+			}
+		}
+	}
+	
+	if(strpos(debug_backtrace()[0]['file'],"new_panchang")===false){
+		
+		//calculate planet karana's
+		calculateKaranamAllPlanets(true); //true for inner/girl
+	
+		//calculate planet thithi's
+		calculateThithiAllPlanets(true); //true for inner/girl
+	
+		//calculate planet thithi's
+		calculateYogamAllPlanets(true); //true for inner/girl
+		
+		//calculate planet thithi's
+		calculateVainasigamAllPlanets(true); //true for inner/girl
+		
+		//calculate planet abhijit's
+		calculateAbhijitAllPlanets(true); //true for inner/girl
+	}		
+
+	echo "<center><div class='divTable blueTable' id='starlordHeadMutable' style='height:auto;display:none'>"; 
+		echo "<br>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divTableCell' colspan=3>";
+				echo "<H6 style='font-weight:bold;color:black'>கிரக சாரம்</H6>";
+			echo "</div>";
+		echo "</div>";
+	echo "</div></center>";
+
+	echo "<center><div class='divTable blueTable' id='starlordBodyMutable' style='height:auto;display:none'>"; 
+	echo "<div class='divTableRow'>";
+				echo "<div class='divTableCell'>கிரகம்</div>";
+				echo "<div class='divTableCell'>நக்ஷ் பாத</div>";
+				echo "<div class='divTableCell'>தாரை</div>";
+				echo "<div class='divTableCell'>சூக்ஷம தாரை</div>";
+				echo "<div class='divTableCell'>பாகை</div>";
+				//echo "<div class='divTableCell'>ராசி பாகை</div>";
+		echo "</div>";
+	
+	//Rearranging raasi/paadham array based on Moon paadham for Thaara palan
+	$str = getShortStar($g_nak . ' ' . $g_padham);
+	//findPaadham($str);
+	$rearranged_arr = generateOrderedNakArray($str);
+	
+	foreach($planet_starlord as $planet => $data)
+	{	
+		echo "<div class='divTableRow'>";
+			if((strcmp("சனி",$planet)==0 or strcmp("குரு",$planet)==0 or strcmp("செ",$planet)==0 or strcmp("சுக்",$planet)==0 or
+				strcmp("புத",$planet)==0) and $planetDeg_default[$planet] < 0.0){
+					//strcmp("புத",$planet)==0) and $planetDeg[$planet] < 0.0){
+						
+				echo "<div class='divPanchangHeadingSmall'>$planet (வ)</div>";
+			}
+			else{
+				echo "<div class='divPanchangHeadingSmall'>$planet</div>";
+			}
+			
+			$star_padham = getShortStar($data[0]);
+			
+			if(strstr($data[6],"புஷ்") !== false){
+				echo "<div class='divPanchangSmallGreen'>$star_padham<BR>(புஷ்)</div>";
+			}
+			else{
+				echo "<div class='divPanchangSmall'>" . $star_padham ."</div>";
+			}
+			
+			echo getThaaraPalan($data[0]);
+			debug("planet-----".$data[0]."--------moon".$g_nak . ' ' . $g_padham);
+			echo getThaaraHtml($data[0]);
+			
+			echo "<div class='divPanchangSmall'>" . DECtoDMS($data[2]) . " (" . DECtoDMS($data[3]) . ")" . "</div>";
+			//echo "<div class='divPanchangSmall'>" . DECtoDMS($data[3]) . "</div>";
+			
+		echo "</div>";
+	}
+	
+	echo "<div class='divTableRow' id='hidePdf1'>";
+	echo "</div>";
+	
+	echo "</div></center>";
+	
+	if(strpos(debug_backtrace()[0]['file'],"new_panchang")===false){
+		echo "<center><div class='divTable blueTable' id='thithiYogamKaranamHeadMutable' style='height:32px;display:none;margin-top:20px'>"; 
+			echo "<div class='divTableRow'>";
+				echo "<div class='divTableCell' colspan=3>";
+					echo "<H6 style='font-weight:bold;color:black'>கிரக திதி/யோக/கரணம்</H6>";
+				echo "</div>";
+			echo "</div>";
+		echo "</div></center>";
+
+		echo "<center><div class='divTable blueTable' id='thithiYogamKaranamBodyMutable' style='height:auto;display:none'>"; 
+		echo "<div class='divTableRow'>";
+					echo "<div class='divTableCell'>கிர</div>";
+					echo "<div class='divTableCell'>திதி</div>";
+					echo "<div class='divTableCell'>யோ</div>";
+					echo "<div class='divTableCell'>கர</div>";
+			echo "</div>";
+		
+		foreach($planet_starlord as $planet => $data)
+		{
+			echo "<div class='divTableRow'>";
+				if((strcmp("சனி",$planet)==0 or strcmp("குரு",$planet)==0 or strcmp("செ",$planet)==0 or strcmp("சுக்",$planet)==0 or
+					strcmp("புத",$planet)==0) and $planetDeg_default[$planet] < 0.0){
+					echo "<div class='divPanchangHeadingSmall'>$planet (வ)</div>";
+				}
+				else{
+					echo "<div class='divPanchangHeadingSmall'>$planet</div>";
+				}
+					
+				echo "<div class='divPanchangSmall'>" . $g_planetThithiLord[$planet] . "</div>";
+				echo "<div class='divPanchangSmall'>" . $g_planetYogamLord[$planet] . "</div>";
+				echo "<div class='divPanchangSmall'>" . $g_planetKaranaLord[$planet] . "</div>";
+			echo "</div>";
+		}
+
+		echo "</div></center>";
+		
+		echo "<center><div class='divTable blueTable' id='abhijitHeadMutable' style='height:32px;display:none;margin-top:20px'>"; 
+			echo "<div class='divTableRow'>";
+				echo "<div class='divTableCell' colspan=3>";
+					echo "<H6 style='font-weight:bold;color:black'>கிரக வைநாசிகம்/அபிஜித்</H6>";
+				echo "</div>";
+			echo "</div>";
+		echo "</div></center>";
+
+		echo "<center><div class='divTable blueTable' id='abhijitBodyMutable' style='height:auto;display:none'>"; 
+			echo "<div class='divTableRow'>";
+					echo "<div class='divTableCell'>கிர</div>";
+					echo "<div class='divTableCell'>வைநா</div>";
+					echo "<div class='divTableCell'>வைநா நிவர்தி</div>";
+					echo "<div class='divTableCell'>அபிஜித்</div>";
+			echo "</div>";
+		
+		foreach($planet_starlord as $planet => $data)
+		{
+			echo "<div class='divTableRow'>";
+				if((strcmp("சனி",$planet)==0 or strcmp("குரு",$planet)==0 or strcmp("செ",$planet)==0 or strcmp("சுக்",$planet)==0 or
+					strcmp("புத",$planet)==0) and $planetDeg_default[$planet] < 0.0){
+					echo "<div class='divPanchangHeadingSmall'>$planet (வ)</div>";
+				}
+				else{
+					echo "<div class='divPanchangHeadingSmall'>$planet</div>";
+				}
+				
+				echo "<div class='divPanchangSmall'>" . $g_planetVainasigamNak[$planet][0] . "</div>";
+				echo "<div class='divPanchangSmall'>" . $g_planetVainasigamNak[$planet][1] . "</div>";
+				echo "<div class='divPanchangSmall'>" . join("<BR>",$g_planetAbhijitNak[$planet]) . "</div>";
+			echo "</div>";
+		}
+		
+		echo "</div></center>";
+		
+		echo "<center><div class='divTable blueTable' id='kpHeadMutable' style='height:32px;display:none;margin-top:20px'>"; 
+			echo "<div class='divTableRow'>";
+				echo "<div class='divTableCell' colspan=3>";
+					echo "<H6 style='font-weight:bold;color:black'>KP details</H6>";
+				echo "</div>";
+			echo "</div>";
+		echo "</div></center>";
+
+		echo "<center><div class='divTable blueTable' id='kpBodyMutable' style='height:auto;display:none'>"; 
+		echo "<div class='divTableRow'>";
+				echo "<div class='divTableCell'>கிர</div>";
+				echo "<div class='divTableCell'>பாகை</div>";
+				echo "<div class='divTableCell'>நக்ஷ் பா</div>";
+				echo "<div class='divTableCell'>ந.அ.</div>";
+				echo "<div class='divTableCell'>உ.அ.</div>";
+			echo "</div>";
+		
+		foreach($planet_starlord as $planet => $data)
+		{	
+			echo "<div class='divTableRow'>";
+				if((strcmp("சனி",$planet)==0 or strcmp("குரு",$planet)==0 or strcmp("செ",$planet)==0 or strcmp("சுக்",$planet)==0 or
+					strcmp("புத",$planet)==0) and $planetDeg_default[$planet] < 0.0){
+						//strcmp("புத",$planet)==0) and $planetDeg[$planet] < 0.0){
+							
+					echo "<div class='divPanchangHeadingSmall'>$planet (வ)</div>";
+				}
+				else{
+					echo "<div class='divPanchangHeadingSmall'>$planet</div>";
+				}
+				
+				echo "<div class='divPanchangSmall'>" . DECtoDMS($data[2]) . " (" . DECtoDMS($data[3]) . ")" . "</div>";
+				
+				$star_padham = getShortStar($data[0]);
+				
+				if(strstr($data[6],"புஷ்") !== false){
+					echo "<div class='divPanchangSmallGreen'>$star_padham<BR>(புஷ்)</div>";
+				}
+				else{
+					echo "<div class='divPanchangSmall'>" . $star_padham ."</div>";
+				}
+				
+				echo "<div class='divPanchangSmall'>" . $data[1] . "</div>";
+				
+				echo "<div class='divPanchangSmall'>" . findSubLord($data[1],$data[2]) . "</div>";
+				
+			echo "</div>";
+		}
+
+		echo "</div></center>";
+	}
+	
+	//displayStarLord_transit();
+}
+
+
+//This function sperated for jamakol to exclude unnecessary functionality like vainasigam, karanam
+function displayStarLord_jamakol()
+{
+	global $planetDeg,$sw_planet, $planet_starlord, $g_planetKaranaLord, $g_planetThithiLord, $g_planetYogamLord, $g_planetVainasigamNak, $g_planetAbhijitNak,$planetDeg_default, $nak_array;
+	
+	//$planet_starlord = array();
+	
 	$nak_lord = array("dummy","கே","கே","கே","கே",
 						"சுக்","சுக்","சுக்","சுக்",
 						"சூரி","சூரி","சூரி","சூரி",
@@ -2250,10 +2745,12 @@ function displayStarLord()
 				$starlord_idx==30 || $starlord_idx==43 || $starlord_idx==45 || $starlord_idx==48 || $starlord_idx==50 || $starlord_idx==60 || $starlord_idx==62 || 
 				$starlord_idx==64 || $starlord_idx==66 || $starlord_idx==79 || $starlord_idx==81 || $starlord_idx==84 || $starlord_idx==86 || $starlord_idx==96 || 
 				$starlord_idx==98 || $starlord_idx==100 || $starlord_idx==102){
-					$planet_starlord[$planet][1] = $nak_lord[$starlord_idx]."(புஷ்)";
+					$planet_starlord[$planet][1] = $nak_lord[$starlord_idx];
+					$planet_starlord[$planet][6] = "புஷ்";
 				}
 				else{
 					$planet_starlord[$planet][1] = $nak_lord[$starlord_idx];
+					$planet_starlord[$planet][6] = '';
 				}
 				
 				$planet_starlord[$planet][2] = $full_planet_deg;
@@ -2272,9 +2769,12 @@ function displayStarLord()
 					echo "|".$planet_starlord[$planet][2]."-".$planet."|";
 					echo "|".$planet_starlord[$planet][3]."-".$planet."|";
 				}*/
+				
+				debug("<BR>planet=$planet,fulldegree=".$full_planet_deg."house=".$house."deg=$deg");
 			}
 			
-			if((strpos($planets,"ரா")===0 || strpos($planets,"ரா")>0) && (strpos($planets,"கே")===0 || strpos($planets,"கே")>0))
+			//if((strpos($planets,"ரா")===0 || strpos($planets,"ரா")>0) && (strpos($planets,"கே")===0 || strpos($planets,"கே")>0))
+			if(strpos($planet,"ரா")===0 && (strpos($planets,"கே")===0 || strpos($planets,"கே")>0))
 			{
 				//$planet_starlord["ரா"][0] = $nak_array[$starlord_idx_ragu];
 				$planet_starlord["ரா"][0] = explode('/',$nak_array[$starlord_idx_ragu])[1]; //display tamil star name
@@ -2285,12 +2785,15 @@ function displayStarLord()
 				$starlord_idx==30 || $starlord_idx==43 || $starlord_idx==45 || $starlord_idx==48 || $starlord_idx==50 || $starlord_idx==60 || $starlord_idx==62 || 
 				$starlord_idx==64 || $starlord_idx==66 || $starlord_idx==79 || $starlord_idx==81 || $starlord_idx==84 || $starlord_idx==86 || $starlord_idx==96 || 
 				$starlord_idx==98 || $starlord_idx==100 || $starlord_idx==102){
-					$planet_starlord["ரா"][1] = $nak_lord[$starlord_idx_ragu]."(புஷ்)";
-					$planet_starlord["கே"][1] = $nak_lord[$starlord_idx]."(புஷ்)";
+					$planet_starlord["ரா"][1] = $nak_lord[$starlord_idx_ragu];
+					$planet_starlord["ரா"][6] = "புஷ்";
+					$planet_starlord["கே"][1] = $nak_lord[$starlord_idx];
+					$planet_starlord["கே"][6] = "புஷ்";
 				}
 				else{
 					$planet_starlord["ரா"][1] = $nak_lord[$starlord_idx_ragu];
 					$planet_starlord["கே"][1] = $nak_lord[$starlord_idx];
+					$planet_starlord["கே"][6] = "";
 				}
 				
 				$planet_starlord["ரா"][2] = ($full_planet_deg > 180) ? $full_planet_deg-180 : $full_planet_deg;
@@ -2322,8 +2825,7 @@ function displayStarLord()
 		
 		//calculate planet abhijit's
 		calculateAbhijitAllPlanets(true); //true for inner/girl
-	}		
-
+	}
 
 	echo "<center><div class='divTable blueTable' id='starlordHeadMutable' style='height:auto;display:none'>"; 
 		echo "<br>";
@@ -2450,39 +2952,13 @@ function displayStarLord()
 	//displayStarLord_transit();
 }
 
+
 function displayStarLord_transit()
 {
-	global $planetDeg_transit,$tr_sw_planet, $planet_starlord_transit,$g_planetKaranaLord_boy, $g_planetThithiLord_boy, $g_planetYogamLord_boy, $planetDeg_default_transit;
+	global $planetDeg_transit,$tr_sw_planet, $planet_starlord_transit,$g_planetKaranaLord_boy, $g_planetThithiLord_boy, $g_planetYogamLord_boy, $planetDeg_default_transit, $nak_array;
 	
 	$planet_starlord_transit = array();
 	
-	$nak_array = array("dummy/dummy","Aswini 1/அசுவினி 1","Aswini 2/அசுவினி 2","Aswini 3/அசுவினி 3","Aswini 4/அசுவினி 4",
-						"Bharani 1/பரணி 1","Bharani 2/பரணி 2","Bharani 3/பரணி 3","Bharani 4/பரணி 4",
-						"Krithika 1/கிருத்திகை 1","Krithika 2/கிருத்திகை 2","Krithika 3/கிருத்திகை 3","Krithika 4/கிருத்திகை 4",
-						"Rohini 1/ரோகிணி 1","Rohini 2/ரோகிணி 2","Rohini 3/ரோகிணி 3","Rohini 4/ரோகிணி 4",
-						"Mrigashirsha 1/மிருகசிரீஷம் 1","Mrigashirsha 2/மிருகசிரீஷம் 2","Mrigashirsha 3/மிருகசிரீஷம் 3","Mrigashirsha 4/மிருகசிரீஷம் 4",
-						"Arudra 1/திருவாதிரை 1","Arudra 2/திருவாதிரை 2","Arudra 3/திருவாதிரை 3","Arudra 4/திருவாதிரை 4",
-						"Punarvasu 1/புனர்பூசம் 1","Punarvasu 2/புனர்பூசம் 2","Punarvasu 3/புனர்பூசம் 3","Punarvasu 4/புனர்பூசம் 4",
-						"Pushyami 1/பூசம் 1","Pushyami 2/பூசம் 2","Pushyami 3/பூசம் 3","Pushyami 4/பூசம் 4",
-						"Ashlesha 1/ஆயில்யம் 1","Ashlesha 2/ஆயில்யம் 2","Ashlesha 3/ஆயில்யம் 3","Ashlesha 4/ஆயில்யம் 4",
-						"Magha 1/மகம் 1","Magha 2/மகம் 2","Magha 3/மகம் 3","Magha 4/மகம் 4",
-						"Poorva Phalguni 1/பூரம் 1","Poorva Phalguni 2/பூரம் 2","Poorva Phalguni 3/பூரம் 3","Poorva Phalguni 4/பூரம் 4",
-						"Uthra phalguni 1/உத்திரம் 1","Uthra phalguni 2/உத்திரம் 2","Uthra phalguni 3/உத்திரம் 3","Uthra phalguni 4/உத்திரம் 4",
-						"Hastha 1/ஹஸ்தம் 1","Hastha 2/ஹஸ்தம் 2","Hastha 3/ஹஸ்தம் 3","Hastha 4/ஹஸ்தம் 4",
-						"Chitra 1/சித்திரை 1","Chitra 2/சித்திரை 2","Chitra 3/சித்திரை 3","Chitra 4/சித்திரை 4",
-						"Swaathi 1/சுவாதி 1","Swaathi 2/சுவாதி 2","Swaathi 3/சுவாதி 3","Swaathi 4/சுவாதி 4",
-						"Vishaakha 1/விசாகம் 1","Vishaakha 2/விசாகம் 2","Vishaakha 3/விசாகம் 3","Vishaakha 4/விசாகம் 4",
-						"Anuraadha 1/அனுஷம் 1","Anuraadha 2/அனுஷம் 2","Anuraadha 3/அனுஷம் 3","Anuraadha 4/அனுஷம் 4",
-						"Jyeshta 1/கேட்டை 1","Jyeshta 2/கேட்டை 2","Jyeshta 3/கேட்டை 3","Jyeshta 4/கேட்டை 4",
-						"Moola 1/மூலம் 1","Moola 2/மூலம் 2","Moola 3/மூலம் 3","Moola 4/மூலம் 4",
-						"Poorva Ashaada 1/பூராடம் 1","Poorva Ashaada 2/பூராடம் 2","Poorva Ashaada 3/பூராடம் 3","Poorva Ashaada 4/பூராடம் 4",
-						"Uthra Ashaada 1/உத்திராடம் 1","Uthra Ashaada 2/உத்திராடம் 2","Uthra Ashaada 3/உத்திராடம் 3","Uthra Ashaada 4/உத்திராடம் 4",
-						"Shraavan 1/திருவோணம் 1","Shraavan 2/திருவோணம் 2","Shraavan 3/திருவோணம் 3","Shraavan 4/திருவோணம் 4",
-						"Dhanishta 1/அவிட்டம் 1","Dhanishta 2/அவிட்டம் 2","Dhanishta 3/அவிட்டம் 3","Dhanishta 4/அவிட்டம் 4",
-						"Shathabhisha 1/சதயம் 1","Shathabhisha 2/சதயம் 2","Shathabhisha 3/சதயம் 3","Shathabhisha 4/சதயம் 4",
-						"Poorva bhadrapada 1/பூரட்டாதி 1","Poorva bhadrapada 2/பூரட்டாதி 2","Poorva bhadrapada 3/பூரட்டாதி 3","Poorva bhadrapada 4/பூரட்டாதி 4",
-						"Uthra bhadrapada 1/உத்திரட்டாதி 1","Uthra bhadrapada 2/உத்திரட்டாதி 2","Uthra bhadrapada 3/உத்திரட்டாதி 3","Uthra bhadrapada 4/உத்திரட்டாதி 4",
-						"Revathi 1/ரேவதி 1","Revathi 2/ரேவதி 2","Revathi 3/ரேவதி 3","Revathi 4/ரேவதி 4");
 	$nak_lord = array("dummy","கே","கே","கே","கே","சுக்","சுக்","சுக்","சுக்","சூரி","சூரி","சூரி","சூரி","சந்","சந்","சந்","சந்","செ","செ","செ","செ","ரா","ரா","ரா","ரா","குரு","குரு","குரு","குரு","சனி","சனி","சனி","சனி","புத","புத","புத","புத",
 						"கே","கே","கே","கே","சுக்","சுக்","சுக்","சுக்","சூரி","சூரி","சூரி","சூரி","சந்","சந்","சந்","சந்","செ","செ","செ","செ","ரா","ரா","ரா","ரா","குரு","குரு","குரு","குரு","சனி","சனி","சனி","சனி","புத","புத","புத","புத",
 						"கே","கே","கே","கே","சுக்","சுக்","சுக்","சுக்","சூரி","சூரி","சூரி","சூரி","சந்","சந்","சந்","சந்","செ","செ","செ","செ","ரா","ரா","ரா","ரா","குரு","குரு","குரு","குரு","சனி","சனி","சனி","சனி","புத","புத","புத","புத");
@@ -2507,7 +2983,8 @@ function displayStarLord_transit()
 				$starlord_idx==30 || $starlord_idx==43 || $starlord_idx==45 || $starlord_idx==48 || $starlord_idx==50 || $starlord_idx==60 || $starlord_idx==62 || 
 				$starlord_idx==64 || $starlord_idx==66 || $starlord_idx==79 || $starlord_idx==81 || $starlord_idx==84 || $starlord_idx==86 || $starlord_idx==96 || 
 				$starlord_idx==98 || $starlord_idx==100 || $starlord_idx==102){
-					$planet_starlord_transit[$planet][1] = $nak_lord[$starlord_idx]."(புஷ்)";
+					$planet_starlord_transit[$planet][1] = $nak_lord[$starlord_idx];
+					$planet_starlord_transit[$planet][6] = "புஷ்";
 				}
 				else{
 					$planet_starlord_transit[$planet][1] = $nak_lord[$starlord_idx];
@@ -2530,8 +3007,10 @@ function displayStarLord_transit()
 				$starlord_idx==30 || $starlord_idx==43 || $starlord_idx==45 || $starlord_idx==48 || $starlord_idx==50 || $starlord_idx==60 || $starlord_idx==62 || 
 				$starlord_idx==64 || $starlord_idx==66 || $starlord_idx==79 || $starlord_idx==81 || $starlord_idx==84 || $starlord_idx==86 || $starlord_idx==96 || 
 				$starlord_idx==98 || $starlord_idx==100 || $starlord_idx==102){
-					$planet_starlord_transit["கே"][1] = $nak_lord[$starlord_idx]."(புஷ்)";
-					$planet_starlord_transit["ரா"][1] = $nak_lord[$starlord_idx_ragu]."(புஷ்)";
+					$planet_starlord_transit["கே"][1] = $nak_lord[$starlord_idx];
+					$planet_starlord_transit["கே"][6] = "புஷ்";
+					$planet_starlord_transit["ரா"][1] = $nak_lord[$starlord_idx_ragu];
+					$planet_starlord_transit["ரா"][6] = "புஷ்";
 				}
 				else{
 					$planet_starlord_transit["கே"][1] = $nak_lord[$starlord_idx];
@@ -2605,35 +3084,9 @@ function displayStarLord_transit()
 }
 
 function getVainasigam($inner=true){
-	global $planetDeg_transit,$tr_sw_planet, $planet_starlord, $planet_starlord_boy;
+	global $planetDeg_transit,$tr_sw_planet, $planet_starlord, $planet_starlord_boy, $nak_array;
 	
-	$nak_arr  = array("dummy/dummy","Aswini 1/அசுவினி 1","Aswini 2/அசுவினி 2","Aswini 3/அசுவினி 3","Aswini 4/அசுவினி 4",
-						"Bharani 1/பரணி 1","Bharani 2/பரணி 2","Bharani 3/பரணி 3","Bharani 4/பரணி 4",
-						"Krithika 1/கிருத்திகை 1","Krithika 2/கிருத்திகை 2","Krithika 3/கிருத்திகை 3","Krithika 4/கிருத்திகை 4",
-						"Rohini 1/ரோகிணி 1","Rohini 2/ரோகிணி 2","Rohini 3/ரோகிணி 3","Rohini 4/ரோகிணி 4",
-						"Mrigashirsha 1/மிருகசிரீஷம் 1","Mrigashirsha 2/மிருகசிரீஷம் 2","Mrigashirsha 3/மிருகசிரீஷம் 3","Mrigashirsha 4/மிருகசிரீஷம் 4",
-						"Arudra 1/திருவாதிரை 1","Arudra 2/திருவாதிரை 2","Arudra 3/திருவாதிரை 3","Arudra 4/திருவாதிரை 4",
-						"Punarvasu 1/புனர்பூசம் 1","Punarvasu 2/புனர்பூசம் 2","Punarvasu 3/புனர்பூசம் 3","Punarvasu 4/புனர்பூசம் 4",
-						"Pushyami 1/பூசம் 1","Pushyami 2/பூசம் 2","Pushyami 3/பூசம் 3","Pushyami 4/பூசம் 4",
-						"Ashlesha 1/ஆயில்யம் 1","Ashlesha 2/ஆயில்யம் 2","Ashlesha 3/ஆயில்யம் 3","Ashlesha 4/ஆயில்யம் 4",
-						"Magha 1/மகம் 1","Magha 2/மகம் 2","Magha 3/மகம் 3","Magha 4/மகம் 4",
-						"Poorva Phalguni 1/பூரம் 1","Poorva Phalguni 2/பூரம் 2","Poorva Phalguni 3/பூரம் 3","Poorva Phalguni 4/பூரம் 4",
-						"Uthra phalguni 1/உத்திரம் 1","Uthra phalguni 2/உத்திரம் 2","Uthra phalguni 3/உத்திரம் 3","Uthra phalguni 4/உத்திரம் 4",
-						"Hastha 1/ஹஸ்தம் 1","Hastha 2/ஹஸ்தம் 2","Hastha 3/ஹஸ்தம் 3","Hastha 4/ஹஸ்தம் 4",
-						"Chitra 1/சித்திரை 1","Chitra 2/சித்திரை 2","Chitra 3/சித்திரை 3","Chitra 4/சித்திரை 4",
-						"Swaathi 1/சுவாதி 1","Swaathi 2/சுவாதி 2","Swaathi 3/சுவாதி 3","Swaathi 4/சுவாதி 4",
-						"Vishaakha 1/விசாகம் 1","Vishaakha 2/விசாகம் 2","Vishaakha 3/விசாகம் 3","Vishaakha 4/விசாகம் 4",
-						"Anuraadha 1/அனுஷம் 1","Anuraadha 2/அனுஷம் 2","Anuraadha 3/அனுஷம் 3","Anuraadha 4/அனுஷம் 4",
-						"Jyeshta 1/கேட்டை 1","Jyeshta 2/கேட்டை 2","Jyeshta 3/கேட்டை 3","Jyeshta 4/கேட்டை 4",
-						"Moola 1/மூலம் 1","Moola 2/மூலம் 2","Moola 3/மூலம் 3","Moola 4/மூலம் 4",
-						"Poorva Ashaada 1/பூராடம் 1","Poorva Ashaada 2/பூராடம் 2","Poorva Ashaada 3/பூராடம் 3","Poorva Ashaada 4/பூராடம் 4",
-						"Uthra Ashaada 1/உத்திராடம் 1","Uthra Ashaada 2/உத்திராடம் 2","Uthra Ashaada 3/உத்திராடம் 3","Uthra Ashaada 4/உத்திராடம் 4",
-						"Shraavan 1/திருவோணம் 1","Shraavan 2/திருவோணம் 2","Shraavan 3/திருவோணம் 3","Shraavan 4/திருவோணம் 4",
-						"Dhanishta 1/அவிட்டம் 1","Dhanishta 2/அவிட்டம் 2","Dhanishta 3/அவிட்டம் 3","Dhanishta 4/அவிட்டம் 4",
-						"Shathabhisha 1/சதயம் 1","Shathabhisha 2/சதயம் 2","Shathabhisha 3/சதயம் 3","Shathabhisha 4/சதயம் 4",
-						"Poorva bhadrapada 1/பூரட்டாதி 1","Poorva bhadrapada 2/பூரட்டாதி 2","Poorva bhadrapada 3/பூரட்டாதி 3","Poorva bhadrapada 4/பூரட்டாதி 4",
-						"Uthra bhadrapada 1/உத்திரட்டாதி 1","Uthra bhadrapada 2/உத்திரட்டாதி 2","Uthra bhadrapada 3/உத்திரட்டாதி 3","Uthra bhadrapada 4/உத்திரட்டாதி 4",
-						"Revathi 1/ரேவதி 1","Revathi 2/ரேவதி 2","Revathi 3/ரேவதி 3","Revathi 4/ரேவதி 4");
+	$nak_arr = $nak_array;
 	
 	if($inner==true){ //girl	
 		$vaisaisam_idx = $planet_starlord['சந்'][4] + VAINASIGAM_PAD_COUNT - 1;
@@ -2671,37 +3124,10 @@ function getVainasigam($inner=true){
 
 function calculateStarLord()
 {
-	global $planetDeg,$sw_planet, $planet_starlord, $g_planetKaranaLord, $g_planetThithiLord, $g_planetYogamLord;
+	global $planetDeg,$sw_planet, $planet_starlord, $g_planetKaranaLord, $g_planetThithiLord, $g_planetYogamLord, $nak_array;
 	
 	//$planet_starlord = array();
 	
-	$nak_array = array("dummy","Aswini 1/அசுவினி 1","Aswini 2/அசுவினி 2","Aswini 3/அசுவினி 3","Aswini 4/அசுவினி 4",
-						"Bharani 1/பரணி 1","Bharani 2/பரணி 2","Bharani 3/பரணி 3","Bharani 4/பரணி 4",
-						"Krithika 1/கிருத்திகை 1","Krithika 2/கிருத்திகை 2","Krithika 3/கிருத்திகை 3","Krithika 4/கிருத்திகை 4",
-						"Rohini 1/ரோகிணி 1","Rohini 2/ரோகிணி 2","Rohini 3/ரோகிணி 3","Rohini 4/ரோகிணி 4",
-						"Mrigashirsha 1/மிருகசிரீஷம் 1","Mrigashirsha 2/மிருகசிரீஷம் 2","Mrigashirsha 3/மிருகசிரீஷம் 3","Mrigashirsha 4/மிருகசிரீஷம் 4",
-						"Arudra 1/திருவாதிரை 1","Arudra 2/திருவாதிரை 2","Arudra 3/திருவாதிரை 3","Arudra 4/திருவாதிரை 4",
-						"Punarvasu 1/புனர்பூசம் 1","Punarvasu 2/புனர்பூசம் 2","Punarvasu 3/புனர்பூசம் 3","Punarvasu 4/புனர்பூசம் 4",
-						"Pushyami 1/பூசம் 1","Pushyami 2/பூசம் 2","Pushyami 3/பூசம் 3","Pushyami 4/பூசம் 4",
-						"Ashlesha 1/ஆயில்யம் 1","Ashlesha 2/ஆயில்யம் 2","Ashlesha 3/ஆயில்யம் 3","Ashlesha 4/ஆயில்யம் 4",
-						"Magha 1/மகம் 1","Magha 2/மகம் 2","Magha 3/மகம் 3","Magha 4/மகம் 4",
-						"Poorva Phalguni 1/பூரம் 1","Poorva Phalguni 2/பூரம் 2","Poorva Phalguni 3/பூரம் 3","Poorva Phalguni 4/பூரம் 4",
-						"Uthra phalguni 1/உத்திரம் 1","Uthra phalguni 2/உத்திரம் 2","Uthra phalguni 3/உத்திரம் 3","Uthra phalguni 4/உத்திரம் 4",
-						"Hastha 1/ஹஸ்தம் 1","Hastha 2/ஹஸ்தம் 2","Hastha 3/ஹஸ்தம் 3","Hastha 4/ஹஸ்தம் 4",
-						"Chitra 1/சித்திரை 1","Chitra 2/சித்திரை 2","Chitra 3/சித்திரை 3","Chitra 4/சித்திரை 4",
-						"Swaathi 1/சுவாதி 1","Swaathi 2/சுவாதி 2","Swaathi 3/சுவாதி 3","Swaathi 4/சுவாதி 4",
-						"Vishaakha 1/விசாகம் 1","Vishaakha 2/விசாகம் 2","Vishaakha 3/விசாகம் 3","Vishaakha 4/விசாகம் 4",
-						"Anuraadha 1/அனுஷம் 1","Anuraadha 2/அனுஷம் 2","Anuraadha 3/அனுஷம் 3","Anuraadha 4/அனுஷம் 4",
-						"Jyeshta 1/கேட்டை 1","Jyeshta 2/கேட்டை 2","Jyeshta 3/கேட்டை 3","Jyeshta 4/கேட்டை 4",
-						"Moola 1/மூலம் 1","Moola 2/மூலம் 2","Moola 3/மூலம் 3","Moola 4/மூலம் 4",
-						"Poorva Ashaada 1/பூராடம் 1","Poorva Ashaada 2/பூராடம் 2","Poorva Ashaada 3/பூராடம் 3","Poorva Ashaada 4/பூராடம் 4",
-						"Uthra Ashaada 1/உத்திராடம் 1","Uthra Ashaada 2/உத்திராடம் 2","Uthra Ashaada 3/உத்திராடம் 3","Uthra Ashaada 4/உத்திராடம் 4",
-						"Shraavan 1/திருவோணம் 1","Shraavan 2/திருவோணம் 2","Shraavan 3/திருவோணம் 3","Shraavan 4/திருவோணம் 4",
-						"Dhanishta 1/அவிட்டம் 1","Dhanishta 2/அவிட்டம் 2","Dhanishta 3/அவிட்டம் 3","Dhanishta 4/அவிட்டம் 4",
-						"Shathabhisha 1/சதயம் 1","Shathabhisha 2/சதயம் 2","Shathabhisha 3/சதயம் 3","Shathabhisha 4/சதயம் 4",
-						"Poorva bhadrapada 1/பூரட்டாதி 1","Poorva bhadrapada 2/பூரட்டாதி 2","Poorva bhadrapada 3/பூரட்டாதி 3","Poorva bhadrapada 4/பூரட்டாதி 4",
-						"Uthra bhadrapada 1/உத்திரட்டாதி 1","Uthra bhadrapada 2/உத்திரட்டாதி 2","Uthra bhadrapada 3/உத்திரட்டாதி 3","Uthra bhadrapada 4/உத்திரட்டாதி 4",
-						"Revathi 1/ரேவதி 1","Revathi 2/ரேவதி 2","Revathi 3/ரேவதி 3","Revathi 4/ரேவதி 4");
 	$nak_lord = array("dummy","கே","கே","கே","கே",
 						"சுக்","சுக்","சுக்","சுக்",
 						"சூரி","சூரி","சூரி","சூரி",
@@ -2750,10 +3176,12 @@ function calculateStarLord()
 				$starlord_idx==30 || $starlord_idx==43 || $starlord_idx==45 || $starlord_idx==48 || $starlord_idx==50 || $starlord_idx==60 || $starlord_idx==62 || 
 				$starlord_idx==64 || $starlord_idx==66 || $starlord_idx==79 || $starlord_idx==81 || $starlord_idx==84 || $starlord_idx==86 || $starlord_idx==96 || 
 				$starlord_idx==98 || $starlord_idx==100 || $starlord_idx==102){
-					$planet_starlord[$planet][1] = $nak_lord[$starlord_idx]."(புஷ்)";
+					$planet_starlord[$planet][1] = $nak_lord[$starlord_idx];
+					$planet_starlord[$planet][6] = "புஷ்";
 				}
 				else{
 					$planet_starlord[$planet][1] = $nak_lord[$starlord_idx];
+					$planet_starlord[$planet][6] = '';
 				}
 				
 				$planet_starlord[$planet][2] = $full_planet_deg;
@@ -2784,13 +3212,16 @@ function calculateStarLord()
 				$starlord_idx==30 || $starlord_idx==43 || $starlord_idx==45 || $starlord_idx==48 || $starlord_idx==50 || $starlord_idx==60 || $starlord_idx==62 || 
 				$starlord_idx==64 || $starlord_idx==66 || $starlord_idx==79 || $starlord_idx==81 || $starlord_idx==84 || $starlord_idx==86 || $starlord_idx==96 || 
 				$starlord_idx==98 || $starlord_idx==100 || $starlord_idx==102){
-					$planet_starlord["ரா"][1] = $nak_lord[$starlord_idx_ragu]."(புஷ்)";
-					$planet_starlord["கே"][1] = $nak_lord[$starlord_idx]."(புஷ்)";
+					$planet_starlord["ரா"][1] = $nak_lord[$starlord_idx_ragu];
+					$planet_starlord["ரா"][6] = "புஷ்";
+					$planet_starlord["கே"][1] = $nak_lord[$starlord_idx];
+					$planet_starlord["கே"][6] = "புஷ்";
 				}
 				else{
 					
 					$planet_starlord["ரா"][1] = $nak_lord[$starlord_idx_ragu];
 					$planet_starlord["கே"][1] = $nak_lord[$starlord_idx];
+					$planet_starlord["கே"][6] = "";
 				}
 				
 				$planet_starlord["ரா"][2] = ($full_planet_deg > 180) ? $full_planet_deg-180 : $full_planet_deg;
@@ -2825,37 +3256,10 @@ function calculateStarLord()
 
 function displayStarLord_boy()
 {
-	global $planetDeg_transit,$tr_sw_planet, $g_planetKaranaLord_boy, $planet_starlord_boy, $planetDeg_default ;
+	global $planetDeg_transit,$tr_sw_planet, $g_planetKaranaLord_boy, $planet_starlord_boy, $planetDeg_default, $nak_array ;
 	
 	$planet_starlord = array();
 	
-	$nak_array = array("dummy","Aswini 1/அசுவினி 1","Aswini 2/அசுவினி 2","Aswini 3/அசுவினி 3","Aswini 4/அசுவினி 4",
-						"Bharani 1/பரணி 1","Bharani 2/பரணி 2","Bharani 3/பரணி 3","Bharani 4/பரணி 4",
-						"Krithika 1/கிருத்திகை 1","Krithika 2/கிருத்திகை 2","Krithika 3/கிருத்திகை 3","Krithika 4/கிருத்திகை 4",
-						"Rohini 1/ரோகிணி 1","Rohini 2/ரோகிணி 2","Rohini 3/ரோகிணி 3","Rohini 4/ரோகிணி 4",
-						"Mrigashirsha 1/மிருகசிரீஷம் 1","Mrigashirsha 2/மிருகசிரீஷம் 2","Mrigashirsha 3/மிருகசிரீஷம் 3","Mrigashirsha 4/மிருகசிரீஷம் 4",
-						"Arudra 1/திருவாதிரை 1","Arudra 2/திருவாதிரை 2","Arudra 3/திருவாதிரை 3","Arudra 4/திருவாதிரை 4",
-						"Punarvasu 1/புனர்பூசம் 1","Punarvasu 2/புனர்பூசம் 2","Punarvasu 3/புனர்பூசம் 3","Punarvasu 4/புனர்பூசம் 4",
-						"Pushyami 1/பூசம் 1","Pushyami 2/பூசம் 2","Pushyami 3/பூசம் 3","Pushyami 4/பூசம் 4",
-						"Ashlesha 1/ஆயில்யம் 1","Ashlesha 2/ஆயில்யம் 2","Ashlesha 3/ஆயில்யம் 3","Ashlesha 4/ஆயில்யம் 4",
-						"Magha 1/மகம் 1","Magha 2/மகம் 2","Magha 3/மகம் 3","Magha 4/மகம் 4",
-						"Poorva Phalguni 1/பூரம் 1","Poorva Phalguni 2/பூரம் 2","Poorva Phalguni 3/பூரம் 3","Poorva Phalguni 4/பூரம் 4",
-						"Uthra phalguni 1/உத்திரம் 1","Uthra phalguni 2/உத்திரம் 2","Uthra phalguni 3/உத்திரம் 3","Uthra phalguni 4/உத்திரம் 4",
-						"Hastha 1/ஹஸ்தம் 1","Hastha 2/ஹஸ்தம் 2","Hastha 3/ஹஸ்தம் 3","Hastha 4/ஹஸ்தம் 4",
-						"Chitra 1/சித்திரை 1","Chitra 2/சித்திரை 2","Chitra 3/சித்திரை 3","Chitra 4/சித்திரை 4",
-						"Swaathi 1/சுவாதி 1","Swaathi 2/சுவாதி 2","Swaathi 3/சுவாதி 3","Swaathi 4/சுவாதி 4",
-						"Vishaakha 1/விசாகம் 1","Vishaakha 2/விசாகம் 2","Vishaakha 3/விசாகம் 3","Vishaakha 4/விசாகம் 4",
-						"Anuraadha 1/அனுஷம் 1","Anuraadha 2/அனுஷம் 2","Anuraadha 3/அனுஷம் 3","Anuraadha 4/அனுஷம் 4",
-						"Jyeshta 1/கேட்டை 1","Jyeshta 2/கேட்டை 2","Jyeshta 3/கேட்டை 3","Jyeshta 4/கேட்டை 4",
-						"Moola 1/மூலம் 1","Moola 2/மூலம் 2","Moola 3/மூலம் 3","Moola 4/மூலம் 4",
-						"Poorva Ashaada 1/பூராடம் 1","Poorva Ashaada 2/பூராடம் 2","Poorva Ashaada 3/பூராடம் 3","Poorva Ashaada 4/பூராடம் 4",
-						"Uthra Ashaada 1/உத்திராடம் 1","Uthra Ashaada 2/உத்திராடம் 2","Uthra Ashaada 3/உத்திராடம் 3","Uthra Ashaada 4/உத்திராடம் 4",
-						"Shraavan 1/திருவோணம் 1","Shraavan 2/திருவோணம் 2","Shraavan 3/திருவோணம் 3","Shraavan 4/திருவோணம் 4",
-						"Dhanishta 1/அவிட்டம் 1","Dhanishta 2/அவிட்டம் 2","Dhanishta 3/அவிட்டம் 3","Dhanishta 4/அவிட்டம் 4",
-						"Shathabhisha 1/சதயம் 1","Shathabhisha 2/சதயம் 2","Shathabhisha 3/சதயம் 3","Shathabhisha 4/சதயம் 4",
-						"Poorva bhadrapada 1/பூரட்டாதி 1","Poorva bhadrapada 2/பூரட்டாதி 2","Poorva bhadrapada 3/பூரட்டாதி 3","Poorva bhadrapada 4/பூரட்டாதி 4",
-						"Uthra bhadrapada 1/உத்திரட்டாதி 1","Uthra bhadrapada 2/உத்திரட்டாதி 2","Uthra bhadrapada 3/உத்திரட்டாதி 3","Uthra bhadrapada 4/உத்திரட்டாதி 4",
-						"Revathi 1/ரேவதி 1","Revathi 2/ரேவதி 2","Revathi 3/ரேவதி 3","Revathi 4/ரேவதி 4");
 	$nak_lord = array("dummy","கே","கே","கே","கே","சுக்","சுக்","சுக்","சுக்","சூரி","சூரி","சூரி","சூரி","சந்","சந்","சந்","சந்","செ","செ","செ","செ","ரா","ரா","ரா","ரா","குரு","குரு","குரு","குரு","சனி","சனி","சனி","சனி","புத","புத","புத","புத",
 						"கே","கே","கே","கே","சுக்","சுக்","சுக்","சுக்","சூரி","சூரி","சூரி","சூரி","சந்","சந்","சந்","சந்","செ","செ","செ","செ","ரா","ரா","ரா","ரா","குரு","குரு","குரு","குரு","சனி","சனி","சனி","சனி","புத","புத","புத","புத",
 						"கே","கே","கே","கே","சுக்","சுக்","சுக்","சுக்","சூரி","சூரி","சூரி","சூரி","சந்","சந்","சந்","சந்","செ","செ","செ","செ","ரா","ரா","ரா","ரா","குரு","குரு","குரு","குரு","சனி","சனி","சனி","சனி","புத","புத","புத","புத");
@@ -2879,10 +3283,12 @@ function displayStarLord_boy()
 				$starlord_idx==30 || $starlord_idx==43 || $starlord_idx==45 || $starlord_idx==48 || $starlord_idx==50 || $starlord_idx==60 || $starlord_idx==62 || 
 				$starlord_idx==64 || $starlord_idx==66 || $starlord_idx==79 || $starlord_idx==81 || $starlord_idx==84 || $starlord_idx==86 || $starlord_idx==96 || 
 				$starlord_idx==98 || $starlord_idx==100 || $starlord_idx==102){
-					$planet_starlord[$planet][1] = $nak_lord[$starlord_idx]."(புஷ்)";
+					$planet_starlord[$planet][1] = $nak_lord[$starlord_idx];
+					$planet_starlord[$planet][6] = "புஷ்";
 				}
 				else{
 					$planet_starlord[$planet][1] = $nak_lord[$starlord_idx];
+					$planet_starlord[$planet][6] = '';
 				}
 				
 				$planet_starlord[$planet][2] = $full_planet_deg;
@@ -2902,10 +3308,12 @@ function displayStarLord_boy()
 				$starlord_idx==30 || $starlord_idx==43 || $starlord_idx==45 || $starlord_idx==48 || $starlord_idx==50 || $starlord_idx==60 || $starlord_idx==62 || 
 				$starlord_idx==64 || $starlord_idx==66 || $starlord_idx==79 || $starlord_idx==81 || $starlord_idx==84 || $starlord_idx==86 || $starlord_idx==96 || 
 				$starlord_idx==98 || $starlord_idx==100 || $starlord_idx==102){
-					$planet_starlord["கே"][1] = $nak_lord[$starlord_idx]."(புஷ்)";
+					$planet_starlord["கே"][1] = $nak_lord[$starlord_idx];
+					$planet_starlord["கே"][6] = "புஷ்";
 				}
 				else{
 					$planet_starlord["கே"][1] = $nak_lord[$starlord_idx];
+					$planet_starlord[$planet][6] = '';
 				}
 				
 				$planet_starlord["ரா"][2] = ($full_planet_deg > 180) ? $full_planet_deg-180 : $full_planet_deg;
@@ -2968,37 +3376,10 @@ function displayStarLord_boy()
 
 function calculateStarLord_boy()
 {
-	global $planetDeg_transit,$tr_sw_planet, $g_planetKaranaLord_boy, $planet_starlord_boy;
+	global $planetDeg_transit,$tr_sw_planet, $g_planetKaranaLord_boy, $planet_starlord_boy, $nak_array;
 	
 	//$planet_starlord = array();
 	
-	$nak_array = array("dummy","Aswini 1/அசுவினி 1","Aswini 2/அசுவினி 2","Aswini 3/அசுவினி 3","Aswini 4/அசுவினி 4",
-						"Bharani 1/பரணி 1","Bharani 2/பரணி 2","Bharani 3/பரணி 3","Bharani 4/பரணி 4",
-						"Krithika 1/கிருத்திகை 1","Krithika 2/கிருத்திகை 2","Krithika 3/கிருத்திகை 3","Krithika 4/கிருத்திகை 4",
-						"Rohini 1/ரோகிணி 1","Rohini 2/ரோகிணி 2","Rohini 3/ரோகிணி 3","Rohini 4/ரோகிணி 4",
-						"Mrigashirsha 1/மிருகசிரீஷம் 1","Mrigashirsha 2/மிருகசிரீஷம் 2","Mrigashirsha 3/மிருகசிரீஷம் 3","Mrigashirsha 4/மிருகசிரீஷம் 4",
-						"Arudra 1/திருவாதிரை 1","Arudra 2/திருவாதிரை 2","Arudra 3/திருவாதிரை 3","Arudra 4/திருவாதிரை 4",
-						"Punarvasu 1/புனர்பூசம் 1","Punarvasu 2/புனர்பூசம் 2","Punarvasu 3/புனர்பூசம் 3","Punarvasu 4/புனர்பூசம் 4",
-						"Pushyami 1/பூசம் 1","Pushyami 2/பூசம் 2","Pushyami 3/பூசம் 3","Pushyami 4/பூசம் 4",
-						"Ashlesha 1/ஆயில்யம் 1","Ashlesha 2/ஆயில்யம் 2","Ashlesha 3/ஆயில்யம் 3","Ashlesha 4/ஆயில்யம் 4",
-						"Magha 1/மகம் 1","Magha 2/மகம் 2","Magha 3/மகம் 3","Magha 4/மகம் 4",
-						"Poorva Phalguni 1/பூரம் 1","Poorva Phalguni 2/பூரம் 2","Poorva Phalguni 3/பூரம் 3","Poorva Phalguni 4/பூரம் 4",
-						"Uthra phalguni 1/உத்திரம் 1","Uthra phalguni 2/உத்திரம் 2","Uthra phalguni 3/உத்திரம் 3","Uthra phalguni 4/உத்திரம் 4",
-						"Hastha 1/ஹஸ்தம் 1","Hastha 2/ஹஸ்தம் 2","Hastha 3/ஹஸ்தம் 3","Hastha 4/ஹஸ்தம் 4",
-						"Chitra 1/சித்திரை 1","Chitra 2/சித்திரை 2","Chitra 3/சித்திரை 3","Chitra 4/சித்திரை 4",
-						"Swaathi 1/சுவாதி 1","Swaathi 2/சுவாதி 2","Swaathi 3/சுவாதி 3","Swaathi 4/சுவாதி 4",
-						"Vishaakha 1/விசாகம் 1","Vishaakha 2/விசாகம் 2","Vishaakha 3/விசாகம் 3","Vishaakha 4/விசாகம் 4",
-						"Anuraadha 1/அனுஷம் 1","Anuraadha 2/அனுஷம் 2","Anuraadha 3/அனுஷம் 3","Anuraadha 4/அனுஷம் 4",
-						"Jyeshta 1/கேட்டை 1","Jyeshta 2/கேட்டை 2","Jyeshta 3/கேட்டை 3","Jyeshta 4/கேட்டை 4",
-						"Moola 1/மூலம் 1","Moola 2/மூலம் 2","Moola 3/மூலம் 3","Moola 4/மூலம் 4",
-						"Poorva Ashaada 1/பூராடம் 1","Poorva Ashaada 2/பூராடம் 2","Poorva Ashaada 3/பூராடம் 3","Poorva Ashaada 4/பூராடம் 4",
-						"Uthra Ashaada 1/உத்திராடம் 1","Uthra Ashaada 2/உத்திராடம் 2","Uthra Ashaada 3/உத்திராடம் 3","Uthra Ashaada 4/உத்திராடம் 4",
-						"Shraavan 1/திருவோணம் 1","Shraavan 2/திருவோணம் 2","Shraavan 3/திருவோணம் 3","Shraavan 4/திருவோணம் 4",
-						"Dhanishta 1/அவிட்டம் 1","Dhanishta 2/அவிட்டம் 2","Dhanishta 3/அவிட்டம் 3","Dhanishta 4/அவிட்டம் 4",
-						"Shathabhisha 1/சதயம் 1","Shathabhisha 2/சதயம் 2","Shathabhisha 3/சதயம் 3","Shathabhisha 4/சதயம் 4",
-						"Poorva bhadrapada 1/பூரட்டாதி 1","Poorva bhadrapada 2/பூரட்டாதி 2","Poorva bhadrapada 3/பூரட்டாதி 3","Poorva bhadrapada 4/பூரட்டாதி 4",
-						"Uthra bhadrapada 1/உத்திரட்டாதி 1","Uthra bhadrapada 2/உத்திரட்டாதி 2","Uthra bhadrapada 3/உத்திரட்டாதி 3","Uthra bhadrapada 4/உத்திரட்டாதி 4",
-						"Revathi 1/ரேவதி 1","Revathi 2/ரேவதி 2","Revathi 3/ரேவதி 3","Revathi 4/ரேவதி 4");
 	$nak_lord = array("dummy","கே","கே","கே","கே","சுக்","சுக்","சுக்","சுக்","சூரி","சூரி","சூரி","சூரி","சந்","சந்","சந்","சந்","செ","செ","செ","செ","ரா","ரா","ரா","ரா","குரு","குரு","குரு","குரு","சனி","சனி","சனி","சனி","புத","புத","புத","புத",
 						"கே","கே","கே","கே","சுக்","சுக்","சுக்","சுக்","சூரி","சூரி","சூரி","சூரி","சந்","சந்","சந்","சந்","செ","செ","செ","செ","ரா","ரா","ரா","ரா","குரு","குரு","குரு","குரு","சனி","சனி","சனி","சனி","புத","புத","புத","புத",
 						"கே","கே","கே","கே","சுக்","சுக்","சுக்","சுக்","சூரி","சூரி","சூரி","சூரி","சந்","சந்","சந்","சந்","செ","செ","செ","செ","ரா","ரா","ரா","ரா","குரு","குரு","குரு","குரு","சனி","சனி","சனி","சனி","புத","புத","புத","புத");
@@ -3045,7 +3426,8 @@ function calculateStarLord_boy()
 				$starlord_idx==30 || $starlord_idx==43 || $starlord_idx==45 || $starlord_idx==48 || $starlord_idx==50 || $starlord_idx==60 || $starlord_idx==62 || 
 				$starlord_idx==64 || $starlord_idx==66 || $starlord_idx==79 || $starlord_idx==81 || $starlord_idx==84 || $starlord_idx==86 || $starlord_idx==96 || 
 				$starlord_idx==98 || $starlord_idx==100 || $starlord_idx==102){
-					$planet_starlord_boy["கே"][1] = $nak_lord[$starlord_idx]."(புஷ்)";
+					$planet_starlord_boy["கே"][1] = $nak_lord[$starlord_idx];
+					$planet_starlord_boy["கே"][6] = "புஷ்";
 				}
 				else{
 					$planet_starlord_boy["கே"][1] = $nak_lord[$starlord_idx];
@@ -3232,7 +3614,7 @@ function displayPanchang($date=null,$time=null,$place=null){
 }
 
 function displayPanchang_jamakol(){
-	global $moon_degree, $moon_house, $sun_house, $sun_degree, $dayofweek,$panchang,$nak_pad_idx,$today_sunrise, $today_sunset, $lagna_house;
+	global $moon_degree, $moon_house, $sun_house, $sun_degree, $dayofweek,$panchang,$nak_pad_idx,$today_sunrise, $today_sunset, $lagna_house, $g_paksham;
 	
 	//display panchang table
 	echo "<center><div class='divTable blueTable' style='height:40px;' id='panchangBody'>"; 
@@ -3246,7 +3628,13 @@ function displayPanchang_jamakol(){
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>திதி</div>";
-			$thithi_tamil = explode('[',explode('/',$panchang['thithi'])[1])[0] . '[' . explode('/',$panchang['thithi'])[2];
+			if(strpos($panchang['thithi'],"Amavasya/அமாவாசை")===0 || strpos($panchang['thithi'],"Poornima/பௌர்ணமி")===0){
+				$thithi_tamil = explode('[',explode('/',$panchang['thithi'])[1])[0];
+			}
+			else{
+				$thithi_tamil = explode('[',explode('/',$panchang['thithi'])[1])[0] . '[' . explode('/',$panchang['thithi'])[2];
+			}
+			
 			echo "<div class='divPanchang'>".$thithi_tamil."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
@@ -3297,7 +3685,8 @@ function getMoonLongitude($timestamp){
 }
 
 function calculatePanchang(){
-	global $moon_degree, $moon_house, $sun_house, $sun_degree, $dayofweek,$panchang,$nak_pad_idx,$today_sunrise, $today_sunset, $chart_time, $chart_date, $moon_degree_exact,$TZ,$full_moon_deg,$full_sun_deg;
+	global $moon_degree, $moon_house, $sun_house, $sun_degree, $dayofweek,$panchang,$nak_pad_idx,$today_sunrise, $today_sunset, $chart_time, $chart_date, $moon_degree_exact,$TZ,$full_moon_deg,$full_sun_deg, 
+		$g_padham,$nak_array;
 	
 	$tithi = array("Prathame/பிரதமை","Dwithiya/துவிதியை","Thrithiya/திருதியை","Chathurthi/சதுர்த்தி","Panchami/பஞ்சமி","Shrashti/சஷ்டி","Saptami/சப்தமி","Ashtami/அஷ்டமி","Navami/நவமி","Dashami/தசமி","Ekadashi/ஏகாதசி","Dwadashi/துவாதசி","Thrayodashi/திரயோதசி","Chaturdashi/சதுர்த்தசி","Poornima/பௌர்ணமி","Prathame/பிரதமை","Dwithiya/துவிதியை","Thrithiya/திருதியை","Chathurthi/சதுர்த்தி","Panchami/பஞ்சமி","Shrashti/சஷ்டி","Saptami/சப்தமி","Ashtami/அஷ்டமி","Navami/நவமி","Dashami/தசமி","Ekadashi/ஏகாதசி","Dwadashi/துவாதசி","Thrayodashi/திரயோதசி","Chaturdashi/சதுர்த்தசி","Amavasya/அமாவாசை");
 	
@@ -3335,33 +3724,6 @@ function calculatePanchang(){
 	$weekday_arr = array("Sunday/ஞாயிற்றுக்கிழமை","Monday/திங்கட்கிழமை","Tuesday/செவ்வாய்க்கிழமை","Wednesday/புதன்கிழமை",
 					"Thursday/வியாழக்கிழமை","Friday/வெள்ளிக்கிழமை","Saturday/சனிக்கிழமை");
 	
-	$nak_array = array("dummy","Aswini 1/அசுவினி 1","Aswini 2/அசுவினி 2","Aswini 3/அசுவினி 3","Aswini 4/அசுவினி 4",
-						"Bharani 1/பரணி 1","Bharani 2/பரணி 2","Bharani 3/பரணி 3","Bharani 4/பரணி 4",
-						"Krithika 1/கிருத்திகை 1","Krithika 2/கிருத்திகை 2","Krithika 3/கிருத்திகை 3","Krithika 4/கிருத்திகை 4",
-						"Rohini 1/ரோகிணி 1","Rohini 2/ரோகிணி 2","Rohini 3/ரோகிணி 3","Rohini 4/ரோகிணி 4",
-						"Mrigashirsha 1/மிருகசிரீஷம் 1","Mrigashirsha 2/மிருகசிரீஷம் 2","Mrigashirsha 3/மிருகசிரீஷம் 3","Mrigashirsha 4/மிருகசிரீஷம் 4",
-						"Arudra 1/திருவாதிரை 1","Arudra 2/திருவாதிரை 2","Arudra 3/திருவாதிரை 3","Arudra 4/திருவாதிரை 4",
-						"Punarvasu 1/புனர்பூசம் 1","Punarvasu 2/புனர்பூசம் 2","Punarvasu 3/புனர்பூசம் 3","Punarvasu 4/புனர்பூசம் 4",
-						"Pushyami 1/பூசம் 1","Pushyami 2/பூசம் 2","Pushyami 3/பூசம் 3","Pushyami 4/பூசம் 4",
-						"Ashlesha 1/ஆயில்யம் 1","Ashlesha 2/ஆயில்யம் 2","Ashlesha 3/ஆயில்யம் 3","Ashlesha 4/ஆயில்யம் 4",
-						"Magha 1/மகம் 1","Magha 2/மகம் 2","Magha 3/மகம் 3","Magha 4/மகம் 4",
-						"Poorva Phalguni 1/பூரம் 1","Poorva Phalguni 2/பூரம் 2","Poorva Phalguni 3/பூரம் 3","Poorva Phalguni 4/பூரம் 4",
-						"Uthra phalguni 1/உத்திரம் 1","Uthra phalguni 2/உத்திரம் 2","Uthra phalguni 3/உத்திரம் 3","Uthra phalguni 4/உத்திரம் 4",
-						"Hastha 1/ஹஸ்தம் 1","Hastha 2/ஹஸ்தம் 2","Hastha 3/ஹஸ்தம் 3","Hastha 4/ஹஸ்தம் 4",
-						"Chitra 1/சித்திரை 1","Chitra 2/சித்திரை 2","Chitra 3/சித்திரை 3","Chitra 4/சித்திரை 4",
-						"Swaathi 1/சுவாதி 1","Swaathi 2/சுவாதி 2","Swaathi 3/சுவாதி 3","Swaathi 4/சுவாதி 4",
-						"Vishaakha 1/விசாகம் 1","Vishaakha 2/விசாகம் 2","Vishaakha 3/விசாகம் 3","Vishaakha 4/விசாகம் 4",
-						"Anuraadha 1/அனுஷம் 1","Anuraadha 2/அனுஷம் 2","Anuraadha 3/அனுஷம் 3","Anuraadha 4/அனுஷம் 4",
-						"Jyeshta 1/கேட்டை 1","Jyeshta 2/கேட்டை 2","Jyeshta 3/கேட்டை 3","Jyeshta 4/கேட்டை 4",
-						"Moola 1/மூலம் 1","Moola 2/மூலம் 2","Moola 3/மூலம் 3","Moola 4/மூலம் 4",
-						"Poorva Ashaada 1/பூராடம் 1","Poorva Ashaada 2/பூராடம் 2","Poorva Ashaada 3/பூராடம் 3","Poorva Ashaada 4/பூராடம் 4",
-						"Uthra Ashaada 1/உத்திராடம் 1","Uthra Ashaada 2/உத்திராடம் 2","Uthra Ashaada 3/உத்திராடம் 3","Uthra Ashaada 4/உத்திராடம் 4",
-						"Shraavan 1/திருவோணம் 1","Shraavan 2/திருவோணம் 2","Shraavan 3/திருவோணம் 3","Shraavan 4/திருவோணம் 4",
-						"Dhanishta 1/அவிட்டம் 1","Dhanishta 2/அவிட்டம் 2","Dhanishta 3/அவிட்டம் 3","Dhanishta 4/அவிட்டம் 4",
-						"Shathabhisha 1/சதயம் 1","Shathabhisha 2/சதயம் 2","Shathabhisha 3/சதயம் 3","Shathabhisha 4/சதயம் 4",
-						"Poorva bhadrapada 1/பூரட்டாதி 1","Poorva bhadrapada 2/பூரட்டாதி 2","Poorva bhadrapada 3/பூரட்டாதி 3","Poorva bhadrapada 4/பூரட்டாதி 4",
-						"Uthra bhadrapada 1/உத்திரட்டாதி 1","Uthra bhadrapada 2/உத்திரட்டாதி 2","Uthra bhadrapada 3/உத்திரட்டாதி 3","Uthra bhadrapada 4/உத்திரட்டாதி 4",
-						"Revathi 1/ரேவதி 1","Revathi 2/ரேவதி 2","Revathi 3/ரேவதி 3","Revathi 4/ரேவதி 4");
 						
 	$yoga_arr = array("dummy","விஷ்கம்பம்","ப்ரீதி","ஆயுஷ்மான்", "செளபாக்யம்", "சோபனம்", "அதி கண்டம்", "சுகர்மம்", "திருதி", "சூலம்", "கண்டம்", "விருத்தி", "துருவம்","வ்யாகதம்",
 					"ஹர்ஷணம்", "வஜ்ரம்","சித்தி","வியதீபாதம்","வரீயான்", "பரிகம்","சிவம்", "சித்தம்", "சாத்தியம்","சுபம்","சுப்பிரம்","பிராம்மியம்","ஐந்திரம்","வைதிருதி","விஷ்கம்பம்");
@@ -3386,6 +3748,7 @@ function calculatePanchang(){
 	
 	$panchang["nak"] = $nak_array[$nak_idx];
 	$nak_pad_idx = $nak_idx;
+	$g_padham = explode(' ',explode('/',$panchang['nak'])[1])[1];
 	
 	//thithi calculation
 	$full_sun_deg = ($sun_house-1)*30+$sun_degree;
@@ -3407,12 +3770,13 @@ function calculatePanchang(){
 			$thi_idx = floor($idx);
 			debug("IDX=".(floor($idx)));
 			
-			if($idx > 29){
-				$thi_idx = 29;
-				$panchang["thithi"] = $tithi[$thi_idx];
+			if($thi_idx >=0 and $thi_idx <=14)
+			{
+				$panchang["thithi"] = $tithi[$thi_idx]."[shukla/வளர்]";
 			}
-			else{
-				$panchang["thithi"] = $tithi[$thi_idx];
+			elseif($thi_idx >14 and $thi_idx <=29)
+			{
+				$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]";
 			}
 			debug("MOON-SUN DEGREE=".($full_moon_deg - $full_sun_deg));//testing
 			
@@ -3425,10 +3789,10 @@ function calculatePanchang(){
 			
 			if($idx > 14){
 				$thi_idx = 14;
-				$panchang["thithi"] = $tithi[$thi_idx];
+				$panchang["thithi"] = $tithi[$thi_idx]."[shukla/வளர்]";
 			}
 			else{
-				$panchang["thithi"] = $tithi[$thi_idx];
+				$panchang["thithi"] = $tithi[$thi_idx]."[shukla/வளர்]";
 			}
 			debug("Else MOON-SUN DEGREE=".($full_moon_deg - $full_sun_deg));//testing
 		}
@@ -3446,18 +3810,11 @@ function calculatePanchang(){
 		else{
 			$thi_idx = floor($idx);
 		
-			$panchang["thithi"] = $tithi[$thi_idx];
+			$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]";
 			
 		}
 		
 		debug(__LINE__ . ":". "MOON-SUN DEGREE=".($full_moon_deg - $full_sun_deg));//testing
-	}
-	
-	if(countHouses($sun_house,$moon_house)<=7){
-		$panchang["thithi"] = $panchang["thithi"]."[shukla/வளர்]";
-	}
-	else{
-		$panchang["thithi"] = $panchang["thithi"]."[krishna/தேய்]";
 	}
 	
 	//Get thithi end time
@@ -5404,7 +5761,7 @@ function getValue($in_string, $lang=1)
 //get thithi temple based on 
 function getThithiParigaaram($thithi_idx)
 {
-	global $conn, $g_paksham;
+	global $conn, $g_paksham, $timestamp;
 					
 	$data = getDataFromThithiById($conn, $thithi_idx+1);
 	
@@ -5422,7 +5779,7 @@ function getThithiParigaaram($thithi_idx)
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><A style='color:blue;cursor:pointer' href='".$data['thithi_temple_link']."' target='_blank'>google Map</A></DIV>";
 		
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>திதி தெய்வம்</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><image style='width:150px' src='images\\thithi_god\\" . $data['thithi_name'] . "_" . $g_paksham . ".jpg'></DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right' id='photo'><image style='width:150px' src='images\\thithi_god\\" . $data['thithi_name'] . "_" . $g_paksham . ".jpg?$timestamp'></DIV>";
 
 	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
 	$details = $details . "</DIV>";
@@ -5433,6 +5790,7 @@ function getThithiParigaaram($thithi_idx)
 //get karana parigaaram based on karana idx
 function getKaranaParigaaram($karan)
 {					
+	global $timestamp;
 	$kar = explode('/',$karan)[1];
 	//$details = "<DIV class='parigaraDiv'><div id='labelParigaraDiv'>கரண பரிகாரம்</div><img src='images/karanam_gods/$kar.jpg' /></DIV>";
 	
@@ -5443,7 +5801,7 @@ function getKaranaParigaaram($karan)
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$kar."</DIV>";
 		
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>கரண பரிகாரம் கோவில்</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><img style='width:150px' src='images/karanam_gods/$kar.jpg' /></DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><img style='width:150px' src='images/karanam_gods/$kar.jpg?$timestamp' /></DIV>";
 			
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
 	$details = $details . "</DIV>";
@@ -5453,29 +5811,53 @@ function getKaranaParigaaram($karan)
 
 function getYogiParigaaram($yogi_idx)
 {
+	global $conn;
 	//$details = "<DIV class='parigaraDiv'><div id='labelParigaraDiv'>யோகி பரிகாரம்</div><img src='images/yogi_parigaaram/$yogi_idx.png' /></DIV>";
+	$yoga_arr = array("dummy","விஷ்கம்பம்","ப்ரீதி","ஆயுஷ்மான்", "செளபாக்யம்", "சோபனம்", "அதி கண்டம்", "சுகர்மம்", "திருதி", "சூலம்", "கண்டம்", "விருத்தி", "துருவம்","வ்யாகதம்",
+					"ஹர்ஷணம்", "வஜ்ரம்","சித்தி","வியதீபாதம்","வரீயான்", "பரிகம்","சிவம்", "சித்தம்", "சாத்தியம்","சுபம்","சுப்பிரம்","பிராம்மியம்","ஐந்திரம்","வைதிருதி");
+					
+    $yogam = $yoga_arr[$yogi_idx];
+	
+	$data = getDataFromYogiById($conn,$yogi_idx);
 	
 	$details = "<DIV class='parigaaram-grid-container'>";
 	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>யோகி விவரங்கள்</DIV>";
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>யோகம்</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['yogam']."</DIV>";
+		
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>நக்ஷ் (கிரகம்)</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_planet']."</DIV>";
+		
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>யோகி கோவில்</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['temple']."</DIV>";
+		
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>பரிகாரம்</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['remedy']."</DIV>";
+		
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
+		
+		/*$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>யோகம்</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$yogam."</DIV>";
 		
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>யோகி பரிகாரம் கோவில்</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><img style='width:150px' src='images/yogi_parigaaram/$yogi_idx.png' /></DIV>";
 			
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";*/
 	$details = $details . "</DIV>";
-					
+	
 	return $details;
 }
 
 function getAvaYogiParigaaram($ayogi_idx)
 {
+	global $timestamp;
 	//$details = "<DIV class='parigaraDiv'><div id='labelParigaraDiv'>அவயோகி பரிகாரம்</div><img src='images/avayogi_parigaaram/$ayogi_idx.png' /></DIV>";
 	
 	$details = "<DIV class='parigaaram-grid-container'>";
 	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>அவயோகி விவரங்கள்</DIV>";
 		
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>அவயோகி பரிகாரம் கோவில்</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><img style='width:150px' src='images/avayogi_parigaaram/$ayogi_idx.png' /></DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><img style='width:150px' src='images/avayogi_parigaaram/$ayogi_idx.png?$timestamp' /></DIV>";
 			
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
 	$details = $details . "</DIV>";
@@ -5514,7 +5896,7 @@ function getNakParigaaram($nak_idx)
 
 function getMudakkuParigaaram($mudakku_idx)
 {
-	global $conn;
+	global $conn, $timestamp;
 	
 	//$details = "<DIV class='parigaraDiv'><div id='labelParigaraDiv'>நட் பரிகாரம்</div><img src='images/nak_parigaaram/$nak_idx.png' /></DIV>";
 	
@@ -5522,7 +5904,7 @@ function getMudakkuParigaaram($mudakku_idx)
 	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>முடக்கு விவரங்கள்</DIV>";
 		
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>முடக்கு கோவில்</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><img style='width:150px' src='images/mudakku_parigaaram/$mudakku_idx.png' /></DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><img style='width:150px' src='images/mudakku_parigaaram/$mudakku_idx.png?$timestamp' /></DIV>";
 			
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
 	$details = $details . "</DIV>";
@@ -5534,7 +5916,7 @@ function getKuberaParigaaram($nak_idx)
 {
 	global $conn;
 	
-	$data = getDataFromStarById($conn, $nak_idx+1);
+	$data = getDataFromStarById($conn, $nak_idx);
 	
 	$details = "<DIV class='parigaaram-grid-container'>";
 	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>குபேர நக்ஷ் விவரங்கள்</DIV>";
@@ -5553,14 +5935,127 @@ function getKuberaParigaaram($nak_idx)
 	
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
 	$details = $details . "</DIV>";
+					
+	return $details;
+}
+
+function getDestinyPointParigaaram($nak_idx)
+{
+	global $conn;
 	
+	$data = getDataFromStarById($conn, $nak_idx);
 	
+	$details = "<DIV class='parigaaram-grid-container'>";
+	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>தலைவிதி  நக்ஷ் விவரங்கள்</DIV>";
+
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>தலைவிதி  நக்ஷ்</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_name']."</DIV>";
+		
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>தலைவிதி  நக்ஷ் கோவில்</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_temple']."</DIV>";
+		
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>தலைவிதி  நக்ஷ் கோவில் இருப்பிடம்</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><A style='color:blue;cursor:pointer' href='".$data['star_temple_link']."' target='_blank'>google Map</A></DIV>";
+
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>தலைவிதி  நக்ஷ் அதிபதி</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_lord']."</DIV>";		
+	
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
+	$details = $details . "</DIV>";
+					
+	return $details;
+}
+
+function getAthrishtaPointParigaaram($nak_idx)
+{
+	global $conn;
+	
+	$data = getDataFromStarById($conn, $nak_idx);
+	
+	$details = "<DIV class='parigaaram-grid-container'>";
+	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>அதிர்ஷ்ட நக்ஷ் விவரங்கள்</DIV>";
+
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>அதிர்ஷ்ட நக்ஷ்</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_name']."</DIV>";
+		
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>அதிர்ஷ்ட நக்ஷ் கோவில்</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_temple']."</DIV>";
+		
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>அதிர்ஷ்ட நக்ஷ் கோவில் இருப்பிடம்</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><A style='color:blue;cursor:pointer' href='".$data['star_temple_link']."' target='_blank'>google Map</A></DIV>";
+
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>அதிர்ஷ்ட நக்ஷ் அதிபதி</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_lord']."</DIV>";		
+	
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
+	$details = $details . "</DIV>";
+					
+	return $details;
+}
+
+function getDhurathrishtaPointParigaaram($nak_idx)
+{
+	global $conn;
+	
+	$data = getDataFromStarById($conn, $nak_idx);
+	
+	$details = "<DIV class='parigaaram-grid-container'>";
+	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>துரதிர்ஷ்ட நக்ஷ் விவரங்கள்</DIV>";
+
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>துரதிர்ஷ்ட நக்ஷ்</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_name']."</DIV>";
+		
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>துரதிர்ஷ்ட நக்ஷ் கோவில்</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_temple']."</DIV>";
+		
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>துரதிர்ஷ்ட நக்ஷ் கோவில் இருப்பிடம்</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><A style='color:blue;cursor:pointer' href='".$data['star_temple_link']."' target='_blank'>google Map</A></DIV>";
+
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>துரதிர்ஷ்ட நக்ஷ் அதிபதி</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_lord']."</DIV>";		
+	
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
+	$details = $details . "</DIV>";
+					
+	return $details;
+}
+
+function getRasiParigaaram()
+{
+	global $g_rasi;
+	
+	$rasi_temples = [
+				"மேஷம்" => "ராமநாதஸ்வாமி கோவில் (ராமேஸ்வரம்)",
+				"ரிஷபம்" => "சிவபெருந்துறைத்திருக்கோவில் (திருவையாற்று)",
+				"மிதுனம்" => "தண்தோண்டுபரணி சுவாமி திருக்கோவில் (பழனி)",
+				"கடகம்" => "குற்றாலநாதர் (குற்றாலநாதர்)",
+				"சிம்மம்" => "பெரியகளப்பர் கோவில் (திருவாடமை)",
+				"கன்னி" => "வேதவல்லீஸ்வரர் கோவில் (கூத்தநல்லூர்)",
+				"துலாம்" => "திருத்தணி முருகன் கோவில்",
+				"விருச்சிகம்" => "எகாம்பரநாதர் கோவில் (காஞ்சிபுரம்)",
+				"தனுசு" => "மத்யார்ஜுனஸ்வாமி கோவில் (மிட்கொத்தூர்)",
+				"மகரம்" => "திருநல்லார் சனீஸ்வர கோவில் (திருநல்லாறு)",
+				"கும்பம்" => "ஓம்காரேஸ்வரர் கோவில் (ஓம்காரேஸ்வரம்)",
+				"மீனம்" => "வைதீஸ்வரன் கோவில் (மயிலாடுதுறை)"
+			];
+	
+	$details = "<DIV class='parigaaram-grid-container'>";
+	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>ராசி பரிகாரம்</DIV>";
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>ராசி</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$g_rasi."</DIV>";
+		
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>ராசி கோவில்</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>" . $rasi_temples[$g_rasi] . "</DIV>";
+			
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
+	$details = $details . "</DIV>";
 					
 	return $details;
 }
 
 function calculateBirthPanchang(){
-	global $moon_degree, $moon_house, $sun_house, $sun_degree, $dayofweek, $g_nak, $g_karan, $panchang,$g_nak_pad_idx, $g_thithi_idx, $g_yoga_idx, $g_nak_idx, $full_sun_deg, $nak_pad_idx;
+	global $moon_degree, $moon_house, $sun_house, $sun_degree, $dayofweek, $g_nak, $g_karan, $panchang,$g_nak_pad_idx, $g_thithi_idx, $g_yoga_idx, $g_nak_idx, $full_sun_deg, 
+		$nak_pad_idx, $nak_array;
 	
 	$tithi = array("Prathame/பிரதமை","Dwithiya/துவிதியை","Thrithiya/திருதியை","Chathurthi/சதுர்த்தி","Panchami/பஞ்சமி","Shrashti/சஷ்டி","Saptami/சப்தமி","Ashtami/அஷ்டமி","Navami/நவமி","Dashami/தசமி","Ekadashi/ஏகாதசி","Dwadashi/துவாதசி","Thrayodashi/திரயோதசி","Chaturdashi/சதுர்த்தசி","Poornima/பௌர்ணமி","Prathame/பிரதமை","Dwithiya/துவிதியை","Thrithiya/திருதியை","Chathurthi/சதுர்த்தி","Panchami/பஞ்சமி","Shrashti/சஷ்டி","Saptami/சப்தமி","Ashtami/அஷ்டமி","Navami/நவமி","Dashami/தசமி","Ekadashi/ஏகாதசி","Dwadashi/துவாதசி","Thrayodashi/திரயோதசி","Chaturdashi/சதுர்த்தசி","Amavasya/அமாவாசை");
 	
@@ -5595,38 +6090,10 @@ function calculateBirthPanchang(){
 						array("Visti/பத்தரை","Sakuni/சகுனி"),
 						array("Chatuspada/சதுஷ்பாத","Naga/நாகவ"));
 	
-	$weekday_arr = array("Sunday/ஞாயிற்று","Monday/திங்கள்","Tuesday/செவ்வாய்","Wednesday/புதன்",
+	$weekday_arr = array("Sunday/ஞாயிறு","Monday/திங்கள்","Tuesday/செவ்வாய்","Wednesday/புதன்",
 					"Thursday/வியாழன்","Friday/வெள்ளி","Saturday/சனி");
 	
 	$panchang = array();
-	
-	$nak_array = array("dummy","Aswini 1/அசுவினி 1","Aswini 2/அசுவினி 2","Aswini 3/அசுவினி 3","Aswini 4/அசுவினி 4",
-						"Bharani 1/பரணி 1","Bharani 2/பரணி 2","Bharani 3/பரணி 3","Bharani 4/பரணி 4",
-						"Krithika 1/கிருத்திகை 1","Krithika 2/கிருத்திகை 2","Krithika 3/கிருத்திகை 3","Krithika 4/கிருத்திகை 4",
-						"Rohini 1/ரோகிணி 1","Rohini 2/ரோகிணி 2","Rohini 3/ரோகிணி 3","Rohini 4/ரோகிணி 4",
-						"Mrigashirsha 1/மிருகசிரீஷம் 1","Mrigashirsha 2/மிருகசிரீஷம் 2","Mrigashirsha 3/மிருகசிரீஷம் 3","Mrigashirsha 4/மிருகசிரீஷம் 4",
-						"Arudra 1/திருவாதிரை 1","Arudra 2/திருவாதிரை 2","Arudra 3/திருவாதிரை 3","Arudra 4/திருவாதிரை 4",
-						"Punarvasu 1/புனர்பூசம் 1","Punarvasu 2/புனர்பூசம் 2","Punarvasu 3/புனர்பூசம் 3","Punarvasu 4/புனர்பூசம் 4",
-						"Pushyami 1/பூசம் 1","Pushyami 2/பூசம் 2","Pushyami 3/பூசம் 3","Pushyami 4/பூசம் 4",
-						"Ashlesha 1/ஆயில்யம் 1","Ashlesha 2/ஆயில்யம் 2","Ashlesha 3/ஆயில்யம் 3","Ashlesha 4/ஆயில்யம் 4",
-						"Magha 1/மகம் 1","Magha 2/மகம் 2","Magha 3/மகம் 3","Magha 4/மகம் 4",
-						"Poorva Phalguni 1/பூரம் 1","Poorva Phalguni 2/பூரம் 2","Poorva Phalguni 3/பூரம் 3","Poorva Phalguni 4/பூரம் 4",
-						"Uthra phalguni 1/உத்திரம் 1","Uthra phalguni 2/உத்திரம் 2","Uthra phalguni 3/உத்திரம் 3","Uthra phalguni 4/உத்திரம் 4",
-						"Hastha 1/ஹஸ்தம் 1","Hastha 2/ஹஸ்தம் 2","Hastha 3/ஹஸ்தம் 3","Hastha 4/ஹஸ்தம் 4",
-						"Chitra 1/சித்திரை 1","Chitra 2/சித்திரை 2","Chitra 3/சித்திரை 3","Chitra 4/சித்திரை 4",
-						"Swaathi 1/சுவாதி 1","Swaathi 2/சுவாதி 2","Swaathi 3/சுவாதி 3","Swaathi 4/சுவாதி 4",
-						"Vishaakha 1/விசாகம் 1","Vishaakha 2/விசாகம் 2","Vishaakha 3/விசாகம் 3","Vishaakha 4/விசாகம் 4",
-						"Anuraadha 1/அனுஷம் 1","Anuraadha 2/அனுஷம் 2","Anuraadha 3/அனுஷம் 3","Anuraadha 4/அனுஷம் 4",
-						"Jyeshta 1/கேட்டை 1","Jyeshta 2/கேட்டை 2","Jyeshta 3/கேட்டை 3","Jyeshta 4/கேட்டை 4",
-						"Moola 1/மூலம் 1","Moola 2/மூலம் 2","Moola 3/மூலம் 3","Moola 4/மூலம் 4",
-						"Poorva Ashaada 1/பூராடம் 1","Poorva Ashaada 2/பூராடம் 2","Poorva Ashaada 3/பூராடம் 3","Poorva Ashaada 4/பூராடம் 4",
-						"Uthra Ashaada 1/உத்திராடம் 1","Uthra Ashaada 2/உத்திராடம் 2","Uthra Ashaada 3/உத்திராடம் 3","Uthra Ashaada 4/உத்திராடம் 4",
-						"Shraavan 1/திருவோணம் 1","Shraavan 2/திருவோணம் 2","Shraavan 3/திருவோணம் 3","Shraavan 4/திருவோணம் 4",
-						"Dhanishta 1/அவிட்டம் 1","Dhanishta 2/அவிட்டம் 2","Dhanishta 3/அவிட்டம் 3","Dhanishta 4/அவிட்டம் 4",
-						"Shathabhisha 1/சதயம் 1","Shathabhisha 2/சதயம் 2","Shathabhisha 3/சதயம் 3","Shathabhisha 4/சதயம் 4",
-						"Poorva bhadrapada 1/பூரட்டாதி 1","Poorva bhadrapada 2/பூரட்டாதி 2","Poorva bhadrapada 3/பூரட்டாதி 3","Poorva bhadrapada 4/பூரட்டாதி 4",
-						"Uthra bhadrapada 1/உத்திரட்டாதி 1","Uthra bhadrapada 2/உத்திரட்டாதி 2","Uthra bhadrapada 3/உத்திரட்டாதி 3","Uthra bhadrapada 4/உத்திரட்டாதி 4",
-						"Revathi 1/ரேவதி 1","Revathi 2/ரேவதி 2","Revathi 3/ரேவதி 3","Revathi 4/ரேவதி 4");
 						
 	$yoga_arr = array("dummy","விஷ்கம்பம்","ப்ரீதி","ஆயுஷ்மான்", "செளபாக்யம்", "சோபனம்", "அதி கண்டம்", "சுகர்மம்", "திருதி", "சூலம்", "கண்டம்", "விருத்தி", "துருவம்","வ்யாகதம்",
 					"ஹர்ஷணம்", "வஜ்ரம்","சித்தி","வியதீபாதம்","வரீயான்", "பரிகம்","சிவம்", "சித்தம்", "சாத்தியம்","சுபம்","சுப்பிரம்","பிராம்மியம்","ஐந்திரம்","வைதிருதி");
@@ -5868,7 +6335,6 @@ function displayDetailsDiv($in_dataType,$in_data){
 		case "kar":
 			$details = getKaranaParigaaram($g_karan);
 			echo "<DIV class='karanaDetailsDiv' id='karanaDetailsDiv' onclick='hideDetailsDiv()'>$details</DIV>";
-
 			break;
 		case "yogi":
 			$details = getYogiParigaaram($g_yoga_idx);
@@ -5886,6 +6352,22 @@ function displayDetailsDiv($in_dataType,$in_data){
 			$details = getKuberaParigaaram($in_data);
 			echo "<DIV class='kuberaDetailsDiv' id='kuberaDetailsDiv' onclick='this.style.display=`none`'>$details</DIV>";
 			break;
+		case "rasi":
+			$details = getRasiParigaaram();
+			echo "<DIV class='rasiDetailsDiv' id='rasiDetailsDiv' onclick='this.style.display=`none`'>$details</DIV>";
+			break;
+		case "destinyPoint":
+			$details = getDestinyPointParigaaram($in_data);
+			echo "<DIV class='destinyPointDetailsDiv' id='destinyPointDetailsDiv' onclick='this.style.display=`none`'>$details</DIV>";
+			break;
+		case "AthrishtaPoint":
+			$details = getAthrishtaPointParigaaram($in_data);
+			echo "<DIV class='athrishtaPointDetailsDiv' id='athrishtaPointDetailsDiv' onclick='this.style.display=`none`'>$details</DIV>";
+			break;
+		case "DhurathrishtaPoint":
+			$details = getDhurathrishtaPointParigaaram($in_data);
+			echo "<DIV class='dhurathrishtaPointDetailsDiv' id='dhurathrishtaPointDetailsDiv' onclick='this.style.display=`none`'>$details</DIV>";
+			break;	
 	}
 }
 
@@ -6094,8 +6576,58 @@ function getTamilMonthDay($sun_house, $sun_degree) {
     return array($month, $day);
 }
 
-
+//currently works only for 2024
 function getTamilDate() {
+    global $chart_time, $chart_date, $sun_house, $sun_degree, $today_sunrise;
+    include_once "eng_tamil_year_map.php";
+    
+   // Parse the time from chart_time
+    $chartHour = (int) date('H', strtotime($chart_time));
+    $chartMinute = (int) date('i', strtotime($chart_time));
+    
+     // Parse the sunrise time
+    list($sunriseDate, $sunriseTime) = explode(' ', $today_sunrise);
+    $sunriseHour = (int) date('H', strtotime($sunriseTime));
+    $sunriseMinute = (int) date('i', strtotime($sunriseTime));
+    
+    // Check if the time is before today's sunrise
+    if ($chartHour < $sunriseHour || ($chartHour == $sunriseHour && $chartMinute < $sunriseMinute)) {
+        // Subtract one day from the chart_date
+        $chart_date = date('Y-m-d', strtotime($chart_date . ' -1 day'));
+    }
+    
+    $year = date('Y', strtotime($chart_date));
+    $month = (int) date('m', strtotime($chart_date));
+    $day = date('d', strtotime($chart_date));
+    
+    if (isset($eng_tam_map[$year])) { // if array exists
+        if ($day < $eng_tam_map[$year][$month][1]) {
+            $tamil_month = $eng_tam_map[$year][$month-1][0];
+        } else {
+            $tamil_month = $eng_tam_map[$year][$month][0];
+        }
+        if ($day - $eng_tam_map[$year][$month][1] >= 0) {
+            $tamil_day = $day - $eng_tam_map[$year][$month][1] + 1;
+        } else {
+            if ($month == 1) {
+                $tamil_day = cal_days_in_month(CAL_GREGORIAN, 12, $year) - $eng_tam_map[$year][$month-1][1] + $day + 1;
+            } else {
+                $tamil_day = cal_days_in_month(CAL_GREGORIAN, $month-1, $year) - $eng_tam_map[$year][$month-1][1] + $day + 1;
+            }
+        }
+    } else {
+        $month_day_arr = getTamilMonthDay($sun_house, $sun_degree);
+        $tamil_month = $month_day_arr[0];
+        $tamil_day = $month_day_arr[1];
+    }
+    
+    $tamil_year = getTamilYear($year, $tamil_month);
+    setKariNaal($tamil_month, $tamil_day);
+    
+    return $tamil_year . ',<BR>' . $tamil_month . ' ' . $tamil_day;
+}
+
+function getTamilDate_old() {
     global $chart_time, $chart_date, $sun_house, $sun_degree;
     include_once "eng_tamil_year_map.php";
 
@@ -6163,7 +6695,7 @@ function getTamilYear1($eng_year, $tamil_month) {
     }
 }
 
-function getTamilYear($eng_year, $tamil_month) {
+function getTamilYear_old($eng_year, $tamil_month) {
     // Tamil year names array
     $year_names = [
         'பிரபவ', 'விபவ', 'சுக்ல', 'பிரமோதூத', 'பிரசோற்பத்தி', 'ஆங்கீரச', 'ஸ்ரீமுக', 'பவ', 'யுவ', 'தாது',
@@ -6194,13 +6726,28 @@ function getTamilYear($eng_year, $tamil_month) {
     }
 }
 
-
+function getTamilYear($eng_year,$tamil_month){
+	global $sun_house;
+	$first_year = [907,967,1027,1087,1147,1207,1267,1327,1387,1447,1507,1567,1627,1687,1747,1807,1867,1927,1987,2047,2107,2167,2227,2287,2347,2407,2467,2527,2587,2647,2707,2767,2827,2887,2947,3007];
+	$year_names = ['பிரபவ','விபவ','சுக்ல','பிரமோதூத','பிரசோற்பத்தி','ஆங்கீரச','ஸ்ரீமுக','பவ','யுவ','தாது','ஈஸ்வர','வெகுதானிய','பிரமாதி','விக்கிரம','விஷு','சித்திரபானு','சுபானு','தாரண','பார்த்திப','விய','சர்வசித்து','சர்வதாரி','விரோதி','விக்ருதி','கர','நந்தன','விஜய','ஜய','மன்மத','துன்முகி','ஹேவிளம்பி','விளம்பி','விகாரி','சார்வரி','பிலவ','சுபகிருது','சோபகிருது','குரோதி','விசுவாசுவ','பரபாவ','பிலவங்க','கீலக','சௌமிய','சாதாரண','விரோதகிருது','பரிதாபி','பிரமாதீச','ஆனந்த','ராட்சச','நள','பிங்கள','காளயுக்தி','சித்தார்த்தி','ரௌத்திரி','துன்மதி','துந்துபி','ருத்ரோத்காரி','ரக்தாட்சி','குரோதன','அட்சய'];
+	$first_half=["தை","மாசி","பங்குனி"];
+	$second_half=["சித்திரை","வைகாசி","ஆனி","ஆடி","ஆவணி","புரட்டாசி","ஐப்பசி","கார்த்திகை","மார்கழி"];
+	
+	if(array_search($tamil_month,$second_half)===0 or array_search($tamil_month,$second_half)>0){
+		return $year_names[($eng_year-907)%60];
+		debug(__FUNCTION__.":".(($eng_year-907)%60));
+	}
+	else{
+		return $year_names[($eng_year-907-1)%60];
+		debug(__FUNCTION__.":".(($eng_year-907-1)%60));
+	}
+}
 
 
 function displayHomePageButtons($in_usertype){
+	global $timestamp;
 	
-	
-	echo "<center><IMG SRC='images/dsjv_title.png' width='70%' style='position:relative;top:0px;padding:20px'></center>";
+	echo "<center><IMG SRC='images/dsjv_title.png?$timestamp' width='70%' style='position:relative;top:0px;padding:20px'></center>";
 	echo "<BR><BR>";
 	switch($in_usertype){
 		case MATCHING:
@@ -6288,11 +6835,12 @@ function updateOfficeDetails($conn,$in_phone,$in_office_name,$in_office_contact)
 }
 
 function displayRegistrationMsg(){
+	global $timestamp;
 	echo <<<EOL
 	<div class='regMessage'>
-		<img src='images/dsjv_logo.jpg' style='width:200px' />
+		<img src='images/dsjv_logo.jpg?$timestamp' style='width:200px' />
 		<br>
-		<img src='images/dsjv_title.png' style='width:350px' />
+		<img src='images/dsjv_title.png?$timestamp' style='width:350px' />
 		<br>
 		<br>
 		<H2>Thanks for choosing DSJV App. Please contact DSJV Admin with your HELP menu screenshot, NAME and PHONE# for registration.</H2>
@@ -6301,7 +6849,7 @@ function displayRegistrationMsg(){
 		<br>
 		<BR>
 		<br>
-		<img src='images/periyanayaki_astro_solutions.png' style='width:250px;left:40%;bottom:20px;position:fixed' />
+		<img src='images/periyanayaki_astro_solutions.png?$timestamp' style='width:250px;left:40%;bottom:20px;position:fixed' />
 	</div>
 EOL;
 }
@@ -6617,9 +7165,7 @@ function displayBhavaChart()
 {
 	global $g_bhava_arr, $tr_sw_planet;
 	
-	var_dump($g_bhava_arr[4]);
-	
-	echo '<div class="divTable blueTable" id="bhava_chart" style="margin-top:20px">';
+	echo '<center><div class="divTable blueTable" id="bhava_chart" style="margin-top:20px">';
 		
 		echo '<div class="divTableBody">';
 			echo '<div class="divTableRow">';
@@ -6641,7 +7187,7 @@ function displayBhavaChart()
 			echo '<div class="divTableRow">';
 					echo '<div class="divTableOuterCell">'.$tr_sw_planet[10].'</div>';
 					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[10],2)).'</div>';
-					echo '<div class="divTableCenterCell1">பாவம்</div>';
+					echo '<div class="divTableCenterCell1" style="font-size:10px">பாவம்</div>';
 					echo '<div class="divTableCenterCell1"></div>';
 					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[3],2)).'</div>';
 					echo '<div class="divTableOuterCell">'.$tr_sw_planet[3].'</div>';
@@ -6671,25 +7217,72 @@ function displayBhavaChart()
 					echo '<div class="divTableOuterCellRightBottom">'.$tr_sw_planet[5].'</div>';
 			echo '</div>';
 		echo '</div>';
-	echo '</div>';
+	echo '</div></center>';
+	echo '<center>*பாவக மாற்றம்</center>';
 }
 
-function updateBhavaArray($deg,$planet,$house){
-	global $g_bhava_arr, $lagna_house;
-	
-	$targetHouse = targetHouse($lagna_house-1,$house)-1;
-	
-	if($targetHouse < 0){
-		$targetHouse = 11;
-	}
-	
-	echo ("<br>$planet ".($deg+$house*30).' '.$g_bhava_arr[$targetHouse][0].' '.$targetHouse);
-	if($deg+$house*30 < $g_bhava_arr[$targetHouse][0]){
-		array_push($g_bhava_arr[($house-1 < 0 ? 11 : $house-1)],$planet);
-	}
-	else{
-		array_push($g_bhava_arr[$house],$planet);
-	}
+function updateBhavaArray($deg, $planet, $house, $reverse = false) {
+    global $g_bhava_arr, $lagna_house;
+    
+    $targetHouse = countHouses($lagna_house, $house);
+    
+    if ($targetHouse == 12) {
+        $targetHouse = 0;
+    }
+    
+//   $tempdeg = DECtoDMS_jamakol($deg);
+//   [$pl, $de] = explode('-', $planet);
+	 $pl = $planet;
+
+    $house_start = $g_bhava_arr[$targetHouse][0];
+    $house_end = $g_bhava_arr[$targetHouse][0] + 30;
+
+    if ($house_end > 360) {
+        $house_end -= 360;
+    }
+
+    $pl_degree = $deg + $house * 30;
+
+    debug("<br><br>$planet " . $pl_degree . ' Bhava_housestart=' . $house_start . ' Bhava_houseend=' . $house_end . ' bava_house =' . $targetHouse . ' Kalapurush_house=' . $house);
+
+    if ($house_start < $house_end) {
+        if ($pl_degree >= $house_start && $pl_degree < $house_end) {
+            array_push($g_bhava_arr[$house], $planet);
+        } elseif ($pl_degree > $house_end) {
+           // array_push($g_bhava_arr[($house + 1 > 11 ? 0 : $house + 1)], '*' . $pl . '-' . ($pl_degree));
+		    array_push($g_bhava_arr[($house + 1 > 11 ? 0 : $house + 1)], '*' . $pl);
+        } elseif ($pl_degree < $house_start) {
+            //array_push($g_bhava_arr[($house - 1 < 0 ? 11 : $house - 1)], '*' . $pl . '-' . ($pl_degree));
+			array_push($g_bhava_arr[($house - 1 < 0 ? 11 : $house - 1)], '*' . $pl);
+        }
+    } else {
+        if ($pl_degree >= $house_start || $pl_degree < $house_end) {
+            array_push($g_bhava_arr[$house], $planet);
+        } elseif ($pl_degree > $house_end && $pl_degree < $house_start && $pl_degree < 30) {
+            //array_push($g_bhava_arr[($house + 1 > 11 ? 0 : $house + 1)], '*' . $pl . '-' . ($pl_degree));
+			array_push($g_bhava_arr[($house + 1 > 11 ? 0 : $house + 1)], '*' . $pl);
+        }
+		elseif ($pl_degree < $house_start) {
+            //array_push($g_bhava_arr[($house - 1 < 0 ? 11 : $house - 1)], '*' . $pl . '-' . ($pl_degree));
+			array_push($g_bhava_arr[($house - 1 < 0 ? 11 : $house - 1)], '*' . $pl);
+        }
+    }
+
+	/*if ($house_start < $house_end) {
+        if ($pl_degree > $house_start && $pl_degree < $house_end) {
+            array_push($g_bhava_arr[$house], $planet);
+        } elseif ($pl_degree > $house_end) {
+            array_push($g_bhava_arr[($house + 1 > 11 ? 0 : $house + 1)], '*' . $pl . '-' . ($pl_degree));
+        } elseif ($pl_degree < $house_start) {
+            array_push($g_bhava_arr[($house - 1 < 0 ? 11 : $house - 1)], '*' . $pl . '-' . ($pl_degree));
+        }
+    } else {
+        if ($pl_degree > $house_start || $pl_degree < $house_end) {
+            array_push($g_bhava_arr[$house], $planet);
+        } elseif ($pl_degree > $house_end && $pl_degree < $house_start) {
+            array_push($g_bhava_arr[($house + 1 > 11 ? 0 : $house + 1)], '*' . $pl . '-' . ($pl_degree));
+        }
+    }*/
 }
 
 function planetSort($inArray)
@@ -6876,6 +7469,29 @@ function getDataFromStarById($conn, $id) {
     return $data;
 }
 
+//get star details from DB
+function getDataFromYogiById($conn, $id) {
+    $query = "SELECT id,yogam,star_planet,temple,remedy,google_map FROM yogi WHERE id = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    
+    $data = array();
+    if ($row = mysqli_fetch_assoc($result)) {
+        $data = array(
+            'id' => $row['id'],
+            'yogam' => $row['yogam'],
+            'star_planet' => $row['star_planet'],
+			'temple' => $row['temple'],
+            'remedy' => $row['remedy'],
+			'google_map' => $row['google_map']
+        );
+    }
+    
+    return $data;
+}
+
 //this function is to get Gubera point for birth chart
 function getKubera(){
 	global $planet_starlord, $lagna_house;
@@ -6900,41 +7516,14 @@ function getKubera(){
 	$guberaArr[0] = getValue(getStarPaatham($gubera_paatham),1);  //nak paatham
 	$guberaArr[1] = getRasiNameFromPaatham($gubera_paatham); // Rasi name
 	$guberaArr[2] = getRasiHouseFromPaatham($gubera_paatham); // Rasi house
-	$guberaArr[3] = (int)$gubera_paatham/4;
+	$guberaArr[3] = ceil($gubera_paatham/4); //star index
 	
 	return $guberaArr;
 }
 
 //function get star paatham for a given 108 paaatham number
 function getStarPaatham($paatham_idx){
-	
-	$nak_array = array("Aswini 1/அசுவினி 1","Aswini 2/அசுவினி 2","Aswini 3/அசுவினி 3","Aswini 4/அசுவினி 4",
-						"Bharani 1/பரணி 1","Bharani 2/பரணி 2","Bharani 3/பரணி 3","Bharani 4/பரணி 4",
-						"Krithika 1/கிருத்திகை 1","Krithika 2/கிருத்திகை 2","Krithika 3/கிருத்திகை 3","Krithika 4/கிருத்திகை 4",
-						"Rohini 1/ரோகிணி 1","Rohini 2/ரோகிணி 2","Rohini 3/ரோகிணி 3","Rohini 4/ரோகிணி 4",
-						"Mrigashirsha 1/மிருகசிரீஷம் 1","Mrigashirsha 2/மிருகசிரீஷம் 2","Mrigashirsha 3/மிருகசிரீஷம் 3","Mrigashirsha 4/மிருகசிரீஷம் 4",
-						"Arudra 1/திருவாதிரை 1","Arudra 2/திருவாதிரை 2","Arudra 3/திருவாதிரை 3","Arudra 4/திருவாதிரை 4",
-						"Punarvasu 1/புனர்பூசம் 1","Punarvasu 2/புனர்பூசம் 2","Punarvasu 3/புனர்பூசம் 3","Punarvasu 4/புனர்பூசம் 4",
-						"Pushyami 1/பூசம் 1","Pushyami 2/பூசம் 2","Pushyami 3/பூசம் 3","Pushyami 4/பூசம் 4",
-						"Ashlesha 1/ஆயில்யம் 1","Ashlesha 2/ஆயில்யம் 2","Ashlesha 3/ஆயில்யம் 3","Ashlesha 4/ஆயில்யம் 4",
-						"Magha 1/மகம் 1","Magha 2/மகம் 2","Magha 3/மகம் 3","Magha 4/மகம் 4",
-						"Poorva Phalguni 1/பூரம் 1","Poorva Phalguni 2/பூரம் 2","Poorva Phalguni 3/பூரம் 3","Poorva Phalguni 4/பூரம் 4",
-						"Uthra phalguni 1/உத்திரம் 1","Uthra phalguni 2/உத்திரம் 2","Uthra phalguni 3/உத்திரம் 3","Uthra phalguni 4/உத்திரம் 4",
-						"Hastha 1/ஹஸ்தம் 1","Hastha 2/ஹஸ்தம் 2","Hastha 3/ஹஸ்தம் 3","Hastha 4/ஹஸ்தம் 4",
-						"Chitra 1/சித்திரை 1","Chitra 2/சித்திரை 2","Chitra 3/சித்திரை 3","Chitra 4/சித்திரை 4",
-						"Swaathi 1/சுவாதி 1","Swaathi 2/சுவாதி 2","Swaathi 3/சுவாதி 3","Swaathi 4/சுவாதி 4",
-						"Vishaakha 1/விசாகம் 1","Vishaakha 2/விசாகம் 2","Vishaakha 3/விசாகம் 3","Vishaakha 4/விசாகம் 4",
-						"Anuraadha 1/அனுஷம் 1","Anuraadha 2/அனுஷம் 2","Anuraadha 3/அனுஷம் 3","Anuraadha 4/அனுஷம் 4",
-						"Jyeshta 1/கேட்டை 1","Jyeshta 2/கேட்டை 2","Jyeshta 3/கேட்டை 3","Jyeshta 4/கேட்டை 4",
-						"Moola 1/மூலம் 1","Moola 2/மூலம் 2","Moola 3/மூலம் 3","Moola 4/மூலம் 4",
-						"Poorva Ashaada 1/பூராடம் 1","Poorva Ashaada 2/பூராடம் 2","Poorva Ashaada 3/பூராடம் 3","Poorva Ashaada 4/பூராடம் 4",
-						"Uthra Ashaada 1/உத்திராடம் 1","Uthra Ashaada 2/உத்திராடம் 2","Uthra Ashaada 3/உத்திராடம் 3","Uthra Ashaada 4/உத்திராடம் 4",
-						"Shraavan 1/திருவோணம் 1","Shraavan 2/திருவோணம் 2","Shraavan 3/திருவோணம் 3","Shraavan 4/திருவோணம் 4",
-						"Dhanishta 1/அவிட்டம் 1","Dhanishta 2/அவிட்டம் 2","Dhanishta 3/அவிட்டம் 3","Dhanishta 4/அவிட்டம் 4",
-						"Shathabhisha 1/சதயம் 1","Shathabhisha 2/சதயம் 2","Shathabhisha 3/சதயம் 3","Shathabhisha 4/சதயம் 4",
-						"Poorva bhadrapada 1/பூரட்டாதி 1","Poorva bhadrapada 2/பூரட்டாதி 2","Poorva bhadrapada 3/பூரட்டாதி 3","Poorva bhadrapada 4/பூரட்டாதி 4",
-						"Uthra bhadrapada 1/உத்திரட்டாதி 1","Uthra bhadrapada 2/உத்திரட்டாதி 2","Uthra bhadrapada 3/உத்திரட்டாதி 3","Uthra bhadrapada 4/உத்திரட்டாதி 4",
-						"Revathi 1/ரேவதி 1","Revathi 2/ரேவதி 2","Revathi 3/ரேவதி 3","Revathi 4/ரேவதி 4");
+	global $nak_array;
 						
 	return $nak_array[$paatham_idx];
 }
@@ -7076,12 +7665,12 @@ function updateMatchingMark($conn,$rowid,$mark)
 }
 
 function displayNumerologyInfo(){
-	
+	global $timestamp;
 	echo<<<EOL
-		<center><img src='images/num_planets_letters.png' style='width:-webkit-fill-available;height:auto'></center>
-		<center><img src='images/num_friend_enemy.png' style='width:-webkit-fill-available;height:auto'></center>
+	    <center><img src='images/num_planets_letters.png?$timestamp' style='width:-webkit-fill-available;height:auto'></center>
+		<center><img src='images/num_friend_enemy.png?$timestamp' style='width:-webkit-fill-available;height:auto'></center>
 		<!-- Disabled as requested by Manikantan sir -->
-		<!-- <center><img src='images/num_rasi_chart.png' style='width:-webkit-fill-available;height:auto'></center> -->
+		<!-- <center><img src='images/num_rasi_chart.png?$timestamp' style='width:-webkit-fill-available;height:auto'></center> -->
 EOL;
 }
 
@@ -7168,10 +7757,52 @@ function calculateVivahaChakra($sun_nakshatra, $moon_nakshatra) {
 	displayVivahaChakram($result,$sun_nakshatra,$moon_nakshatra);
 }
 
+function displayVivahaChakra_Manikantan($sun_nakshatra, $moon_nakshatra) {
+    // Nakshatra sequence
+    $nakshatras = [
+        'அசுவினி', 'பரணி', 'கிருத்திகை', 'ரோகிணி', 'மிருகசிரீஷம்', 'திருவாதிரை', 'புனர்பூசம்', 'பூசம்',
+        'ஆயில்யம்', 'மகம்', 'பூரம்', 'உத்திரம்', 'ஹஸ்தம்', 'சித்திரை', 'சுவாதி', 'விசாகம்', 'அனுஷம்',
+        'கேட்டை', 'மூலம்', 'பூராடம்', 'உத்திராடம்', 'திருவோணம்', 'அவிட்டம்', 'சதயம்', 'பூரட்டாதி', 'உத்திரட்டாதி', 'ரேவதி'
+    ];
+	
+	$result = "";
+	
+	// Get the indexes of Sun and Moon Nakshatras
+	$sun_index = array_search($sun_nakshatra, $nakshatras)+1;
+	$moon_index = array_search($moon_nakshatra, $nakshatras)+1;
+
+
+   // Ensure valid indexes before calculation
+	if ($sun_index === false || $moon_index === false) {
+		die("Invalid Nakshatra name provided.");
+	}
+
+	// Circular counting from sun_nakshatra to moon_nakshatra
+	$count = ($moon_index - $sun_index + count($nakshatras)) % count($nakshatras) + 1;
+
+	
+	debug("sun_idx=$sun_index, moon_idx=$moon_index, count=$count");
+	
+	if(in_array($count, [3, 4, 5, 12, 13, 14, 21, 22, 23, 24, 25, 26])){
+		$result = '<div class="vivagaResultGreen">இந்த நாள் விவாஹ சக்ரப்படி நன்றாக உள்ளது</div>';
+	}
+	else{
+		$result = '<div class="vivagaResultRed">இந்த நாள் விவாஹ சக்ரப்படி நன்றாக இல்லை</div>';
+	}
+	
+	echo "<center>";
+	echo "<div class='divPanchangHeading' id='vivahaChakram' style='width: var(--chart-width);padding-top:15px; padding-bottom:15px'>இன்றய விவாஹ சக்ர பலன்<BR><BR>" . $result;
+	echo "<BR>";
+	echo "<div style='font-size: 12px;text-align:left;'>சூரியன் நின்ற நட்சத்திரம்: <U>$sun_nakshatra</U></div>";
+	echo "<div style='font-size: 12px;text-align:left'>சந்திரன் நின்ற நட்சத்திரம்: <U>$moon_nakshatra</U></div>";
+	echo "</center>";
+	echo "</div>";
+	
+}
+
 function displayVivahaChakram($result, $sunstar, $moonstar){
 	echo "<center>";
-	echo "<div class='divPanchangHeading' id='vivahaChakram' style='widt@123
-	h: var(--chart-width)'>தற்போதய விவாஹ சக்ர பலன்<BR><BR>" . $result['result'];
+	echo "<div class='divPanchangHeading' id='vivahaChakram' style='width: var(--chart-width)'>இன்றய விவாஹ சக்ர பலன்<BR><BR>" . $result['result'];
 	echo "சூரியன் நின்ற நட்சத்திரம்: <U>$sunstar</U><BR>";
 	echo "சந்திரன் நின்ற நட்சத்திரம்: <U>$moonstar</U><BR><BR>";
 	echo $result['chart'];
@@ -9211,9 +9842,12 @@ function getAsthangam(){
 			default:
 				break;
 		}
-		
-		
     }
+	
+	if(empty($g_asthangam_arr)){
+		$g_asthangam_arr = ['இல்லை'];
+	}
+	
     return $g_asthangam_arr;
 }
 
@@ -9498,6 +10132,538 @@ function displayAshtavargam($id,$planet,$data,$type=1)
 EOL;
 
 	echo "<center>";
+}
+
+function displayPlanetTharaPalan()
+{
+	global $planetDeg,$sw_planet, $planet_starlord, $planetDeg_default, $g_nak;
+	
+	//$planet_starlord = array();
+
+	echo "<center><div class='divTable blueTable' id='starlordTharaiHead' style='height:auto;display:none'>"; 
+		echo "<br>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divTableCell' colspan=3>";
+				echo "<H6 style='font-weight:bold;color:black'>கிரக நக்ஷ் சார தாரா பலன்</H6>";
+			echo "</div>";
+		echo "</div>";
+	echo "</div></center>";
+
+	echo "<center><div class='divTable blueTable' id='starlordTharaiBody' style='height:auto;display:none'>"; 
+	echo "<div class='divTableRow'>";
+		echo "<div class='divTableCell'>கிரகம்</div>";
+		echo "<div class='divTableCell'>நக்ஷ் பாத</div>";
+		echo "<div class='divTableCell'>நக்ஷ் தாரை</div>";
+	echo "</div>";
+	
+	foreach($planet_starlord as $planet => $data)
+	{	
+		echo "<div class='divTableRow'>";
+			if((strcmp("சனி",$planet)==0 or strcmp("குரு",$planet)==0 or strcmp("செ",$planet)==0 or strcmp("சுக்",$planet)==0 or
+				strcmp("புத",$planet)==0) and $planetDeg_default[$planet] < 0.0){
+					//strcmp("புத",$planet)==0) and $planetDeg[$planet] < 0.0){
+						
+				echo "<div class='divPanchangHeadingSmall'>$planet (வ)</div>";
+			}
+			else{
+				echo "<div class='divPanchangHeadingSmall'>$planet</div>";
+			}
+			
+			echo "<div class='divPanchangSmall'>$data[0]</div>";
+			//echo "<div class='divPanchangSmall'>" . getThaaraPalan(explode(' ',$data[0])[0]) . "</div>";
+			echo getThaaraPalan($data[0]);
+		echo "</div>";
+	}
+	
+	echo "<div class='divTableRow' id='hidePdf1'>";
+	echo "</div>";
+	
+	echo "</div></center>";
+}
+
+function calculateThaaraPalan($inStar){
+	$thaarapalan = array();
+	
+	$star_arr = array("dummy","Aswini","Bharani","Krithika","Rohini","Mrigashirsha","Arudra", "Punarvasu","Pushyami","Ashlesha","Magha","Poorva Phalguni","Uthra phalguni","Hastha","Chitra","Swaathi","Vishaakha","Anuraadha","Jyeshta","Moola","Poorva Ashaada","Uthra Ashaada","Shraavan","Dhanishta","Shathabhisha","Poorva bhadrapada","Uthra bhadrapada","Revathi");
+	//$star_arr_result = array("dummy","Aswini/அசுவினி","Bharani/பரணி","Krithika/கிருத்திகை","Rohini/ரோகிணி","Mrigashirsha/மிருகசிரீஷம்","Arudra/திருவாதிரை","Punarvasu/புனர்பூசம்","Pushyami/பூசம்","Ashlesha/ஆயில்யம்","Magha/மகம்","Poorva Phalguni/பூரம்","Uthra phalguni/உத்திரம்","Hastha/ஹஸ்தம்","Chitra/சித்திரை","Swaathi/சுவாதி","Vishaakha/விசாகம்","Anuraadha/அனுஷம்","Jyeshta/கேட்டை","Moola/மூலம்","Poorva Ashaada/பூராடம்","Uthra Ashaada/உத்திராடம்","Shraavan/திருவோணம்","Dhanishta/அவிட்டம்","Shathabhisha/சதயம்","Poorva bhadrapada/பூரட்டாதி","Uthra bhadrapada/உத்திரட்டாதி","Revathi/ரேவதி");
+	$star_arr_result = array("dummy","அசுவினி","பரணி","கிருத்திகை","ரோகிணி","மிருகசிரீஷம்","திருவாதிரை","புனர்பூசம்","பூசம்","ஆயில்யம்","மகம்","பூரம்","உத்திரம்","ஹஸ்தம்","சித்திரை","சுவாதி","விசாகம்","அனுஷம்","கேட்டை","மூலம்","பூராடம்","உத்திராடம்","திருவோணம்","அவிட்டம்","சதயம்","பூரட்டாதி","உத்திரட்டாதி","ரேவதி");
+	foreach ($star_arr as $key => $value){
+		if($key==0) {continue;}
+		
+		$start_pos = array_search($inStar,$star_arr);
+		$end_pos = array_search($value,$star_arr);
+		
+		if($start_pos > 1 && $start_pos>$end_pos){
+			//echo $value . (27-$start_pos+$end_pos+1) . "<br>";
+			debug("[" . $inStar . "=" . $start_pos . "]" . "[" . $value . "=" . (27-$start_pos+$end_pos+1) . "]" . "<br>");
+			$thaarapalan[$star_arr_result[$key]] = 27-$start_pos+$end_pos+1;
+			
+			if((27-$start_pos+$end_pos+1)==22) {
+				debug("<span style='color:white;background-color:red;font-size:11pt'>VAINASIKA STAR - ". $value . "</span><br>");
+				$thaarapalan['VAINASIKA'] = $star_arr_result[$key];
+			}
+			continue;
+		}
+		else{
+			debug("[" . $inStar . "=" . $start_pos . "]" . "[" . $value . "=" . ($end_pos-$start_pos+1) . "]" . "<br>");
+			$thaarapalan[$star_arr_result[$key]] = $end_pos-$start_pos+1;
+		}
+		
+		if(($end_pos-$start_pos+1)==22) {
+			debug("<span style='color:white;background-color:red;font-size:11pt'>VAINASIKA STAR - ". $value . "</span><br>");
+			$thaarapalan['VAINASIKA'] = $star_arr_result[$key];
+		}
+	}
+	
+	return $thaarapalan;
+}
+
+// Declare this function once outside the main function
+function getThaaraHtml($instar_padham) {
+	global $rearranged_arr;
+	
+	$nak_array = array("அசுவினி 1","அசுவினி 2","அசுவினி 3","அசுவினி 4",
+                   "பரணி 1","பரணி 2","பரணி 3","பரணி 4",
+                   "கிருத்திகை 1","கிருத்திகை 2","கிருத்திகை 3","கிருத்திகை 4",
+                   "ரோகிணி 1","ரோகிணி 2","ரோகிணி 3","ரோகிணி 4",
+                   "மிருகசிரீஷம் 1","மிருகசிரீஷம் 2","மிருகசிரீஷம் 3","மிருகசிரீஷம் 4",
+                   "திருவாதிரை 1","திருவாதிரை 2","திருவாதிரை 3","திருவாதிரை 4",
+                   "புனர்பூசம் 1","புனர்பூசம் 2","புனர்பூசம் 3","புனர்பூசம் 4",
+                   "பூசம் 1","பூசம் 2","பூசம் 3","பூசம் 4",
+                   "ஆயில்யம் 1","ஆயில்யம் 2","ஆயில்யம் 3","ஆயில்யம் 4",
+                   "மகம் 1","மகம் 2","மகம் 3","மகம் 4",
+                   "பூரம் 1","பூரம் 2","பூரம் 3","பூரம் 4",
+                   "உத்திரம் 1","உத்திரம் 2","உத்திரம் 3","உத்திரம் 4",
+                   "ஹஸ்தம் 1","ஹஸ்தம் 2","ஹஸ்தம் 3","ஹஸ்தம் 4",
+                   "சித்திரை 1","சித்திரை 2","சித்திரை 3","சித்திரை 4",
+                   "சுவாதி 1","சுவாதி 2","சுவாதி 3","சுவாதி 4",
+                   "விசாகம் 1","விசாகம் 2","விசாகம் 3","விசாகம் 4",
+                   "அனுஷம் 1","அனுஷம் 2","அனுஷம் 3","அனுஷம் 4",
+                   "கேட்டை 1","கேட்டை 2","கேட்டை 3","கேட்டை 4",
+                   "மூலம் 1","மூலம் 2","மூலம் 3","மூலம் 4",
+                   "பூராடம் 1","பூராடம் 2","பூராடம் 3","பூராடம் 4",
+                   "உத்திராடம் 1","உத்திராடம் 2","உத்திராடம் 3","உத்திராடம் 4",
+                   "திருவோணம் 1","திருவோணம் 2","திருவோணம் 3","திருவோணம் 4",
+                   "அவிட்டம் 1","அவிட்டம் 2","அவிட்டம் 3","அவிட்டம் 4",
+                   "சதயம் 1","சதயம் 2","சதயம் 3","சதயம் 4",
+                   "பூரட்டாதி 1","பூரட்டாதி 2","பூரட்டாதி 3","பூரட்டாதி 4",
+                   "உத்திரட்டாதி 1","உத்திரட்டாதி 2","உத்திரட்டாதி 3","உத்திரட்டாதி 4",
+                   "ரேவதி 1","ரேவதி 2","ரேவதி 3","ரேவதி 4");
+
+						
+	$thara_palan_arr = $rearranged_arr[13];
+	
+	$nak_idx = array_search($instar_padham,$nak_array);
+	
+	$rasi_padham_idx = $nak_idx % 9;
+	
+	$nak_idx = ceil(($nak_idx+1) / 4);  // divide by 4 to get rasi idx
+	
+	$suk_thara = $rearranged_arr[13][$rasi_padham_idx];
+	
+	debug("instar_padham=$instar_padham,rasi_padham_idx=$rasi_padham_idx,suk_thara=$suk_thara,nak_idx=$nak_idx");
+	
+    /*switch ($nak_idx) {
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 10:
+        case 12:
+        case 14:
+        case 16:
+        case 19:
+        case 21:
+        case 23:
+        case 25:
+            //return "<div class='divThaaraPalanRed'>" . "$thara ($sookshama_thaara)" . $thaarapalan_arr[$thara] . "</div>";
+			return "<div class='divThaaraPalanRed'>$suk_thara</div>";
+        case 11:
+			return "<div class='divThaaraPalanRedBright'>சமு.பகை</div>";
+        case 18:
+			return "<div class='divThaaraPalanRedBright'>பணப்பகை</div>";
+        case 22:
+            //return "<div class='divThaaraPalanRedBright'>" . "$thara ($sookshama_thaara)" . $thaarapalan_arr[$thara] . "</div>";
+			return "<div class='divThaaraPalanRedBright'>வைநாசிகம்</div>";
+        case 2:
+        case 4:
+        case 6:
+        case 8:
+        case 13:
+        case 15:
+        case 17:
+        case 20:
+        case 24:
+        case 26:
+            //return "<div class='divThaaraPalanGreen'>" . "$thara ($sookshama_thaara)" . $thaarapalan_arr[$thara] . "</div>";
+			return "<div class='divThaaraPalanGreen'>$suk_thara</div>";
+        case 9:
+        case 27:
+            //return "<div class='divThaaraPalanGreenBright'>" . "$thara ($sookshama_thaara)" . $thaarapalan_arr[$thara] . "</div>";
+			return "<div class='divThaaraPalanGreenBright'>$suk_thara</div>";
+        default:
+            return ""; // Optional default case for when no match occurs
+    }
+	*/
+	
+	return "<div class='divThaaraPalanWhite'>$suk_thara</div>";
+}
+
+// Main function
+function getThaaraPalan($inStar_padham) {
+    global $g_nak, $g_padham, $panchang;
+	
+	[$inStar, $padham] = explode(' ',$inStar_padham);
+    
+    $star_arr_result = array("dummy", "அசுவினி", "பரணி", "கிருத்திகை", "ரோகிணி", "மிருகசிரீஷம்", "திருவாதிரை", "புனர்பூசம்", "பூசம்", "ஆயில்யம்", "மகம்", "பூரம்", "உத்திரம்", "ஹஸ்தம்", "சித்திரை", "சுவாதி", "விசாகம்", "அனுஷம்", "கேட்டை", "மூலம்", "பூராடம்", "உத்திராடம்", "திருவோணம்", "அவிட்டம்", "சதயம்", "பூரட்டாதி", "உத்திரட்டாதி", "ரேவதி");
+    
+    $thaarapalan_arr = [
+        "dummy", "ஜென்ம", "சம்பத்", "விபத்து", "ஷேம", "பிரத்யக்", "சாதக", "வதை", "மைத்ர", "ப.மைத்ர", "ஜென்ம", "சமு.பகை", "விபத்து", "ஷேம", "பிரத்யக்", "சாதக", "வதை", "மைத்ர", "ப.பகை", "ஜென்ம", "சமு.பகை", "விபத்து", "வைநாசி", "பிரத்யக்", "சாதக", "வதை", "மைத்ர", "ப.மைத்ர"
+    ];
+	
+	$str = getShortStar($g_nak . ' ' . $g_padham);
+	
+	//echo "----".array_search($str, $nak_array);
+
+
+    // Find the positions in the star array
+    $start_pos = array_search($g_nak, $star_arr_result);
+    $end_pos = array_search($inStar, $star_arr_result);
+
+    // Calculate the thara value
+    if ($start_pos > 1 && $start_pos > $end_pos) {
+        $thara = 27 - $start_pos + $end_pos + 1;
+    } else {
+        $thara = $end_pos - $start_pos + 1;
+    }
+	
+	switch ($thara) {
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 10:
+        case 12:
+        case 14:
+        case 16:
+        case 19:
+        case 21:
+        case 23:
+        case 25:
+            return "<div class='divThaaraPalanRed'>" . $thaarapalan_arr[$thara] . "</div>";
+        case 11:
+		case 18:
+		case 22:
+			return "<div class='divThaaraPalanRedBright'>" . $thaarapalan_arr[$thara] . "</div>";
+        case 2:
+        case 4:
+        case 6:
+        case 8:
+        case 13:
+        case 15:
+        case 17:
+        case 20:
+        case 24:
+        case 26:
+            return "<div class='divThaaraPalanGreen'>" . $thaarapalan_arr[$thara] . "</div>";
+        case 9:
+        case 27:
+            return "<div class='divThaaraPalanGreenBright'>" . $thaarapalan_arr[$thara] . "</div>";
+        default:
+            return ""; // Optional default case for when no match occurs
+    }
+}
+
+//This orders the paadham inside each rasi as well as thaara palan array (13) based on the moon's paadham
+//this is used to calculate sukshuma paadham for each planets in star lord table
+function generateOrderedNakArray($search) {
+    $nak_array = array(
+        1 => array(
+            "அசுவி 1", "அசுவி 2", "அசுவி 3", "அசுவி 4", 
+            "பரணி 1", "பரணி 2", "பரணி 3", "பரணி 4",
+            "கிருத் 1"
+        ),
+        2 => array(
+            "கிருத் 2", "கிருத் 3", "கிருத் 4", 
+            "ரோகி 1", "ரோகி 2", "ரோகி 3", "ரோகி 4", 
+            "மிருக 1", "மிருக 2"
+        ),
+        3 => array(
+            "மிருக 3", "மிருக 4", "திருவா 1", "திருவா 2", 
+            "திருவா 3", "திருவா 4", "புனர் 1", "புனர் 2", 
+            "புனர் 3"
+        ),
+        4 => array(
+            "புனர் 4", "பூசம் 1", "பூசம் 2", "பூசம் 3", 
+            "பூசம் 4", "ஆயில் 1", "ஆயில் 2", "ஆயில் 3", 
+            "ஆயில் 4"
+        ),
+        5 => array(
+            "மகம் 1", "மகம் 2", "மகம் 3", "மகம் 4", 
+            "பூரம் 1", "பூரம் 2", "பூரம் 3", "பூரம் 4", 
+            "உத்ர 1"
+        ),
+        6 => array(
+            "உத்ர 2", "உத்ர 3", "உத்ர 4", "ஹஸ்த 1", 
+            "ஹஸ்த 2", "ஹஸ்த 3", "ஹஸ்த 4", "சித்தி 1", 
+            "சித்தி 2"
+        ),
+        7 => array(
+            "சித்தி 3", "சித்தி 4", "சுவா 1", "சுவா 2", 
+            "சுவா 3", "சுவா 4", "விசா 1", "விசா 2", 
+            "விசா 3"
+        ),
+        8 => array(
+            "விசா 4", "அனுஷ 1", "அனுஷ 2", "அனுஷ 3", 
+            "அனுஷ 4", "கேட் 1", "கேட் 2", "கேட் 3", 
+            "கேட் 4"
+        ),
+        9 => array(
+            "மூலம் 1", "மூலம் 2", "மூலம் 3", "மூலம் 4", 
+            "பூரா 1", "பூரா 2", "பூரா 3", "பூரா 4", 
+            "உத்ராட 1"
+        ),
+        10 => array(
+            "உத்ராட 2", "உத்ராட 3", "உத்ராட 4", "திருவோ 1", 
+            "திருவோ 2", "திருவோ 3", "திருவோ 4", "அவிட் 1", 
+            "அவிட் 2"
+        ),
+        11 => array(
+            "அவிட் 3", "அவிட் 4", "சதய 1", "சதய 2", 
+            "சதய 3", "சதய 4", "பூரட் 1", "பூரட் 2", 
+            "பூரட் 3"
+        ),
+        12 => array(
+            "பூரட் 4", "உத்ரட் 1", "உத்ரட் 2", "உத்ரட் 3", 
+            "உத்ரட் 4", "ரேவதி 1", "ரேவதி 2", "ரேவதி 3", 
+            "ரேவதி 4"
+        ),
+		13 => array("ஜென்ம", "சம்பத்", "விபத்து", "ஷேமம்", 
+				"பிரத்யகு", "சாதக", "வதை", "மைத்ரம்", 
+				"ப.மைத்ர"
+		)
+    );
+
+    $nak_array_out = array();
+
+    // Step 1: Find the moon paadham
+    $foundInGroup = null;
+    $indexOfSearch = null;
+
+    foreach ($nak_array as $groupNumber => $group) {
+        if (in_array($search, $group)) {
+            $foundInGroup = $groupNumber;
+            $indexOfSearch = array_search($search, $group);
+            break;
+        }
+    }
+
+    // Step 2: Generate the reordered array based on moon paadham count
+    foreach ($nak_array as $groupNumber => $group) {
+        // Rotate the group array starting from the found moon paadham index
+        $group = array_merge(
+            array_slice($group, 9-$indexOfSearch), 
+            array_slice($group, 0, 9-$indexOfSearch)
+        );
+        
+        $nak_array_out[$groupNumber] = $group;
+    }
+
+    return $nak_array_out;
+}
+
+function displayErrorPage(){
+	echo <<< EOL
+		<center>
+<H2><span style='color:red'>***UPDATE***<BR>There is an issue in the server which is causing this error. Working with service provider. Server பிரச்சினை இருப்பதால் app வேலை செய்யவில்லை. சர்வர் கம்பெனியுடன் வேலை செய்துகொண்டுள்ளேன். விரைவில் சரி செய்யப்படும்.</SPAN></h2>
+</center>
+
+EOL;
+
+	return;
+}
+
+function getShortStar($star_padham){
+	$nak_short_arr = array(
+		"அசுவினி" => "அசுவி",
+		"பரணி" => "பரணி",
+		"கிருத்திகை" => "கிருத்",
+		"ரோகிணி" => "ரோகி",
+		"மிருகசிரீஷம்" => "மிருக",
+		"திருவாதிரை" => "திருவா",
+		"புனர்பூசம்" => "புனர்",
+		"பூசம்" => "பூசம்",
+		"ஆயில்யம்" => "ஆயில்",
+		"மகம்" => "மகம்",
+		"பூரம்" => "பூரம்",
+		"உத்திரம்" => "உத்ர",
+		"ஹஸ்தம்" => "ஹஸ்த",
+		"சித்திரை" => "சித்தி",
+		"சுவாதி" => "சுவா",
+		"விசாகம்" => "விசா",
+		"அனுஷம்" => "அனுஷ",
+		"கேட்டை" => "கேட்",
+		"மூலம்" => "மூலம்",
+		"பூராடம்" => "பூரா",
+		"உத்திராடம்" => "உத்ராட",
+		"திருவோணம்" => "திருவோ",
+		"அவிட்டம்" => "அவிட்",
+		"சதயம்" => "சதய",
+		"பூரட்டாதி" => "பூரட்",
+		"உத்திரட்டாதி" => "உத்ரட்",
+		"ரேவதி" => "ரேவதி"
+	);
+	
+	[$star,$padham] = explode(" ",$star_padham);
+	
+	return $nak_short_arr[$star] . ' ' . $padham;
+}
+
+//Used in Jamakol to find sookuma rasi
+//Calculation, Count Udhayam to Aaruda athipathi, uthayam_to_aarudaAthipathi_count. 
+//Find the rasi from Aaruda athipathi for this uthayam_to_aarudaAthipathi_count.
+function updateSookumaRasi($aar_house){
+	global $sw_planet, $outside, $udhayam_house;
+	
+	$aaruda_athipathi = findAthipathi($aar_house);
+		
+	$found_keys = array_keys(array_filter($outside, function ($value) use ($aaruda_athipathi) {
+		return strpos($value, $aaruda_athipathi) !== false;
+	}));
+	
+	$aaruda_athipathi_house = $found_keys[0];
+	
+	$uthayam_to_aarudaAthipathi_count = countHouses($udhayam_house,$aaruda_athipathi_house);
+	
+	$sookuma_house = targetHouse($aaruda_athipathi_house,$uthayam_to_aarudaAthipathi_count);
+	
+	debug("aar_house=$aar_house<BR>aaruda_athipathi=$aaruda_athipathi<BR>aaruda_athipathi_house=$aaruda_athipathi_house<BR>uthayam_to_aarudaAthipathi_count=$uthayam_to_aarudaAthipathi_count<BR>sookuma_house=$sookuma_house");
+	
+	$sw_planet[$sookuma_house] = $sw_planet[$sookuma_house] . "<span class='sookuma'> சூக்</span>";
+}
+
+//தலைவிதி புள்ளி காணும் முறை 
+//ராகு உள்ளதூரம் முதல் சந்திரன் உள்ள தூரம் வரை எண்ணி வரும் விடையை 2 ஆல் வகுக்க கிடைக்க விடை தலைவிதி புள்ளி ஆகும்...
+function calculateThalaivithiPulli($moonDeg, $rahuDeg) {
+    // Step 1: Subtract Rahu from Moon
+    $diff = abs($moonDeg - $rahuDeg);
+
+    // Step 3: Divide by 2 to get Destiny Point
+    $destinyPoint = ceil($diff / 2 / 3.333333);
+	
+	$starIdx = ceil($destinyPoint/4);
+
+    return [getValue(getStarPaatham($destinyPoint)),$starIdx];
+}
+
+//அதிர்ஷ்ட புள்ளி
+//Add full degree of moon, 5th lord, 9th lord. Subtract 360 if the total is more than 360.
+//The star on which the final degree falls is your luck point. We should see if there are any
+//planets in this star. If yes that planet is your lucky planet. if not there, consider the star lord.
+//Check in which bava the lucky star lord placed. The life karaka of that bava is your luck.
+//if 4 mother, 5 child, 6 uncle, 7 wife, 9 father. Make sure to activate that relation
+
+function calculateAthrishtaPulli(){
+	global $planet_starlord, $lagna_house;
+	
+	$fifth_house = $lagna_house-1+5-1;
+	if($fifth_house >= 12) $fifth_house=$fifth_house-12;
+	
+	$ninth_house = $lagna_house-1+9-1;
+	if($ninth_house >= 12) $ninth_house=$ninth_house-12;
+	
+	$fifthLord = findAthipathi($fifth_house);
+	$ninthLord = findAthipathi($ninth_house);
+	$total_deg = $planet_starlord['சந்'][2]+$planet_starlord[$fifthLord][2]+$planet_starlord[$ninthLord][2];
+	
+	$final_deg = fmod($total_deg,360);
+	
+	$athirishtaIdx = ceil($final_deg/3.333333);
+	
+	$starIdx = ceil($athirishtaIdx/4);
+	
+	return [getValue(getStarPaatham($athirishtaIdx)),$starIdx];
+}
+
+//துரதிர்ஷ்ட புள்ளி
+//Add full degree of moon, 5th lord, 9th lord. Subtract 360 if the total is more than 360.
+//The star on which the final degree falls is your luck point. We should see if there are any
+//planets in this star. If yes that planet is your lucky planet. if not there, consider the star lord.
+//Check in which bava the lucky star lord placed. The life karaka of that bava is your luck.
+//if 4 mother, 5 child, 6 uncle, 7 wife, 9 father. Make sure to activate that relation
+
+function calculateDhurathrishtaPulli(){
+	global $planet_starlord, $lagna_house;
+	
+	$sixth_house = $lagna_house-1+6-1;
+	if($sixth_house >= 12) $sixth_house=$sixth_house-12;
+	
+	$eight_house = $lagna_house-1+8-1;
+	if($eight_house >= 12) $eight_house=$eight_house-12;
+	
+	$sixthLord = findAthipathi($sixth_house);
+	$eightLord = findAthipathi($eight_house);
+	$total_deg = $planet_starlord['சந்'][2]+$planet_starlord[$sixthLord][2]+$planet_starlord[$eightLord][2];
+	
+	$bad_point_idx = ceil(fmod($total_deg,360)/3.333333);
+	
+	$bad_point_remedy_idx = ($bad_point_idx + 54) % 108;
+	
+	$star_idx =ceil($bad_point_remedy_idx/4);
+	
+	return [getValue(getStarPaatham($bad_point_idx)),getValue(getStarPaatham($bad_point_remedy_idx)), $star_idx];
+}
+
+function findSubLord($planet, $full_deg) {
+	
+	//find nakshatra degree
+	$deg = fmod($full_deg,13.333333);
+	
+    // Convert degrees to minutes
+    $deg_in_minutes = $deg * 60;
+
+    // Vimshottari Dasha years
+    $vimshottari = [
+        'கே' => 7,
+        'சுக்' => 20,
+        'சூரி' => 6,
+        'சந்' => 10,
+        'செ' => 7,
+        'ரா' => 18,
+        'குரு' => 16,
+        'சனி' => 19,
+        'புத' => 17
+    ];
+
+    // Planet order
+    $planet_order = array_keys($vimshottari);
+
+    // Total span for 1 Nakshatra (800 minutes = 13°20′)
+    $total_span = 800;
+
+    // Reorder the planet list to start from the given planet
+    $start_index = array_search($planet, $planet_order);
+    if ($start_index === false) {
+        return "Invalid planet name.";
+    }
+
+    // Reorder the array to begin with the starting planet and wrap around
+    $rotated_planets = array_merge(
+        array_slice($planet_order, $start_index),
+        array_slice($planet_order, 0, $start_index)
+    );
+
+    // Calculate and find the sub lord
+    $current_pos = 0;
+    foreach ($rotated_planets as $sub_lord) {
+	    $portion = ($vimshottari[$sub_lord] / 120) * $total_span;
+        if ($deg_in_minutes >= $current_pos && $deg_in_minutes < ($current_pos + $portion)) {
+            return $sub_lord;
+        }
+        $current_pos += $portion;
+    }
+
+    return "Degree out of range.";
 }
 
 ?>
