@@ -212,7 +212,9 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 		$(document).ready(function(){
 			$('.search-box input[type="text"]').on("keyup input", function(){
 				/* Get input value on change */
-				var inputVal = $(this).val();
+				//var inputVal = $(this).val();
+				var inputVal = $(this).val().trim();
+				document.getElementById('place').value=inputVal;
 				var resultDropdown = $(this).siblings(".result");
 				if(inputVal.length>2){
 					$.get("backend-search.php", {term: inputVal}).done(function(data){
@@ -420,6 +422,8 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 			var z3 = document.getElementById("starlordHeadMutable_boy");
 			var z4 = document.getElementById("starlordBodyMutable_boy");
 			var z5 = document.getElementById("d9_chart");
+			var z6 = document.getElementById("kpHeadMutable");
+			var z7 = document.getElementById("kpBodyMutable");
 			
 			if (z1.style.display === "none" && z2.style.display === "none") {
 				z1.style.display = "table-cell";
@@ -429,9 +433,13 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 				z3.style.display = "none";
 				z4.style.display = "none";
 				z5.style.display = "none";
+				z6.style.display = "table-cell";
+				z7.style.display = "table-cell";
 			  } else {
 				z1.style.display = "none";
 				z2.style.display = "none";
+				z6.style.display = "none";
+				z7.style.display = "none";
 				x.style.display = "none";
 				y.style.display = "none";
 			  }
@@ -561,6 +569,8 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 			document.getElementById("thithiYogamKaranamBodyMutable").style.display='table';
 			document.getElementById("abhijitHeadMutable").style.display='table';
 			document.getElementById("abhijitBodyMutable").style.display='table';
+			document.getElementById("kpHeadMutable").style.display='table';
+			document.getElementById("kpBodyMutable").style.display='table';
 			
 			var btns = document.getElementById("buttons");
 			
@@ -623,6 +633,19 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 				case 6:
 					divName = "mudakkuDetailsDiv";
 					break;
+				case 7:
+					divName = "rasiDetailsDiv";
+					break;
+				case 8:
+					divName = "destinyPointDetailsDiv";
+					break;
+				case 9:
+					divName = "athrishtaPointDetailsDiv";
+					break;
+				case 10:
+					divName = "dhurathrishtaPointDetailsDiv";
+					break;
+					
 			}
 			
 			$(divName).delay(3000).fadeOut('slow');
@@ -704,7 +727,8 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 	   curr_date = new Date();
        
        console.log("Anthram");
-       for (var i = index; i <= index + 7; i++) {
+        //for (var i = index; i <= index + 7; i++) {
+	for (var i = index; i <= index + 8; i++) {
            if (i > 8) {
              break;
            }
@@ -944,7 +968,7 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 			document.getElementById('thithi').innerHTML = panchang.Tithi.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Tithi.start)+' முதல்<BR>'+formatDateTime(panchang.Tithi.end)+' வரை</div>';
 			document.getElementById('nak').innerHTML = panchang.Nakshatra.name+document.getElementById('nak').innerHTML+'<BR><div class="divSmall">'+formatDateTime(panchang.Nakshatra.start)+' முதல்<BR>'+formatDateTime(panchang.Nakshatra.end)+' வரை</div>';
 			document.getElementById('yogam').innerHTML = panchang.Yoga.name+'<BR><div class="divSmall">'+formatDateTime(panchang.Yoga.start)+' முதல்<BR>'+formatDateTime(panchang.Yoga.end)+' வரை</div>';
-			document.getElementById('karanam').innerHTML = panchang.Karna.name+'('+getKaranaPlanet(panchang.Karna.name)+')'+'<BR><div class="divSmall">'+formatDateTime(panchang.Karna.start)+' முதல்<BR>'+formatDateTime(panchang.Karna.end)+' வரை</div>';
+			document.getElementById('karanam').innerHTML = panchang.Karna.name+' ('+getKaranaPlanet(panchang.Karna.name)+')'+'<BR><div class="divSmall">'+formatDateTime(panchang.Karna.start)+' முதல்<BR>'+formatDateTime(panchang.Karna.end)+' வரை</div>';
 		});
 	}
 	
@@ -1002,8 +1026,6 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 	</script>
 </head>
 <?php
-
-
 
 // ------- Swiss ephemeris // ------- 
 $libPath = './sweph/';
@@ -1351,7 +1373,7 @@ function displayHoroDetails()
 	global $panchang, $in_name, $chart_date, $chart_time, $g_dasaBalance, $place, $g_thithi_soonyam_matching_arr,$g_dasaCurrent, $transit_date, $lagna_house, $country,$yogi_arr, 
 		$g_pancha_pakshi, $g_thithi, $g_paksham, $moon_house, $today_sunrise, $today_sunset, $otherPanchangDetails, $city,$g_nak, $g_thithi_idx, $g_yoga_idx, $in_place, $g_rowid, $in_sex,
 		$g_lagnam, $g_rasi, $nak_pad_idx, $g_ucha_details, $g_neecha_details, $sun_house, $sun_degree, $g_tamil_date_arr, $g_vayadhotta_lagna, $g_age, $g_mudakku_detail,
-		$current_dasa_bukthi,$planet_starlord, $g_padham;
+		$current_dasa_bukthi,$planet_starlord, $g_padham,$lat,$lon;
 	
 	echo "<div id='birthdetails'><div class='divTable blueTable' style='height:40px;' id='birthHead'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
@@ -1398,7 +1420,7 @@ function displayHoroDetails()
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பிறந்த இடம்</div>";
-			echo "<div class='divPanchang'>".$place."</div>";
+			echo "<div class='divPanchang' id='placename'>".$place."<BR>(".$lat."°, ".$lon."°)</div>";
 		echo "</div>";
 		
 		echo "<div class='divTableRow'>";
@@ -1427,15 +1449,17 @@ function displayHoroDetails()
 			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
 			//echo "<div class='divPanchang'  id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'>".explode('/',$panchang['nak'])[1]."</div>";
 			//echo "<div class='divPanchang'  id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'>(".(ceil($g_nak_idx/4/12)).")</div>";
-			$g_padham = explode(' ',explode('/',$panchang['nak'])[1])[1];
+			//$g_padham = explode(' ',explode('/',$panchang['nak'])[1])[1];
 			echo "<div class='divPanchang'  id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'> (".($g_padham).")</div>";
 		echo "</div>";
 		displayDetailsDiv('nak',ceil($nak_pad_idx)/4);
 		
+		$yogi_arr = getYogi($panchang['yoga']);
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>யோகம்</div>";
-			echo "<div class='divPanchang' id='yogam'>".$panchang['yoga']."</div>";
+			echo "<div class='divPanchang' id='yogam' OnClick='showDetailsDiv(event, 3)' style='color:blue;cursor:pointer'>".$panchang['yoga']."</div>";
 		echo "</div>";
+		displayDetailsDiv('yogi',$g_yoga_idx);
 		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>கரணம்</div>";
@@ -1469,8 +1493,10 @@ function displayHoroDetails()
 		echo "<div class='divTableRow'>";
 			$g_rasi = getRasi($moon_house-1);
 			echo "<div class='divPanchangHeading'>ராசி</div>";
-			echo "<div class='divPanchang'>".$g_rasi."</div>";
+			//echo "<div class='divPanchang'>".$g_rasi."</div>";
+			echo "<div class='divPanchang' id='raasi'   OnClick='showDetailsDiv(event, 7)' style='color:blue;cursor:pointer'>" . $g_rasi . "</div>";
 		echo "</div>";
+		displayDetailsDiv('rasi',"");
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>உச்சம்</div>";
 			echo "<div class='divPanchang'>".$g_ucha_details."</div>";
@@ -1482,9 +1508,16 @@ function displayHoroDetails()
 		$yogi_arr = getYogi($panchang['yoga']);
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>யோகி</div>";
-			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 3)' style='color:blue;cursor:pointer'>".$yogi_arr[1]."(".$yogi_arr[0].")</div>";
+			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 3)' style='color:blue;cursor:pointer'>".$yogi_arr[1]." (".$yogi_arr[0].")</div>";
 		echo "</div>";
 		displayDetailsDiv('yogi',$g_yoga_idx);
+
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>பஞ்ச பக்ஷி</div>";
+			$g_pancha_pakshi = getPanchaPakshi();
+			echo "<div class='divPanchang'>".$g_pancha_pakshi."</div>";
+		echo "</div>";
+
 		[$guberaStarPaadham,$guberaRasi,$guberaRasiHouse, $guberaStarIdx] = getKubera();  //$guberaRasiHouse not used as of now. It will be used if we need to show some symbold in chart
 		
 		echo "<div class='divTableRow' style='background-color:yellow'>";
@@ -1493,12 +1526,23 @@ function displayHoroDetails()
 		echo "</div>";
 
 		displayDetailsDiv('kubera',$guberaStarIdx);
-		
+
+		[$destiny_star, $star_idx] = calculateThalaivithiPulli($planet_starlord['சந்'][2],$planet_starlord['ரா'][2]);
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>பஞ்ச பக்ஷி</div>";
-			$g_pancha_pakshi = getPanchaPakshi();
-			echo "<div class='divPanchang'>".$g_pancha_pakshi."</div>";
+			echo "<div class='divPanchangHeading'>தலைவிதி புள்ளி</div>";
+			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 8)' style='color:blue;cursor:pointer'>" .$destiny_star . "</div>";
+			//echo "<div class='divPanchang'>" . $destiny_star . "</div>";
 		echo "</div>";
+		displayDetailsDiv('destinyPoint',$star_idx);
+		
+		[$athrishta_star, $star_idx] = calculateAthrishtaPulli();
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>அதிர்ஷ்ட புள்ளி</div>";
+			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 9)' style='color:blue;cursor:pointer'>" .$athrishta_star . "</div>";
+			//echo "<div class='divPanchang'>" . $athrishta_star . "</div>";
+		echo "</div>";
+		displayDetailsDiv('AthrishtaPoint',$star_idx);
+		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>சூரிய உதயம்</div>";
 			echo "<div class='divPanchang'>".explode(' ',$today_sunrise)[1]."</div>";
@@ -1509,7 +1553,7 @@ function displayHoroDetails()
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeadingRed'>அவயோகி</div>";
-			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 4)' style='color:blue;cursor:pointer'>".$yogi_arr[3]."(".$yogi_arr[2].")</div>";
+			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 4)' style='color:blue;cursor:pointer'>".$yogi_arr[3]." (".$yogi_arr[2].")</div>";
 		echo "</div>";
 		displayDetailsDiv('ayogi',$g_yoga_idx);
 		echo "<div class='divTableRow'>";
@@ -1532,7 +1576,8 @@ function displayHoroDetails()
 		$g_asthangam_arr = getAsthangam();
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeadingRed'>அஸ்தங்கம்</div>";
-			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 6)' style='color:blue;cursor:pointer'>".join(',',$g_asthangam_arr)."</div>";
+			//echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 6)' style='color:blue;cursor:pointer'>".join(',',$g_asthangam_arr)."</div>";
+			echo "<div class='divPanchang'>".join(',',$g_asthangam_arr)."</div>";
 		echo "</div>";
 		/*echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>ராகு காலம்</div>";
@@ -1559,6 +1604,15 @@ function displayHoroDetails()
 			//echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house,6)-1)."</div>";
 			echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house-1,8))."</div>";
 		echo "</div>";
+
+		[$bad_star, $remedy_star, $remedy_star_idx] = calculateDhurathrishtaPulli();
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeadingRed'>துரதிர்ஷ்ட புள்ளி</div>";
+			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 10)' style='color:blue;cursor:pointer'>". $bad_star . "<BR>பரிகாரம் - " . $remedy_star . "</div>";
+			//echo "<div class='divPanchang'>" . $bad_star . "<BR>பரிகாரம் - " . $remedy_star . "</div>";
+		echo "</div>";
+		displayDetailsDiv('DhurathrishtaPoint',$remedy_star_idx);
+
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பிறப்பு தசா இருப்பு</div>";
 			echo "<div class='divPanchang'>".$g_dasaBalance[0]."</div>";
@@ -1904,18 +1958,19 @@ if($default_save){ //save it to DB and show the chart
 	echo "<script>window.location='$url';</script>";
 }
 
-if(date('I',strtotime($chart_date))==1) { // DST
-   debug('<br>Picking daylight savings '.$gmt_offset_dst);
-   $hour=(int)strtok($gmt_offset_dst,":");
-   $min=(int)strtok(":");
-   $offset=$hour+$min/60;
-   $tz_offset=$gmt_offset_dst;
-}
-else {
-   $hour=(int)strtok($gmt_offset,":");
-   $min=(int)strtok(":");
-   $offset=$hour+$min/60;
-   $tz_offset=$gmt_offset;
+// Create a DateTime object for the chart date
+$chart_date_obj = new DateTime($chart_date);
+
+// Check if DST is active for the given date and timezone
+if ($chart_date_obj->format('I') == 1) { // DST is active
+    debug('<br>Picking daylight savings ' . $gmt_offset_dst);
+    list($hour, $min) = explode(':', $gmt_offset_dst);
+    $offset = (int)$hour + (int)$min / 60;
+    $tz_offset = $gmt_offset_dst;
+} else { // DST is not active
+    list($hour, $min) = explode(':', $gmt_offset);
+    $offset = (int)$hour + (int)$min / 60;
+    $tz_offset = $gmt_offset;
 }
 
 // ------- Swiss ephemeris // ------- 
@@ -1923,7 +1978,6 @@ else {
 $date = date("d.m.Y",strtotime($chart_date));
 $time = date("H:i:s",strtotime($chart_time));
 $datetime = $date . " " . $time;
-$h_sys='P';
 
 if($DEBUG==1){ 
 	echo 'DATETIME =' . $datetime; echo '<br>';
@@ -1970,6 +2024,117 @@ if(strtotime($datetime) >= strtotime($today_sunrise) && strtotime($datetime) <= 
 }
 
 debug("DAY=" . $day);
+
+/*
+Housing system options
+A  equal\n\
+B  Alcabitius\n\
+C  Campanus\n\
+D  equal / MC\n\
+E  equal = A\n\
+F  Carter poli-equatorial\n\
+G  36 Gauquelin sectors\n\
+H  horizon / azimuth\n\
+I  Sunshine\n\
+i  Sunshine alternative\n\
+K  Koch\n\
+L  Pullen S-delta\n\
+M  Morinus\n\
+N  Whole sign, Aries = 1st house\n\
+O  Porphyry\n\
+P  Placidus\n\
+Q  Pullen S-ratio\n\
+R  Regiomontanus\n\
+S  Sripati\n\
+T  Polich/Page (\"topocentric\")\n\
+U  Krusinski-Pisa-Goelzer\n\
+V  equal Vehlow\n\
+W  equal, whole sign\n\
+X  axial rotation system/ Meridian houses\n\
+Y  APC houses\n\
+*/
+
+//$h_sys='P';
+$h_sys='V';
+
+/*-sid<option> ayanamsam
+ number of ayanamsha method:\n\
+0 for Fagan/Bradley\n\
+1 for Lahiri\n\
+2 for De Luce\n\
+3 for Raman\n\
+4 for Usha/Shashi\n\
+5 for Krishnamurti\n\
+6 for Djwhal Khul\n\
+7 for Yukteshwar\n\
+8 for J.N. Bhasin\n\
+9 for Babylonian/Kugler 1\n\
+10 for Babylonian/Kugler 2\n\
+11 for Babylonian/Kugler 3\n\
+12 for Babylonian/Huber\n\
+13 for Babylonian/Eta Piscium\n\
+14 for Babylonian/Aldebaran = 15 Tau\n\
+15 for Hipparchos\n\
+16 for Sassanian\n\
+17 for Galact. Center = 0 Sag\n\
+18 for J2000\n\
+19 for J1900\n\
+20 for B1950\n\
+21 for Suryasiddhanta\n\
+22 for Suryasiddhanta, mean Sun\n\
+23 for Aryabhata\n\
+24 for Aryabhata, mean Sun\n\
+25 for SS Revati\n\
+26 for SS Citra\n\
+27 for True Citra\n\
+28 for True Revati\n\
+29 for True Pushya (PVRN Rao)\n\
+30 for Galactic (Gil Brand)\n\
+31 for Galactic Equator (IAU1958)\n\
+32 for Galactic Equator\n\
+33 for Galactic Equator mid-Mula\n\
+34 for Skydram (Mardyks)\n\
+35 for True Mula (Chandra Hari)\n\
+36 Dhruva/Gal.Center/Mula (Wilhelm)\n\
+37 Aryabhata 522\n\
+38 Babylonian/Britton\n\
+39 Vedic/Sheoran\n\
+40 Cochrane (Gal.Center = 0 Cap)\n\
+41 Galactic Equator (Fiorenza)\n\
+42 Vettius Valens\n\
+43 Lahiri 1940\n\
+44 Lahiri VP285 (1980)\n\
+45 Krishnamurti VP291\n\
+46 Lahiri ICRC\n\
+
+-p<planet bodies>
+  single body numbers/letters:\n\
+        0 Sun (character zero)\n\
+        1 Moon (character 1)\n\
+        2 Mercury\n\
+        3 Venus\n\
+        4 Mars\n\
+        5 Jupiter\n\
+        6 Saturn\n\
+        7 Uranus\n\
+        8 Neptune\n\
+        9 Pluto\n\
+        m mean lunar node\n\
+        t true lunar node\n\
+        n nutation\n\
+        o obliquity of ecliptic\n\
+	q delta t\n\
+	y time equation\n\
+	b ayanamsha\n\
+        A mean lunar apogee (Lilith, Black Moon) \n\
+        B osculating lunar apogee \n\
+        c intp. lunar apogee \n\
+        g intp. lunar perigee \n\
+        C Earth (in heliocentric or barycentric calculation)\n\
+*/
+
+// Define file path to save output
+$filePath = 'output.txt';
 
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 	debug('RUNNING ON WINDOWS');
@@ -2019,6 +2184,7 @@ foreach ($output as $key => $line)
 		
 		continue;
 	}
+	
 	//$sw_planet[$key] = $row[0];
     $tot_degree[$key] = $row[1];
 	
@@ -2390,7 +2556,7 @@ echo <<<EOL
 											
 											<button type='button' class='actionBtn' id='submit1' value='Submit' onClick='return genChart(this.form);'>Submit</button>
 											<input type='button' class='actionBtn' id='save' name='save' value='$saveBtnTxt' onClick='saveChart();'>
-											<button type="button" class='actionBtn' value='Download' onClick='loadOnePage("$onePageURL");'>Download</button>
+											<button type="button" class='actionBtn' value='Download' onClick='loadOnePage("$onePageURL");'>PDF</button>
 											</form>
 											
 											<!-- <button style="background-color:gold;color:#660000;font-weight:bold;font-size:10px;" onclick="generatePDF()">Download</button> -->
@@ -2491,6 +2657,7 @@ EOL;
 					//displayBhavaChart();
 					calculateNavamsam();
 					displayNavamsam();
+					displayBhavaChart();
 					calculateBirthPanchang();
 					echo "<br><div id='birth_info'></div>";
 					//displayThithiSoonyam($panchang["thithi"]);
@@ -2506,22 +2673,6 @@ EOL;
 
 
 echo <<<EOL
-						
-						<center><div class='divTable blueTable' style='height:auto;' id='notes'>
-							<br>
-							<div class='divTableRow'>
-								<div class="divTableCell" colspan='2'>
-									<H6 style='font-weight:bold;color:black'>குறிப்புகள்</H6>
-								</div>
-							</div>
-							<form id='saveForm' action='' method='post' style='width:inherit'>
-								<input type="hidden" id="hNotesTxt" name="hNotesTxt" value="">
-								<div class="editable" id="notesTxt" contenteditable="true" onClick='addDateTime();'>$g_notes</div>
-								<input type='button' class='actionBtn' id='save' name='save' value='$saveBtnTxt' onClick='saveChart();'>
-							</form> <!-- notes update form end tag -->
-						</div>
-						
-						</center>
 					</div>
 					
 					<BR><BR><BR>
@@ -2675,8 +2826,25 @@ $charts = [
 		
         echo "</div>";
     }
-	@123
 	
+echo<<<EOL
+	<center><div class='divTable blueTable' style='height:auto;' id='notes'>
+			<br>
+		<div class='divTableRow'>
+			<div class="divTableCell" colspan='2'>
+				<H6 style='font-weight:bold;color:black'>குறிப்புகள்</H6>
+			</div>
+		</div>
+		<form id='saveForm' action='' method='post' style='width:inherit'>
+			<input type="hidden" id="hNotesTxt" name="hNotesTxt" value="">
+			<div class="editable" id="notesTxt" contenteditable="true" onClick='addDateTime();'>$g_notes</div>
+			<input type='button' class='actionBtn' id='save' name='save' value='$saveBtnTxt' onClick='saveChart();'>
+		</form> <!-- notes update form end tag -->
+	</div>
+	</center>
+EOL;
+	
+	//displayPlanetTharaPalan();
 	?>
 
 </body>

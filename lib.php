@@ -7450,6 +7450,7 @@ function getDataFromThithiById($conn, $id) {
 //get star details from DB
 function getDataFromStarById($conn, $id) {
     $query = "SELECT * FROM star WHERE id = ?";
+
     $stmt = mysqli_prepare($conn, $query);
     mysqli_stmt_bind_param($stmt, "i", $id);
     mysqli_stmt_execute($stmt);
@@ -7504,11 +7505,10 @@ function getKubera(){
 	$second_athipathi_paatham = $planet_starlord[$second_athipathi][4];
 	
 	//Forumla to find the gubera paadham, (Moon paatham * $second_lord_star_paatham) / 108, reminder is the required point/paatham
-	$gubera_paatham = ($moon_paatham * $second_athipathi_paatham) % 108 - 1;
+	$gubera_paatham = ($moon_paatham * $second_athipathi_paatham) % 108;
 	
-	if($gubera_paatham==-1){
-		$gubera_paatham = 107;
-	}
+	if($gubera_paatham == 0)
+		$gubera_paatham = 108;
 	
 	debug("moon-paatham=$moon_paatham--second_athipathi-paatham=$second_athipathi_paatham--kubera_paatham=$gubera_paatham");
 	debug(getValue(getStarPaatham($gubera_paatham),1));
@@ -7530,7 +7530,10 @@ function getStarPaatham($paatham_idx){
 
 function getRasiNameFromPaatham($paatham){
 	$rasi_arr = ["மேஷம்", "ரிஷபம்", "மிதுனம்", "கடகம்", "சிம்மம்", "கன்னி", "துலாம்", "விருச்சிகம்", "தனுசு", "மகரம்", "கும்பம்", "மீனம்"];
-	return $rasi_arr[(int)$paatham / 9];
+
+	$idx = ceil($paatham / 9)-1;
+
+	return $rasi_arr[$idx];
 }
 
 function getRasiHouseFromPaatham($paatham){
@@ -10608,6 +10611,8 @@ function calculateDhurathrishtaPulli(){
 	$bad_point_idx = ceil(fmod($total_deg,360)/3.333333);
 	
 	$bad_point_remedy_idx = ($bad_point_idx + 54) % 108;
+	
+	//$bad_point_remedy_idx = $bad_point_remedy_idx + 1; //increase by 1  because nak_arr starts from idx 1
 	
 	$star_idx =ceil($bad_point_remedy_idx/4);
 	
