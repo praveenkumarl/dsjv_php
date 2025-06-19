@@ -259,6 +259,19 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 			if (sunChart) {
 				sunChart.style.display = 'block';
 			}
+			
+			 const btn   = document.getElementById('showNadi');
+			  const modal = document.getElementById('astroModal');
+			  const close = document.getElementById('closeNadi');
+
+			  if (!btn || !modal || !close) return;   // safety guard
+
+			  btn.onclick   = () => modal.style.display = 'block';
+			  close.onclick = () => modal.style.display = 'none';
+
+			  window.onclick = e => {
+				if (e.target === modal) modal.style.display = 'none';
+			  };
 		});
 		
 		function validateForm() {
@@ -645,6 +658,9 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 				case 10:
 					divName = "dhurathrishtaPointDetailsDiv";
 					break;
+				case 11:
+					divName = "sugaPointDetailsDiv";
+					break;
 					
 			}
 			
@@ -727,11 +743,14 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 	   curr_date = new Date();
        
        console.log("Anthram");
-        //for (var i = index; i <= index + 7; i++) {
-	for (var i = index; i <= index + 8; i++) {
+       //for (var i = index; i <= index + 7; i++) {
+		for (var i = index; i <= index + 8; i++) {
            if (i > 8) {
              break;
            }
+		   
+		   console.log('i='+i);
+		   
            //console.log(Object.keys(dasa_period)[i]);
            var no_of_days = Math.round((dasa_period[dasa] * dasa_period[bukthi] * Object.values(dasa_period)[i]) / 14400 * 365.2425 * 24 * 60 * 60);
            var end = new Date(new Date(start).getTime() + no_of_days * 1000);
@@ -759,15 +778,18 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
        }
       
        
-       for (var i = 0; i < 9 - count; i++) {
+		//for (var i = 0; i < 9 - count; i++) {
+			for (var i = 0; i < 9 - count; i++) {
            //console.log(Object.keys(dasa_period)[i]);
            var no_of_days = Math.round((dasa_period[dasa] * dasa_period[bukthi] * Object.values(dasa_period)[i]) / 14400 * 365.2425 * 24 * 60 * 60);
            var end = new Date(new Date(start).getTime() + no_of_days * 1000);
 		   
-		   if(i==9-count-1) 
+			if(i==9-count-1)
 		   { 
 				end = new Date(in_end);
 			}
+			
+			console.log('i='+i);
 		   
            anthram_arr[Object.keys(dasa_period)[i]] = [start, end];
           
@@ -1022,6 +1044,57 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
  
     // Execute the transliteration function once the page is loaded
     //window.addEventListener('load', transliterateTamilToEnglish);
+	
+	function openTab(tabId) {
+	  var i, tabContent, tabButtons;
+	  
+	  // Hide all tab contents
+	  tabContent = document.getElementsByClassName("tabContent");
+	  for (i = 0; i < tabContent.length; i++) {
+		tabContent[i].style.display = "none";
+	  }
+	  
+	  // Remove 'active' class from all buttons
+	  tabButtons = document.getElementsByClassName("tabButton");
+	  for (i = 0; i < tabButtons.length; i++) {
+		tabButtons[i].classList.remove("active");
+	  }
+	  
+	  // Show selected tab and highlight the button
+	  document.getElementById(tabId).style.display = "block";
+	  
+	  if(tabId=='chartTab'){
+		  document.getElementById('detailsTab').style.display = "block";
+	  }
+	  
+	  event.currentTarget.classList.add("active");
+	}
+	
+	function showAllContent() {
+		  // Get all elements with the class "tabContent" and make them visible
+		  var tabContent = document.getElementsByClassName("tabContent");
+		  for (var i = 0; i < tabContent.length; i++) {
+			tabContent[i].style.display = "block";
+		  }
+
+		  // Hide the entire tabs container if it exists
+		  var tabsContainer = document.getElementById("tabsContainer"); // Assuming your tab buttons are in a div with id="tabsContainer"
+		  if (tabsContainer) { // Check if the element exists before trying to hide it
+			tabsContainer.style.display = "none";
+		  }
+
+		  // Although the container is hidden, it's good practice to clear active classes
+		  // from buttons in case you re-enable them later or have other scripts
+		  var tabButtons = document.getElementsByClassName("tabButton");
+		  for (var i = 0; i < tabButtons.length; i++) {
+			tabButtons[i].classList.remove("active");
+		  }
+		}
+	
+	document.addEventListener('DOMContentLoaded', function() {
+		showAllContent();
+	  });
+
 				
 	</script>
 </head>
@@ -1511,22 +1584,21 @@ function displayHoroDetails()
 			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 3)' style='color:blue;cursor:pointer'>".$yogi_arr[1]." (".$yogi_arr[0].")</div>";
 		echo "</div>";
 		displayDetailsDiv('yogi',$g_yoga_idx);
-
+		
+		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பஞ்ச பக்ஷி</div>";
 			$g_pancha_pakshi = getPanchaPakshi();
 			echo "<div class='divPanchang'>".$g_pancha_pakshi."</div>";
 		echo "</div>";
-
-		[$guberaStarPaadham,$guberaRasi,$guberaRasiHouse, $guberaStarIdx] = getKubera();  //$guberaRasiHouse not used as of now. It will be used if we need to show some symbold in chart
 		
+		[$guberaStarPaadham,$guberaRasi,$guberaRasiHouse, $guberaStarIdx] = getKubera();  //$guberaRasiHouse not used as of now. It will be used if we need to show some symbold in chart
 		echo "<div class='divTableRow' style='background-color:yellow'>";
 			echo "<div class='divPanchangHeading'>குபேர புள்ளி</div>";
-			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 31)' style='color:blue;cursor:pointer'>" .$guberaStarPaadham . "<BR>". $guberaRasi . "</div>";
+			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 31)' style='color:blue;cursor:pointer'>" . $guberaStarPaadham . "<BR>". $guberaRasi . "</div>";
 		echo "</div>";
-
 		displayDetailsDiv('kubera',$guberaStarIdx);
-
+		
 		[$destiny_star, $star_idx] = calculateThalaivithiPulli($planet_starlord['சந்'][2],$planet_starlord['ரா'][2]);
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>தலைவிதி புள்ளி</div>";
@@ -1542,6 +1614,18 @@ function displayHoroDetails()
 			//echo "<div class='divPanchang'>" . $athrishta_star . "</div>";
 		echo "</div>";
 		displayDetailsDiv('AthrishtaPoint',$star_idx);
+		
+		$sunPada = ceil($planet_starlord['சூரி'][2] / 3.333333);
+		$moonPada = ceil($planet_starlord['சந்'][2] / 3.333333); 
+		$lagnaPada = ceil($planet_starlord['லக்'][2] / 3.333333);
+		
+		[$star_idx,$sugaPaadham] = getSugaPaadham($sunPada, $moonPada, $lagnaPada);
+		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>சுக பாதம்</div>";
+			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 11)' style='color:blue;cursor:pointer'>" .$sugaPaadham . "</div>";
+			//echo "<div class='divPanchang'>" . $athrishta_star . "</div>";
+		echo "</div>";
+		displayDetailsDiv('SugaPoint',$star_idx);
 		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>சூரிய உதயம்</div>";
@@ -1604,7 +1688,7 @@ function displayHoroDetails()
 			//echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house,6)-1)."</div>";
 			echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house-1,8))."</div>";
 		echo "</div>";
-
+		
 		[$bad_star, $remedy_star, $remedy_star_idx] = calculateDhurathrishtaPulli();
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeadingRed'>துரதிர்ஷ்ட புள்ளி</div>";
@@ -1612,7 +1696,7 @@ function displayHoroDetails()
 			//echo "<div class='divPanchang'>" . $bad_star . "<BR>பரிகாரம் - " . $remedy_star . "</div>";
 		echo "</div>";
 		displayDetailsDiv('DhurathrishtaPoint',$remedy_star_idx);
-
+		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பிறப்பு தசா இருப்பு</div>";
 			echo "<div class='divPanchang'>".$g_dasaBalance[0]."</div>";
@@ -2493,8 +2577,17 @@ echo <<<EOL
 			</div>
 		</div>
 		<div class='column-body'>
-					<center><P style="color:#660000;font-weight:bold; font-size:16px; text-align:center; background-color:white;width:200px;line-height: 30px;">பிறப்பு ஜாதகம்</P></center>
-					
+EOL;
+			
+echo "<div id='tabsContainer' style='text-align: -webkit-left;'>";
+		echo "<button class='tabButton' onclick=\"openTab('detailsTab')\">Details</button>";
+		echo "<button class='tabButton' onclick=\"openTab('chartTab')\">Chart</button>";
+echo "</div>";
+			
+echo <<<EOL
+			<center><P style="color:#660000;font-weight:bold; font-size:16px; text-align:center; background-color:white;width:200px;line-height: 30px;">பிறப்பு ஜாதகம்</P></center>
+			<div id="detailsTab" class="tabContent">
+			<div class="tableWrapper">		
 					<center id="pdf"><div class="divTable blueTable" style="height:70px;">
 						<!-- <IMG SRC='images/ganpati2.jpg' width='10%' height='10%' />
 						<center><P style="color:#660000;font-weight:bold; font-size:10px; text-align:center; background-color:white;width:200px;line-height: 20px;">பெரியநாயகி துணை</P></center> -->
@@ -2556,11 +2649,11 @@ echo <<<EOL
 											
 											<button type='button' class='actionBtn' id='submit1' value='Submit' onClick='return genChart(this.form);'>Submit</button>
 											<input type='button' class='actionBtn' id='save' name='save' value='$saveBtnTxt' onClick='saveChart();'>
+											<!-- <button type='button' id="showNadi" class="actionBtn">BN.NADI</button> -->
 											<button type="button" class='actionBtn' value='Download' onClick='loadOnePage("$onePageURL");'>PDF</button>
-											</form>
+										</form>
 											
-											<!-- <button style="background-color:gold;color:#660000;font-weight:bold;font-size:10px;" onclick="generatePDF()">Download</button> -->
-											
+										<!-- <button style="background-color:gold;color:#660000;font-weight:bold;font-size:10px;" onclick="generatePDF()">Download</button> -->
 										<!-- </form> -->
 										
 										
@@ -2568,6 +2661,11 @@ echo <<<EOL
 								</div>
 							</div>
 					<br>
+					</div>
+					</div>
+					
+					<div id="chartTab" class="tabContent">
+					<div class="tableWrapper">
 					<div class="divTable blueTable" id="chart">
 						
 						<div class="divTableBody">
@@ -2650,18 +2748,18 @@ EOL;
 								/*if($autoAnalysisMenu==1){
 									echo "<div class='footer'>Scroll down for Auto Analysis details &#9660;</div>";
 								}*/
-					//NOTE: These functions should be called in these order because various global variables are filled which is dependent
-					//displayPanchang();
+								
+										// --- Tab Buttons ---
+
 					calculateStarLord();
 					resortStarLordArray(true);  //this is to sort the planets in correct order
-					//displayBhavaChart();
 					calculateNavamsam();
 					displayNavamsam();
 					displayBhavaChart();
+					echo '</div>'; //chartTab end
+					echo '</div>'; //chartTab end
 					calculateBirthPanchang();
-					echo "<br><div id='birth_info'></div>";
-					//displayThithiSoonyam($panchang["thithi"]);
-					//calculateBirthThithiSoonyam($panchang["thithi"]);
+					echo "<br><div id='birth_info' style='text-align: -webkit-center;'></div>";
 					calculateVimDasaBalance($moon_degree,$moon_house,$chart_time,$chart_time,$panchang['nak'],$nak_pad_idx, true);
 					displayButtons(true); //this will calculate star lord as well 
 					displayStarLord_transit();
@@ -2669,7 +2767,11 @@ EOL;
 					
 					echo "<div class='html2pdf__page-break'></div>";
 					getOtherPanchangamDetails();
-					displayHoroDetails();
+					echo '<div id="horoDetailsTab" class="tabContent">';
+					echo '<div class="tableWrapper">';
+						displayHoroDetails();
+					echo "</div>";
+					echo "</div>";
 
 
 echo <<<EOL
@@ -2844,7 +2946,106 @@ echo<<<EOL
 	</center>
 EOL;
 	
-	//displayPlanetTharaPalan();
+/*$clubs = buildTriadClubsWithRetro($planet_starlord, $planetDeg_default);
+
+foreach ($clubs as $label => $planets) {
+    if (!$planets) continue;                          // skip empty triads
+    #echo $label . ' : ' .
+	echo '<BR><1/5/9> : ' .
+         implode('+', array_column($planets, 'tag')) .
+         PHP_EOL;
+}
+
+$pairs = buildSecondRasiPairs($planet_starlord, $planetDeg_default);
+
+foreach ($pairs as $p) {
+    echo '<BR><2/12>' . $p . PHP_EOL;
+}
+
+$sameRasi = buildSameRasiCombinations($planet_starlord, $planetDeg_default);
+
+foreach ($sameRasi as $rasi => $pairs) {
+    echo '<BR>Rasi '.$rasi.' : '.implode(' , ', $pairs).PHP_EOL;
+}
+
+// focus on Mercury (புத)
+$combos = buildPlanetCentricCombinations('கே',
+                                         $planet_starlord,
+                                         $planetDeg_default);
+
+foreach ($combos as $label => $items) {
+    echo strtoupper($label).': '.implode(' , ', $items)."<br>\n";
+}*/
+
+
+
+
+/* ============= MAIN BUILD ======================================== */
+$planetInfo = buildInfo($planet_starlord,$planetDeg_default,$alwaysRetro);
+
+/* bucket‑wise storage requested in point 2 */
+$bucketArrays = [
+    'same'=>[], 'triad'=>[], '2nd'=>[],
+    '12th'=>[], '7th'=>[], '3/11'=>[]
+];
+
+/* row‑oriented data for the HTML table */
+$tableRows=[];
+
+foreach($allPlanets as $pl){
+    $combo = combosForFocus($pl, $planetInfo, $excludeTags, $fmt, $enemyMap);
+
+    // fill bucket arrays (planet -> joined string)
+    foreach($bucketArrays as $k=>&$arr){
+        $arr[$pl]=isset($combo[$k])?implode(' , ',$combo[$k]):'';
+    } unset($arr);
+
+    // build the row for the table
+    $tableRows[$pl]=[
+        'same'  =>$bucketArrays['same'][$pl],
+        'triad' =>$bucketArrays['triad'][$pl],
+        '2nd'   =>$bucketArrays['2nd'][$pl],
+        '12th'  =>$bucketArrays['12th'][$pl],
+        '7th'   =>$bucketArrays['7th'][$pl],
+        '3/11'  =>$bucketArrays['3/11'][$pl],
+    ];
+}
+
+/* =========  OVERLAY  ============================================ */
+echo <<<HTML
+<div id="astroModal" class="astro-modal">
+  <div class="astro-modal-content">
+      <span id="closeNadi" class="astro-close">&times;</span>
+HTML;
+
+/* put your existing rendering loop here — either the div‑table
+   or the <details> layout we built earlier: */
+foreach ($tableRows as $planet => $cols) {
+    echo "<div class='astro-section'><details><summary>$planet</summary>";
+    foreach ([
+        'same'  => 'ஒரே ராசி',
+        'triad' => 'திரிகோணம் (1,5,9)',
+        '2nd'   => '2ஆம் ராசி',
+        '12th'  => '12ஆம் ராசி',
+        '7th'   => '7ஆம் ராசி',
+        '3/11'  => '3/11ஆம் ராசி'
+    ] as $key => $label) {
+        if (!empty($cols[$key])) {
+            echo "<div class='bucket'><div class='bucket-label'>$label:</div>";
+            foreach (explode(',', $cols[$key]) as $combo) {
+                echo "<div class='combo-line'>".trim($combo)."</div>";
+            }
+            echo "</div>";
+        }
+    }
+    echo "</details></div>";
+}
+
+echo <<<HTML
+  </div>
+</div>
+HTML;
+	
 	?>
 
 </body>

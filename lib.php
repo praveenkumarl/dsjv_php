@@ -6000,18 +6000,45 @@ function getDhurathrishtaPointParigaaram($nak_idx)
 	$data = getDataFromStarById($conn, $nak_idx);
 	
 	$details = "<DIV class='parigaaram-grid-container'>";
-	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>துரதிர்ஷ்ட நக்ஷ் விவரங்கள்</DIV>";
+	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>துரதிர்ஷ்ட பரிகார நக்ஷ் விவரங்கள்</DIV>";
 
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>துரதிர்ஷ்ட நக்ஷ்</DIV>";
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>துரதிர்ஷ்ட பரிகார நக்ஷ்</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_name']."</DIV>";
 		
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>துரதிர்ஷ்ட நக்ஷ் கோவில்</DIV>";
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>துரதிர்ஷ்ட பரிகார நக்ஷ் கோவில்</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_temple']."</DIV>";
 		
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>துரதிர்ஷ்ட நக்ஷ் கோவில் இருப்பிடம்</DIV>";
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>துரதிர்ஷ்ட பரிகார நக்ஷ் கோவில் இருப்பிடம்</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><A style='color:blue;cursor:pointer' href='".$data['star_temple_link']."' target='_blank'>google Map</A></DIV>";
 
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>துரதிர்ஷ்ட நக்ஷ் அதிபதி</DIV>";
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>துரதிர்ஷ்ட பரிகார நக்ஷ் அதிபதி</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_lord']."</DIV>";		
+	
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
+	$details = $details . "</DIV>";
+					
+	return $details;
+}
+
+function getSugaPointParigaaram($nak_idx)
+{
+	global $conn;
+	
+	$data = getDataFromStarById($conn, $nak_idx);
+	
+	$details = "<DIV class='parigaaram-grid-container'>";
+	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>சுக நக்ஷ் விவரங்கள்</DIV>";
+
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>சுக நக்ஷ்</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_name']."</DIV>";
+		
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>சுக நக்ஷ் கோவில்</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_temple']."</DIV>";
+		
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>சுக நக்ஷ் கோவில் இருப்பிடம்</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><A style='color:blue;cursor:pointer' href='".$data['star_temple_link']."' target='_blank'>google Map</A></DIV>";
+
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>சுக நக்ஷ் அதிபதி</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_lord']."</DIV>";		
 	
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
@@ -6367,6 +6394,10 @@ function displayDetailsDiv($in_dataType,$in_data){
 		case "DhurathrishtaPoint":
 			$details = getDhurathrishtaPointParigaaram($in_data);
 			echo "<DIV class='dhurathrishtaPointDetailsDiv' id='dhurathrishtaPointDetailsDiv' onclick='this.style.display=`none`'>$details</DIV>";
+			break;	
+		case "SugaPoint":
+			$details = getSugaPointParigaaram($in_data);
+			echo "<DIV class='sugaPointDetailsDiv' id='sugaPointDetailsDiv' onclick='this.style.display=`none`'>$details</DIV>";
 			break;	
 	}
 }
@@ -10321,7 +10352,7 @@ function getThaaraPalan($inStar_padham) {
     $star_arr_result = array("dummy", "அசுவினி", "பரணி", "கிருத்திகை", "ரோகிணி", "மிருகசிரீஷம்", "திருவாதிரை", "புனர்பூசம்", "பூசம்", "ஆயில்யம்", "மகம்", "பூரம்", "உத்திரம்", "ஹஸ்தம்", "சித்திரை", "சுவாதி", "விசாகம்", "அனுஷம்", "கேட்டை", "மூலம்", "பூராடம்", "உத்திராடம்", "திருவோணம்", "அவிட்டம்", "சதயம்", "பூரட்டாதி", "உத்திரட்டாதி", "ரேவதி");
     
     $thaarapalan_arr = [
-        "dummy", "ஜென்ம", "சம்பத்", "விபத்து", "ஷேம", "பிரத்யக்", "சாதக", "வதை", "மைத்ர", "ப.மைத்ர", "ஜென்ம", "சமு.பகை", "விபத்து", "ஷேம", "பிரத்யக்", "சாதக", "வதை", "மைத்ர", "ப.பகை", "ஜென்ம", "சமு.பகை", "விபத்து", "வைநாசி", "பிரத்யக்", "சாதக", "வதை", "மைத்ர", "ப.மைத்ர"
+        "dummy", "ஜென்ம", "சம்பத்", "விபத்து", "ஷேம", "பிரத்யக்", "சாதக", "வதை", "மைத்ர", "ப.மைத்ர", "ஜென்ம", "சமு.பகை", "விபத்து", "ஷேம", "பிரத்யக்", "சாதக", "வதை", "மைத்ர", "ப.பகை", "ஜென்ம", "சம்பத்", "விபத்து", "வைநாசி", "பிரத்யக்", "சாதக", "வதை", "மைத்ர", "ப.மைத்ர"
     ];
 	
 	$str = getShortStar($g_nak . ' ' . $g_padham);
@@ -10339,6 +10370,8 @@ function getThaaraPalan($inStar_padham) {
     } else {
         $thara = $end_pos - $start_pos + 1;
     }
+	
+	debug("START=$start_pos,END=$end_pos,THAARA=$thara");
 	
 	switch ($thara) {
         case 1:
@@ -10579,21 +10612,26 @@ function calculateAthrishtaPulli(){
 	$ninthLord = findAthipathi($ninth_house);
 	$total_deg = $planet_starlord['சந்'][2]+$planet_starlord[$fifthLord][2]+$planet_starlord[$ninthLord][2];
 	
+	debug("<BR>****MoonDeg=". $planet_starlord['சந்'][2]. "<BR>fifthLord=$fifthLord". $planet_starlord[$fifthLord][2] . "<BR>NinthLord=$ninthLord" . $planet_starlord[$ninthLord][2]);
+	
 	$final_deg = fmod($total_deg,360);
+	
+	debug("<BR>****adjustedDeg=$final_deg");
 	
 	$athirishtaIdx = ceil($final_deg/3.333333);
 	
 	$starIdx = ceil($athirishtaIdx/4);
 	
+	debug("<BR>****star#=$starIdx<BR>star=".getValue(getStarPaatham($athirishtaIdx)));
+	
 	return [getValue(getStarPaatham($athirishtaIdx)),$starIdx];
 }
 
 //துரதிர்ஷ்ட புள்ளி
-//Add full degree of moon, 5th lord, 9th lord. Subtract 360 if the total is more than 360.
-//The star on which the final degree falls is your luck point. We should see if there are any
-//planets in this star. If yes that planet is your lucky planet. if not there, consider the star lord.
-//Check in which bava the lucky star lord placed. The life karaka of that bava is your luck.
-//if 4 mother, 5 child, 6 uncle, 7 wife, 9 father. Make sure to activate that relation
+//Add full degree of moon, 6th lord, 8th lord. Subtract 360 if the total is more than 360.
+//The star on which the final degree falls is your unlucky point. We should see if there are any
+//planets in this star. If yes that planet is your unlucky planet. if not there, consider the star lord.
+//Check in which bava the unlucky star lord placed. The life karaka of that bava is your unlucky.
 
 function calculateDhurathrishtaPulli(){
 	global $planet_starlord, $lagna_house;
@@ -10608,13 +10646,24 @@ function calculateDhurathrishtaPulli(){
 	$eightLord = findAthipathi($eight_house);
 	$total_deg = $planet_starlord['சந்'][2]+$planet_starlord[$sixthLord][2]+$planet_starlord[$eightLord][2];
 	
+	debug("<BR>****MoonDeg=". $planet_starlord['சந்'][2]. "<BR>sixthLord=$sixthLord" . $planet_starlord[$sixthLord][2]. "<BR>eightLord=$eightLord" . $planet_starlord[$eightLord][2]);
+	
 	$bad_point_idx = ceil(fmod($total_deg,360)/3.333333);
 	
+	debug("<BR>****adjustedDeg=".ceil(fmod($total_deg,360)));
+	
 	$bad_point_remedy_idx = ($bad_point_idx + 54) % 108;
+	
+	if($bad_point_remedy_idx  == 0){
+		$bad_point_remedy_idx = 108;
+	}
 	
 	//$bad_point_remedy_idx = $bad_point_remedy_idx + 1; //increase by 1  because nak_arr starts from idx 1
 	
 	$star_idx =ceil($bad_point_remedy_idx/4);
+
+	debug("<BR>****badstar#=$bad_point_idx<BR>star=".getValue(getStarPaatham($bad_point_idx)));
+	debug("<BR>****remedystar#=$star_idx<BR>badstar=".getValue(getStarPaatham($bad_point_remedy_idx)));
 	
 	return [getValue(getStarPaatham($bad_point_idx)),getValue(getStarPaatham($bad_point_remedy_idx)), $star_idx];
 }
@@ -10670,6 +10719,582 @@ function findSubLord($planet, $full_deg) {
 
     return "Degree out of range.";
 }
+
+/*
+இதைத் தேடி அலைந்த போது தான் ஒரு குத்திரம் கிடைத்தது. ஒரு சிறு கணிதம் தான்.
+உங்கள் சாதகத்தை திறக்கவும், அஸ்வினியிலிருந்து
+
+1. சூரியன் நின்ற பாதம் எண்
+2. சந்திரன் நின்ற நட்சத்திரம் பாதம் எண்
+3. லக்னப் புள்ளி நின்ற பாதம் எண்
+
+இவை மூன்றையும் கூட்டவும்.
+உதாரணம்:
+சூரியன் நின்ற பாதம் :                         60
+சந்திரன் நின்ற பாதம் :                         92
+லக்னப் புள்ளி நின்ற பாதம் :                    63
+கூட்டுத் தொகை :                              215
+கழிக்க :                                       108
+மீதம் வருவது சுகம் அளிக்கும் புண்ணிய பாதம் : 107
+
+107 முடிந்து விட்டது. 108வது ஆகும் பாதம் ரேவதி உங்கள் சுகம் தரும் புண்ணிய பாதம்.
+
+இந்த பாதத்தில் உச்சமாகும் கிரகமே உங்கள் சுகம் தரும் புண்ணிய பாதம். சுக்கிரனே
+உங்களுக்கு வண்டி வாகனம் லக்ஸூரியஸ் வாழ்வை தரும் அதன் தசா/புக்தியில்.
+
+இந்த கிரகமே நிலைத்த இன்பத்தை வாரி வழங்கும். இந்த பாதத்தில் நீச கிரகம் இருந்த்தால் 
+கவனம் தேவை.
+
+உச்ச நீசம் இல்லையெனில் அமர்ந்த கிரகம் அல்லது அந்த நட்சத்திர அதிபதி துணை புரிவார்.
+*/
+
+/**
+ * Calculate the “புண்ணிய பாதம்” (final paadham).
+ *
+ * @param int|float $sunPada      சூரியன் தாய்தின்ற பாதம் எண்
+ * @param int|float $moonPada     சந்திரன் தாய்நின்ற நட்சத்திரம் பாதம் எண்
+ * @param int|float $lagnaPada    லக்னப் புள்ளி நின்ற பாதம் எண்
+ *
+ * @return int 1‑to‑108 — the final paadham (“சகம் தரும் புண்ணிய பாதம்”)
+ */
+function getSugaPaadham($sunPada, $moonPada, $lagnaPada)
+{
+    // Step 1: add the three paadham numbers
+    $total = $sunPada + $moonPada + $lagnaPada;
+
+    // Step 2: take the remainder when divided by 108
+    $remainder = $total % 108 + 1;
+	
+	if($remainder > 108){
+		$remainder = 1;
+	}
+	
+	$padham_idx = $remainder === 0 ? 108 : $remainder;
+
+	$star_idx = ceil($padham_idx/4);
+
+
+    // Step 3: if perfectly divisible, treat the result as 108 (not 0)
+    return [$star_idx, getValue(getStarPaatham($padham_idx))];
+}
+
+
+/**
+ * Build the 1‑5‑9 / 2‑6‑10 / 3‑7‑11 / 4‑8‑12 rāśi‑triad clubs,
+ * sort each club by (full‑degree % 30), wrap retrograde planets
+ * in <span class="retro">…</span>, and **hide any club that ends
+ * up with just a single planet**.
+ *
+ * ─────────────────────────────────────────────────────────────
+ * • A planet is *retrograde* when
+ *       – $planetDeg_default[$tag] < 0,  **or**
+ *       – the tag is Rahu (ரா) or Ketu (கே).  
+ *   Retro tags are wrapped in <span class="retro">…</span>.
+ * • Tags in $exclude are ignored entirely (default: Lagna லக் & Maandi மா).
+ * • Returned structure example:
+ *     [
+ *       '1‑5‑9'  => [ ['tag'=>'செ',                'deg'=> 4.0 ],
+ *                     ['tag'=>'<span …>ரா</span>','deg'=> 7.1 ],
+ *                     ['tag'=>'சந்',              'deg'=>21.0 ] ],
+ *       '3‑7‑11' => [ … ],  // only clubs with ≥2 planets appear
+ *     ]
+ *
+ * @param array $planet_starlord   ['Tag' => [?, ?, <fullDeg>], …]
+ * @param array $planetDeg_default ['Tag' => <speed‑or‑Δλ>, …]
+ * @param array $exclude           Tags to omit (default ['லக்','மா'])
+ * @return array                   Clubs with ≥2 planets, sorted inside
+ */
+function buildTriadClubsWithRetro(
+    array $planet_starlord,
+    array $planetDeg_default,
+    array $exclude = ['லக்', 'மா']
+): array {
+    /* -------- setup -------- */
+    $clubs = [
+        '1‑5‑9'  => [],
+        '2‑6‑10' => [],
+        '3‑7‑11' => [],
+        '4‑8‑12' => [],
+    ];
+    $alwaysRetro = ['ரா', 'கே'];                     // Rahu, Ketu
+
+    /* -------- scan every planet -------- */
+    foreach ($planet_starlord as $tag => $row) {
+
+        /* skip excluded tags or bad rows */
+        if (in_array($tag, $exclude, true) ||
+            !isset($row[2]) ||
+            !is_numeric($row[2])) {
+            continue;
+        }
+
+        /* absolute & relative positions */
+        $full = fmod((float)$row[2] + 360, 360);     // 0‑359.999…
+        $rel  = $full % 30;                          // 0‑29.999  (inside rāśi)
+        $rasi = intdiv((int)$full, 30) + 1;          // 1 … 12
+
+        /* retro? */
+        $isRetro = in_array($tag, $alwaysRetro, true) ||
+                   (isset($planetDeg_default[$tag]) &&
+                    $planetDeg_default[$tag] < 0);
+
+        $dispTag = $isRetro
+                 #? '<span class="retro">'.$tag.'</span>'
+				 ? $tag.'(வ)'
+                 : $tag;
+
+        /* bucket: 1‑5‑9, 2‑6‑10, 3‑7‑11, 4‑8‑12 */
+        $bucket = ['1‑5‑9','2‑6‑10','3‑7‑11','4‑8‑12'][($rasi - 1) % 4];
+
+        $clubs[$bucket][] = ['tag' => $dispTag, 'deg' => $rel];
+    }
+
+    /* -------- sort inside every club -------- */
+    foreach ($clubs as &$club) {
+        usort($club, fn($a, $b) => $a['deg'] <=> $b['deg']);
+    }
+    unset($club);
+
+    /* -------- drop clubs with ≤1 planet -------- */
+    $clubs = array_filter($clubs, fn($c) => count($c) > 1);
+
+    return $clubs;
+}
+
+
+
+/**
+ * Build every “base + partner” pair for the 2‑nd‑rāśi rule.
+ *
+ * Rule set
+ * ─────────────────────────────────────────────────────────────
+ * • A “base” planet is any planet in rāśi‑1 (0° – < 30°), except
+ *   the tags you choose to exclude (default: Lagna லக் & Maandi மா).
+ * • If the base planet is **non‑retro**            → partners are
+ *   all planets in rāśi‑2  (30° – < 60°).
+ * • If the base planet is **retrograde**           → partners are
+ *   all planets in rāśi‑12 (330° – < 360°).
+ * • Rahu (ரா) and Ketu (கே) are always treated as retrograde.
+ * • Retrograde planets are wrapped in
+ *   `<span class="retro">…</span>` so you can style them in red.
+ *
+ * @param array $planet_starlord   ['Tag' => [?, ?, <fullDegree>], …]
+ * @param array $planetDeg_default ['Tag' => <speed‑or‑Δλ>, …]  (< 0 = retro)
+ * @param array $exclude           Tags to skip as bases or partners
+ * @return array                   ["Base + Partner", …]  ← already formatted
+ */
+function buildSecondRasiPairs(
+    array $planet_starlord,
+    array $planetDeg_default,
+    array $exclude = ['லக்', 'மா']
+): array {
+    $alwaysRetro = ['ரா', 'கே'];                   // Rahu & Ketu (default retro)
+    $rasiBuckets = array_fill(1, 12, []);          // 1 … 12 → []
+
+    /* ---- 1) classify every planet by absolute rāśi ---- */
+    foreach ($planet_starlord as $tag => $row) {
+        if (!isset($row[2]) || !is_numeric($row[2])) {
+            continue;                              // bad or missing degree
+        }
+        $full   = fmod((float)$row[2] + 360, 360); // 0‑359.999…
+        $rasi   = intdiv((int)$full, 30) + 1;      // 1 … 12
+        $isRetro = in_array($tag, $alwaysRetro, true)
+                   || (isset($planetDeg_default[$tag]) && $planetDeg_default[$tag] < 0);
+
+        $rasiBuckets[$rasi][] = [
+            'tag'   => $tag,
+            'retro' => $isRetro,
+            #'disp'  => $isRetro ? '<span class="retro">'.$tag.'</span>' : $tag
+			'disp'  => $isRetro ? $tag.'(வ)' : $tag
+        ];
+    }
+
+    /* ---- 2) build the “base + partner” pairs ---- */
+    $pairs = [];
+
+    foreach ($rasiBuckets[1] as $base) {           // only planets in rāśi‑1
+        if (in_array($base['tag'], $exclude, true)) {
+            continue;                              // skip Lagna, Maandi, …
+        }
+
+        $targetRasi = $base['retro'] ? 12 : 2;     // retro → 12th, else 2nd
+
+        foreach ($rasiBuckets[$targetRasi] as $partner) {
+            if (in_array($partner['tag'], $exclude, true)) {
+                continue;                          // never pair with excluded
+            }
+            $pairs[] = $base['disp'].' + '.$partner['disp'];
+        }
+    }
+
+    return $pairs;                                 // already “Base + Partner”
+}
+
+
+/**
+ * Build every 2‑planet AND “full‑set” combination for each rāśi.
+ *
+ * – Two‑planet pairs are always produced when a sign has ≥ 2 planets.  
+ * – If a sign has ≥ 3 planets, an extra entry that concatenates them all
+ *   (e.g.  A + B + C) is added.
+ * – Retro criteria, exclusions, and HTML wrapping are identical to the
+ *   previous version.
+ *
+ * @param array $planet_starlord   ['Tag' => [?, ?, <fullDeg>], …]
+ * @param array $planetDeg_default ['Tag' => <speed‑or‑Δλ>, …]  (<0 = retro)
+ * @param array $exclude           Tags to skip entirely (default ['லக்','மா'])
+ * @return array                   rāśi‑number → [ "A + B", "A + B + C", … ]
+ */
+function buildSameRasiCombinations(
+    array $planet_starlord,
+    array $planetDeg_default,
+    array $exclude = ['லக்', 'மா']
+): array {
+    $alwaysRetro = ['ரா', 'கே'];                  // Rahu & Ketu
+    $rasiBuckets = array_fill(1, 12, []);         // 1 … 12 → []
+
+    /* ---- 1) bucket every planet by rāśi ---- */
+    foreach ($planet_starlord as $tag => $row) {
+        if (in_array($tag, $exclude, true) ||
+            !isset($row[2]) ||
+            !is_numeric($row[2])) {
+            continue;                             // skip excluded / invalid
+        }
+
+        $full = fmod((float)$row[2] + 360, 360);  // 0‑359.999…
+        $rasi = intdiv((int)$full, 30) + 1;       // 1 … 12
+
+        $isRetro = in_array($tag, $alwaysRetro, true) ||
+                   (isset($planetDeg_default[$tag]) &&
+                    $planetDeg_default[$tag] < 0);
+
+        $dispTag = $isRetro
+                 #? '<span class="retro">'.$tag.'</span>'
+				 ? $tag.'(வ)'
+                 : $tag;
+
+        $rasiBuckets[$rasi][] = $dispTag;
+    }
+
+    /* ---- 2) build combinations for each rāśi ---- */
+    $combos = [];
+
+    foreach ($rasiBuckets as $rasiNum => $planets) {
+        $n = count($planets);
+        if ($n < 2) continue;                    // need at least two
+
+        /* two‑planet pairs */
+        for ($i = 0; $i < $n - 1; $i++) {
+            for ($j = $i + 1; $j < $n; $j++) {
+                $combos[$rasiNum][] = $planets[$i] . ' + ' . $planets[$j];
+            }
+        }
+
+        /* full combination when ≥3 planets */
+        if ($n > 2) {
+            $combos[$rasiNum][] = implode(' + ', $planets);
+        }
+    }
+
+    return $combos;                              // rāśi → [ "A + B", … ]
+}
+
+
+/**
+ * Produce four “focus + partner” buckets around a given planet:
+ *
+ *   triad  → partners in the 5th & 9th houses from focus
+ *   2/12   → • if focus is **direct**  → partners in the 2 nd house
+ *             • if focus is **retro**  → partners in the 12 th house
+ *   7      → partner(s) in the 7 th house
+ *   3/11   → partners in the 3 rd & 11 th houses
+ *
+ * ─ Rahu (ரா) & Ketu (கே) are always retrograde.  
+ *   Any planet whose speed in $planetDeg_default is < 0 is retrograde.
+ * ─ Retro tags receive “(வ)” and are wrapped in
+ *     <span class="retro"> … </span>.
+ * ─ Every planet prints its **relative house number**:
+ *     focus is always (1), partners show (2), (5), (9), etc.
+ * ─ Tags in $exclude (default Lagna லக், Maandi மா) are ignored.
+ *
+ * @param string $focusTag          Planet to centre on (e.g. 'புத')
+ * @param array  $planet_starlord   ['Tag' => [?, ?, <fullDeg>], …]
+ * @param array  $planetDeg_default ['Tag' => <speed>, …]   (<0 = retro)
+ * @param array  $exclude           Tags to skip entirely (default ['லக்','மா'])
+ * @return array                    [
+ *     'triad' => ['புத(வ)(1) + சனி(5)', …],
+ *     '2/12'  => ['புத(வ)(1) + <span …>ரா(வ)(12)</span>', …],
+ *     '7'     => [ … ],
+ *     '3/11'  => [ … ],
+ * ]
+ * Buckets with no combinations are omitted.
+ */
+function buildPlanetCentricCombinations(
+    string $focusTag,
+    array  $planet_starlord,
+    array  $planetDeg_default,
+    array  $exclude = ['லக்', 'மா']
+): array {
+    $alwaysRetro = ['ரா', 'கே'];
+
+    // Build planet info: [fullDeg, retro?, rasi]
+    $info = [];
+    foreach ($planet_starlord as $tag => $row) {
+        if (!isset($row[2]) || !is_numeric($row[2])) continue;
+        $full = fmod((float)$row[2] + 360, 360);
+        $rasi = intdiv((int)$full, 30) + 1;
+        $retro = in_array($tag, $alwaysRetro, true) ||
+                 (isset($planetDeg_default[$tag]) && $planetDeg_default[$tag] < 0);
+        $info[$tag] = [$full, $retro, $rasi];
+    }
+
+    if (!isset($info[$focusTag]) || in_array($focusTag, $exclude, true)) {
+        return [];
+    }
+
+    [, $focusRetro, $focusRasi] = $info[$focusTag];
+
+    // Display formatter
+    $fmt = function(string $tag, bool $isRetro, int $rel): string {
+        $txt = $tag . ($isRetro ? '(வ)' : '') . "($rel)";
+        return $isRetro ? '<span class="retro">'.$txt.'</span>' : $txt;
+    };
+
+    $focusDisp = $fmt($focusTag, $focusRetro, 1);
+
+    // Buckets
+    $buckets = [
+        'triad' => [],
+        '2/12'  => [],
+        '7'     => [],
+        '3/11'  => [],
+    ];
+
+    // Loop and find partner planets
+    foreach ($info as $tag => [$full, $retro, $rasi]) {
+        if ($tag === $focusTag || in_array($tag, $exclude, true)) continue;
+
+        $diff = ($rasi - $focusRasi + 12) % 12;
+        $rel  = $diff + 1;
+        $partner = $fmt($tag, $retro, $rel);
+
+        // Triad (1, 5, 9)
+        if (in_array($diff, [0, 4, 8], true) && $diff !== 0) {
+            $buckets['triad'][] = "$focusDisp + $partner";
+        }
+
+        // 2nd rasi — only if focus is direct
+        if ($diff === 1 && !$focusRetro) {
+            $buckets['2/12'][] = "$focusDisp + $partner";
+        }
+
+        // 12th rasi — only if focus is retro
+        if ($diff === 11 && $focusRetro) {
+            $buckets['2/12'][] = "$focusDisp + $partner";
+        }
+
+        // 7th
+        if ($diff === 6) {
+            $buckets['7'][] = "$focusDisp + $partner";
+        }
+
+        // 3rd or 11th
+        if (in_array($diff, [2, 10], true)) {
+            $buckets['3/11'][] = "$focusDisp + $partner";
+        }
+    }
+
+    return array_filter($buckets);
+}
+
+
+/*--------------------------------------------------------------------
+  CONFIG
+  ------------------------------------------------------------------*/
+$allPlanets  = ['சூரி','சந்','செ','புத','குரு','சுக்','சனி','ரா','கே'];
+$excludeTags = ['லக்','மா'];                // ignore Lagna & Maandi
+$alwaysRetro = ['ரா','கே'];                // Rahu & Ketu are retro
+/*------------------------------------------------------------------*/
+
+/* ------------ helpers ---------------- */
+/* → now shows ( absolute‑rāśi no ) */
+$fmt = function(string $tag, bool $retro, int $rasiNo): string {
+    return $tag . ($retro ? '(வ)' : '') . "($rasiNo)";
+};
+
+/* ---------------------------------------------------------------
+   CONFIG  (same as before)
+-----------------------------------------------------------------*/
+$allPlanets  = ['சூரி','சந்','செ','புத','குரு','சுக்','சனி','ரா','கே'];
+$excludeTags = ['லக்','மா'];
+$alwaysRetro = ['ரா','கே'];
+
+/* ---------------------------------------------------------------
+   1) tiny formatter ⟶ now ONLY tag + '(வ)' when retro
+-----------------------------------------------------------------*/
+$fmt = fn(string $tag, bool $retro) => $retro ? "$tag(வ)" : $tag;
+
+/* ---------------------------------------------------------------
+   2) buildInfo helper (unchanged)
+-----------------------------------------------------------------*/
+function buildInfo(array $planet_starlord,
+                   array $planetDeg_default,
+                   array $alwaysRetro): array {
+    $info = [];
+    foreach ($planet_starlord as $tag => $row) {
+        if (!isset($row[2]) || !is_numeric($row[2])) continue;
+        $full  = fmod((float)$row[2] + 360, 360);
+        $rasi  = intdiv((int)$full, 30) + 1;        // 1–12
+        $retro = in_array($tag, $alwaysRetro, true) ||
+                 (isset($planetDeg_default[$tag]) &&
+                  $planetDeg_default[$tag] < 0);
+        $info[$tag] = [$full, $retro, $rasi];
+    }
+    return $info;
+}
+
+/* ---------------------------------------------------------------
+   3) combosForFocus  ➜ version WITHOUT rāśi numbers
+      (exactly the one from my previous reply)
+-----------------------------------------------------------------*/
+/* -------------------------------------------------------------------
+   ENEMY MAP  (feel free to adjust if you use English tags internally)
+--------------------------------------------------------------------*/
+$enemyMap = [
+    'சூரி'=>['சுக்','ரா','கே','சனி'],
+    'சந்' =>['சுக்','சனி','ரா','கே'],
+    'செ'  =>['சனி','புத','ரா','கே'],
+    'புத' =>['செ','ரா','கே'],
+    'குரு'=>['ரா','கே'],
+    'சுக்'=>['சூரி','சந்','ரா','கே'],
+    'சனி'=>['செ','சந்','சூரி','ரா','கே'],
+    'ரா' =>['சூரி','சந்','செ','புத','குரு','சுக்','சனி'],
+    'கே' =>['சூரி','சந்','செ','புத','குரு','சுக்','சனி'],
+];
+
+/* -------------------------------------------------------------------
+   HELPER – join tags inserting red “+” when adjacent tags are enemies
+--------------------------------------------------------------------*/
+function joinWithEnemyPlus(array $tags, array $enemyMap): string
+{
+    if (count($tags) < 2) return $tags[0] ?? '';
+
+    /* strip off everything after '(' to get the plain tag */
+    $plain = fn($s) => preg_replace('/\(.*$/u', '', strip_tags($s));
+
+    $out = $tags[0];
+    for ($i = 1; $i < count($tags); $i++) {
+        $prev = $plain($tags[$i - 1]);
+        $curr = $plain($tags[$i]);
+
+        $isEnemy = in_array($curr, $enemyMap[$prev] ?? [], true) ||
+                   in_array($prev, $enemyMap[$curr] ?? [], true);
+
+        $plus = $isEnemy ? '<span class="enemy">+</span>' : '+';
+        $out .= " $plus " . $tags[$i];
+    }
+    return $out;
+}
+
+/* -------------------------------------------------------------------
+   MAIN  —  combosForFocus()  (updated)
+--------------------------------------------------------------------*/
+function combosForFocus(
+    string   $focus,
+    array    $info,        // tag → [full°, retro?, absolute rāśi]
+    array    $exclude,
+    callable $fmtTag,      // ($tag,$isRetro) → display string
+    array    $enemyMap
+): array {
+
+    if (!isset($info[$focus]) || in_array($focus, $exclude, true)) {
+        return [];
+    }
+
+    [$fFull, $fRetro, $fRasi] = $info[$focus];
+    $focusDisp = $fmtTag($focus, $fRetro);
+
+    /* collect for full‑set lines */
+    $sameCollect  = [ ['tag'=>$focusDisp, 'deg'=>fmod($fFull, 30)] ];
+    $triadCollect = [ ['tag'=>$focusDisp, 'deg'=>fmod($fFull, 30)] ];
+
+    $out = [
+        'same'  => [],
+        'triad' => [],
+        '2nd'   => [],
+        '12th'  => [],
+        '7th'   => [],
+        '3/11'  => [],
+    ];
+
+    foreach ($info as $tag => [$pFull, $pRetro, $pRasi]) {
+        if ($tag === $focus || in_array($tag, $exclude, true)) continue;
+
+        $diff = ($pRasi - $fRasi + 12) % 12;
+        $partnerDisp = $fmtTag($tag, $pRetro);
+
+        /* -------- SAME RĀśI -------- */
+        if ($diff === 0) {
+            $out['same'][] = joinWithEnemyPlus([$focusDisp,$partnerDisp], $enemyMap);
+            $sameCollect[] = ['tag'=>$partnerDisp, 'deg'=>fmod($pFull, 30)];
+            continue;
+        }
+
+        /* -------- TRIAD 5th / 9th -------- */
+        if ($diff === 4 || $diff === 8) {
+            $fDeg = fmod($fFull, 30);
+            $pDeg = fmod($pFull, 30);
+            $pair = $pDeg < $fDeg
+                  ? [$partnerDisp, $focusDisp]
+                  : [$focusDisp,   $partnerDisp];
+            $out['triad'][] = joinWithEnemyPlus($pair, $enemyMap);
+            $triadCollect[] = ['tag'=>$partnerDisp, 'deg'=>$pDeg];
+            continue;
+        }
+
+        /* -------- 2nd / 12th -------- */
+        if (!$fRetro && $diff === 1)  // focus direct → 2nd
+            $out['2nd'][]  = joinWithEnemyPlus([$focusDisp,$partnerDisp], $enemyMap);
+        if ($fRetro && $diff === 11)  // focus retro  → 12th
+            $out['12th'][] = joinWithEnemyPlus([$focusDisp,$partnerDisp], $enemyMap);
+
+        /* -------- 7th (skip Rahu↔Ketu) -------- */
+        if ($diff === 6 &&
+            !(in_array($focus,['ரா','கே'],true) &&
+              in_array($tag,  ['ரா','கே'],true)) ) {
+            $out['7th'][] = joinWithEnemyPlus([$focusDisp,$partnerDisp], $enemyMap);
+        }
+
+        /* -------- 3rd / 11th -------- */
+        if ($diff === 2 || $diff === 10) {
+            $out['3/11'][] = joinWithEnemyPlus([$focusDisp,$partnerDisp], $enemyMap);
+        }
+    }
+
+    /* -------- FULL‑SET for SAME bucket -------- */
+    if (count($sameCollect) > 2) {
+        usort($sameCollect, fn($a,$b)=> $a['deg'] <=> $b['deg']);
+        $tags = array_column($sameCollect,'tag');
+        $out['same'][] = joinWithEnemyPlus($tags, $enemyMap);
+    }
+
+    /* -------- FULL‑SET for TRIAD bucket *fixed* -------- */
+    if (count($triadCollect) > 2) {
+        usort($triadCollect, fn($a,$b)=> $a['deg'] <=> $b['deg']);   // ← now by deg‑in‑sign
+        $tags = array_column($triadCollect,'tag');
+        $out['triad'][] = joinWithEnemyPlus($tags, $enemyMap);
+    }
+
+    return array_filter($out);
+}
+
+
+
+
+
+
+
+
 
 ?>
 
