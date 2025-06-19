@@ -4699,6 +4699,16 @@ textarea {
 	z-index: 10;
 }
 
+.sugaPointDetailsDiv{
+	position: fixed;
+	display: none;
+	width: 100%;
+	height: 100%;
+	background-color: gold;
+	align-content: center;
+	z-index: 10;
+}
+
 
 .rasiDetailsDiv{
 	position: fixed;
