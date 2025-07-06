@@ -999,7 +999,7 @@ function displayStarLard_jama()
 	
 	$planet_starlord = array();
 	
-	$nak_array = array("Aswini 1/அசுவினி 1","Aswini 2/அசுவினி 2","Aswini 3/அசுவினி 3","Aswini 4/அசுவினி 4",
+	$nak_array = array("dummy","Aswini 1/அசுவினி 1","Aswini 2/அசுவினி 2","Aswini 3/அசுவினி 3","Aswini 4/அசுவினி 4",
 						"Bharani 1/பரணி 1","Bharani 2/பரணி 2","Bharani 3/பரணி 3","Bharani 4/பரணி 4",
 						"Krithika 1/கிருத்திகை 1","Krithika 2/கிருத்திகை 2","Krithika 3/கிருத்திகை 3","Krithika 4/கிருத்திகை 4",
 						"Rohini 1/ரோகிணி 1","Rohini 2/ரோகிணி 2","Rohini 3/ரோகிணி 3","Rohini 4/ரோகிணி 4",
@@ -1026,7 +1026,7 @@ function displayStarLard_jama()
 						"Poorva bhadrapada 1/பூரட்டாதி 1","Poorva bhadrapada 2/பூரட்டாதி 2","Poorva bhadrapada 3/பூரட்டாதி 3","Poorva bhadrapada 4/பூரட்டாதி 4",
 						"Uthra bhadrapada 1/உத்திரட்டாதி 1","Uthra bhadrapada 2/உத்திரட்டாதி 2","Uthra bhadrapada 3/உத்திரட்டாதி 3","Uthra bhadrapada 4/உத்திரட்டாதி 4",
 						"Revathi 1/ரேவதி 1","Revathi 2/ரேவதி 2","Revathi 3/ரேவதி 3","Revathi 4/ரேவதி 4");
-	$nak_lord = array("கே","கே","கே","கே","சுக்","சுக்","சுக்","சுக்","சூரி","சூரி","சூரி","சூரி","சந்","சந்","சந்","சந்","செ","செ","செ","செ","ரா","ரா","ரா","ரா","குரு","குரு","குரு","குரு","சனி","சனி","சனி","சனி","புத","புத","புத","புத",
+	$nak_lord = array("dummy","கே","கே","கே","கே","சுக்","சுக்","சுக்","சுக்","சூரி","சூரி","சூரி","சூரி","சந்","சந்","சந்","சந்","செ","செ","செ","செ","ரா","ரா","ரா","ரா","குரு","குரு","குரு","குரு","சனி","சனி","சனி","சனி","புத","புத","புத","புத",
 						"கே","கே","கே","கே","சுக்","சுக்","சுக்","சுக்","சூரி","சூரி","சூரி","சூரி","சந்","சந்","சந்","சந்","செ","செ","செ","செ","ரா","ரா","ரா","ரா","குரு","குரு","குரு","குரு","சனி","சனி","சனி","சனி","புத","புத","புத","புத",
 						"கே","கே","கே","கே","சுக்","சுக்","சுக்","சுக்","சூரி","சூரி","சூரி","சூரி","சந்","சந்","சந்","சந்","செ","செ","செ","செ","ரா","ரா","ரா","ரா","குரு","குரு","குரு","குரு","சனி","சனி","சனி","சனி","புத","புத","புத","புத");
 	
@@ -1494,6 +1494,7 @@ $g_kathir_data = calculateKathirData($sw_planet, $outside); //calculates and ret
 updateSookumaRasi($aarudam_house);
 
 calculatePanchang();
+
 $thithi_soonyam_arr = updateThithiSoonyam($panchang["thithi"],true,true);
 
 //Add additional rasi/deg data for jama planets (outside)
@@ -1548,7 +1549,7 @@ echo <<<EOL
 		</div>
 		<div class='column-body' id="pdf">
 					<center>
-					<P style="color:#660000;font-weight:bold; font-size:16px; text-align:center; background-color:white;width:200px;">ஜாமக்கோள் Chart</P>
+					<P style="color:#660000;font-weight:bold; font-size:16px; text-align:center; background-color:white;width:200px;">ஜாமக்கோள் (DSJV)</P>
 					<center><div class="divTable blueTable" style="height:70px;">
 								<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
 									<div class="divTableDummyCell" colspan=3 style="border-radius: 20px 20px 0 0;">

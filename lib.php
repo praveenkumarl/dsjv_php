@@ -3721,8 +3721,10 @@ function calculatePanchang(){
 						array("Visti/பத்தரை","Sakuni/சகுனி"),
 						array("Chatuspada/சதுஷ்பாத","Naga/நாகவ"));
 	
-	$weekday_arr = array("Sunday/ஞாயிற்றுக்கிழமை","Monday/திங்கட்கிழமை","Tuesday/செவ்வாய்க்கிழமை","Wednesday/புதன்கிழமை",
-					"Thursday/வியாழக்கிழமை","Friday/வெள்ளிக்கிழமை","Saturday/சனிக்கிழமை");
+	//$weekday_arr = array("Sunday/ஞாயிற்றுக்கிழமை","Monday/திங்கட்கிழமை","Tuesday/செவ்வாய்க்கிழமை","Wednesday/புதன்கிழமை",
+	//				"Thursday/வியாழக்கிழமை","Friday/வெள்ளிக்கிழமை","Saturday/சனிக்கிழமை");
+	$weekday_arr = array("Sunday/ஞாயிறு","Monday/திங்கள்","Tuesday/செவ்வாய்","Wednesday/புதன்",
+					"Thursday/வியாழன்","Friday/வெள்ளி","Saturday/சனி");
 	
 						
 	$yoga_arr = array("dummy","விஷ்கம்பம்","ப்ரீதி","ஆயுஷ்மான்", "செளபாக்யம்", "சோபனம்", "அதி கண்டம்", "சுகர்மம்", "திருதி", "சூலம்", "கண்டம்", "விருத்தி", "துருவம்","வ்யாகதம்",
@@ -7531,7 +7533,16 @@ function getKubera(){
 	//find moon paatham count per kalapurusha raasi
 	$moon_paatham = $planet_starlord['சந்'][4];
 	
-	$second_athipathi = findAthipathi(targetHouse($lagna_house,2)-1);
+	//$second_athipathi = findAthipathi(targetHouse($lagna_house,2)-1);
+	
+	$second_athipathi_house = targetHouse($lagna_house,2)-1;
+	
+	if($second_athipathi_house < 0)
+			$second_athipathi_house = 11;
+	
+	$second_athipathi = findAthipathi($second_athipathi_house);
+	
+	debug(findAthipathi(targetHouse($lagna_house,2)-1) . '|' . $second_athipathi_house);
 	
 	$second_athipathi_paatham = $planet_starlord[$second_athipathi][4];
 	
