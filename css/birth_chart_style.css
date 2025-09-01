@@ -18,6 +18,8 @@
 	--chart-inner-font-weight: 600;
 	--chart-width: clamp(300px, 2vw, 800px);
 	--chart-height: clamp(300px, 2vw, 800px);
+	--chart-ubagraha-font-size: clamp(7px, 2vw, 9px);
+	--chart-ubagraha-font-color: grey;
 }
 
 /*normal mode*/
@@ -744,3 +746,172 @@ div.blueTable {
 }
 
 .enemy{ color:red; font-weight:bold; }
+
+.ubagraha{ 
+	color: var(--chart-ubagraha-font-color); 
+	font-size:var(--chart-ubagraha-font-size); 
+}
+
+.sookshmaDiv {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    align-content: center;
+    z-index: 11; /* above anthram */
+}
+
+.divSookshmaHeading { 
+    display: table-cell;
+    text-align:center;
+    vertical-align:middle;
+    border:solid 1px #000000;
+    background-color: lightgreen; /* different than anthram */
+    font-size: 11px;
+    color: black;
+    width: auto;
+    height: auto;
+    padding:5px;
+    font-weight: bold;
+}
+
+.divSookshma { 
+    display: table-cell;
+    text-align:center;
+    vertical-align:middle;
+    border:solid 1px #000000;
+    font-size: 11px;
+    color: black;
+    width: auto;
+    height: 20%;
+    padding:5px;
+    font-weight: bold;
+}
+
+.divCurrSookshma { 
+    display: table-cell;
+    text-align:center;
+    vertical-align:middle;
+    border:solid 1px #000000;
+    font-size: 11px;
+    color: black;
+    width: auto;
+    height: 20%;
+    padding:5px;
+    font-weight: bold;
+    background-color: yellow; /* highlight */
+}
+
+
+.pranaDiv {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    align-content: center;
+    z-index: 12; /* above sookshma */
+}
+
+.divPranaHeading { 
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    border: solid 1px #000000;
+    background-color: #66ccff; /* distinct for Prana */
+    font-size: 10px;
+    color: black;
+    width: auto;
+    height: auto;
+    padding: 5px;
+    font-weight: bold;
+}
+
+.divPrana { 
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    border: solid 1px #000000;
+    font-size: 10px;
+    color: black;
+    width: auto;
+    height: 20%;
+    padding: 5px;
+    font-weight: bold;
+}
+
+.divCurrPrana { 
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    border: solid 1px #000000;
+    font-size: 10px;
+    color: black;
+    width: auto;
+    height: 20%;
+    padding: 5px;
+    font-weight: bold;
+    background-color: yellow; /* highlight current Prana */
+}
+
+
+.birthSectionNav {
+    padding: 8px 12px;
+    font-size: 15px;
+    border: none;
+    border-radius: 6px;
+    background: #fff;
+    color: #333;
+    width: auto;
+    justify-self: right;
+}
+
+/* Container for the dropdown to enable right alignment */
+.nav-container {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+/* Styles for the custom-looking dropdown container */
+.select-container {
+    position: relative;
+    display: inline-block;
+    /* Removed the fixed width: 200px; */
+}
+
+.select-container select {
+    appearance: none; /* Hides the native dropdown arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    /* Removed the fixed width: 100%; to let it fit content */
+    padding: 10px 30px 10px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    /* Custom arrow using a base64 encoded SVG */
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23666" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 15px;
+}
+
+/* Hover and focus styles for better user interaction */
+.select-container select:hover {
+    border-color: #999;
+}
+
+.select-container select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Ensure sections are not hidden by the fixed menu bar */
+#birthHead, #chart2, #chart3, #divCurrentBukthi {
+    scroll-margin-top: 128px;
+}
