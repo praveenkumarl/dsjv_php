@@ -131,16 +131,19 @@ $libPath = './sweph/';
 putenv("PATH=$libPath");
 // ------- Swiss ephemeris // ------- 
 
+
 if(isset($_POST['nDate']) && $_POST['nDate']==""){
 	$chart_date = date("Y-m-d");
 	//$chart_time = date("H:i:s");
-	$chart_time = date("05:30:00"); // Set time to 5:30 AM
+	$chart_time = date("07:00:00"); // Set time to 7:00 AM
 }
 else{
 	$chart_date = isset($_POST['nDate']) ? $_POST['nDate'] : date("Y-m-d");
 	//$chart_time = isset($_POST['nTime']) ? $_POST['nTime'] : date("H:i:s");
-	$chart_time = isset($_POST['nTime']) ? $_POST['nTime'] : date("05:30:00");
+	$chart_time = isset($_POST['nTime']) ? $_POST['nTime'] : date("07:00:00");
 }
+
+echo $today_sunrise;
 
 $_SESSION["date"] = date("d-m-Y",strtotime($chart_date));
 $_SESSION["time"] = $chart_time;
@@ -159,7 +162,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="canonical" href="https://html5-templates.com/" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>PK Astro</title>
+    <title>DSJV app</title>
     <meta name="description" content="One stop website for astrology">
 	
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
@@ -175,6 +178,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" defer></script>
+	
 
     <script src="script.js" defer></script>
 	<script src="panchang.js?<?php echo date('ymdhis'); ?>" defer></script>
@@ -183,7 +187,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 	<script src="lang_mapping.js?<?php echo date('ymdhis'); ?>" defer></script>
     <script type="text/javascript">
 	var timezone = '<?php echo $TZ; ?>';
-	const panchangTime = "05:30:00" //this is the default panchang time the panchang will be generated on load. Download panchang button will be enabled only if time is equal to panchangTime
+	const panchangTime = "07:00:00" //this is the default panchang time the panchang will be generated on load. Download panchang button will be enabled only if time is equal to panchangTime
 	const panchangDate = new Date(); 
 	
 	function init(){
@@ -213,6 +217,8 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 				document.getElementById("en").style.backgroundColor = 'red';
 			}
 		} 
+		
+		document.addEventListener('DOMContentLoaded', init);
 	
 /******** this code is to take screenshot of the chart **************	
 		var dataURL = {};  
@@ -506,7 +512,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 
 			const timeText = timeElement.value; // Get time
 		
-			// Disable the button if time is NOT "5:30:00"
+			// Disable the button if time is NOT "7:00:00"
 			if (timeText !== panchangTime) {
 				button.disabled = true;
 			} else {
@@ -574,6 +580,11 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		  return true;
 	}
 	
+	// Global variables to use on button click
+	let currentNakshatraName = '';
+	let currentNakshatraStart = null;
+	let currentNakshatraEnd = null;
+	
 	function updatePanchangData(){
 		const t = new Date('<?php echo $chart_date." ".$chart_time; ?>');
 
@@ -582,6 +593,12 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		//newdate = changeTimezone(newdate,timezone);
 	
 		panchang.calculate(newdate, function() {
+
+			const nak = panchang.Nakshatra;
+			currentNakshatraName = nak.name;
+			currentNakshatraStart = nak.start;
+			currentNakshatraEnd = nak.end;
+			
 			//document.writeln('<div class="divTableRow">');
 			//	document.writeln('<div class="divTablePanchangMedium" style="width:80px">'+formatDate(newdate)+'</div>');
 			//	document.writeln('<div class="divTablePanchangMedium" style="width:50px">'+panchang.Day.name+'</div>');
@@ -639,19 +656,126 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		});
 	}
 	
+	document.addEventListener('DOMContentLoaded', function() {
+		const btn = document.getElementById('showNakshatraBtn');
+		if (btn) {
+			btn.addEventListener('click', function() {
+				if (currentNakshatraStart && currentNakshatraEnd && currentNakshatraName) {
+					displayNakshatraDivisions(currentNakshatraStart, currentNakshatraEnd, currentNakshatraName);
+				} else {
+					alert("Please load Panchang data first.");
+				}
+			});
+		} else {
+			console.warn('Button with id="showNakshatraBtn" not found in DOM.');
+		}
+	});
+	
+	
+	function displayNakshatraDivisions(startStr, endStr, startNakshatra) {
+	const nakshatras_en = [
+		"Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashirsha", "Ardra", "Punarvasu",
+		"Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", "Hasta", "Chitra",
+		"Swati", "Vishakha", "Anuradha", "Jyeshtha", "Mula", "Purva Ashadha", "Uttara Ashadha",
+		"Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"
+	];
+
+	const nakshatras_ta = [
+		"அசுவினி", "பரணி", "கிருத்திகை", "ரோகிணி", "மிருகசீரிடம்", "திருவாதிரை", "புனர்பூசம்",
+		"பூசம்", "ஆயில்யம்", "மகம்", "பூரம்", "உத்திரம்", "ஹஸ்தம்", "சித்திரை",
+		"சுவாதி", "விசாகம்", "அனுஷம்", "கேட்டை", "மூலம்", "பூராடம்", "உத்திராடம்",
+		"திருவோணம்", "அவிட்டம்", "சதயம்", "பூரட்டாதி", "உத்திரட்டாதி", "ரேவதி"
+	];
+
+	const start = new Date(startStr);
+	let end = new Date(endStr);
+	if (end <= start) end.setDate(end.getDate() + 1);
+
+	const totalMinutes = (end - start) / (1000 * 60);
+	const segmentMinutes = totalMinutes / 27;
+
+	let startIndex = nakshatras_ta.findIndex(n => n.toLowerCase() === startNakshatra.toLowerCase());
+	if (startIndex === -1) {
+		alert("Invalid Nakshatra name.");
+		return;
+	}
+
+	const existing = document.getElementById("nakshatraOverlay");
+	if (existing) existing.remove();
+
+	const overlay = document.createElement("div");
+	overlay.id = "nakshatraOverlay";
+	overlay.className = "starDivition";  // 👈 apply CSS class
+
+	const closeBtn = document.createElement("button");
+	closeBtn.innerText = "✖";
+	//closeBtn.style.cssText = "position:absolute;top:5px;right:5px;background:red;color:white;border:none;padding:5px 10px;cursor:pointer;border-radius:5px;font-weight:bold;text-box-trim: trim-both;";
+	closeBtn.className = "close-btn";
+	closeBtn.onclick = () => overlay.remove();
+	overlay.appendChild(closeBtn);
+
+	const title = `<DIV class="divTableCell">நட்சத்திர பகிர்வு<br><small style="font-weight:normal;">(${nakshatras_ta[startIndex]})</small></DIV>`;
+	let outputHTML = title;
+
+	// Start Table
+	outputHTML += `
+		<table style="width:100%;border-collapse:collapse;margin-top:10px;">
+			<thead>
+				<tr style="background:#f0f0f0;">
+					<th style="border:1px solid #ccc;padding:5px;">#</th>
+					<th style="border:1px solid #ccc;padding:5px;">From</th>
+					<th style="border:1px solid #ccc;padding:5px;">To</th>
+					<th style="border:1px solid #ccc;padding:5px;">Nakshatra</th>
+				</tr>
+			</thead>
+			<tbody>
+	`;
+
+	// 27 Nakshatra Divisions
+	for (let i = 0; i < 27; i++) {
+		const segStart = new Date(start.getTime() + i * segmentMinutes * 60000);
+		const segEnd = new Date(start.getTime() + (i + 1) * segmentMinutes * 60000);
+		const currentNak = nakshatras_ta[(startIndex + i) % 27];
+
+		outputHTML += `
+			<tr>
+				<td style="border:1px solid #ccc;padding:5px;text-align:center;">${i + 1}</td>
+				<td style="border:1px solid #ccc;padding:5px;">${formatTime(segStart)}</td>
+				<td style="border:1px solid #ccc;padding:5px;">${formatTime(segEnd)}</td>
+				<td style="border:1px solid #ccc;padding:5px;">${currentNak}</td>
+			</tr>
+		`;
+	}
+
+	const contentDiv = document.createElement("div");
+	contentDiv.style.padding = "20px"; // Add padding around the table
+	contentDiv.innerHTML = outputHTML;
+	overlay.appendChild(contentDiv);
+	document.body.appendChild(overlay);
+
+	// Helper function to format time as hh:mm
+	function formatTime(date) {
+		const hrs = date.getHours().toString().padStart(2, '0');
+		const mins = date.getMinutes().toString().padStart(2, '0');
+		return `${hrs}:${mins}`;
+	}
+}
+
+	
+	
 	function getKaranaPlanet(karan) {
 		const karanaPlanetArray = {
-				"பவ": "செவ்வாய்",
-				"பாலவ": "ராகு",
+				"பவ": "செ",
+				"பாலவ": "ரா",
 				"கௌலவ": "சனி",
-				"தைதுலை": "சுக்ரன்",
-				"கரசை": "சந்திரன்",
-				"வணிசை": "சூரியன்",
-				"பத்தரை": "கேது",
+				"தைதுலை": "சுக்",
+				"கரசை": "சந்",
+				"வணிசை": "சூரி",
+				"பத்தரை": "கே",
 				"சகுனி": "சனி",
 				"சதுஷ்பாத": "குரு",
-				"நாகவ": "ராகு",
-				"கிம்ஸ்துக்கினம்": "புதன்"
+				"நாகவ": "ரா",
+				"கிம்ஸ்துக்கினம்": "புத"
 		};
 
 		return karanaPlanetArray[karan];
@@ -691,6 +815,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		if(document.getElementById('languageSelector').value == 'english'){
 			transliterateTamilToEnglish();
 		}
+		
 	}); 
 	
 	function generateMuhurtam(today_sunrise,tomm_sunrise) {
@@ -933,6 +1058,35 @@ function closeTable() {
 			});
 		});
 	}
+	
+	function waitForImagesToLoad(callback) {
+		const images = document.images;
+		let loadedCount = 0;
+		const totalImages = images.length;
+
+		if (totalImages === 0) {
+			callback();
+			return;
+		}
+
+		for (let i = 0; i < totalImages; i++) {
+			if (images[i].complete) {
+				loadedCount++;
+			} else {
+				images[i].addEventListener('load', () => {
+					loadedCount++;
+					if (loadedCount === totalImages) callback();
+				});
+				images[i].addEventListener('error', () => {
+					loadedCount++;
+					if (loadedCount === totalImages) callback();
+				});
+			}
+		}
+
+		if (loadedCount === totalImages) callback();
+	}
+
 		
 	function displayOnePagePanchang() {
 		const container = document.getElementById('divContainer');
@@ -963,6 +1117,10 @@ function closeTable() {
 		const divSunrise = document.getElementById('sunrise');
 		const divSunset = document.getElementById('sunset');
 		
+		const DivVivSunNak = document.getElementById('vivSunNak');
+		const DivVivMooNak = document.getElementById('vivMooNak');
+		const DivVivChakram = document.getElementById("vivahaRes");
+		
 		
 		// Clear container
 		/*container.innerHTML = '';
@@ -977,7 +1135,7 @@ function closeTable() {
 		div3.innerHTML = div3.innerHTML;*/
 		
 		document.getElementById('date').innerHTML = divDate.textContent;
-		document.getElementById('day_local').innerHTML = divDay.textContent + "@5:30 AM";
+		document.getElementById('day_local').innerHTML = divDay.textContent + "@7:00 AM";
 		document.getElementById('localPlace').innerHTML = divPlace.textContent;
 		document.getElementById('lHorai').innerHTML = document.getElementById('lHorai').innerHTML + ' - ' +divHora.textContent;
 		document.getElementById('lPakshi').innerHTML = document.getElementById('lPakshi').innerHTML + ' - ' +divPakshi.textContent;
@@ -999,14 +1157,32 @@ function closeTable() {
 		document.getElementById('lSunrise').innerHTML = document.getElementById('lSunrise').innerHTML + ' - ' + divSunrise.textContent;
 		document.getElementById('lSunset').innerHTML = document.getElementById('lSunset').innerHTML + ' - ' + divSunset.textContent;
 		
-		//captureDivAsImage('day','day_local');
-		captureDivAsImage('transitChart','chart');
-		captureDivAsImage('starlordBodyMutable','starlord');
-		captureDivAsImage('vivahaChakram','vivaha');
-		captureDivAsImage('thithi','thithi_local');
-		captureDivAsImage('nak','nak_local');
-		captureDivAsImage('karanam','kara_local');
-		captureDivAsImage('yogam','yogam_local');
+		//document.getElementById('lviv_chakram').innerHTML = document.getElementById('lviv_chakram').innerHTML + ' - ' + DivVivSunNak.textContent + "<BR>" + DivVivMooNak.textContent + "<BR>" + DivVivChakram.innerHTML;
+		
+		const lviv = document.getElementById('lviv_chakram');
+
+		// Add separator and text
+		lviv.append(' - ' + DivVivSunNak.textContent);
+		lviv.append(document.createElement("br"));
+		lviv.append(DivVivMooNak.textContent);
+		lviv.append(document.createElement("br"));
+
+		// Append the styled div directly
+		lviv.appendChild(DivVivChakram.cloneNode(true));
+
+		
+		waitForImagesToLoad(() => {
+			// Your image capture code (html2canvas or custom)
+			//captureDivAsImage('day','day_local');
+			captureDivAsImage('transitChart','chart');
+			captureDivAsImage('starlordBodyMutable','starlord');
+			captureDivAsImage('vivahaChakram','vivaha');
+			captureDivAsImage('thithi','thithi_local');
+			captureDivAsImage('nak','nak_local');
+			captureDivAsImage('karanam','kara_local');
+			captureDivAsImage('yogam','yogam_local');
+
+		});
 		
 		const originalContainer = document.getElementById('divOrigContainer');
 		//const backBtn = document.getElementById('backBtn');
@@ -1032,6 +1208,8 @@ function closeTable() {
 		}, 1000);
 		
 	}
+
+
 	
 	function saveContent() {
 		const content = document.getElementById('divContainer').innerHTML;
@@ -1044,12 +1222,25 @@ function closeTable() {
 		window.print();
 	}
 	
-	function printPDF() {
+	function printPDF_orig() {
 		const element = document.getElementById("targetDiv"); // The element you want to print
 		html2pdf().from(element).set({
 			filename: 'custom_filename.pdf' // Set desired filename
 		}).save();
 	}
+	
+	function printPDF() {
+	  const element = document.getElementById("divContainer");
+	  html2pdf()
+		.from(element)
+		.set({
+		  margin: 5,
+		  filename: 'panchang.pdf',
+		  jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+		})
+		.save();
+	}
+
 
 
 	function displayOrigPanchang(){
@@ -1151,11 +1342,12 @@ function closeTable() {
 	</script>
 </head>
 
-<body id='mybody1' onLoad="init();">
+<body id='mybody1'>
 <div class="karanamDiv" id="karanamDiv" onclick="hideKaranamDiv()"><!-- <img src='images/karanam.png' /> --></div>
 <!-- <div class="muhurthamDiv" id="muhurthamDiv" onclick="this.style.display='none'"></div> -->
 <div class="muhurthamDiv" id="muhurthamDiv"></div>
 <div id="loader" class="center"></div>
+
 
 <?php
 
@@ -1974,6 +2166,7 @@ echo <<<EOL
 				<input type='button' id='sub_button' class='actionBtn' value='Submit' onClick="formSubmitButton();">
 				<input type='button' id='downloadPanchang' class='actionBtn' value='Monthly' onClick="genPanchang('$place');" /> 
 				<input type='button' class='actionBtn' id='onePageBtn' onclick="displayOnePagePanchang()" value="Download" />
+				<input type='button' class="actionBtn" id="showNakshatraBtn" value='நட்.பகிர்வு' />
 				<BR><BR>
 			</form>
 
@@ -2073,19 +2266,23 @@ echo <<<EOL
 							<div class="panchangTextInline" id="lChandraashtamam"><div class="panchangTextInlineBold">சந்திராஷ்டமம்</div></div>,
 							<div class="panchangTextInline" id="lSunrise"><div class="panchangTextInlineBold">சூரிய உதயம்</div></div>,
 							<div class="panchangTextInline" id="lSunset"><div class="panchangTextInlineBold">சூரிய அஸ்தமனம்</div></div>
+							<BR>
+							<div class="panchangTextInline" id="lviv_chakram"><div class="panchangTextInlineBold">விவாஹ சக்ரம்:</div></div>
 						</td>
 					</tr>
 					<tr>
 						<td style='padding:unset' colspan=1>
-							<div class="imgcaption">கோட்சாரம்</div><img id="chart" src="" alt="Captured Image" width='250px'>
+							<div class="imgcaption">கோட்சாரம்</div><img id="chart" src="" alt="Captured Image" width='280px'>
 						</td>
+						<td style='padding:unset;align-content:center'><img id="ganesha" src="images/panchang_ganesha.png" alt="Image" width='180px'>
 						<td style='padding:unset;align-content:center'><div class="imgcaption">கிரக சாரம்</div><img id="starlord" src="" alt="Captured Image" width='220px'></td>
-						 <td style='padding:unset;align-content:center'><div class="imgcaption">விவாஹ சக்ரம்</div><img id="vivaha" src="" alt="Captured Image" width='220px'></td>
+						
+						 <!-- <td style='padding:unset;align-content:center'><div class="imgcaption">விவாஹ சக்ரம்</div><img id="vivaha" src="" alt="Captured Image" width='220px'></td> -->
 						<!-- <td style='padding:unset;align-content:center'><div class="imgcaption">கிரக சாரம்</div><img id="starlord" src="" alt="Captured Image" width='250px'></td> -->
 					</tr>
 					<!-- <tr>
 						<td style='padding:unset;align-content:center'><div class="imgcaption">கிரக சாரம்</div><img id="starlord" src="" alt="Captured Image" width='220px'></td>
-						 <td style='padding:unset;align-content:center'><div class="imgcaption">விவாஹ சக்ரம்</div><img id="vivaha" src="" alt="Captured Image" width='220px'></td>
+						<td style='padding:unset;align-content:center'><div class="imgcaption">விவாஹ சக்ரம்</div><img id="vivaha" src="" alt="Captured Image" width='220px'></td> 
 					</tr> -->
 				</table>
 			<!-- Add more divs as needed -->

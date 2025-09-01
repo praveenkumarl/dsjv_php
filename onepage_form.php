@@ -106,6 +106,7 @@ echo <<<EOL
 				</div>
 			</div>
 			<input type='submit' class='actionBtn' id='submit1' name='submit1' value='Submit' OnClick='submitForm();'>
+			
 		</form>
 		</center>
 	</div>	 

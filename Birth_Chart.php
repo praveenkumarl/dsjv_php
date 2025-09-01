@@ -126,6 +126,8 @@ $g_asthangam_arr = array();
 $g_astavargam_total_arr = array_fill(0,12,0);
 $g_padham=0;
 
+$g_all_parigaaram = "";
+
 $divisional_chartname_arr = [
 								0 => ["dummy",""],
 								1 => ["ராசி","உடல், உடல் சார்ந்த விஷயங்கள் மற்றும் அனைத்து பொது விஷயங்கள்"],
@@ -688,6 +690,47 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 		  //document.getElementById("detailsDiv").style.left = 0;
 		  //document.getElementById("detailsDiv").style. = 0;
 		}
+		
+		function showAllParigaaramDiv() {
+			document.getElementById("allParigaaramDiv").style.display = "block";
+			
+			const anthDiv = document.getElementById('jumpDropdown');
+			anthDiv.style.display = 'none';
+			
+			// Get a reference to your select dropdown
+			var dropdown = document.getElementById("birthSectionNav"); // Use your dropdown's ID here
+
+			// Change the selected option back to the first one (index 0)
+			dropdown.selectedIndex = 0;
+		}
+		
+		function hideAllParigaaramDiv() {
+			document.getElementById("allParigaaramDiv").style.display = "none";
+			
+			const anthDiv = document.getElementById('jumpDropdown');
+			anthDiv.style.display = 'flex';
+		}
+		
+		function hideSookshmaDiv() {
+			document.getElementById("sookshmaDiv").style.display = "none";
+			
+			const anthDiv = document.getElementById('jumpDropdown');
+			anthDiv.style.display = 'flex';
+		}
+		
+		function hideAnthramDiv() {
+			document.getElementById("anthramDiv").style.display = "none";
+			
+			const anthDiv = document.getElementById('jumpDropdown');
+			anthDiv.style.display = 'flex';
+		}
+		
+		function hidePranaDiv() {
+			document.getElementById("pranaDiv").style.display = "none";
+			
+			const anthDiv = document.getElementById('jumpDropdown');
+			anthDiv.style.display = 'flex';
+		}
 
 		function hideDetailsDiv() {
 			document.getElementById("nakDetailsDiv").style.display = "none";
@@ -719,7 +762,213 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 		form.submit();
 	}
 	
+	// ---------------------- Anthram ----------------------
 	function generateAnthram(in_start, in_end, dasa, bukthi) {
+	  var anthram_arr = {};
+	  var count = 0;
+
+	  var start = new Date(in_start);
+	  var dasa_period = {'கே':7,'சுக்':20,'சூரி':6,'சந்':10,'செ':7,'ரா':18,'குரு':16,'சனி':19,'புத':17};
+	  var index = Object.keys(dasa_period).indexOf(bukthi);
+	  var html_str = "";
+	  var curr_date = new Date();
+
+	  html_str += '<center><div class="divTable blueTable" style="width:100%;height:auto">';
+	  html_str += '<button class="dasa-close-btn" onclick="hideAnthramDiv()">X</button><div class="divTableRow"><div class="divAnthraHeading" colspan="3">அந்தரம்</div></div></div>';
+	  html_str += '<center><div class="divTable blueTable" style="width:100%;height:auto">';
+
+	  // first pass (from bukthi index to end)
+	  for (var i = index; i <= index + 8; i++) {
+		if (i > 8) break;
+
+		var no_of_secs = Math.round((dasa_period[dasa] * dasa_period[bukthi] * Object.values(dasa_period)[i]) / 14400 * 365.2425 * 24 * 60 * 60);
+		var end = new Date(start.getTime() + no_of_secs * 1000);
+
+		anthram_arr[Object.keys(dasa_period)[i]] = [start, end];
+
+		let temp1 = new Date(start), temp2 = new Date(end);
+		let s_date = String(temp1.getDate()).padStart(2,'0')+'-'+String(temp1.getMonth()+1).padStart(2,'0')+'-'+temp1.getFullYear();
+		let e_date = String(temp2.getDate()).padStart(2,'0')+'-'+String(temp2.getMonth()+1).padStart(2,'0')+'-'+temp2.getFullYear();
+
+		// 🔶 highlight current anthram (inclusive boundaries)
+		var isCurrent = (curr_date.getTime() >= temp1.getTime() && curr_date.getTime() <= temp2.getTime());
+		var cellClass = isCurrent ? 'divCurrAnthra' : 'divAnthra';
+
+		// pass timestamps (ms) to avoid timezone issues with YYYY-MM-DD
+		var startMs = start.getTime(), endMs = end.getTime();
+		var anthramLord = Object.keys(dasa_period)[i];
+
+		html_str += `<div class="divTableRow"
+						onclick="generateSookshma(${startMs}, ${endMs}, '${dasa}', '${bukthi}', '${anthramLord}')">
+					  <div class="divAnthraHeading">${dasa} / ${bukthi} / ${anthramLord}</div>
+					  <div class="${cellClass}">${s_date}</div>
+					  <div class="${cellClass}">${e_date}</div>
+					</div>`;
+
+		start = end;
+		count++;
+	  }
+
+	  // second pass (wrap remaining planets)
+	  for (var i = 0; i < 9 - count; i++) {
+		var no_of_secs = Math.round((dasa_period[dasa] * dasa_period[bukthi] * Object.values(dasa_period)[i]) / 14400 * 365.2425 * 24 * 60 * 60);
+		var end = new Date(start.getTime() + no_of_secs * 1000);
+
+		if (i == 9 - count - 1) {
+		  end = new Date(in_end);
+		}
+
+		anthram_arr[Object.keys(dasa_period)[i]] = [start, end];
+
+		let temp1 = new Date(start), temp2 = new Date(end);
+		let s_date = String(temp1.getDate()).padStart(2,'0')+'-'+String(temp1.getMonth()+1).padStart(2,'0')+'-'+temp1.getFullYear();
+		let e_date = String(temp2.getDate()).padStart(2,'0')+'-'+String(temp2.getMonth()+1).padStart(2,'0')+'-'+temp2.getFullYear();
+
+		var isCurrent = (curr_date.getTime() >= temp1.getTime() && curr_date.getTime() <= temp2.getTime());
+		var cellClass = isCurrent ? 'divCurrAnthra' : 'divAnthra';
+
+		var startMs = start.getTime(), endMs = end.getTime();
+		var anthramLord = Object.keys(dasa_period)[i];
+
+		html_str += `<div class="divTableRow"
+						onclick="generateSookshma(${startMs}, ${endMs}, '${dasa}', '${bukthi}', '${anthramLord}')">
+					  <div class="divAnthraHeading">${dasa} / ${bukthi} / ${anthramLord}</div>
+					  <div class="${cellClass}">${s_date}</div>
+					  <div class="${cellClass}">${e_date}</div>
+					</div>`;
+
+		start = end;
+	  }
+
+	  html_str += "</div></center>";
+	  document.getElementById('anthramDiv').innerHTML = html_str;
+	  document.getElementById('anthramDiv').style.display = 'block';
+	  
+	  const anthDiv = document.getElementById('jumpDropdown');
+	  anthDiv.style.display = 'none';
+
+	  return anthram_arr;
+	}
+
+
+	// ---------------------- Sookshma ----------------------
+	function generateSookshma(in_start_ms, in_end_ms, dasa, bukthi, anthram) {
+		var start = new Date(Number(in_start_ms));
+		var anthramEnd = new Date(Number(in_end_ms));
+		var curr_date = new Date();
+
+		var dasa_period = {'கே':7,'சுக்':20,'சூரி':6,'சந்':10,'செ':7,'ரா':18,'குரு':16,'சனி':19,'புத':17};
+		var keys = Object.keys(dasa_period);
+
+		var html_str = "<button class='dasa-close-btn' onclick='hideSookshmaDiv()'>X</button>";
+		html_str += '<center><div class="divTable greenTable" style="width:100%;height:auto">';
+		html_str += '<div class="divTableRow"><div class="divSookshmaHeading" colspan="3">சூட்சமம்</div></div></div>';
+		html_str += '<center><div class="divTable greenTable" style="width:100%;height:auto">';
+
+		var totalSecs = Math.max(0, Math.round((anthramEnd.getTime() - start.getTime()) / 1000));
+		var accStart = new Date(start);
+
+		var idx0 = keys.indexOf(anthram);
+		if (idx0 === -1) idx0 = 0;
+
+		for (var step = 0; step < 9; step++) {
+			var k = keys[(idx0 + step) % 9];
+			var sliceSecs = Math.round(totalSecs * (dasa_period[k] / 120));
+			var end = (step === 8) ? new Date(anthramEnd) : new Date(accStart.getTime() + sliceSecs * 1000);
+
+			let t1 = new Date(accStart);
+			let t2 = new Date(end);
+			let s_date = String(t1.getDate()).padStart(2, '0') + '-' + String(t1.getMonth()+1).padStart(2, '0') + '-' + t1.getFullYear();
+			let e_date = String(t2.getDate()).padStart(2, '0') + '-' + String(t2.getMonth()+1).padStart(2, '0') + '-' + t2.getFullYear();
+
+			var isCurrent = (curr_date.getTime() >= t1.getTime() && curr_date.getTime() <= t2.getTime());
+			var cellClass = isCurrent ? 'divCurrSookshma' : 'divSookshma';
+
+			// make row clickable to open Prana
+			html_str += `<div class="divTableRow" onclick="generatePrana(${t1.getTime()}, ${t2.getTime()}, '${dasa}', '${bukthi}', '${anthram}', '${k}')">`;
+			html_str += `<div class="divSookshmaHeading">${dasa} / ${bukthi} / ${anthram} / ${k}</div>`;
+			html_str += `<div class="${cellClass}">${s_date}</div>`;
+			html_str += `<div class="${cellClass}">${e_date}</div>`;
+			html_str += '</div>';
+
+			accStart = end;
+		}
+
+		html_str += '</div></center>';
+
+		document.getElementById('sookshmaDiv').innerHTML = html_str;
+		document.getElementById('sookshmaDiv').style.display = 'block';
+	}
+
+
+
+
+	// ---------------------- Prana ----------------------
+	function generatePrana(in_start_ms, in_end_ms, dasa, bukthi, anthram, sookshma) {
+		// Accept numbers or numeric strings
+		var start = new Date(Number(in_start_ms));
+		var sookshmaEnd = new Date(Number(in_end_ms));
+		var curr_date = new Date();
+
+		var dasa_period = {'கே':7,'சுக்':20,'சூரி':6,'சந்':10,'செ':7,'ரா':18,'குரு':16,'சனி':19,'புத':17};
+		var keys = Object.keys(dasa_period);
+
+		// Build markup similar to SookshmaDiv structure
+		var html_str = "<button class='dasa-close-btn' onclick='hidePranaDiv()'>X</button>";
+		html_str += '<center><div class="divTable pranaTable" style="width:100%;height:auto">';
+		html_str += '<div class="divTableRow"><div class="divPranaHeading" colspan="3">பிராணன்</div></div></div>';
+		html_str += '<center><div class="divTable pranaTable" style="width:100%;height:auto">';
+
+		// total seconds in sookshma (to slice proportionally)
+		var totalSecs = Math.max(0, Math.round((sookshmaEnd.getTime() - start.getTime()) / 1000));
+		var accStart = new Date(start);
+
+		// start index is the sookshma lord, then wrap through the 9 planets
+		var idx0 = keys.indexOf(sookshma);
+		if (idx0 === -1) idx0 = 0; // fallback
+
+		for (var step = 0; step < 9; step++) {
+			var k = keys[(idx0 + step) % 9];
+
+			// proportional slice
+			var sliceSecs = Math.round(totalSecs * (dasa_period[k] / 120));
+
+			// last slice end = sookshmaEnd
+			var end = (step === 8) ? new Date(sookshmaEnd) : new Date(accStart.getTime() + sliceSecs * 1000);
+
+			// format dates like others
+			let t1 = new Date(accStart);
+			let t2 = new Date(end);
+			let s_date = String(t1.getDate()).padStart(2, '0') + '-' + String(t1.getMonth()+1).padStart(2, '0') + '-' + t1.getFullYear();
+			let e_date = String(t2.getDate()).padStart(2, '0') + '-' + String(t2.getMonth()+1).padStart(2, '0') + '-' + t2.getFullYear();
+
+			var isCurrent = (curr_date.getTime() >= t1.getTime() && curr_date.getTime() <= t2.getTime());
+			var cellClass = isCurrent ? 'divCurrPrana' : 'divPrana';
+
+			html_str += '<div class="divTableRow">';
+			html_str += `<div class="divPranaHeading">${dasa} / ${bukthi} / ${anthram} / ${sookshma} / ${k}</div>`;
+			html_str += `<div class="${cellClass}">${s_date}</div>`;
+			html_str += `<div class="${cellClass}">${e_date}</div>`;
+			html_str += '</div>';
+
+			// move pointer
+			accStart = end;
+		}
+
+		html_str += '</div></center>';
+
+		document.getElementById('pranaDiv').innerHTML = html_str;
+		document.getElementById('pranaDiv').style.display = 'block';
+
+		// return if needed
+		var prana_arr = {};
+		return prana_arr;
+	}
+
+
+
+	
+	function generateAnthramOrig(in_start, in_end, dasa, bukthi) {
        var anthram_arr = {};
        var count = 0;
  
@@ -825,6 +1074,12 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 		
 		x.style.display='block';
 		window.scrollTo(0, 0);
+		
+		// Get a reference to your select dropdown
+		var dropdown = document.getElementById("birthSectionNav"); // Use your dropdown's ID here
+
+		// Change the selected option back to the first one (index 0)
+		dropdown.selectedIndex = 0;
 	}
 	
 	function closeWallpaper(){
@@ -976,6 +1231,12 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 		//alert('updatePanchangData: in_datetime='+in_datetime+' newdate='+newdate+' timezone='+timezone);
 	
 		panchang.calculate(newdate, function() {
+			const nak = panchang.Nakshatra;
+
+			// Save for button use
+			currentNakshatraName = nak.name;
+			currentNakshatraStart = nak.start;
+			currentNakshatraEnd = nak.end;
 			//document.writeln('<div class="divTableRow">');
 			//	document.writeln('<div class="divTablePanchangMedium" style="width:80px">'+formatDate(newdate)+'</div>');
 			//	document.writeln('<div class="divTablePanchangMedium" style="width:50px">'+panchang.Day.name+'</div>');
@@ -993,6 +1254,7 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 			document.getElementById('karanam').innerHTML = panchang.Karna.name+' ('+getKaranaPlanet(panchang.Karna.name)+')'+'<BR><div class="divSmall">'+formatDateTime(panchang.Karna.start)+' முதல்<BR>'+formatDateTime(panchang.Karna.end)+' வரை</div>';
 		});
 	}
+
 	
 	function getKaranaPlanet(karan) {
 		const karanaPlanetArray = {
@@ -1011,6 +1273,7 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 
 		return karanaPlanetArray[karan];
 	}
+
 	
 	function showChart() {
 		// Hide all charts first
@@ -1094,7 +1357,38 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 	document.addEventListener('DOMContentLoaded', function() {
 		showAllContent();
 	  });
+	  
+	  
+	  function scrollToSection(id) {
+		// Check for the specific option that needs a function call
+		if (id === "wallpaper") { // You'll use this ID in your <option> tag
+			openWallpaper();
+		} 
+		if (id === "parigaaram") { // You'll use this ID in your <option> tag
+			showAllParigaaramDiv()();
+		} 
+		else if (id === "top") {
+			window.scrollTo({
+				top: 0,
+				behavior: "instant"
+			});
+		} else if (id) {
+			const targetElement = document.getElementById(id);
+			if (targetElement) {
+				const headerHeight = 128 + 20; // The height of your menu bar
+				const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+				const offsetPosition = elementPosition - headerHeight;
 
+				window.scrollTo({
+					top: offsetPosition,
+					behavior: "instant"
+				});
+			}
+		}
+		
+		hideDetailsDiv();
+	}
+	
 				
 	</script>
 </head>
@@ -1121,7 +1415,9 @@ $onePageURL="onepage_form.php?place=".$in_place."&name=".$in_name."&sex=".$in_se
 
 <body onLoad="init();">
 <div id="karanamDiv" onclick="hide ()"><img src='images/karanam.png' width='100%' /></div>
-<div class="anthramDiv" id="anthramDiv" onclick="this.style.display='none'"></div>
+<div class="anthramDiv" id="anthramDiv"></div>
+<div class="sookshmaDiv" id="sookshmaDiv"></div>
+<div class="pranaDiv" id="pranaDiv"></div>
 <div id="loader" class="center"></div>
 
 <?php
@@ -1736,6 +2032,10 @@ EOL;
 			echo "<div class='divPanchang' OnClick='openWallpaper()' style='color:blue;font-weight:bold;cursor:pointer'>Click here</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>உங்கள் பரிகாரங்கள்</div>";
+			echo "<div class='divPanchang' OnClick='showAllParigaaramDiv()' style='color:blue;font-weight:bold;cursor:pointer'>Click here</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>கணக்கீட்டு முறை</div>";
 			echo "<div class='divPanchang'>திருக்கணிதம்<BR>(லஹரி அயனாம்சம்)</div>";
 		echo "</div>";
@@ -2336,10 +2636,12 @@ if($DEBUG==1){
 // Update Mandhi
 $sw_planet = updateMandhi($sw_planet,$sw_planet,$sun_degree,$day,$dayofweek,$sun_house);
 
-
 if($DEBUG==1){
 	var_export($sw_planet);
 }
+
+$sw_planet = updateUpaGraha($sun_degree);
+
 
 //Update planet symbol in Jama planets (tr_sw_planet)
 //$tr_sw_planet = updateSymbols($tr_sw_planet);
@@ -2503,6 +2805,7 @@ $Transit_Planet_degree=displayDegree_transit($tr_sw_degree);
 
 //$sw_degree = sortDegree($sw_degree);
 $sw_planet = sortDegree($sw_planet);
+
 $tr_sw_planet = sortDegree_transit($tr_sw_planet);
 
 updateIndhuLagna();
@@ -2575,6 +2878,28 @@ EOL;
 			
 echo <<<EOL
 			</div>
+						<!-- 🔹 Fixed Navigation Bar -->
+						<div class="nav-container" id='jumpDropdown'>
+							<div class="select-container">
+								<select class="birthSectionNav" id="birthSectionNav" onchange="scrollToSection(this.value)">
+									<option value="top">Top</option>
+									<option value="birthHead">பிறப்பு விவரங்கள்</option>
+									<option value="d9_chart">நவாம்சம்</option>
+									<option value="bhava_chart">பாவம்</option>
+									<option value="starlordHeadMutable">கிரக சாரம்</option>
+									<option value="thithiYogamKaranamHeadMutable">திதி/யோகம்</option>
+									<option value="abhijitHeadMutable">வைநாசிகம்</option>
+									<option value="kpHeadMutable">KP details</option>
+									<option value="divCurrentBukthi">தசாபுக்தி</option>
+									<option value="starlordHeadMutable_transit">கோட்சாரம்</option>
+									<option value="vargaDropdown">வர்க சக்ரம்</option>
+									<option value="ashtaDropdown">அஷ்டவர்கம்</option>
+									<option value="wallpaper">Wallpaper</option>
+									<option value="parigaaram">பரிகாரங்கள்</option>
+									
+								</select>
+							</div>
+						</div>
 		</div>
 		<div class='column-body'>
 EOL;
@@ -2585,7 +2910,7 @@ echo "<div id='tabsContainer' style='text-align: -webkit-left;'>";
 echo "</div>";
 			
 echo <<<EOL
-			<center><P style="color:#660000;font-weight:bold; font-size:16px; text-align:center; background-color:white;width:200px;line-height: 30px;">பிறப்பு ஜாதகம்</P></center>
+			<center><P style="color:#660000;font-weight:bold; font-size:16px; text-align:center; background-color:white;width:200px;margin-top: 50px;">பிறப்பு ஜாதகம்</P></center>
 			<div id="detailsTab" class="tabContent">
 			<div class="tableWrapper">		
 					<center id="pdf"><div class="divTable blueTable" style="height:70px;">
@@ -2649,13 +2974,15 @@ echo <<<EOL
 											
 											<button type='button' class='actionBtn' id='submit1' value='Submit' onClick='return genChart(this.form);'>Submit</button>
 											<input type='button' class='actionBtn' id='save' name='save' value='$saveBtnTxt' onClick='saveChart();'>
-											<!-- <button type='button' id="showNadi" class="actionBtn">BN.NADI</button> -->
 											<button type="button" class='actionBtn' value='Download' onClick='loadOnePage("$onePageURL");'>PDF</button>
+
+											
+											<!-- <button type='button' id="showNadi" class="actionBtn">BN.NADI</button> -->
 										</form>
 											
 										<!-- <button style="background-color:gold;color:#660000;font-weight:bold;font-size:10px;" onclick="generatePDF()">Download</button> -->
 										<!-- </form> -->
-										
+
 										
 									</div>
 								</div>
@@ -2945,6 +3272,8 @@ echo<<<EOL
 	</div>
 	</center>
 EOL;
+
+displayAllParigaaramDiv();
 	
 /*$clubs = buildTriadClubsWithRetro($planet_starlord, $planetDeg_default);
 
@@ -2981,7 +3310,7 @@ foreach ($combos as $label => $items) {
 
 
 /* ============= MAIN BUILD ======================================== */
-$planetInfo = buildInfo($planet_starlord,$planetDeg_default,$alwaysRetro);
+$planetInfo = buildNaadi($planet_starlord,$planetDeg_default,$alwaysRetro);
 
 /* bucket‑wise storage requested in point 2 */
 $bucketArrays = [

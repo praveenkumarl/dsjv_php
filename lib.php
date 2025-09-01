@@ -824,6 +824,14 @@ function envColor()
 	}
 }
 
+
+// true only if $token appears as a standalone token (not inside another Tamil/word token)
+function hasToken($haystack, $token) {
+    // Do not match if a letter/mark is immediately before or after the token
+    $pattern = '/(?<![\p{L}\p{M}])' . preg_quote($token, '/') . '(?![\p{L}\p{M}])/u';
+    return preg_match($pattern, $haystack) === 1;
+}
+
 function sortDegree($inArray) // new function
 {
 	global $planetDeg, $planetDeg_default, $mandhi_degree, $g_rasi_girl,$g_bhava_arr;
@@ -833,6 +841,7 @@ function sortDegree($inArray) // new function
 	$outArray=array(null,null,null,null,null,null,null,null,null,null,null,null);
 	
 	foreach ($planetDeg as $planet => $deg) {
+
 		foreach ($inArray as $house => $inPlanet)
 		{	
 			//$inArray[$house] = str_replace($planet, $planet. " " . $planetDeg[$planet],$inArray[$house]);
@@ -840,7 +849,8 @@ function sortDegree($inArray) // new function
 			//arrange planets by degree from top to bottom within these houses (Mesham to Thulam)
 			if($house<=5)
 			{
-				if(strpos($inArray[$house],$planet)===0 || strpos($inArray[$house],$planet)>0){	
+				//if(strpos($inArray[$house],$planet)===0 || strpos($inArray[$house],$planet)>0){	
+				if (hasToken($inArray[$house], $planet)) {
 					if(strpos($inArray[$house],'retro">'.$planet)>0 || strpos($inArray[$house],'retro">'.$planet)===0){
 						$outArray[$house] = $outArray[$house] . " " . "<span class='retro'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
 						
@@ -910,19 +920,23 @@ function sortDegree($inArray) // new function
 								$outArray[$house] = $outArray[$house] . " " . "<span class='emma_kantam'>$planet</span>";
 							}
 						}
+						elseif(strpos($planet, '#') === 0) {							
+							$outArray[$house] .= " <span class='ubagraha'>{$planet}</span>";
+						}
 						else{
+						//	echo "<BR>$planet".$planetDeg[$planet];
 							$outArray[$house] = $outArray[$house] . " " . $planet . "-". DECtoDMS_jamakol($planetDeg[$planet]);
 							
 							//updateBhavaArray($planetDeg[$planet],"$planet" . "-". $planetDeg[$planet],$house);
 							updateBhavaArray($planetDeg[$planet],"$planet",$house);
-							
 						}
 					}
 				}
 			}
 			//arrange planets by degree from bottom to top within these houses (Virichigam to Meenam)
 			else{
-				if(strpos($inArray[$house],$planet)===0 || strpos($inArray[$house],$planet)>0){	
+				//if(strpos($inArray[$house],$planet)===0 || strpos($inArray[$house],$planet)>0){	
+				if (hasToken($inArray[$house], $planet)) {
 					if(strpos($inArray[$house],'retro">'.$planet)>0 || strpos($inArray[$house],'retro">'.$planet)===0){
 						$outArray[$house] = "<span class='retro'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house];
 						
@@ -993,6 +1007,9 @@ function sortDegree($inArray) // new function
 								$outArray[$house] = "<span class='emma_kantam'>$planet</span>$planet</span>" . " " . $outArray[$house] ;
 							}
 						}
+						elseif(strpos($planet, '#') === 0) {							
+							$outArray[$house] .= " <span class='ubagraha'>{$planet}</span>";
+						}
 						else{
 							$outArray[$house] = $planet . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house] ;
 							
@@ -1024,7 +1041,8 @@ function sortDegree_transit($inArray) // new function
 		{	
 			//$inArray[$house] = str_replace($planet, $planet. " " . $planetDeg_transit[$planet],$inArray[$house]);
 			
-			if(strpos($inArray[$house],$planet)===0 || strpos($inArray[$house],$planet)>0){	
+			//if(strpos($inArray[$house],$planet)===0 || strpos($inArray[$house],$planet)>0){	
+			if (hasToken($inArray[$house], $planet)) {
 				if(strpos($inArray[$house],'retro">'.$planet)>0 || strpos($inArray[$house],'retro">'.$planet)===0){
 					//$outArray[$house] = $outArray[$house] . " " . "<span style='color:red'>$planet</span>" . "-". DECtoDMS($planetDeg_transit[$planet]);
 					$outArray[$house] = $outArray[$house] . " " . "<span class='retro'>$planet</span>";
@@ -1075,7 +1093,8 @@ function sortDegree_boy($inArray) // new function
 			//arrange planets by degree from top to bottom within these houses (Mesham to Thulam)
 			if($house<=5)
 			{
-				if(strpos($inArray[$house],$planet)===0 || strpos($inArray[$house],$planet)>0){	
+				//if(strpos($inArray[$house],$planet)===0 || strpos($inArray[$house],$planet)>0){	
+				if (hasToken($inArray[$house], $planet)) {
 					if(strpos($inArray[$house],'retro">'.$planet)>0 || strpos($inArray[$house],'retro">'.$planet)===0){
 						$outArray[$house] = $outArray[$house] . " " . "<span class='retro'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
 						
@@ -1143,7 +1162,8 @@ function sortDegree_boy($inArray) // new function
 			}
 			//arrange planets by degree from bottom to top within these houses (Virichigam to Meenam)
 			else{
-				if(strpos($inArray[$house],$planet)===0 || strpos($inArray[$house],$planet)>0){	
+				//if(strpos($inArray[$house],$planet)===0 || strpos($inArray[$house],$planet)>0){	
+				if (hasToken($inArray[$house], $planet)) {
 					if(strpos($inArray[$house],'retro">'.$planet)>0 || strpos($inArray[$house],'retro">'.$planet)===0){
 						$outArray[$house] = "<span class='retro'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house];
 						
@@ -1908,7 +1928,7 @@ function calculateVimBukthi($curr_dasa_lord, $bukthi_lord, $bukthi_start_date, $
 		   
 			if(strtotime($current_date) >= strtotime($curr_bukthi_start_date) and strtotime($current_date) <= strtotime($curr_bukthi_end_date)){
 				echo "<div class='divTableRow' onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
-					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
+					echo "<div class='divBukthiHeading' id='divCurrentBukthi'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divCurrentBukthi'>$curr_bukthi_start_date</div>";
 					echo "<div class='divCurrentBukthi'>$curr_bukthi_end_date</div>";
 				echo "</div>";
@@ -1961,7 +1981,7 @@ function calculateVimBukthi($curr_dasa_lord, $bukthi_lord, $bukthi_start_date, $
 		
 		if(strtotime($current_date) >= strtotime($curr_bukthi_start_date) and strtotime($current_date) <= strtotime($curr_bukthi_end_date)){
 			echo "<div class='divTableRow'   onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
-				echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
+				echo "<div class='divBukthiHeading' id='divCurrentBukthi'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 				echo "<div class='divCurrentBukthi'>$curr_bukthi_start_date</div>";
 				if($i==$curr_dasa_lord-1){
 					echo "<div class='divCurrentBukthi'>$dasa_end_date</div>";
@@ -2052,7 +2072,7 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 			if(strtotime($current_date) >= strtotime($curr_bukthi_start_date) and strtotime($current_date) <= strtotime($curr_bukthi_end_date)){
 				//echo "<div class='divTableRow'>";
 				echo "<div class='divTableRow' onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
-					echo "<div class='divBukthiHeading_boy'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
+					echo "<div class='divBukthiHeading_boy' id='divCurrentBukthi'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
 					echo "<div class='divCurrentBukthi'>$curr_bukthi_start_date</div>";
 					echo "<div class='divCurrentBukthi'>$curr_bukthi_end_date</div>";
 				echo "</div>";
@@ -2107,7 +2127,7 @@ function calculateVimBukthi_boy($curr_dasa_lord, $bukthi_lord, $bukthi_start_dat
 				//echo "<div class='divTableRow'>";
 				echo "<div class='divTableRow' onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
 					echo "<div class='divBukthiHeading_boy'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
-					echo "<div class='divCurrentBukthi'>$curr_bukthi_start_date</div>";
+					echo "<div class='divCurrentBukthi'  id='divCurrentBukthi'>$curr_bukthi_start_date</div>";
 					if($i==$curr_dasa_lord-1){
 						echo "<div class='divCurrentBukthi'>$dasa_end_date</div>";
 					}
@@ -3678,8 +3698,6 @@ function getMoonLongitude($timestamp){
 	$time = getUTCtime(strtotime($timestamp),$offset);
 	
 	exec ("swetest64 -edir$libPath -b$date -ut$time -p1 -n1 -sid1 -eswe -fl -head", $output); //get moon degree
-	
-	var_dump($output);
 	
 	echo ("swetest64 -edir$libPath -b$date -ut$time -p1 -n1 -sid1 -eswe -fl -head");
 }
@@ -5763,8 +5781,8 @@ function getValue($in_string, $lang=1)
 //get thithi temple based on 
 function getThithiParigaaram($thithi_idx)
 {
-	global $conn, $g_paksham, $timestamp;
-					
+	global $conn, $g_paksham, $timestamp, $g_all_parigaaram;
+	
 	$data = getDataFromThithiById($conn, $thithi_idx+1);
 	
 	//$details = "<DIV class='parigaraDiv'><div id='labelParigaraDiv'>திதி பரிகாரம்</div>$temple_arr[$thithi_idx]</DIV>";
@@ -5782,6 +5800,8 @@ function getThithiParigaaram($thithi_idx)
 		
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>திதி தெய்வம்</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right' id='photo'><image style='width:150px' src='images\\thithi_god\\" . $data['thithi_name'] . "_" . $g_paksham . ".jpg?$timestamp'></DIV>";
+		
+		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
 
 	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
 	$details = $details . "</DIV>";
@@ -5792,7 +5812,7 @@ function getThithiParigaaram($thithi_idx)
 //get karana parigaaram based on karana idx
 function getKaranaParigaaram($karan)
 {					
-	global $timestamp;
+	global $timestamp, $g_all_parigaaram;
 	$kar = explode('/',$karan)[1];
 	//$details = "<DIV class='parigaraDiv'><div id='labelParigaraDiv'>கரண பரிகாரம்</div><img src='images/karanam_gods/$kar.jpg' /></DIV>";
 	
@@ -5804,8 +5824,11 @@ function getKaranaParigaaram($karan)
 		
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>கரண பரிகாரம் கோவில்</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><img style='width:150px' src='images/karanam_gods/$kar.jpg?$timestamp' /></DIV>";
+		
+		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
 			
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
+		
 	$details = $details . "</DIV>";
 					
 	return $details;
@@ -5813,7 +5836,7 @@ function getKaranaParigaaram($karan)
 
 function getYogiParigaaram($yogi_idx)
 {
-	global $conn;
+	global $conn, $g_all_parigaaram;
 	//$details = "<DIV class='parigaraDiv'><div id='labelParigaraDiv'>யோகி பரிகாரம்</div><img src='images/yogi_parigaaram/$yogi_idx.png' /></DIV>";
 	$yoga_arr = array("dummy","விஷ்கம்பம்","ப்ரீதி","ஆயுஷ்மான்", "செளபாக்யம்", "சோபனம்", "அதி கண்டம்", "சுகர்மம்", "திருதி", "சூலம்", "கண்டம்", "விருத்தி", "துருவம்","வ்யாகதம்",
 					"ஹர்ஷணம்", "வஜ்ரம்","சித்தி","வியதீபாதம்","வரீயான்", "பரிகம்","சிவம்", "சித்தம்", "சாத்தியம்","சுபம்","சுப்பிரம்","பிராம்மியம்","ஐந்திரம்","வைதிருதி");
@@ -5836,6 +5859,8 @@ function getYogiParigaaram($yogi_idx)
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>பரிகாரம்</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['remedy']."</DIV>";
 		
+		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
+		
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
 		
 		/*$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>யோகம்</DIV>";
@@ -5852,7 +5877,7 @@ function getYogiParigaaram($yogi_idx)
 
 function getAvaYogiParigaaram($ayogi_idx)
 {
-	global $timestamp;
+	global $timestamp, $g_all_parigaaram;
 	//$details = "<DIV class='parigaraDiv'><div id='labelParigaraDiv'>அவயோகி பரிகாரம்</div><img src='images/avayogi_parigaaram/$ayogi_idx.png' /></DIV>";
 	
 	$details = "<DIV class='parigaaram-grid-container'>";
@@ -5860,6 +5885,8 @@ function getAvaYogiParigaaram($ayogi_idx)
 		
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>அவயோகி பரிகாரம் கோவில்</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><img style='width:150px' src='images/avayogi_parigaaram/$ayogi_idx.png?$timestamp' /></DIV>";
+		
+		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
 			
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
 	$details = $details . "</DIV>";
@@ -5869,7 +5896,7 @@ function getAvaYogiParigaaram($ayogi_idx)
 
 function getNakParigaaram($nak_idx)
 {
-	global $conn;
+	global $conn, $g_all_parigaaram;
 	
 	$data = getDataFromStarById($conn, $nak_idx);
 	
@@ -5889,6 +5916,8 @@ function getNakParigaaram($nak_idx)
 		
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>நக்ஷ் அதிபதி</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_lord']."</DIV>";
+		
+		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
 	
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
 	$details = $details . "</DIV>";
@@ -5898,7 +5927,7 @@ function getNakParigaaram($nak_idx)
 
 function getMudakkuParigaaram($mudakku_idx)
 {
-	global $conn, $timestamp;
+	global $conn, $timestamp, $g_all_parigaaram;
 	
 	//$details = "<DIV class='parigaraDiv'><div id='labelParigaraDiv'>நட் பரிகாரம்</div><img src='images/nak_parigaaram/$nak_idx.png' /></DIV>";
 	
@@ -5907,6 +5936,8 @@ function getMudakkuParigaaram($mudakku_idx)
 		
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>முடக்கு கோவில்</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><img style='width:150px' src='images/mudakku_parigaaram/$mudakku_idx.png?$timestamp' /></DIV>";
+		
+		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
 			
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
 	$details = $details . "</DIV>";
@@ -5916,7 +5947,7 @@ function getMudakkuParigaaram($mudakku_idx)
 
 function getKuberaParigaaram($nak_idx)
 {
-	global $conn;
+	global $conn, $g_all_parigaaram;
 	
 	$data = getDataFromStarById($conn, $nak_idx);
 	
@@ -5934,6 +5965,8 @@ function getKuberaParigaaram($nak_idx)
 
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>குபேர நக்ஷ் அதிபதி</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_lord']."</DIV>";		
+		
+		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
 	
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
 	$details = $details . "</DIV>";
@@ -5943,7 +5976,7 @@ function getKuberaParigaaram($nak_idx)
 
 function getDestinyPointParigaaram($nak_idx)
 {
-	global $conn;
+	global $conn, $g_all_parigaaram;
 	
 	$data = getDataFromStarById($conn, $nak_idx);
 	
@@ -5961,6 +5994,8 @@ function getDestinyPointParigaaram($nak_idx)
 
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>தலைவிதி  நக்ஷ் அதிபதி</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_lord']."</DIV>";		
+		
+		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
 	
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
 	$details = $details . "</DIV>";
@@ -5970,7 +6005,7 @@ function getDestinyPointParigaaram($nak_idx)
 
 function getAthrishtaPointParigaaram($nak_idx)
 {
-	global $conn;
+	global $conn, $g_all_parigaaram;
 	
 	$data = getDataFromStarById($conn, $nak_idx);
 	
@@ -5988,6 +6023,8 @@ function getAthrishtaPointParigaaram($nak_idx)
 
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>அதிர்ஷ்ட நக்ஷ் அதிபதி</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_lord']."</DIV>";		
+		
+		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
 	
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
 	$details = $details . "</DIV>";
@@ -5997,7 +6034,7 @@ function getAthrishtaPointParigaaram($nak_idx)
 
 function getDhurathrishtaPointParigaaram($nak_idx)
 {
-	global $conn;
+	global $conn, $g_all_parigaaram;
 	
 	$data = getDataFromStarById($conn, $nak_idx);
 	
@@ -6015,6 +6052,8 @@ function getDhurathrishtaPointParigaaram($nak_idx)
 
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>துரதிர்ஷ்ட பரிகார நக்ஷ் அதிபதி</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_lord']."</DIV>";		
+		
+		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
 	
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
 	$details = $details . "</DIV>";
@@ -6024,7 +6063,7 @@ function getDhurathrishtaPointParigaaram($nak_idx)
 
 function getSugaPointParigaaram($nak_idx)
 {
-	global $conn;
+	global $conn, $g_all_parigaaram;
 	
 	$data = getDataFromStarById($conn, $nak_idx);
 	
@@ -6042,6 +6081,8 @@ function getSugaPointParigaaram($nak_idx)
 
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>சுக நக்ஷ் அதிபதி</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_lord']."</DIV>";		
+		
+		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
 	
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
 	$details = $details . "</DIV>";
@@ -6051,7 +6092,7 @@ function getSugaPointParigaaram($nak_idx)
 
 function getRasiParigaaram()
 {
-	global $g_rasi;
+	global $g_rasi, $g_all_parigaaram;
 	
 	$rasi_temples = [
 				"மேஷம்" => "ராமநாதஸ்வாமி கோவில் (ராமேஸ்வரம்)",
@@ -6075,6 +6116,8 @@ function getRasiParigaaram()
 		
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>ராசி கோவில்</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>" . $rasi_temples[$g_rasi] . "</DIV>";
+		
+		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
 			
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
 	$details = $details . "</DIV>";
@@ -6404,6 +6447,16 @@ function displayDetailsDiv($in_dataType,$in_data){
 	}
 }
 
+function displayAllParigaaramDiv(){
+	global $g_all_parigaaram;
+	
+	//$g_all_parigaaram = '<a href="javascript:hideAllParigaaramDiv()">&nbsp;CLOSE (X)&nbsp;</a>' . $g_all_parigaaram;
+	$g_all_parigaaram = "<button class='close-btn' onclick='hideAllParigaaramDiv()'>X</button>" . $g_all_parigaaram . "<BR><BR><BR>";
+
+	echo "<DIV class='allParigaaramDiv' id='allParigaaramDiv'>$g_all_parigaaram</DIV>";
+
+}
+
 //disclaimer to avoid any issues
 function displayDisclaimer()
 {
@@ -6609,7 +6662,7 @@ function getTamilMonthDay($sun_house, $sun_degree) {
     return array($month, $day);
 }
 
-//currently works only for 2024
+//currently works only for current year
 function getTamilDate() {
     global $chart_time, $chart_date, $sun_house, $sun_degree, $today_sunrise;
     include_once "eng_tamil_year_map.php";
@@ -7829,17 +7882,17 @@ function displayVivahaChakra_Manikantan($sun_nakshatra, $moon_nakshatra) {
 	debug("sun_idx=$sun_index, moon_idx=$moon_index, count=$count");
 	
 	if(in_array($count, [3, 4, 5, 12, 13, 14, 21, 22, 23, 24, 25, 26])){
-		$result = '<div class="vivagaResultGreen">இந்த நாள் விவாஹ சக்ரப்படி நன்றாக உள்ளது</div>';
+		$result = '<div class="vivagaResultGreen" id="vivahaRes">இந்த நாள் விவாஹ சக்ரப்படி நன்றாக உள்ளது</div>';
 	}
 	else{
-		$result = '<div class="vivagaResultRed">இந்த நாள் விவாஹ சக்ரப்படி நன்றாக இல்லை</div>';
+		$result = '<div class="vivagaResultRed"  id="vivahaRes">இந்த நாள் விவாஹ சக்ரப்படி நன்றாக இல்லை</div>';
 	}
 	
 	echo "<center>";
 	echo "<div class='divPanchangHeading' id='vivahaChakram' style='width: var(--chart-width);padding-top:15px; padding-bottom:15px'>இன்றய விவாஹ சக்ர பலன்<BR><BR>" . $result;
 	echo "<BR>";
-	echo "<div style='font-size: 12px;text-align:left;'>சூரியன் நின்ற நட்சத்திரம்: <U>$sun_nakshatra</U></div>";
-	echo "<div style='font-size: 12px;text-align:left'>சந்திரன் நின்ற நட்சத்திரம்: <U>$moon_nakshatra</U></div>";
+	echo "<div style='font-size: 12px;text-align:left;' id='vivSunNak'>சூரியன் நின்ற நட்சத்திரம்: <U>$sun_nakshatra</U></div>";
+	echo "<div style='font-size: 12px;text-align:left' id='vivMooNak'>சந்திரன் நின்ற நட்சத்திரம்: <U>$moon_nakshatra</U></div>";
 	echo "</center>";
 	echo "</div>";
 	
@@ -8014,6 +8067,11 @@ function calculateD2Chart() {
 
     // Loop through each planet to calculate divisional positions
     foreach ($planet_starlord as $planet => $details) {
+		// Skip upagrahas that start with #
+		if (strpos($planet, '#') === 0) {
+			continue;
+		}
+	
         $degree = $details[2]; // Get the degree from the third element
         $sign = floor($degree / 30.0) + 1; // Determine the sign
         $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
@@ -8065,6 +8123,11 @@ function calculateD3Chart() {
 
     // Loop through each planet to calculate divisional positions
     foreach ($planet_starlord as $planet => $details) {
+		// Skip upagrahas that start with #
+		if (strpos($planet, '#') === 0) {
+			continue;
+		}
+		
         $degree = $details[2]; // Get the degree from the third element
         $sign = floor($degree / 30.0) + 1; // Determine the sign
         $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
@@ -8113,6 +8176,11 @@ function calculateD4Chart() {
 
     // Loop through each planet to calculate divisional positions
     foreach ($planet_starlord as $planet => $details) {
+		// Skip upagrahas that start with #
+		if (strpos($planet, '#') === 0) {
+			continue;
+		}
+		
         $degree = $details[2]; // Get the degree from the third element
         $sign = floor($degree / 30.0) + 1; // Determine the sign
         $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
@@ -8170,6 +8238,11 @@ function calculateD5Chart() {
 
     // Loop through each planet to calculate divisional positions
     foreach ($planet_starlord as $planet => $details) {
+		// Skip upagrahas that start with #
+		if (strpos($planet, '#') === 0) {
+			continue;
+		}
+		
         $degree = $details[2]; // Get the degree from the third element
         $sign = floor($degree / 30.0) + 1; // Determine the sign
         $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
@@ -8251,6 +8324,11 @@ function calculateD6Chart() {
 
     // Loop through each planet to calculate divisional positions
     foreach ($planet_starlord as $planet => $details) {
+		// Skip upagrahas that start with #
+		if (strpos($planet, '#') === 0) {
+			continue;
+		}
+		
         $degree = $details[2]; // Get the degree from the third element
         $sign = floor($degree / 30.0) + 1; // Determine the sign
         $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
@@ -8341,6 +8419,11 @@ function calculateD7Chart() {
 
     // Loop through each planet to calculate divisional positions
     foreach ($planet_starlord as $planet => $details) {
+		// Skip upagrahas that start with #
+		if (strpos($planet, '#') === 0) {
+			continue;
+		}
+		
         $degree = $details[2]; // Get the degree from the third element
         $sign = floor($degree / 30.0) + 1; // Determine the sign
         $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
@@ -8451,6 +8534,11 @@ function calculateD8Chart() {
 
     // Loop through each planet to calculate divisional positions
     foreach ($planet_starlord as $planet => $details) {
+		// Skip upagrahas that start with #
+		if (strpos($planet, '#') === 0) {
+			continue;
+		}
+		
         $degree = $details[2]; // Get the degree from the third element
         $sign = floor($degree / 30.0) + 1; // Determine the sign
         $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
@@ -8704,6 +8792,11 @@ function calculateD10Chart() {
 
     // Loop through each planet to calculate divisional positions
     foreach ($planet_starlord as $planet => $details) {
+		// Skip upagrahas that start with #
+		if (strpos($planet, '#') === 0) {
+			continue;
+		}
+		
         $degree = $details[2]; // Get the degree from the third element
         $sign = floor($degree / 30.0) + 1; // Determine the sign
         $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
@@ -8835,6 +8928,11 @@ function calculateD11Chart() {
 
     // Loop through each planet to calculate divisional positions
     foreach ($planet_starlord as $planet => $details) {
+		// Skip upagrahas that start with #
+		if (strpos($planet, '#') === 0) {
+			continue;
+		}
+		
         $degree = $details[2]; // Get the degree from the third element
         $sign = floor($degree / 30.0) + 1; // Determine the sign
         $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
@@ -8931,6 +9029,11 @@ function calculateD12Chart() {
 
     // Loop through each planet to calculate divisional positions
     foreach ($planet_starlord as $planet => $details) {
+		// Skip upagrahas that start with #
+		if (strpos($planet, '#') === 0) {
+			continue;
+		}
+		
         $degree = $details[2]; // Get the degree from the third element
         //$sign = floor($degree / 30.0) + 1; // Determine the sign
 		$sign = floor($degree / 30.0) ; // Determine the sign
@@ -9008,6 +9111,11 @@ function calculateD16Chart() {
 
     // Loop through each planet to calculate divisional positions
     foreach ($planet_starlord as $planet => $details) {
+		// Skip upagrahas that start with #
+		if (strpos($planet, '#') === 0) {
+			continue;
+		}
+		
         $degree = $details[2]; // Get the degree from the third element
 		$sign = floor($degree / 30.0) ; // Determine the sign
         $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
@@ -9124,6 +9232,11 @@ function calculateD20Chart() {
 
     // Loop through each planet to calculate divisional positions
     foreach ($planet_starlord as $planet => $details) {
+		// Skip upagrahas that start with #
+		if (strpos($planet, '#') === 0) {
+			continue;
+		}
+		
         $degree = $details[2]; // Get the degree from the third element
 		$sign = floor($degree / 30.0) ; // Determine the sign
         $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
@@ -9242,6 +9355,11 @@ function calculateD24Chart() {
 
     // Loop through each planet to calculate divisional positions
     foreach ($planet_starlord as $planet => $details) {
+		// Skip upagrahas that start with #
+		if (strpos($planet, '#') === 0) {
+			continue;
+		}
+		
         $degree = $details[2]; // Get the degree from the third element
 		$sign = floor($degree / 30.0) ; // Determine the sign
         $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
@@ -9339,6 +9457,11 @@ function calculateD27Chart() {
 
     // Loop through each planet to calculate divisional positions
     foreach ($planet_starlord as $planet => $details) {
+		// Skip upagrahas that start with #
+		if (strpos($planet, '#') === 0) {
+			continue;
+		}
+		
         $degree = $details[2]; // Get the degree from the third element
 		$sign = floor($degree / 30.0) ; // Determine the sign
         $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
@@ -9442,6 +9565,11 @@ function calculateD30Chart() {
 
     // Loop through each planet to calculate divisional positions
     foreach ($planet_starlord as $planet => $details) {
+		// Skip upagrahas that start with #
+		if (strpos($planet, '#') === 0) {
+			continue;
+		}
+		
         $degree = $details[2]; // Get the degree from the third element
 		$sign = floor($degree / 30.0) + 1 ; // Determine the sign
         $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
@@ -9558,6 +9686,11 @@ function calculateD40Chart() {
 
     // Loop through each planet to calculate divisional positions
     foreach ($planet_starlord as $planet => $details) {
+		// Skip upagrahas that start with #
+		if (strpos($planet, '#') === 0) {
+			continue;
+		}
+		
         $degree = $details[2]; // Get the degree from the third element
 		$sign = floor($degree / 30.0) + 1 ; // Determine the sign
         $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
@@ -9638,6 +9771,11 @@ function calculateD45Chart() {
 
     // Loop through each planet to calculate divisional positions
     foreach ($planet_starlord as $planet => $details) {
+		// Skip upagrahas that start with #
+		if (strpos($planet, '#') === 0) {
+			continue;
+		}
+		
         $degree = $details[2]; // Get the degree from the third element
 		$sign = floor($degree / 30.0) + 1 ; // Determine the sign
         $signDegree = fmod($degree, 30.0); // Degree within the sign, ensuring decimals are included
@@ -9700,6 +9838,11 @@ function calculateD60Chart() {
 
     // Loop through each planet to calculate D60 positions
     foreach ($planet_starlord as $planet => $details) {
+		// Skip upagrahas that start with #
+		if (strpos($planet, '#') === 0) {
+			continue;
+		}
+		
         $degree = $details[2]; // Planet's degree in full
         $sign = floor($degree / 30.0) + 1; // Determine the sign (1 to 12)
         $signDegree = fmod($degree, 30.0); // Degree within the sign
@@ -10818,7 +10961,7 @@ function getSugaPaadham($sunPada, $moonPada, $lagnaPada)
 function buildTriadClubsWithRetro(
     array $planet_starlord,
     array $planetDeg_default,
-    array $exclude = ['லக்', 'மா']
+    array  $exclude = ['லக்', 'மா', "#கால", "#மிரு", "#உகே", "#வியா", "#இந்ர", "#அர்த", "#தூம", "#பரி"]
 ): array {
     /* -------- setup -------- */
     $clubs = [
@@ -10897,7 +11040,7 @@ function buildTriadClubsWithRetro(
 function buildSecondRasiPairs(
     array $planet_starlord,
     array $planetDeg_default,
-    array $exclude = ['லக்', 'மா']
+    array  $exclude = ['லக்', 'மா', "#கால", "#மிரு", "#உகே", "#வியா", "#இந்ர", "#அர்த", "#தூம", "#பரி"]
 ): array {
     $alwaysRetro = ['ரா', 'கே'];                   // Rahu & Ketu (default retro)
     $rasiBuckets = array_fill(1, 12, []);          // 1 … 12 → []
@@ -10959,7 +11102,7 @@ function buildSecondRasiPairs(
 function buildSameRasiCombinations(
     array $planet_starlord,
     array $planetDeg_default,
-    array $exclude = ['லக்', 'மா']
+    array  $exclude = ['லக்', 'மா', "#கால", "#மிரு", "#உகே", "#வியா", "#இந்ர", "#அர்த", "#தூம", "#பரி"]
 ): array {
     $alwaysRetro = ['ரா', 'கே'];                  // Rahu & Ketu
     $rasiBuckets = array_fill(1, 12, []);         // 1 … 12 → []
@@ -11044,7 +11187,7 @@ function buildPlanetCentricCombinations(
     string $focusTag,
     array  $planet_starlord,
     array  $planetDeg_default,
-    array  $exclude = ['லக்', 'மா']
+    array  $exclude = ['லக்', 'மா', "#கால", "#மிரு", "#உகே", "#வியா", "#இந்ர", "#அர்த", "#தூம", "#பரி"]
 ): array {
     $alwaysRetro = ['ரா', 'கே'];
 
@@ -11123,7 +11266,7 @@ function buildPlanetCentricCombinations(
   CONFIG
   ------------------------------------------------------------------*/
 $allPlanets  = ['சூரி','சந்','செ','புத','குரு','சுக்','சனி','ரா','கே'];
-$excludeTags = ['லக்','மா'];                // ignore Lagna & Maandi
+$excludeTags = ['லக்', 'மா', "#கால", "#மிரு", "#உகே", "#வியா", "#இந்ர", "#அர்த", "#தூம", "#பரி"];                // ignore Lagna & Maandi
 $alwaysRetro = ['ரா','கே'];                // Rahu & Ketu are retro
 /*------------------------------------------------------------------*/
 
@@ -11137,7 +11280,7 @@ $fmt = function(string $tag, bool $retro, int $rasiNo): string {
    CONFIG  (same as before)
 -----------------------------------------------------------------*/
 $allPlanets  = ['சூரி','சந்','செ','புத','குரு','சுக்','சனி','ரா','கே'];
-$excludeTags = ['லக்','மா'];
+$excludeTags = ['லக்', 'மா', "#கால", "#மிரு", "#உகே", "#வியா", "#இந்ர", "#அர்த", "#தூம", "#பரி"];
 $alwaysRetro = ['ரா','கே'];
 
 /* ---------------------------------------------------------------
@@ -11146,9 +11289,9 @@ $alwaysRetro = ['ரா','கே'];
 $fmt = fn(string $tag, bool $retro) => $retro ? "$tag(வ)" : $tag;
 
 /* ---------------------------------------------------------------
-   2) buildInfo helper (unchanged)
+   2) buildNaadi helper (unchanged)
 -----------------------------------------------------------------*/
-function buildInfo(array $planet_starlord,
+function buildNaadi(array $planet_starlord,
                    array $planetDeg_default,
                    array $alwaysRetro): array {
     $info = [];
@@ -11300,10 +11443,87 @@ function combosForFocus(
 }
 
 
+function updateUpaGraha($sun_degree)
+{
+	global $planetDeg, $sw_planet, $planetDeg_default;
+	global $datetime, $today_sunrise, $today_sunset;
 
+	// Normalize degrees to 0–360
+	$norm = fn($deg) => fmod(($deg + 360.0), 360.0);
 
+	// Step 1: Calculate all Aprakasha Upagraha positions
+	$dhuma       = $norm($sun_degree + 120 + (3 + 20/60));       // Sun + 120° + 3°20'
+	$vyatipata   = $norm(360 - $dhuma);
+	$parivesha   = $norm($dhuma + 180);
+	$indrachapa  = $norm(360 - $parivesha);
+	$upaketu     = $norm($sun_degree + (16 + 40/60));            // Sun + 16°40'
 
+	// Step 2: Map with Tamil names
+	$upa_list = [
+		"#தூம" => $dhuma,
+		"#வியா" => $vyatipata,
+		"#பரி" => $parivesha,
+		"#இந்ர" => $indrachapa,
+		//"#உk" => $upaketu
+		"#உகே" => $upaketu
+	];
 
+	foreach ($upa_list as $upa_name => $deg) {
+		$sign_index = floor($deg / 30); // 0 to 11
+		$sw_planet[$sign_index] .= ($sw_planet[$sign_index] ? " + " : "") . $upa_name;
+
+		// Store degree in 0–30 format within sign
+		$planetDeg[$upa_name] = round(fmod($deg, 30.0),4);
+		$planetDeg_default[$upa_name] = fmod($deg, 30.0);
+	}
+
+	// ------------------ Ardhaprahara, Kala, Mrityu ------------------
+
+	$birth_time = strtotime($datetime);
+	$sunrise    = strtotime($today_sunrise);
+	$sunset     = strtotime($today_sunset);
+
+	$is_daytime = ($birth_time >= $sunrise && $birth_time < $sunset);
+	$start_time = $is_daytime ? $sunrise : $sunset;
+	$end_time   = $is_daytime ? $sunset : strtotime('+1 day', $sunrise);
+
+	$total_secs = $end_time - $start_time;
+	$half_secs  = $total_secs / 2;
+
+	$ardha_time   = $start_time + $half_secs;
+	$kala_time    = $start_time + ($half_secs / 2);
+	$mrityu_time  = $start_time + ($half_secs * 1.5);
+
+	$timeToDeg = function($time, $sunrise, $sunset, $sun_start_deg) use ($norm) {
+		$total = strtotime($sunset) - strtotime($sunrise);
+		$elapsed = $time - strtotime($sunrise);
+		$frac = $elapsed / $total;
+		$deg = $norm($sun_start_deg + ($frac * 180));
+		return $deg;
+	};
+
+	$ardha_deg   = $timeToDeg($ardha_time, $today_sunrise, $today_sunset, $sun_degree);
+	$kala_deg    = $timeToDeg($kala_time, $today_sunrise, $today_sunset, $sun_degree);
+	$mrityu_deg  = $timeToDeg($mrityu_time, $today_sunrise, $today_sunset, $sun_degree);
+
+	$kala_list = [
+		"#அர்த" => $ardha_deg,
+		"#கால"   => $kala_deg,
+		"#மிரு"   => $mrityu_deg
+	];
+
+	foreach ($kala_list as $upa_name => $deg) {
+		$sign_index = floor($deg / 30);
+		$sw_planet[$sign_index] .= ($sw_planet[$sign_index] ? " + " : "") . $upa_name;
+
+		$planetDeg[$upa_name] = round(fmod($deg, 30.0),4);
+		$planetDeg_default[$upa_name] = fmod($deg, 30.0);
+	}
+
+	asort($planetDeg);
+
+	return $sw_planet;
+}
 
 
 
