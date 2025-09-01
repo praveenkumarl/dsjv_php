@@ -713,9 +713,6 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 		
 		function hideSookshmaDiv() {
 			document.getElementById("sookshmaDiv").style.display = "none";
-			
-			const anthDiv = document.getElementById('jumpDropdown');
-			anthDiv.style.display = 'flex';
 		}
 		
 		function hideAnthramDiv() {
@@ -727,9 +724,6 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 		
 		function hidePranaDiv() {
 			document.getElementById("pranaDiv").style.display = "none";
-			
-			const anthDiv = document.getElementById('jumpDropdown');
-			anthDiv.style.display = 'flex';
 		}
 
 		function hideDetailsDiv() {
