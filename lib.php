@@ -1401,13 +1401,13 @@ function updateRahuEmma(array $inside, $weekday, $sun_degree, $lang)
 				break;
 			case 3: //wed
 				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
-					$inside[5] = $inside[5] . "R.K" . "-" . $sun_degree; //12:00-1:30
+					$inside[5] = $inside[5] . " R.K" . "-" . $sun_degree; //12:00-1:30
 				} else {
 					// Nighttime (6 PM to 5:59 AM)
-					$inside[0] = $inside[0] . "R.K" . "-" . $sun_degree; //4:30-6:00
+					$inside[0] = $inside[0] . " R.K" . "-" . $sun_degree; //4:30-6:00
 				}
 				
-				//$inside[5] = $inside[5] . "R.K" . "-" . $sun_degree; //kanni
+				//$inside[5] = $inside[5] . " R.K" . "-" . $sun_degree; //kanni
 				break;
 			case 4: //thu
 				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
@@ -6097,7 +6097,7 @@ function getRasiParigaaram()
 	$rasi_temples = [
 				"மேஷம்" => "ராமநாதஸ்வாமி கோவில் (ராமேஸ்வரம்)",
 				"ரிஷபம்" => "சிவபெருந்துறைத்திருக்கோவில் (திருவையாற்று)",
-				"மிதுனம்" => "தண்தோண்டுபரணி சுவாமி திருக்கோவில் (பழனி)",
+				"மிதுனம்" => "தண்டாயுதபாணி சுவாமி திருக்கோவில் (பழனி)",
 				"கடகம்" => "குற்றாலநாதர் (குற்றாலநாதர்)",
 				"சிம்மம்" => "பெரியகளப்பர் கோவில் (திருவாடமை)",
 				"கன்னி" => "வேதவல்லீஸ்வரர் கோவில் (கூத்தநல்லூர்)",
