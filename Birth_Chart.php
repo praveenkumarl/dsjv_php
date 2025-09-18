@@ -173,11 +173,13 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<script src="html2pdf.bundle.min.js" type="text/javascript"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <script src="script.js"></script>
 	<script src="panchang.js?<?php echo date('ymdhis'); ?>"></script>
 	<script src="my_panchang.js?<?php echo date('ymdhis'); ?>"></script>
+	<script src="send_pdf_data.js?<?php echo date('ymdhis'); ?>"></script>
     <script type="text/javascript">
 	var timezone = '<?php echo $TZ; ?>';
 	
@@ -1383,6 +1385,374 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 		hideDetailsDiv();
 	}
 	
+async function generateOptimizedPDF() {
+    // Check if html2canvas is available.
+    if (typeof html2canvas === 'undefined' || typeof html2pdf === 'undefined') {
+        console.error("The PDF generation libraries are not loaded.");
+        alert("The PDF generation library is not loaded. Please try refreshing the page.");
+        return;
+    }
+
+    // Show loading indicator
+    document.getElementById("loader").style.display = "block";
+
+    // Show all content tabs to ensure all elements are in the DOM and visible for the PDF generation.
+    showAllContent();
+
+    // Hide any UI elements that should not be in the PDF.
+    document.getElementById('column-menu').style.display = 'none';
+    document.getElementById('jumpDropdown').style.display = 'none';
+
+    // Helper function to convert a DOM node to an image
+    const domToImage = async (node, title) => {
+        if (!node) return null;
+        try {
+            const canvas = await html2canvas(node, { scale: 2, useCORS: true, backgroundColor: '#fff' });
+            const img = document.createElement('img');
+            img.src = canvas.toDataURL('image/jpeg', 0.98);
+            img.style.width = '80%';
+            img.style.display = 'block';
+            img.style.breakInside = 'avoid';
+
+            const container = document.createElement('div');
+            container.style.breakInside = 'avoid';
+            container.style.marginBottom = '15px';
+            const titleElement = document.createElement('h4');
+            titleElement.innerText = `-- ${title} --`;
+            titleElement.style.textAlign = 'center';
+            titleElement.style.margin = '10px 0';
+            titleElement.style.fontSize = '12px';
+            container.appendChild(titleElement);
+            container.appendChild(img);
+            return container;
+        } catch (error) {
+            console.error(`Failed to create image for "${title}":`, error);
+            return null;
+        }
+    };
+
+    // Helper function to convert div table to simple HTML table
+    const convertDivTableToSimpleTable = (divTableElement, title) => {
+        if (!divTableElement) return null;
+
+        const container = document.createElement('div');
+        container.style.breakInside = 'avoid';
+        container.style.marginBottom = '15px';
+
+        const titleElement = document.createElement('h4');
+        titleElement.innerText = `-- ${title} --`;
+        titleElement.style.textAlign = 'center';
+        titleElement.style.margin = '10px 0';
+        titleElement.style.fontSize = '12px';
+        container.appendChild(titleElement);
+
+        const table = document.createElement('table');
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
+        table.style.fontSize = '8px';
+        table.style.border = '1px solid #000';
+
+        const allRows = divTableElement.querySelectorAll('.divTableRow, .divTableHeading, .divTableHead, .divPanchangHeading');
+
+        allRows.forEach((row) => {
+            const tr = table.insertRow();
+            const isHeader = row.classList.contains('divTableHeading') ||
+                row.classList.contains('divTableHead') ||
+                row.style.backgroundColor === 'gold' ||
+                row.querySelector('.divPanchangHeading');
+
+            const cells = row.querySelectorAll('div, td, th');
+            let cellsProcessed = 0;
+
+            cells.forEach(cell => {
+                if (cell.querySelectorAll('div').length > 0 && !cell.textContent.trim()) return;
+                if (!cell.textContent.trim()) return;
+                if (cell.parentElement !== row && !cell.classList.contains('divTableCell') &&
+                    !cell.classList.contains('divPanchang') && !cell.classList.contains('divPanchangHeading')) return;
+
+                const cellElement = isHeader ? document.createElement('th') : document.createElement('td');
+                cellElement.innerHTML = cell.innerHTML || cell.textContent;
+                cellElement.style.border = '1px solid #000';
+                cellElement.style.padding = '3px';
+                cellElement.style.fontSize = '8px';
+
+                if (isHeader) {
+                    cellElement.style.backgroundColor = '#f0f0f0';
+                    cellElement.style.fontWeight = 'bold';
+                }
+
+                tr.appendChild(cellElement);
+                cellsProcessed++;
+            });
+
+            if (cellsProcessed === 0) {
+                Array.from(row.children).forEach(child => {
+                    if (child.textContent.trim()) {
+                        const cellElement = isHeader ? document.createElement('th') : document.createElement('td');
+                        cellElement.innerHTML = child.innerHTML || child.textContent;
+                        cellElement.style.border = '1px solid #000';
+                        cellElement.style.padding = '3px';
+                        cellElement.style.fontSize = '8px';
+
+                        if (isHeader) {
+                            cellElement.style.backgroundColor = '#f0f0f0';
+                            cellElement.style.fontWeight = 'bold';
+                        }
+                        tr.appendChild(cellElement);
+                    }
+                });
+            }
+
+            if (tr.cells.length === 0) {
+                table.deleteRow(tr.rowIndex);
+            }
+        });
+
+        container.appendChild(table);
+        return container;
+    };
+
+    // Create main PDF container
+    const pdfContainer = document.createElement('div');
+    pdfContainer.style.width = '210mm';
+    pdfContainer.style.boxSizing = 'border-box';
+    pdfContainer.style.fontFamily = 'Arial, sans-serif';
+
+    // ===== PAGE 1 =====
+    const page1 = document.createElement('div');
+    page1.style.width = '100%';
+    page1.style.minHeight = '297mm';
+    page1.style.padding = '5mm';
+    page1.style.boxSizing = 'border-box';
+    page1.style.display = 'flex';
+    page1.style.gap = '10mm';
+    // This is the only mandatory page break.
+    //page1.style.pageBreakAfter = 'always';
+
+    // Page 1 Left Column - Birth Details
+    const page1Left = document.createElement('div');
+    page1Left.style.flex = '1';
+    page1Left.style.minWidth = '0';
+
+    // Birth details section
+    const birthInfoNode = document.getElementById('birth_info');
+    if (birthInfoNode) {
+        const birthSection = convertDivTableToSimpleTable(birthInfoNode, 'பிறப்பு விவரங்கள்');
+        if (birthSection) page1Left.appendChild(birthSection);
+    }
+
+    // Page 1 Right Column - Main Charts
+    const page1Right = document.createElement('div');
+    page1Right.style.flex = '1';
+    page1Right.style.minWidth = '0';
+    page1Right.style.display = 'flex';
+    page1Right.style.flexDirection = 'column';
+    page1Right.style.gap = '10px';
+
+    // Main charts as images - stacked vertically on right side
+    const mainChartImage = await domToImage(document.getElementById('chart'), 'ஜாதக சக்கரம் (D1)');
+    if (mainChartImage) page1Right.appendChild(mainChartImage);
+
+    const navamsamChartImage = await domToImage(document.getElementById('d9_chart'), 'நவாம்சம்');
+    if (navamsamChartImage) page1Right.appendChild(navamsamChartImage);
+
+    const bhavaChartImage = await domToImage(document.getElementById('bhava_chart'), 'பாவ சக்கரம்');
+    if (bhavaChartImage) page1Right.appendChild(bhavaChartImage);
+
+    page1.appendChild(page1Left);
+    page1.appendChild(page1Right);
+    pdfContainer.appendChild(page1);
+
+    // ===== PAGE 2 (conditional) =====
+    const page2 = document.createElement('div');
+    page2.style.width = '100%';
+    page2.style.minHeight = '297mm';
+    page2.style.padding = '5mm';
+    page2.style.boxSizing = 'border-box';
+    page2.style.display = 'flex';
+    page2.style.gap = '10mm';
+    // We remove the page break here, as the html2pdf library will handle it.
+
+    // Page 2 Left Column
+    const page2Left = document.createElement('div');
+    page2Left.style.flex = '1';
+    page2Left.style.minWidth = '0';
+    page2Left.style.display = 'flex';
+    page2Left.style.flexDirection = 'column';
+    page2Left.style.gap = '8px';
+
+    // Starlord (கிரக சாரம்)
+    const starlordHead = document.getElementById('starlordHeadMutable');
+    const starlordBody = document.getElementById('starlordBodyMutable');
+    if (starlordHead && starlordBody) {
+        const starlordContainer = document.createElement('div');
+        //starlordContainer.appendChild(starlordHead.cloneNode(true));
+        starlordContainer.appendChild(starlordBody.cloneNode(true));
+        const starlordTable = convertDivTableToSimpleTable(starlordContainer, 'கிரக சாரம்');
+        if (starlordTable) page2Left.appendChild(starlordTable);
+    }
+
+    // Gocharam (கோட்சாரம்)
+    const gocharamHead = document.getElementById('starlordHeadMutable_transit');
+    const gocharamBody = document.getElementById('starlordBodyMutable_transit');
+    if (gocharamHead && gocharamBody) {
+        const gocharamContainer = document.createElement('div');
+        //gocharamContainer.appendChild(gocharamHead.cloneNode(true));
+        gocharamContainer.appendChild(gocharamBody.cloneNode(true));
+        const gocharamTable = convertDivTableToSimpleTable(gocharamContainer, 'கோட்சாரம்');
+        if (gocharamTable) page2Left.appendChild(gocharamTable);
+    }
+
+    // Thithi Yogam (திதி/யோகம்)
+    const thithiYogamKaranamHead = document.getElementById('thithiYogamKaranamHeadMutable');
+    const thithiYogamKaranamBody = document.getElementById('thithiYogamKaranamBodyMutable');
+    if (thithiYogamKaranamHead && thithiYogamKaranamBody) {
+        const thithiContainer = document.createElement('div');
+        //thithiContainer.appendChild(thithiYogamKaranamHead.cloneNode(true));
+        thithiContainer.appendChild(thithiYogamKaranamBody.cloneNode(true));
+        const thithiTable = convertDivTableToSimpleTable(thithiContainer, 'திதி/யோகம்');
+        if (thithiTable) page2Left.appendChild(thithiTable);
+    }
+
+    // Page 2 Right Column
+    const page2Right = document.createElement('div');
+    page2Right.style.flex = '1';
+    page2Right.style.minWidth = '0';
+    page2Right.style.display = 'flex';
+    page2Right.style.flexDirection = 'column';
+    page2Right.style.gap = '8px';
+
+    // Abhijit (வைநாசிகம்)
+    const abhijitHead = document.getElementById('abhijitHeadMutable');
+    const abhijitBody = document.getElementById('abhijitBodyMutable');
+    if (abhijitHead && abhijitBody) {
+        const abhijitContainer = document.createElement('div');
+        //abhijitContainer.appendChild(abhijitHead.cloneNode(true));
+        abhijitContainer.appendChild(abhijitBody.cloneNode(true));
+        const abhijitTable = convertDivTableToSimpleTable(abhijitContainer, 'வைநாசிகம்');
+        if (abhijitTable) page2Right.appendChild(abhijitTable);
+    }
+
+    // KP (KP விவரங்கள்)
+    const kpHead = document.getElementById('kpHeadMutable');
+    const kpBody = document.getElementById('kpBodyMutable');
+    if (kpHead && kpBody) {
+        const kpContainer = document.createElement('div');
+        //kpContainer.appendChild(kpHead.cloneNode(true));
+        kpContainer.appendChild(kpBody.cloneNode(true));
+        const kpTable = convertDivTableToSimpleTable(kpContainer, 'KP விவரங்கள்');
+        if (kpTable) page2Right.appendChild(kpTable);
+    }
+
+    // Check if there is any content on page 2 before adding it
+    if (page2Left.children.length > 0 || page2Right.children.length > 0) {
+        page2.appendChild(page2Left);
+        page2.appendChild(page2Right);
+        pdfContainer.appendChild(page2);
+        // Add a page break after page 2 if it's present
+        page2.style.pageBreakAfter = 'always';
+    }
+
+    // ===== REMAINING CONTENT (PAGE 3+) =====
+    const remainingPages = document.createElement('div');
+    remainingPages.style.width = '100%';
+    remainingPages.style.padding = '10mm';
+    remainingPages.style.boxSizing = 'border-box';
+    remainingPages.style.columnCount = '2';
+    remainingPages.style.columnGap = '15mm';
+    remainingPages.style.columnFill = 'balance';
+
+    // Dasa
+    const dasaTable = document.getElementById('DasaMutable');
+    if (dasaTable) {
+        const dasaSimpleTable = convertDivTableToSimpleTable(dasaTable, 'தசா');
+        if (dasaSimpleTable) {
+            dasaSimpleTable.style.breakInside = 'avoid';
+            remainingPages.appendChild(dasaSimpleTable);
+        }
+    }
+
+    // Bukthi
+    const bukthiTable = document.getElementById('BukthiMutable');
+    if (bukthiTable) {
+        const bukthiSimpleTable = convertDivTableToSimpleTable(bukthiTable, 'புக்தி');
+        if (bukthiSimpleTable) {
+            bukthiSimpleTable.style.breakInside = 'avoid';
+            remainingPages.appendChild(bukthiSimpleTable);
+        }
+    }
+
+    // Varga Charts
+    const vargaCharts = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 16, 20, 24, 27, 30, 40, 45, 60];
+    for (const d of vargaCharts) {
+        const chartId = `D${d}`;
+        const chartTitle = `வர்க சக்கரம் (D${d})`;
+        const chartImage = await domToImage(document.getElementById(chartId), chartTitle);
+        if (chartImage) {
+            chartImage.style.breakInside = 'avoid';
+            remainingPages.appendChild(chartImage);
+        }
+    }
+
+    // Ashtavarga Charts
+    const ashtaCharts = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    const ashtaTitleMap = {
+        1: 'சூரி', 2: 'சந்', 3: 'செ', 4: 'புத', 5: 'குரு',
+        6: 'சுக்', 7: 'சனி', 8: 'லக்', 9: 'சர்வாஷ்டக வர்கம்'
+    };
+    for (const d of ashtaCharts) {
+        const chartId = `a${d}`;
+        const chartTitle = ashtaTitleMap[d] ? `${ashtaTitleMap[d]} பின்னாஷ்டக வர்கம்` : `அஷ்டவர்கம் (A${d})`;
+        const chartImage = await domToImage(document.getElementById(chartId), chartTitle);
+        if (chartImage) {
+            chartImage.style.breakInside = 'avoid';
+            remainingPages.appendChild(chartImage);
+        }
+    }
+
+    // Parigaaram section
+    const parigaaramSection = document.getElementById('allParigaaramDiv');
+    if (parigaaramSection) {
+        const parigaaramContainer = document.createElement('div');
+        parigaaramContainer.style.breakInside = 'avoid';
+        parigaaramContainer.style.marginBottom = '15px';
+        const titleElement = document.createElement('h4');
+        titleElement.innerText = `-- பரிகாரங்கள் --`;
+        titleElement.style.textAlign = 'center';
+        titleElement.style.margin = '10px 0';
+        titleElement.style.fontSize = '12px';
+        parigaaramContainer.appendChild(titleElement);
+        parigaaramContainer.appendChild(parigaaramSection.cloneNode(true));
+        remainingPages.appendChild(parigaaramContainer);
+    }
+
+    pdfContainer.appendChild(remainingPages);
+
+    // Add to DOM for PDF generation
+    document.body.appendChild(pdfContainer);
+
+    const opt = {
+        margin: 5,
+        filename: 'birth_chart.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#fff' },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+
+    try {
+        await html2pdf().set(opt).from(pdfContainer).save();
+    } catch (error) {
+        console.error("PDF generation failed:", error);
+    }
+
+    // Clean up
+    document.body.removeChild(pdfContainer);
+    document.getElementById("loader").style.display = 'none';
+
+    document.getElementById('column-menu').style.display = 'block';
+    document.getElementById('jumpDropdown').style.display = 'flex';
+}
 				
 	</script>
 </head>
@@ -1925,6 +2295,7 @@ function displayHoroDetails()
 			echo "<div class='divPanchangHeading'>சூரிய அஸ்தமனம்</div>";
 			echo "<div class='divPanchang'>".explode(' ',$today_sunset)[1]."</div>";
 		echo "</div>";
+		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeadingRed'>அவயோகி</div>";
 			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 4)' style='color:blue;cursor:pointer'>".$yogi_arr[3]." (".$yogi_arr[2].")</div>";
@@ -2332,7 +2703,14 @@ echo "TZ: " . $TZ ."<BR>";
 date_default_timezone_set($TZ);
 
 if($default_save){ //save it to DB and show the chart
-	$url = 'saveChartMultiple.php?name=' . $in_name . '&place=' . $in_place . '&date=' . $chart_date . '&time=' . $chart_time . '&sex=' . $in_sex . '&phone=' . $phone . '&charttype=b&savemode=0&default_save=1';
+	//$url = 'saveChartMultiple.php?name=' . $in_name . '&place=' . $in_place . '&date=' . $chart_date . '&time=' . $chart_time . '&sex=' . $in_sex . '&phone=' . $phone . '&charttype=b&savemode=0&default_save=1';
+	$url = 'saveChartMultiple.php?name=' . urlencode($in_name)
+     . '&place=' . urlencode($in_place)
+     . '&date=' . urlencode($chart_date)
+     . '&time=' . urlencode($chart_time)
+     . '&sex=' . urlencode($in_sex)
+     . '&phone=' . urlencode($phone)
+     . '&charttype=b&savemode=0&default_save=1';
 	echo "<script>window.location='$url';</script>";
 }
 
@@ -2636,7 +3014,6 @@ if($DEBUG==1){
 
 $sw_planet = updateUpaGraha($sun_degree);
 
-
 //Update planet symbol in Jama planets (tr_sw_planet)
 //$tr_sw_planet = updateSymbols($tr_sw_planet);
 
@@ -2799,6 +3176,7 @@ $Transit_Planet_degree=displayDegree_transit($tr_sw_degree);
 
 //$sw_degree = sortDegree($sw_degree);
 $sw_planet = sortDegree($sw_planet);
+
 
 $tr_sw_planet = sortDegree_transit($tr_sw_planet);
 
@@ -2969,6 +3347,8 @@ echo <<<EOL
 											<button type='button' class='actionBtn' id='submit1' value='Submit' onClick='return genChart(this.form);'>Submit</button>
 											<input type='button' class='actionBtn' id='save' name='save' value='$saveBtnTxt' onClick='saveChart();'>
 											<button type="button" class='actionBtn' value='Download' onClick='loadOnePage("$onePageURL");'>PDF</button>
+											<!-- <button type="button" class="actionBtn" value="DownloadFull" onClick="generateOptimizedPDF();">Full PDF</button>
+											<button type="button" class="actionBtn" value="DownloadFull1" onClick="sendForServerPDFGeneration();">Full PDF php</button> -->
 
 											
 											<!-- <button type='button' id="showNadi" class="actionBtn">BN.NADI</button> -->
@@ -3117,7 +3497,22 @@ dbDisconnect($conn);
 $backtrace = debug_backtrace();
 
 if($num == 1){ //clicked numerology button in chart history	
-	$chartdata=join('|',$sw_planet);
+	//$chartdata=join('|',$sw_planet);
+	
+	/*$cleaned = array_map(function($v) {
+		// remove any word starting with #
+		return preg_replace('/#\S+/u', '', $v);
+	}, $sw_planet);
+
+	$chartdata = join('|', $cleaned);*/
+	
+	$cleaned = array_map(function($v) {
+		// remove the entire span with its content
+		return preg_replace('/<span class=[\'"]ubagraha[\'"]>.*?<\/span>/u', '', $v);
+	}, $sw_planet);
+
+	$chartdata = join('|', $cleaned);
+	
 	// Create a DateTime object from the original date
 	$dateObject = new DateTime($chart_date);
 
@@ -3125,6 +3520,7 @@ if($num == 1){ //clicked numerology button in chart history
 	$newDateFormat = $dateObject->format('d/M/Y');
 	
 	$url = "numerology.php?referrer=Birth_Chart.php&name=$in_name&dob=".$newDateFormat."&chartdata=".$chartdata;
+	
 	echo "<script>window.open(\"$url\",'_self')</script>";
 }
 

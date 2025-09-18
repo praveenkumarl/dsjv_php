@@ -297,10 +297,10 @@ function updateNow() {
 						<td><div class="divBirthInputLable">*பி.நேரம்</div></td>
 						<td><input type="time" id="in_time" name="in_time" step="1" style="border:1px solid lightgray;font-weight:bold"></td>
 					</tr>
-					<tr>
+					<!-- <tr>
 						<td></td>
 						<td><input type="checkbox" id="birthsave" name="birthsave" value=1 style="display:none" /><label class='divBirthInputLable' for="birthsave">Save</label></td>
-					</tr>
+					</tr> -->
 					<!-- <tr style="background-color: #FFFFFF">
 						<td>
 							<label for="lang" style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:20px">Choose Language:</label>

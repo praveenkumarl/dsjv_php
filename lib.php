@@ -1282,10 +1282,10 @@ function updateRahuEmma(array $inside, $weekday, $sun_degree, $lang)
 			case 0: //sun
 				// Daytime condition (6 AM to 5:59 PM) 
 				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
-					$inside[5] = $inside[5] . "எ.க" . "-" . $sun_degree; //12:00-1:30
+					$inside[5] = $inside[5] . " எ.க" . "-" . $sun_degree; //12:00-1:30
 				} else {
 					// Nighttime (6 PM to 5:59 AM) 
-					$inside[11] = $inside[11] . "எ.க" . "-" . $sun_degree; //6:00-7:30
+					$inside[11] = $inside[11] . " எ.க" . "-" . $sun_degree; //6:00-7:30
 				}
 				
 				//$inside[5] = $inside[5] . "எ.க" . "-" . $sun_degree; //kanni
@@ -1293,10 +1293,10 @@ function updateRahuEmma(array $inside, $weekday, $sun_degree, $lang)
 			case 1: //mon
 				// Daytime condition (6 AM to 5:59 PM)
 				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
-					$inside[6] = $inside[6] . "எ.க" . "-" . $sun_degree; //10:30-12:00
+					$inside[6] = $inside[6] . " எ.க" . "-" . $sun_degree; //10:30-12:00
 				} else {
 					// Nighttime (6 PM to 5:59 AM) 
-					$inside[2] = $inside[2] . "எ.க" . "-" . $sun_degree; //3:00-4:30
+					$inside[2] = $inside[2] . " எ.க" . "-" . $sun_degree; //3:00-4:30
 				}
 				
 				//$inside[6] = $inside[6] . "எ.க" . "-" . $sun_degree; //thulam
@@ -1304,10 +1304,10 @@ function updateRahuEmma(array $inside, $weekday, $sun_degree, $lang)
 			case 2: //tue
 				// Daytime condition (6 AM to 5:59 PM)
 				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
-					$inside[8] = $inside[8] . "எ.க" . "-" . $sun_degree; //9:00-10:30
+					$inside[8] = $inside[8] . " எ.க" . "-" . $sun_degree; //9:00-10:30
 				} else {
 					// Nighttime (6 PM to 5:59 AM) 
-					$inside[3] = $inside[3] . "எ.க" . "-" . $sun_degree; //1:30-3:00
+					$inside[3] = $inside[3] . " எ.க" . "-" . $sun_degree; //1:30-3:00
 				}
 				
 				//$inside[8] = $inside[8] . "எ.க" . "-" . $sun_degree; //thanusu
@@ -1315,10 +1315,10 @@ function updateRahuEmma(array $inside, $weekday, $sun_degree, $lang)
 			case 3: //wed
 				// Daytime condition (6 AM to 5:59 PM)
 				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
-					$inside[9] = $inside[9] . "எ.க" . "-" . $sun_degree; //7:30-9:00
+					$inside[9] = $inside[9] . " எ.க" . "-" . $sun_degree; //7:30-9:00
 				} else {
 					// Nighttime (6 PM to 5:59 AM)
-					$inside[5] = $inside[5] . "எ.க" . "-" . $sun_degree; //12:00-1:30
+					$inside[5] = $inside[5] . " எ.க" . "-" . $sun_degree; //12:00-1:30
 				}
 				
 				//$inside[9] = $inside[9] . "எ.க" . "-" . $sun_degree; //makaram
@@ -1329,10 +1329,10 @@ function updateRahuEmma(array $inside, $weekday, $sun_degree, $lang)
 					$inside[11] = $inside[11] . "எ.க" . "-" . $sun_degree; //6:00-7:30
 				} else {
 					// Nighttime (6 PM to 5:59 AM) 
-					$inside[6] = $inside[6] . "எ.க" . "-" . $sun_degree; //10:30-12:00
+					$inside[6] = $inside[6] . " எ.க" . "-" . $sun_degree; //10:30-12:00
 				}
 				
-				//$inside[11] = $inside[11] . "எ.க" . "-" . $sun_degree; //meenam
+				//$inside[11] = $inside[11] . " எ.க" . "-" . $sun_degree; //meenam
 				break;
 			case 5: //fri
 				// Daytime condition (6 AM to 5:59 PM)
@@ -1340,18 +1340,18 @@ function updateRahuEmma(array $inside, $weekday, $sun_degree, $lang)
 					$inside[2] = $inside[2] . "எ.க" . "-" . $sun_degree; //3:00-4:30
 				} else {
 					// Nighttime (6 PM to 5:59 AM) 
-					$inside[8] = $inside[8] . "எ.க" . "-" . $sun_degree; //9:00-10:30
+					$inside[8] = $inside[8] . " எ.க" . "-" . $sun_degree; //9:00-10:30
 				}
 				
-				//$inside[2] = $inside[2] . "எ.க" . "-" . $sun_degree; //mithunam
+				//$inside[2] = $inside[2] . " எ.க" . "-" . $sun_degree; //mithunam
 				break;
 			case 6: //sat
 				// Daytime condition (6 AM to 5:59 PM)
 				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
-					$inside[3] = $inside[3] . "எ.க" . "-" . $sun_degree; //1:30-3:00
+					$inside[3] = $inside[3] . " எ.க" . "-" . $sun_degree; //1:30-3:00
 				} else {
 					// Nighttime (6 PM to 5:59 AM) 
-					$inside[9] = $inside[9] . "எ.க" . "-" . $sun_degree; //7:30-9:00
+					$inside[9] = $inside[9] . " எ.க" . "-" . $sun_degree; //7:30-9:00
 				}
 				
 				//$inside[3] = $inside[3] . "எ.க" . "-" . $sun_degree; //katakam
@@ -1371,30 +1371,30 @@ function updateRahuEmma(array $inside, $weekday, $sun_degree, $lang)
 			case 0: //sun
 				// Daytime condition (6 AM to 5:59 PM)
 				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
-					$inside[0] = $inside[0] . "R.K" . "-" . $sun_degree;
+					$inside[0] = $inside[0] . " R.K" . "-" . $sun_degree;
 				} else {
 					// Nighttime (6 PM to 5:59 AM) 
-					$inside[6] = $inside[6] . "R.K" . "-" . $sun_degree;
+					$inside[6] = $inside[6] . " R.K" . "-" . $sun_degree;
 				}
 				
 				//$inside[0] = $inside[0] . "R.K" . "-" . $sun_degree; //mesham
 				break;
 			case 1: //mon
 				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
-					$inside[9] = $inside[9] . "R.K" . "-" . $sun_degree; //9:30-10:00
+					$inside[9] = $inside[9] . " R.K" . "-" . $sun_degree; //9:30-10:00
 				} else {
 					// Nighttime (6 PM to 5:59 AM)
-					$inside[5] = $inside[5] . "R.K" . "-" . $sun_degree; //12:00-1:30
+					$inside[5] = $inside[5] . " R.K" . "-" . $sun_degree; //12:00-1:30
 				}
 				
 				//$inside[9] = $inside[9] . "R.K" . "-" . $sun_degree; //makaram
 				break;
 			case 2: //tue
 				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
-					$inside[2] = $inside[2] . "R.K" . "-" . $sun_degree; //3:00-4:30
+					$inside[2] = $inside[2] . " R.K" . "-" . $sun_degree; //3:00-4:30
 				} else {
 					// Nighttime (6 PM to 5:59 AM)
-					$inside[8] = $inside[8] . "R.K" . "-" . $sun_degree; //9:00-10:30
+					$inside[8] = $inside[8] . " R.K" . "-" . $sun_degree; //9:00-10:30
 				}
 				
 				//$inside[2] = $inside[2] . "R.K" . "-" . $sun_degree; //mithunam
@@ -1411,30 +1411,30 @@ function updateRahuEmma(array $inside, $weekday, $sun_degree, $lang)
 				break;
 			case 4: //thu
 				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
-					$inside[3] = $inside[3] . "R.K" . "-" . $sun_degree; //1:30-3:00
+					$inside[3] = $inside[3] . " R.K" . "-" . $sun_degree; //1:30-3:00
 				} else {
 					// Nighttime (6 PM to 5:59 AM)
-					$inside[9] = $inside[9] . "R.K" . "-" . $sun_degree; //7:30-9:00
+					$inside[9] = $inside[9] . " R.K" . "-" . $sun_degree; //7:30-9:00
 				}
 				
 				//$inside[3] = $inside[3] . "R.K" . "-" . $sun_degree; //katakam
 				break;
 			case 5: //fri
 				if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
-					$inside[6] = $inside[6] . "R.K" . "-" . $sun_degree; //10:30-12:00
+					$inside[6] = $inside[6] . " R.K" . "-" . $sun_degree; //10:30-12:00
 				} else {
 					// Nighttime (6 PM to 5:59 AM)
-					$inside[2] = $inside[2] . "R.K" . "-" . $sun_degree; //3:00-4:30
+					$inside[2] = $inside[2] . " R.K" . "-" . $sun_degree; //3:00-4:30
 				}
 				
 				//$inside[6] = $inside[6] . "R.K" . "-" . $sun_degree; //thulam
 				break;
 			case 6: //sat
 			if ($datetime >= $today_day_start && $datetime < $today_night_start) { 
-					$inside[8] = $inside[8] . "R.K" . "-" . $sun_degree; //9:00-10:30
+					$inside[8] = $inside[8] . " R.K" . "-" . $sun_degree; //9:00-10:30
 				} else {
 					// Nighttime (6 PM to 5:59 AM)
-					$inside[3] = $inside[3] . "R.K" . "-" . $sun_degree; //1:30-3:00
+					$inside[3] = $inside[3] . " R.K" . "-" . $sun_degree; //1:30-3:00
 				}
 				
 				//$inside[8] = $inside[8] . "R.K" . "-" . $sun_degree; //thanusu
@@ -2425,7 +2425,8 @@ function displayStarLord()
 			$starlord_idx = ceil($full_planet_deg/3.333333);
 			$starlord_idx_ragu = ceil($full_planet_deg_ragu/3.333333);
 			
-			if(strpos($planets,$planet)===0 || strpos($planets,$planet)>0){
+			//if(strpos($planets,$planet)===0 || strpos($planets,$planet)>0){
+			if (hasToken($planets, $planet)) {
 				
 				//$planet_starlord[$planet][0] = $nak_array[$starlord_idx];
 				$planet_starlord[$planet][0] = explode('/',$nak_array[$starlord_idx])[1]; //display tamil star name
@@ -2462,7 +2463,8 @@ function displayStarLord()
 			
 
 			//if((strpos($planets,"ரா")===0 || strpos($planets,"ரா")>0) && (strpos($planets,"கே")===0 || strpos($planets,"கே")>0))
-			if(strpos($planet,"ரா")===0 && (strpos($planets,"கே")===0 || strpos($planets,"கே")>0))
+			//if(strpos($planet,"ரா")===0 && (strpos($planets,"கே")===0 || strpos($planets,"கே")>0))
+			if(strpos($planet,"ரா")===0 && hasToken($planets, "கே"))
 			{
 				//$planet_starlord["ரா"][0] = $nak_array[$starlord_idx_ragu];
 				$planet_starlord["ரா"][0] = explode('/',$nak_array[$starlord_idx_ragu])[1]; //display tamil star name
@@ -3187,8 +3189,8 @@ function calculateStarLord()
 			$starlord_idx = ceil($full_planet_deg/3.333333);
 			$starlord_idx_ragu = ceil($full_planet_deg_ragu/3.333333);
 			
-			if(strpos($planets,$planet)===0 || strpos($planets,$planet)>0){
-				
+			//if(strpos($planets,$planet)===0 || strpos($planets,$planet)>0){
+			if(hasToken($planets,$planet)){
 				//$planet_starlord[$planet][0] = $nak_array[$starlord_idx];
 				$planet_starlord[$planet][0] = explode('/',$nak_array[$starlord_idx])[1]; //display tamil star name
 				
@@ -3221,7 +3223,8 @@ function calculateStarLord()
 				}*/
 			}
 			
-			if((strpos($planets,"ரா")===0 || strpos($planets,"ரா")>0) && (strpos($planets,"கே")===0 || strpos($planets,"கே")>0))
+			//if((strpos($planets,"ரா")===0 || strpos($planets,"ரா")>0) && (strpos($planets,"கே")===0 || strpos($planets,"கே")>0))
+			if((strpos($planets,"ரா")===0 || strpos($planets,"ரா")>0) && hasToken($planets,"கே"))
 			{
 				//$planet_starlord["ரா"][0] = $nak_array[$starlord_idx_ragu];
 				$planet_starlord["ரா"][0] = explode('/',$nak_array[$starlord_idx_ragu])[1]; //display tamil star name
