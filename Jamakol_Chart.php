@@ -1483,7 +1483,10 @@ $sw_planet = updateRahuEmma($sw_planet,$dayofweek,$sun_degree,$lang);
 
 $chartdate=date("d/m/Y",strtotime($chart_date));
 $Planet_degree=displayDegree($sw_degree); 
+
 $sw_planet = sortDegree($sw_planet);
+
+
 
 //to display place in center of 2 cells
 $place_left_part = substr($place,0,strlen($place)/2);

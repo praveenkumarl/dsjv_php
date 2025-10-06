@@ -2303,6 +2303,14 @@ $_COOKIE['panchang_place']=$place;
 
 unset($_SESSION['menu_clicked']);
 
+
+
+?>
+
+<?php
+// Your main panchang page
+include 'panchang_pushkara_times.php';
+
 ?>
 
 <!-- <button class='actionBtn' id='Translate' onClick='transliterateTamilToEnglish()'>English</button> -->

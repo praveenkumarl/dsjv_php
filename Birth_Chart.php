@@ -3454,6 +3454,7 @@ EOL;
 
 					calculateStarLord();
 					resortStarLordArray(true);  //this is to sort the planets in correct order
+					displayBriguCombination();
 					calculateNavamsam();
 					displayNavamsam();
 					displayBhavaChart();
@@ -3697,75 +3698,8 @@ foreach ($combos as $label => $items) {
 }*/
 
 
+//$allCombos = buildNaadiCombinations($planet_starlord, $planetDeg_default, $alwaysRetro, $allPlanets, $excludeTags, $fmt, $enemyMap);
 
-
-/* ============= MAIN BUILD ======================================== */
-$planetInfo = buildNaadi($planet_starlord,$planetDeg_default,$alwaysRetro);
-
-/* bucket‑wise storage requested in point 2 */
-$bucketArrays = [
-    'same'=>[], 'triad'=>[], '2nd'=>[],
-    '12th'=>[], '7th'=>[], '3/11'=>[]
-];
-
-/* row‑oriented data for the HTML table */
-$tableRows=[];
-
-foreach($allPlanets as $pl){
-    $combo = combosForFocus($pl, $planetInfo, $excludeTags, $fmt, $enemyMap);
-
-    // fill bucket arrays (planet -> joined string)
-    foreach($bucketArrays as $k=>&$arr){
-        $arr[$pl]=isset($combo[$k])?implode(' , ',$combo[$k]):'';
-    } unset($arr);
-
-    // build the row for the table
-    $tableRows[$pl]=[
-        'same'  =>$bucketArrays['same'][$pl],
-        'triad' =>$bucketArrays['triad'][$pl],
-        '2nd'   =>$bucketArrays['2nd'][$pl],
-        '12th'  =>$bucketArrays['12th'][$pl],
-        '7th'   =>$bucketArrays['7th'][$pl],
-        '3/11'  =>$bucketArrays['3/11'][$pl],
-    ];
-}
-
-/* =========  OVERLAY  ============================================ */
-echo <<<HTML
-<div id="astroModal" class="astro-modal">
-  <div class="astro-modal-content">
-      <span id="closeNadi" class="astro-close">&times;</span>
-HTML;
-
-/* put your existing rendering loop here — either the div‑table
-   or the <details> layout we built earlier: */
-foreach ($tableRows as $planet => $cols) {
-    echo "<div class='astro-section'><details><summary>$planet</summary>";
-    foreach ([
-        'same'  => 'ஒரே ராசி',
-        'triad' => 'திரிகோணம் (1,5,9)',
-        '2nd'   => '2ஆம் ராசி',
-        '12th'  => '12ஆம் ராசி',
-        '7th'   => '7ஆம் ராசி',
-        '3/11'  => '3/11ஆம் ராசி'
-    ] as $key => $label) {
-        if (!empty($cols[$key])) {
-            echo "<div class='bucket'><div class='bucket-label'>$label:</div>";
-            foreach (explode(',', $cols[$key]) as $combo) {
-                echo "<div class='combo-line'>".trim($combo)."</div>";
-            }
-            echo "</div>";
-        }
-    }
-    echo "</details></div>";
-}
-
-echo <<<HTML
-  </div>
-</div>
-HTML;
-	
-	?>
-
+?>
 </body>
 </html>

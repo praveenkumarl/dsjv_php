@@ -7583,6 +7583,20 @@ function getDataFromYogiById($conn, $id) {
 }
 
 //this function is to get Gubera point for birth chart
+/*
+குபேர புள்ளி (Kubera Point) கணக்கிடும் விதம்:
+
+குபேரம்=(சந்திரன்பாதம்×2வதுஅதிபதிபாதம்)(mod108)
+
+இதனால் கிடைக்கும் மதிப்பு 1–108 வரையில் இருக்கும்.
+
+0 வந்தால், அதை 108 என்று எடுத்துக் கொள்ள வேண்டும்.
+
+அந்த எண் எந்த நட்சத்திரப் பாதத்தில், எந்த ராசியில், எந்த வீட்டில் இருக்கிறது என்பதை கண்டுபிடிக்கிறோம்.
+
+👉 அதாவது, சந்திரனின் பாதம் மற்றும் 2வது வீட்டின் அதிபதியின் பாதம் இரண்டையும் பெருக்கி, 108-ஆல் வகுத்த பின் மீதி எண் தான் குபேரப் பாதம்.
+*/
+
 function getKubera(){
 	global $planet_starlord, $lagna_house;
 	
@@ -10996,8 +11010,8 @@ function buildTriadClubsWithRetro(
                     $planetDeg_default[$tag] < 0);
 
         $dispTag = $isRetro
-                 #? '<span class="retro">'.$tag.'</span>'
-				 ? $tag.'(வ)'
+                 ? '<span class="retro">'.$tag.'</span>'
+				 #? $tag.'(வ)'
                  : $tag;
 
         /* bucket: 1‑5‑9, 2‑6‑10, 3‑7‑11, 4‑8‑12 */
@@ -11334,112 +11348,146 @@ $enemyMap = [
 --------------------------------------------------------------------*/
 function joinWithEnemyPlus(array $tags, array $enemyMap): string
 {
-    if (count($tags) < 2) return $tags[0] ?? '';
+	if (count($tags) < 2) return $tags[0] ?? '';
 
-    /* strip off everything after '(' to get the plain tag */
-    $plain = fn($s) => preg_replace('/\(.*$/u', '', strip_tags($s));
+	/* strip off everything after '(' to get the plain tag */
+	$plain = fn($s) => preg_replace('/\(.*$/u', '', strip_tags($s));
 
-    $out = $tags[0];
-    for ($i = 1; $i < count($tags); $i++) {
-        $prev = $plain($tags[$i - 1]);
-        $curr = $plain($tags[$i]);
+	$out = $tags[0];
+	for ($i = 1; $i < count($tags); $i++) {
+		$prev = $plain($tags[$i - 1]);
+		$curr = $plain($tags[$i]);
 
-        $isEnemy = in_array($curr, $enemyMap[$prev] ?? [], true) ||
-                   in_array($prev, $enemyMap[$curr] ?? [], true);
+		// $isEnemy = in_array($curr, $enemyMap[$prev] ?? [], true) ||
+		//            in_array($prev, $enemyMap[$curr] ?? [], true);
 
-        $plus = $isEnemy ? '<span class="enemy">+</span>' : '+';
-        $out .= " $plus " . $tags[$i];
-    }
-    return $out;
+		// $plus = $isEnemy ? '<span class="enemy">+</span>' : '+';
+		$plus = '+';
+		$out .= " $plus " . $tags[$i];
+	}
+	return $out;
 }
 
 /* -------------------------------------------------------------------
-   MAIN  —  combosForFocus()  (updated)
+ * MAIN — combosForFocus() (REVERTED)
 --------------------------------------------------------------------*/
 function combosForFocus(
-    string   $focus,
-    array    $info,        // tag → [full°, retro?, absolute rāśi]
+    string   $focus, // This parameter is now primarily for filtering, not the main focus of the logic
+    array    $info,         // tag → [full°, retro?, absolute rāśi]
     array    $exclude,
-    callable $fmtTag,      // ($tag,$isRetro) → display string
+    callable $fmtTag,       // ($tag,$isRetro) → display string
     array    $enemyMap
 ): array {
 
-    if (!isset($info[$focus]) || in_array($focus, $exclude, true)) {
-        return [];
-    }
-
-    [$fFull, $fRetro, $fRasi] = $info[$focus];
-    $focusDisp = $fmtTag($focus, $fRetro);
-
-    /* collect for full‑set lines */
-    $sameCollect  = [ ['tag'=>$focusDisp, 'deg'=>fmod($fFull, 30)] ];
-    $triadCollect = [ ['tag'=>$focusDisp, 'deg'=>fmod($fFull, 30)] ];
-
     $out = [
-        'same'  => [],
-        'triad' => [],
         '2nd'   => [],
         '12th'  => [],
-        '7th'   => [],
-        '3/11'  => [],
+        '6/10'  => [],
+        '4/8'   => [],
+        'trine_1_5_9' => [],
+        'trine_2_6_10' => [],
+        'trine_3_7_11' => [],
+        'trine_4_8_12' => [],
     ];
-
-    foreach ($info as $tag => [$pFull, $pRetro, $pRasi]) {
-        if ($tag === $focus || in_array($tag, $exclude, true)) continue;
-
-        $diff = ($pRasi - $fRasi + 12) % 12;
-        $partnerDisp = $fmtTag($tag, $pRetro);
-
-        /* -------- SAME RĀśI -------- */
-        if ($diff === 0) {
-            $out['same'][] = joinWithEnemyPlus([$focusDisp,$partnerDisp], $enemyMap);
-            $sameCollect[] = ['tag'=>$partnerDisp, 'deg'=>fmod($pFull, 30)];
-            continue;
-        }
-
-        /* -------- TRIAD 5th / 9th -------- */
-        if ($diff === 4 || $diff === 8) {
-            $fDeg = fmod($fFull, 30);
-            $pDeg = fmod($pFull, 30);
-            $pair = $pDeg < $fDeg
-                  ? [$partnerDisp, $focusDisp]
-                  : [$focusDisp,   $partnerDisp];
-            $out['triad'][] = joinWithEnemyPlus($pair, $enemyMap);
-            $triadCollect[] = ['tag'=>$partnerDisp, 'deg'=>$pDeg];
-            continue;
-        }
-
-        /* -------- 2nd / 12th -------- */
-        if (!$fRetro && $diff === 1)  // focus direct → 2nd
-            $out['2nd'][]  = joinWithEnemyPlus([$focusDisp,$partnerDisp], $enemyMap);
-        if ($fRetro && $diff === 11)  // focus retro  → 12th
-            $out['12th'][] = joinWithEnemyPlus([$focusDisp,$partnerDisp], $enemyMap);
-
-        /* -------- 7th (skip Rahu↔Ketu) -------- */
-        if ($diff === 6 &&
-            !(in_array($focus,['ரா','கே'],true) &&
-              in_array($tag,  ['ரா','கே'],true)) ) {
-            $out['7th'][] = joinWithEnemyPlus([$focusDisp,$partnerDisp], $enemyMap);
-        }
-
-        /* -------- 3rd / 11th -------- */
-        if ($diff === 2 || $diff === 10) {
-            $out['3/11'][] = joinWithEnemyPlus([$focusDisp,$partnerDisp], $enemyMap);
+    
+    // Create a new, filtered array of planets and their details
+    $planets = [];
+    foreach ($info as $tag => $details) {
+        if (!in_array($tag, $exclude, true)) {
+            $planets[] = [
+                'tag' => $tag,
+                'full_deg' => $details[0],
+                'retro' => $details[1],
+                'rasi' => $details[2],
+                'disp' => $fmtTag($tag, $details[1]) . " (" . round(fmod($details[0], 30), 2) . "°)",
+            ];
         }
     }
 
-    /* -------- FULL‑SET for SAME bucket -------- */
-    if (count($sameCollect) > 2) {
-        usort($sameCollect, fn($a,$b)=> $a['deg'] <=> $b['deg']);
-        $tags = array_column($sameCollect,'tag');
-        $out['same'][] = joinWithEnemyPlus($tags, $enemyMap);
+    // Process all combinations for all planets at once
+    foreach ($planets as $i => $focusPlanet) {
+        
+        $rasiPlanets = [];
+        foreach ($planets as $partner) {
+            if ($focusPlanet['tag'] === $partner['tag']) continue;
+            $diff = ($partner['rasi'] - $focusPlanet['rasi'] + 12) % 12;
+            $rasiPlanets[$diff][] = $partner;
+        }
+
+        // --- 2nd (NON-RETRO) / 12th (RETRO) ---
+        if (!$focusPlanet['retro']) {
+            if (isset($rasiPlanets[1])) {
+                usort($rasiPlanets[1], fn($a, $b) => $a['full_deg'] <=> $b['full_deg']);
+                $out['2nd'][] = joinWithEnemyPlus([$focusPlanet['disp'], $rasiPlanets[1][0]['disp']], $enemyMap);
+            }
+        } else {
+            if (isset($rasiPlanets[11])) {
+                usort($rasiPlanets[11], fn($a, $b) => $b['full_deg'] <=> $a['full_deg']);
+                $out['12th'][] = joinWithEnemyPlus([$focusPlanet['disp'], $rasiPlanets[11][0]['disp']], $enemyMap);
+            }
+        }
+        
+        // --- 6/10 (NON-RETRO) ---
+        if (!$focusPlanet['retro']) {
+            $sixthAndTenth = [];
+            if (isset($rasiPlanets[5])) $sixthAndTenth = array_merge($sixthAndTenth, $rasiPlanets[5]);
+            if (isset($rasiPlanets[9])) $sixthAndTenth = array_merge($sixthAndTenth, $rasiPlanets[9]);
+            
+            if (!empty($sixthAndTenth)) {
+                usort($sixthAndTenth, fn($a, $b) => $a['full_deg'] <=> $b['full_deg']);
+                $out['6/10'][] = joinWithEnemyPlus([$focusPlanet['disp'], $sixthAndTenth[0]['disp']], $enemyMap);
+            }
+        }
+
+        // --- 4/8 (RETRO) ---
+        if ($focusPlanet['retro']) {
+            $fourthAndEighth = [];
+            if (isset($rasiPlanets[3])) $fourthAndEighth = array_merge($fourthAndEighth, $rasiPlanets[3]);
+            if (isset($rasiPlanets[7])) $fourthAndEighth = array_merge($fourthAndEighth, $rasiPlanets[7]);
+            
+            if (!empty($fourthAndEighth)) {
+                usort($fourthAndEighth, fn($a, $b) => $b['full_deg'] <=> $a['full_deg']);
+                $out['4/8'][] = joinWithEnemyPlus([$focusPlanet['disp'], $fourthAndEighth[0]['disp']], $enemyMap);
+            }
+        }
     }
 
-    /* -------- FULL‑SET for TRIAD bucket *fixed* -------- */
-    if (count($triadCollect) > 2) {
-        usort($triadCollect, fn($a,$b)=> $a['deg'] <=> $b['deg']);   // ← now by deg‑in‑sign
-        $tags = array_column($triadCollect,'tag');
-        $out['triad'][] = joinWithEnemyPlus($tags, $enemyMap);
+    // --- ALL TRINES (UNCHANGED) ---
+    $trineGroups = [
+        'trine_1_5_9' => [1, 5, 9],
+        'trine_2_6_10' => [2, 6, 10],
+        'trine_3_7_11' => [3, 7, 11],
+        'trine_4_8_12' => [4, 8, 12],
+    ];
+    $rasiToTrineGroup = [];
+    foreach ($trineGroups as $key => $signs) {
+        foreach ($signs as $sign) {
+            $rasiToTrineGroup[$sign] = $key;
+        }
+    }
+    $trineCollections = [
+        'trine_1_5_9' => [], 'trine_2_6_10' => [],
+        'trine_3_7_11' => [], 'trine_4_8_12' => [],
+    ];
+    foreach ($planets as $p) {
+        if (isset($rasiToTrineGroup[$p['rasi']])) {
+            $trineKey = $rasiToTrineGroup[$p['rasi']];
+            $trineCollections[$trineKey][] = ['tag' => $p['disp'], 'deg' => fmod($p['full_deg'], 30)];
+        }
+    }
+    foreach ($trineCollections as $key => $planets) {
+        if (!empty($planets)) {
+            usort($planets, fn($a, $b) => $a['deg'] <=> $b['deg']);
+            $tags = array_column($planets, 'tag');
+            $out[$key] = [joinWithEnemyPlus($tags, $enemyMap)];
+        }
+    }
+    
+    // Remove duplicates from the final output lists
+    foreach ($out as $key => $values) {
+        if (is_array($values)) {
+            $out[$key] = array_unique($values);
+        }
     }
 
     return array_filter($out);
@@ -11528,7 +11576,213 @@ function updateUpaGraha($sun_degree)
 	return $sw_planet;
 }
 
+function calculateBriguCombination($planet_starlord, $planetDeg_default, $alwaysRetro, $allPlanets, $excludeTags, $fmt, $enemyMap) {
+	$planetInfo = buildNaadi($planet_starlord, $planetDeg_default, $alwaysRetro);
 
+	// Usage:
+	$allCombos = calculateBriguCombination($planet_starlord, $planetDeg_default, $alwaysRetro, $allPlanets, $excludeTags, $fmt, $enemyMap);
+
+	// Prepare an array to hold the single set of combinations
+	$allCombos = [
+		'trine_1_5_9' => [],
+		'trine_2_6_10' => [],
+		'trine_3_7_11' => [],
+		'trine_4_8_12' => [],
+		'2nd' => [],
+		'12th' => [],
+		'6/10' => [],
+		'4/8' => [],
+	];
+
+	// Iterate through each planet to find its combinations
+	foreach ($allPlanets as $pl) {
+		$combo = combosForFocus($pl, $planetInfo, $excludeTags, $fmt, $enemyMap);
+
+		// Merge the individual planet's combinations into the main array
+		foreach ($allCombos as $k => $v) {
+			if (isset($combo[$k])) {
+				$allCombos[$k] = array_merge($allCombos[$k], $combo[$k]);
+			}
+		}
+	}
+
+	// Remove duplicates from the combined lists
+	foreach ($allCombos as $k => $v) {
+		$allCombos[$k] = array_unique($v);
+	}
+
+	createBriguDiv($allCombos);
+
+	return $allCombos;
+}
+
+function createBriguDiv($allCombos) {
+	/* ========= OVERLAY ============================================ */
+	echo <<<HTML
+<div id="astroModal" class="astro-modal">
+	<div class="astro-modal-content">
+		<span id="closeNadi" class="astro-close">&times;</span>
+		<div class="bucket-container">
+HTML;
+
+	/* Loop through the final, combined combinations and display them */
+	foreach ([
+		'trine_1_5_9' => 'திரிகோண குழு 1,5,9',
+		'trine_2_6_10' => 'திரிகோண குழு 2,6,10',
+		'trine_3_7_11' => 'திரிகோண குழு 3,7,11',
+		'trine_4_8_12' => 'திரிகோண குழு 4,8,12',
+		'2nd' => '2ஆம் ராசி',
+		'12th' => '12ஆம் ராசி',
+		'6/10' => '6/10ஆம் ராசி',
+		'4/8' => '4/8ஆம் ராசி',
+	] as $key => $label) {
+		echo "<div class='bucket'><div class='bucket-label'>$label:</div>";
+		if (!empty($allCombos[$key])) {
+			foreach ($allCombos[$key] as $combo) {
+				echo "<div class='combo-line'>".trim($combo)."</div>";
+			}
+		} else {
+			echo "<div class='combo-line'>none</div>";
+		}
+		echo "</div>";
+	}
+	echo <<<HTML
+		</div>
+	</div>
+</div>
+HTML;
+}
+
+function displayBriguCombination() {
+	global $planet_starlord, $planetDeg_default, $alwaysRetro, $allPlanets, $excludeTags, $fmt, $enemyMap;
+	$output = '';
+
+	$allCombos = buildNaadiCombinations($planet_starlord, $planetDeg_default, $alwaysRetro, $allPlanets, $excludeTags, $fmt, $enemyMap);
+
+	$firstElement = '';
+	$firstSet = true;
+
+	foreach (['trine_1_5_9', 'trine_2_6_10', 'trine_3_7_11', 'trine_4_8_12'] as $key) {
+		$items = array_map(function($v) {
+			return str_replace('+', ' ', $v);
+		}, $allCombos[$key]);
+		foreach ($items as $item) {
+			$parts = explode(' ', $item);
+			foreach ($parts as $part) {
+				if (empty($part)) continue;
+				if (strpos($part, '°') !== false) continue;
+				$has_retro = (mb_substr(trim($part), -3) === '(வ)');
+				if ($firstSet && empty($firstElement)) {
+					$firstElement = "<div style='display:inline-block;text-align:center;'>" .
+						($has_retro
+							? "<span style='font-size:10px;display:block;color:red;'>&#8592;</span><span style='color:red;'>$part</span>"
+							: "<span style='font-size:10px;display:block;'>&#8594;</span><span>$part</span>"
+						) .
+						"</div>";
+				}
+				if ($has_retro) {
+					$arrow = "<span style='color:red;'>&#8592;</span>";
+					// Remove (வ) from the part before displaying
+					$clean_part = str_replace('(வ)', '', $part);
+					$output .= "<div style='display:inline-block;text-align:center;'>
+						<span style='font-size:10px;display:block;color:red;'>$arrow</span>
+						<span style='color:red;font-size:10px'>$clean_part</span>
+					  </div>";
+				} else {
+					$arrow = '&#8594;';
+					$output .= "<div style='display:inline-block;text-align:center;'>
+						<span style='font-size:10px;display:block;'>$arrow</span>
+						<span style='font-size:10px'>$part</span>
+					  </div>";
+				}
+			}
+			$firstSet = false;
+		}
+	}
+
+	// Add the first element once after the loop
+	$output .= str_replace('(வ)', '', $firstElement);
+
+	echo "<div class='divBNN'>";
+	echo "<div class='bnn-title'>பிருகு நந்தி நாடி தொடர்பு</div>";
+	echo "<div style='display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;'>";
+	echo $output;
+	echo "</div>";
+	echo "</div>";
+}
+
+function buildNaadiCombinations($planet_starlord, $planetDeg_default, $alwaysRetro, $allPlanets, $excludeTags, $fmt, $enemyMap) {
+	// ============= MAIN BUILD ========================================
+	$planetInfo = buildNaadi($planet_starlord, $planetDeg_default, $alwaysRetro);
+
+	// Prepare an array to hold the single set of combinations
+	$allCombos = [
+		'trine_1_5_9' => [],
+		'trine_2_6_10' => [],
+		'trine_3_7_11' => [],
+		'trine_4_8_12' => [],
+		'2nd' => [],
+		'12th' => [],
+		'6/10' => [],
+		'4/8' => [],
+	];
+
+	// Iterate through each planet to find its combinations
+	foreach ($allPlanets as $pl) {
+		$combo = combosForFocus($pl, $planetInfo, $excludeTags, $fmt, $enemyMap);
+
+		// Merge the individual planet's combinations into the main array
+		foreach ($allCombos as $k => $v) {
+			if (isset($combo[$k])) {
+				$allCombos[$k] = array_merge($allCombos[$k], $combo[$k]);
+			}
+		}
+	}
+
+	// Remove duplicates from the combined lists
+	foreach ($allCombos as $k => $v) {
+		$allCombos[$k] = array_unique($v);
+	}
+
+	/* This section is to display all combinations in a div 
+	// ========= OVERLAY ============================================
+	echo <<<HTML
+	<div id="astroModal" class="astro-modal">
+		<div class="astro-modal-content">
+			<span id="closeNadi" class="astro-close">&times;</span>
+			<div class="bucket-container">
+	HTML;
+
+	// Loop through the final, combined combinations and display them
+	foreach ([
+		'trine_1_5_9' => 'திரிகோண குழு 1,5,9',
+		'trine_2_6_10' => 'திரிகோண குழு 2,6,10',
+		'trine_3_7_11' => 'திரிகோண குழு 3,7,11',
+		'trine_4_8_12' => 'திரிகோண குழு 4,8,12',
+		'2nd' => '2ஆம் ராசி',
+		'12th' => '12ஆம் ராசி',
+		'6/10' => '6/10ஆம் ராசி',
+		'4/8' => '4/8ஆம் ராசி',
+	] as $key => $label) {
+		echo "<div class='bucket'><div class='bucket-label'>$label:</div>";
+		if (!empty($allCombos[$key])) {
+			foreach ($allCombos[$key] as $combo) {
+				echo "<div class='combo-line'>" . trim($combo) . "</div>";
+			}
+		} else {
+			echo "<div class='combo-line'>none</div>";
+		}
+		echo "</div>";
+	}
+	echo <<<HTML
+			</div>
+		</div>
+	</div>
+	HTML;
+*/
+	// Usage: return $allCombos if needed
+	return $allCombos;
+}
 
 ?>
 

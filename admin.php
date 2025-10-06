@@ -396,6 +396,11 @@ function getTamilDate(){
 		</div>
 	</div>
 	<div class='column-body'>
+		<p class="arrow-container">
+		  <span class="arrow">&#x2190;</span>
+		  <span>குரு</span>
+		</p>
+
 			<center><div class="divTable blueTable" id="chart">
 
 			<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">App Info update</P>
