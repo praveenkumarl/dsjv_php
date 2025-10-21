@@ -1,0 +1,10 @@
+@echo off
+cd C:\Users\praveenkumarl\OneDrive - HCL Technologies Ltd\Desktop\Jamakol software
+
+set /p YEAR="Year: "
+
+set STARTDATE=01.01.%YEAR%
+
+echo Ephemeris start date is: %STARTDATE%
+
+swetest64 -edir./sweph/ -b%STARTDATE% -ut00:00:00 -p0123456t -n366 -sid1 -eswe -fTPls -g, -head -house80.2785,13.0878,P > ephemeris_output_%YEAR%

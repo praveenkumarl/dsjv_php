@@ -1,0 +1,917 @@
+
+/* Theme one  brown rosewood chart blue button
+:root {
+    --chart-background: #F9EBEA;
+	--details-background: #FFFFFF;
+	--chart-font-size: 14px;
+	--chart-inner-font-weight: 600;
+}
+*/
+
+/* Theme Two gold brown theme blue button */
+:root {
+    --chart-background: #ffe44d;
+	--chart-font-size: 14px;
+	--chart-inner-font-size: clamp(11px, 2vw, 12px);
+	--chart-outer-font-size: clamp(10px, 2vw, 12px);
+	--chart-center-font-size: clamp(8px, 2vw, 10px);
+	--chart-inner-font-weight: 600;
+	--chart-width: clamp(300px, 2vw, 800px);
+	--chart-height: clamp(300px, 2vw, 800px);
+	--chart-ubagraha-font-size: clamp(7px, 2vw, 9px);
+	--chart-ubagraha-font-color: grey;
+}
+
+/*normal mode*/
+#desk-table {
+    display: block;
+}
+#phone-table {
+    display: none;
+}
+
+/*mobile mode*/
+@media only screen and (max-width: 400px) { // max-width is the size of the web broswer in mobile 
+    #desk-table {
+        display: none;
+    }
+    #phone-table {
+        display: block;
+    }
+}
+
+mark {
+  color: black;
+}
+
+div.blueTable {
+  border: 0px solid #660000;
+  background-color: none;
+  width: var(--chart-width);
+  height: var(--chart-height);
+  text-align: center;
+  border-collapse: collapse;
+  /* box-shadow: 1px 2px 5px #FF6a40; */
+}
+.divTable.blueTable, .divTable.blueTable .divTableHead {
+  border: 0px solid #AAAAAA;
+  padding: 3px 2px;
+
+}
+.divTable.blueTable .divTableBody .divTableCell {
+  font-size: var(--chart-inner-font-size);
+}
+.blueTable .tableFootStyle {
+  font-size: 12px;
+}
+.blueTable .tableFootStyle .links {
+	 text-align: center;
+
+}
+.blueTable .tableFootStyle .links a{
+  display: inline-block;
+  background: #1C6EA4;
+  color: #FFFFFF;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+.blueTable.outerTableFooter {
+  border-top: none;
+}
+.blueTable.outerTableFooter .tableFootStyle {
+  padding: 3px 5px; 
+}
+/* DivTable.com */
+.divTable{ display: table; background-color:white}
+.divTableRow { display: table-row; }
+.divTableHeading { display: table-header-group;}
+.divTableCell, .divTableHead 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 2px #660000;
+	background-color: var(--chart-background);
+	font-size: var(--chart-inner-font-size);
+	line-height: 15px;
+	font-weight: var(--chart-inner-font-weight);
+	color: #660000;
+	width: 20%;
+	height: 20%;
+	padding:5px;
+
+	/*background-image: url(../images/square5.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;*/
+	
+	position:relative;
+}
+.divTableOuterCell 
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #FFFFFF;
+	text-align:center;
+	vertical-align:middle;
+	font-size: var(--chart-outer-font-size);
+	font-weight: var(--chart-inner-font-weight);
+	color: #660000;
+	width: 10%;
+	height: 10%;
+	border:solid 1px #660000;
+	
+	position:relative;
+}
+
+.divTableOuterCellLeftTop
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #FFFFFF;
+	text-align:center;
+	vertical-align:middle;
+	font-size: var(--chart-outer-font-size);
+	font-weight: var(--chart-inner-font-weight);
+	color: #660000;
+	width: 10%;
+	height: 10%;
+	border-top:solid 1px #660000;
+	border-left:solid 1px #660000;
+	border-right:none;
+	border-bottom:none;
+	position:relative;
+}
+
+.divTableOuterCellRightTop
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #FFFFFF;
+	text-align:center;
+	vertical-align:middle;
+	font-size: var(--chart-outer-font-size);
+	font-weight: var(--chart-inner-font-weight);
+	color: #660000;
+	width: 10%;
+	height: 10%;
+	border-right:solid 1px #660000;
+	border-top:solid 1px #660000;
+	border-left:none;
+	border-bottom:none;
+	position:relative;
+}
+
+.divTableOuterCellLeftBottom
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #FFFFFF;
+	text-align:center;
+	vertical-align:middle;
+	font-size: var(--chart-outer-font-size);
+	font-weight: var(--chart-inner-font-weight);
+	color: #660000;
+	width: 10%;
+	height: 10%;
+	border-left:solid 1px #660000;
+	border-bottom:solid 1px #660000;
+	border-right:none;
+	border-top:none;
+	position:relative;
+}
+
+.divTableOuterCellRightBottom
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #FFFFFF;
+	text-align:center;
+	vertical-align:middle;
+	font-size: var(--chart-outer-font-size);
+	font-weight: var(--chart-inner-font-weight);
+	color: #660000;
+	width: 10%;
+	height: 10%;
+	border-right:solid 1px #660000;
+	border-bottom:solid 1px #660000;
+	border-left:none;
+	border-top:none;
+	position:relative;
+}
+
+.divTableDummyCell 
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #FFFFFF;
+	text-align:center;
+	vertical-align:middle;
+	width: 5%;
+	height: 5%;
+	font-size: 12px;
+	font-weight: bold;
+	color: black;
+}
+
+.divTableCenterCell 
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: none;
+	text-align:center;
+	vertical-align:middle;
+	font-size: var(--chart-center-font-size);
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:5px;
+	
+}
+
+
+.divTableHeading { display: table-header-group;}
+.divTableFoot { display: table-footer-group;}
+.divTableBody { display: table-row-group;}
+
+ .overlay {
+		position:absolute;
+		top:178px;
+        z-index: 9;
+        margin-left: 107px;
+        background: #FFFFFF;
+		width:145px;
+		height:145px;
+		border:solid 1px #660000;
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 60%;
+		background-position: center;
+		font-size:8px;
+		font-weight: bold;
+		color:#660000;
+}
+
+ .overlay1 {
+		position:absolute;
+		top:108px;
+        z-index: 9;
+        margin-left: 108px;
+        background: #FFFFFF;
+		width:145px;
+		height:145px;
+		border:solid 1px #660000;
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 60%;
+		background-position: center;
+		font-size:8px;
+		font-weight: bold;
+		color:#660000;
+      }	
+
+.overlay2 {
+		position:absolute;
+		/* top:108px; */
+		top: 23%;
+        z-index: 9;
+        margin-left: 111px;
+        background: #FFFFFF;
+		/* width:145px; */
+		/* height:145px; */
+		width:135px;
+		height:28.3%;
+		border:none; /*solid 1px #660000;*/
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 60%;
+		background-position: center;
+		font-size:8px;
+		font-weight: bold;
+		color:#660000;
+		
+      }	  
+	  
+.divTableCenterCell1
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: white;
+	text-align:center;
+	vertical-align:middle;
+	font-size: var(--chart-center-font-size);
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:0px;
+	
+/*	background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 150%;
+		background-position: left -50% top -10%;*/
+		
+		/*background-image: url(../images/om.png);
+		background-repeat: no-repeat;
+		background-size: 100%;*/
+	
+	
+}
+
+.divTableCenterCell2
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: white;
+	text-align:center;
+	vertical-align:middle;
+	font-size: var(--chart-center-font-size);
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:0px;
+	
+		/*background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 150%;
+		background-position: right -50% top -10%;
+		
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 100%;*/
+
+	
+	
+}
+
+.divTableCenterCell3
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: white;
+	text-align:center;
+	vertical-align:middle;
+	font-size: var(--chart-center-font-size);
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:0px;
+	
+	
+		/*background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 150%;
+		background-position: left -50% bottom -15%;
+		
+		background-image: url(../images/swastik.png);
+		background-repeat: no-repeat;
+		background-size: 100%;*/
+	
+}
+
+.divTableCenterCell4
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: white;
+	text-align:center;
+	vertical-align:middle;
+	font-size: var(--chart-center-font-size);
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:0px;
+	
+		/*background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 150%;
+		background-position: right -50% bottom -15%;
+		
+		background-image: url(../images/karanam.gif);
+		background-repeat: no-repeat;
+		background-size: 100%;*/
+
+	
+}
+
+
+.symbol {
+	display: none;
+	font-size:15px;
+	font-weight:bold;
+	/* color: #660000; */
+	color: transparent;
+	
+	position: absolute;
+	top: 2px;
+	right: 2px;
+}
+
+::-webkit-calendar-picker-indicator {
+    color: rgba(0, 0, 0, 0);
+    opacity: 1;
+    display: block;
+    width: 15px;
+    height: 15px;
+    border-width: thin;
+	z-index: 1;
+}
+
+.divTableDegreeCell 
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #FFFFFF;
+	text-align:center;
+	vertical-align:middle;
+	font-size: var(--chart-outer-font-size);
+	font-weight: bold;
+	color: #660000;
+	width: 10%;
+	height: 10%;
+	border:solid 1px #660000;
+	
+	position:relative;
+}
+
+.header
+{
+	color:#660000; 
+	font-family: 'Source Sans Pro', Helvetica, sans-serif;
+	font-weight:bold; 
+	font-size:15px;
+}
+
+.footer
+{
+	color:#660000; 
+	font-family: 'Source Sans Pro', Helvetica, sans-serif;
+	font-weight:bold; 
+	font-size:18px;
+	animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+.title{
+	position: relative;
+	top:0;
+	right:0;
+	padding:40px;
+	height:20px;
+	background-image: url(../images/title2.png);
+	background-color: black;
+	background-size: 50%;
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+}
+
+#section1{
+		background:  linear-gradient(90deg,rgba(147,13,36,1),rgba(147,13,36,.5), rgba(147,13,36,.5),rgba(147,13,36,1)), url(../images/background1.jpg);
+		background-size: cover;
+		background-repeat: no-repeat;
+		
+		/* animation-name: rightToLeft;
+		animation-duration: .3s; */
+	}
+	
+#section0{
+		background:  linear-gradient(90deg,rgba(255, 250, 250,0.8),rgba(255, 250, 250,0.8), rgba(255, 250, 250,0.8),rgba(255, 250, 250,0.8)), url(../images/background1.jpg);
+		background-size: cover;
+		background-repeat: no-repeat;
+		
+		/* animation-name: rightToLeft;
+		animation-duration: .3s; */
+	}
+	
+	@keyframes leftToRight {
+  25%  {left:-1000px; top:0px;}
+  100% {left:0px; top:0px;}
+	}
+  
+  	@keyframes rightToLeft {
+  50%  {right:-1000px; top:0px;}
+  100% {right:0px; top:0px;}
+	}
+	
+#container
+	{
+	/* animation-name: rightToLeft;
+	animation-duration: .5s; */
+	}
+#search
+{
+	font-size: 20px;
+	color: #660000;
+}
+
+#search_err
+{
+	font-size: 12px;
+	color: red;
+}
+
+.lagna
+{
+	background-color:blue;
+	color:white;
+}
+
+.mandhi
+{
+	background-color:red;
+	color:white;
+}
+
+.moon
+{
+	background-color:#00ffff;
+	color:black;
+}
+
+
+
+#karanamDiv{
+	position: fixed;
+	display: none;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0,0,0,0.5);
+	z-index: 2;
+	cursor: pointer;
+}
+
+
+/* Definition for wallpaper styles */
+/* DivTable.com */
+#wallpaper_container {
+  width:100%;
+  height:100%;
+  display: flex;
+  flex-wrap: wrap;
+  font-family: sans-serif;
+  text-transform: uppercase;
+}
+
+.wallpaper_item {
+  flex-basis: 33%;
+  width: 33%;
+  height: 33%;
+  flex-grow: 1;
+  text-align: center;
+  background-color: #000000;
+  color:white;
+  font-size: 12px;
+  border: 5px solid #FFFFFF;
+  padding:5px;
+}
+
+.wallpaper_img1 {
+  object-fit: contain;
+  width:100%;
+  height:100%;
+  padding: 5%;   
+}
+
+.wallpaper_img {
+  object-fit: contain;
+  width:100%;
+  height:100%;
+  padding: 5%;   
+}
+
+.centerImg {
+  width:75%;
+  opacity:0.5;
+}
+
+.actionBtnNotes{
+	background-color: gold !important;
+	color:#000000;
+	font-weight:bold;
+	font-size:10px !important;
+	width:120px;
+	text-align: center;
+}
+
+#divNotes{
+	display: block;
+	background-color: white;
+	width:parent;
+	margin-left: 10px;
+}
+
+.editable {
+  width: var(--chart-width);
+  height: 200px;
+  border: 1px solid #ccc;
+  padding: 5px;
+  resize: both;
+  overflow: auto;
+  text-align: left;
+  font-size: 12px;
+  font-weight: normal;
+  color:blue;
+}
+
+.indhu{
+	background-color:green;
+	color:white;
+	font-size:10px;
+	font-weight:bold
+}
+
+
+.retro{
+	color:red;
+}
+
+
+/* Button */
+.nadi-btn{
+  padding:6px 14px;font-size:16px;border:none;border-radius:6px;
+  background:#f2b60d;color:#000;font-weight:bold;cursor:pointer;
+}
+.nadi-btn:hover{background:#e0a705;}
+
+/* Overlay background */
+.astro-modal {
+  display: none; /* shown via JS */
+  position: fixed;
+  z-index: 9999;
+  left: 0; top: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 40px 10px;
+  box-sizing: border-box;
+}
+
+/* Modal content box */
+.astro-modal-content {
+  position: relative;
+  margin: auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 800px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
+
+/* Close button */
+.astro-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  z-index: 10000;
+  background: none;
+  border: none;
+  line-height: 1;
+}
+
+.astro-close:hover {
+  color: #d00;
+}
+
+/* Each planet's block */
+.astro-section {
+  margin-bottom: 14px;
+}
+
+/* Summary styling */
+.astro-section summary {
+  background: #f2b60d;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Buckets */
+.bucket {
+  margin: 8px 0 12px 20px;
+}
+
+.bucket-label {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.combo-line {
+  margin-left: 10px;
+  margin-bottom: 4px;
+  font-size: 14px;
+  word-wrap: break-word;
+}
+
+/* Responsive font size adjustment */
+@media (max-width: 600px) {
+  .combo-line {
+    font-size: 13px;
+  }
+  .astro-modal-content {
+    padding: 14px;
+  }
+}
+
+.nadi-btn{
+	background-color: var(--menu-background) !important;
+	color:var(--button-text-color) !important;
+	font-weight:bold !important;
+	font-size: var(--actionBtn-fontsize) !important;
+	width:auto;
+	text-align: center;
+	padding-left: 5px;
+    padding-right: 5px;
+}
+
+.enemy{ color:red; font-weight:bold; }
+
+.ubagraha{ 
+	color: var(--chart-ubagraha-font-color); 
+	font-size:var(--chart-ubagraha-font-size); 
+}
+
+.sookshmaDiv {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    align-content: center;
+    z-index: 11; /* above anthram */
+}
+
+.divSookshmaHeading { 
+    display: table-cell;
+    text-align:center;
+    vertical-align:middle;
+    border:solid 1px #000000;
+    background-color: lightgreen; /* different than anthram */
+    font-size: 11px;
+    color: black;
+    width: auto;
+    height: auto;
+    padding:5px;
+    font-weight: bold;
+}
+
+.divSookshma { 
+    display: table-cell;
+    text-align:center;
+    vertical-align:middle;
+    border:solid 1px #000000;
+    font-size: 11px;
+    color: black;
+    width: auto;
+    height: 20%;
+    padding:5px;
+    font-weight: bold;
+}
+
+.divCurrSookshma { 
+    display: table-cell;
+    text-align:center;
+    vertical-align:middle;
+    border:solid 1px #000000;
+    font-size: 11px;
+    color: black;
+    width: auto;
+    height: 20%;
+    padding:5px;
+    font-weight: bold;
+    background-color: yellow; /* highlight */
+}
+
+
+.pranaDiv {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    align-content: center;
+    z-index: 12; /* above sookshma */
+}
+
+.divPranaHeading { 
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    border: solid 1px #000000;
+    background-color: #66ccff; /* distinct for Prana */
+    font-size: 10px;
+    color: black;
+    width: auto;
+    height: auto;
+    padding: 5px;
+    font-weight: bold;
+}
+
+.divPrana { 
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    border: solid 1px #000000;
+    font-size: 10px;
+    color: black;
+    width: auto;
+    height: 20%;
+    padding: 5px;
+    font-weight: bold;
+}
+
+.divCurrPrana { 
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    border: solid 1px #000000;
+    font-size: 10px;
+    color: black;
+    width: auto;
+    height: 20%;
+    padding: 5px;
+    font-weight: bold;
+    background-color: yellow; /* highlight current Prana */
+}
+
+
+.birthSectionNav {
+    padding: 8px 12px;
+    font-size: 15px;
+    border: none;
+    border-radius: 6px;
+    background: #fff;
+    color: #333;
+    width: auto;
+    justify-self: right;
+}
+
+/* Container for the dropdown to enable right alignment */
+.nav-container {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+/* Styles for the custom-looking dropdown container */
+.select-container {
+    position: relative;
+    display: inline-block;
+    /* Removed the fixed width: 200px; */
+}
+
+.select-container select {
+    appearance: none; /* Hides the native dropdown arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    /* Removed the fixed width: 100%; to let it fit content */
+    padding: 10px 30px 10px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    /* Custom arrow using a base64 encoded SVG */
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23666" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 15px;
+}
+
+/* Hover and focus styles for better user interaction */
+.select-container select:hover {
+    border-color: #999;
+}
+
+.select-container select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Ensure sections are not hidden by the fixed menu bar */
+#birthHead, #chart2, #chart3, #divCurrentBukthi {
+    scroll-margin-top: 128px;
+}

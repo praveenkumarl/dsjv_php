@@ -1,0 +1,238 @@
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `prepareJamaChartData`(IN `in_sun_house` INT, IN `in_sun_degree` INT)
+BEGIN
+	DECLARE sunset,sunrise,sunrise_tom,sunset_prev,chart_time DATETIME;
+	DECLARE sun_house, sun_degree,counter,wday,udhayam_house,aarudam_house,kavippu_house TINYINT;
+	DECLARE day_length,night_length INT;
+	DECLARE rasi_size TIME;
+	DECLARE place VARCHAR(20);
+	DECLARE hs12,hs10,hs9,hs7,hs6,hs4,hs3,hs1 VARCHAR(10);
+	DECLARE daytime,debug,prev_night bool;
+	DECLARE kavippu,udhayam,aarudam VARCHAR(250);
+	DECLARE chart_date,house_start,house_end,today_midnight,prev_midnight DATETIME;
+	
+	SET debug = false;
+	SET prev_night = false;
+    
+	SET udhayam = "உத";
+	SET aarudam = "ஆரு";
+	SET kavippu = "கவி";
+	SET udhayam_house=0;
+	SET aarudam_house=0;
+	
+	START TRANSACTION; -- starting transaction 
+
+	SELECT in_sunrise, in_sunset, in_sunrise_tom, in_sunset_prev, in_chart_date, in_chart_time, in_place 
+		INTO sunrise,sunset,sunrise_tom,sunset_prev,chart_date,chart_time,place FROM input_data;
+		
+	SET chart_date = ADDTIME(chart_date,chart_time);
+	SET today_midnight = ADDTIME(chart_time,"23:59:59");
+	SET prev_midnight = ADDTIME(DATE_ADD(date(chart_time),INTERVAL -1 day),"23:59:59");
+	
+	-- store IN parameters
+	SET sun_degree = in_sun_degree;
+	SET sun_house = in_sun_house;
+	
+	IF debug THEN SELECT in_sun_degree, in_sun_house; END IF;
+	
+	-- Find aarudam
+	SET aarudam_house = MINUTE(chart_time) DIV 5+1;
+  
+  	-- Find udhayam ---------------------------Start-
+	IF chart_time > sunrise AND chart_time < SUBTIME(sunset,SEC_TO_TIME((sun_degree * 2)*60)) THEN
+		SET day_length = CAST(HOUR(TIMEDIFF(sunset,sunrise)) AS signed)*60+CAST(MINUTE(TIMEDIFF(sunset,sunrise)) AS signed);
+		SET rasi_size = SEC_TO_TIME(day_length/12*60);
+		SET daytime = true;
+	ELSEIF chart_time > SUBTIME(sunset,SEC_TO_TIME((sun_degree * 2)*60+1)) AND chart_time < SUBTIME(sunrise_tom,SEC_TO_TIME((sun_degree * 2)*60)) THEN
+		SET night_length = CAST(HOUR(TIMEDIFF(sunset,sunrise_tom)) AS signed)*60+CAST(MINUTE(TIMEDIFF(sunset,sunrise_tom)) AS signed);
+		SET rasi_size = SEC_TO_TIME(night_length/12*60);
+		SET daytime = false;
+	ELSEIF chart_time < sunrise AND chart_time > SUBTIME(sunset_prev,SEC_TO_TIME((sun_degree * 2)*60)) THEN
+		SET night_length = CAST(HOUR(ADDTIME(TIMEDIFF(prev_midnight,sunset_prev),TIME(sunrise))) AS signed)*60+CAST(MINUTE(ADDTIME(TIMEDIFF(prev_midnight,sunset_prev),TIME(sunrise))) AS signed);
+		SET rasi_size = SEC_TO_TIME(night_length/12*60);
+		SET prev_night = true;
+	END IF;
+	
+	
+	
+	IF prev_night = true THEN
+		SET wday = DAYOFWEEK(chart_time)-1;
+		SELECT H12,H10,H9,H7,H6,H4,H3,H1 INTO hs12,hs10,hs9,hs7,hs6,hs4,hs3,hs1 FROM jama WHERE Weekday=wday AND (CAST(chart_time AS TIME) > start_time AND CAST(chart_time AS TIME) <= end_time);
+		
+		SET house_start = SUBTIME(sunrise,SEC_TO_TIME((sun_degree * 2)*60));
+		SET house_end = ADDTIME(house_start,rasi_size);
+		
+		IF debug THEN SELECT hs12,hs10,hs9,hs7,hs6,hs4,hs3,hs1,wday,prev_night,house_start,house_end,SEC_TO_TIME((sun_degree * 2)*60),rasi_size,night_length; END IF;
+
+		SET counter=sun_house;
+		TRUNCATE temp_data;
+		
+		IF debug THEN SELECT counter,house_start,house_end; END IF;
+		
+		INSERT INTO temp_data (house,start_time,end_time) VALUES (counter,house_start,house_end);
+		
+		IF chart_time BETWEEN house_start AND house_end THEN
+			SET udhayam_house = counter;
+			-- INSERT INTO temp_data (house,start_time,end_time) VALUES (counter,house_start,house_end);
+		END IF;
+		
+		IF counter <= 12 THEN
+			Loop1 : WHILE counter > 1 DO
+				SET counter = counter - 1;
+				SET house_end=house_start;
+				
+				SET house_start=SUBTIME(house_start,rasi_size);
+				
+				IF chart_time BETWEEN house_start AND house_end THEN
+					SET udhayam_house = counter;
+				END IF;
+				
+				INSERT INTO temp_data (house,start_time,end_time) VALUES (counter,house_start,house_end);
+
+				IF debug THEN  SELECT udhayam_house,house_start,house_end; END IF;
+				
+				IF debug THEN SELECT counter,house_start,house_end; END IF;
+					
+			END WHILE Loop1;
+			SET counter = 13;
+			Loop2 : WHILE counter > sun_house+1 DO
+				SET counter = counter - 1;
+				SET house_end=house_start;
+				IF counter = sun_house+1 THEN
+					SET house_start=SUBTIME(house_end,SEC_TO_TIME((sun_degree * 2)*60));
+				ELSE
+					SET house_start=SUBTIME(house_end,rasi_size);	
+				END IF;
+		
+				IF chart_time BETWEEN house_start AND house_end THEN
+					SET udhayam_house = counter;
+				END IF;
+
+				INSERT INTO temp_data (house,start_time,end_time) VALUES (counter,house_start,house_end); 
+				IF debug THEN SELECT counter,house_start,house_end; END IF;
+				
+			END WHILE Loop2;
+		END IF;
+		
+
+	ELSE -- else of IF prev_night = true
+		SET wday = DAYOFWEEK(chart_time);
+		SELECT H12,H10,H9,H7,H6,H4,H3,H1 INTO hs12,hs10,hs9,hs7,hs6,hs4,hs3,hs1 FROM jama WHERE Weekday=wday AND (CAST(chart_time AS TIME) > start_time AND CAST(chart_time AS TIME) <= end_time);
+		
+		SET house_start = IF(daytime,SUBTIME(sunrise,SEC_TO_TIME((sun_degree * 2)*60)),SUBTIME(sunset,SEC_TO_TIME((sun_degree * 2)*60)));
+		SET house_end = ADDTIME(IF(daytime,sunrise,sunset),SUBTIME(rasi_size,SEC_TO_TIME((sun_degree * 2)*60)));
+		
+		IF debug THEN SELECT hs12,hs10,hs9,hs7,hs6,hs4,hs3,hs1,wday,daytime,house_start,house_end,SEC_TO_TIME((sun_degree * 2)*60),rasi_size,day_length,SUBTIME(rasi_size,SEC_TO_TIME((sun_degree * 2)*60)),SEC_TO_TIME((sun_degree * 2)*60); END IF;
+
+		SET counter=sun_house;
+		TRUNCATE temp_data;
+		
+		IF debug THEN SELECT counter,house_start,house_end; END IF;
+		
+		INSERT INTO temp_data (house,start_time,end_time) VALUES (counter,house_start,house_end);
+		
+		IF chart_time BETWEEN house_start AND house_end THEN
+			SET udhayam_house = counter;
+			-- INSERT INTO temp_data (house,start_time,end_time) VALUES (counter,house_start,house_end);
+		END IF;
+		
+		IF counter <= 12 THEN
+			Loop1 : WHILE counter < 12 DO
+				SET counter = counter + 1;
+				SET house_start=house_end;
+				
+				SET house_end=ADDTIME(house_start,rasi_size);
+				
+				IF chart_time BETWEEN house_start AND house_end THEN
+					SET udhayam_house = counter;
+				END IF;
+				
+				INSERT INTO temp_data (house,start_time,end_time) VALUES (counter,house_start,house_end);
+
+				IF debug THEN  SELECT udhayam_house,house_start,house_end; END IF;
+				
+				IF debug THEN SELECT counter,house_start,house_end; END IF;
+					
+			END WHILE Loop1;
+			SET counter = 0;
+			Loop2 : WHILE counter < sun_house-1 DO
+				SET counter = counter + 1;
+				SET house_start=house_end;
+				IF counter = sun_house-1 THEN
+					SET house_end=ADDTIME(IF(daytime,date(chart_time),DATE_ADD(date(chart_time),INTERVAL +1 day)),IF(daytime,CAST(sunset as TIME),CAST(sunrise_tom AS TIME)));
+				ELSE
+					SET house_end=ADDTIME(house_start,rasi_size);
+					
+				END IF;
+		
+				IF chart_time BETWEEN house_start AND house_end THEN
+					SET udhayam_house = counter;
+				END IF;
+
+				INSERT INTO temp_data (house,start_time,end_time) VALUES (counter,house_start,house_end); 
+				IF debug THEN SELECT counter,house_start,house_end; END IF;
+				
+			END WHILE Loop2;
+		END IF;
+		
+		-- Adjust last house for daytime calculation
+		
+		IF daytime THEN
+			IF debug THEN SELECT counter,house_start,house_end,SUBTIME(house_end,SEC_TO_TIME((sun_degree * 2)*60)); END IF;
+			UPDATE temp_data SET end_time = (SUBTIME(house_end,SEC_TO_TIME((sun_degree * 2*2)*60))) where house=counter;
+		END IF;
+	END IF; -- End if for IF prev_night == true
+
+	
+	-- UPDATE udhayam, aarudam to temp_data
+	UPDATE temp_data SET inside = IF(inside IS NULL,udhayam,CONCAT(inside,' ',udhayam)) WHERE house = udhayam_house;
+	UPDATE temp_data SET inside = IF(inside IS NULL,aarudam,CONCAT(inside,' ',aarudam)) WHERE house = aarudam_house;
+	
+	-- Find udhayam ---------------------------End-
+
+	-- Kavippu calclation ------------
+	IF sun_house=8 OR sun_house=9 OR sun_house=10 OR sun_house=11 THEN
+		-- SET kavippu_house = 3+IF(udhayam_house>aarudam_house,udhayam_house-aarudam_house,IF(aarudam_house=udhayam_house,0,12-aarudam_house+udhayam_house-1));
+		SET kavippu_house = KavippuHouse(3,CountHouse(aarudam_house,udhayam_house));
+	ELSEIF sun_house=2 OR sun_house=3 OR sun_house=4 OR sun_house=5 THEN
+		-- SET kavippu_house = 2+IF(udhayam_house>aarudam_house,udhayam_house-aarudam_house,IF(aarudam_house=udhayam_house,0,12-aarudam_house+udhayam_house-1));
+		SET kavippu_house = KavippuHouse(1,CountHouse(aarudam_house,udhayam_house));
+	ELSE
+		-- SET kavippu_house = 1+IF(udhayam_house>aarudam_house,udhayam_house-aarudam_house,IF(aarudam_house=udhayam_house,0,12-aarudam_house+udhayam_house-1));
+		SET kavippu_house = KavippuHouse(2,CountHouse(aarudam_house,udhayam_house));
+	END IF;
+
+
+	IF debug THEN SELECT udhayam_house,aarudam_house,kavippu_house; END IF;
+
+	UPDATE temp_data SET inside = IF(inside IS NULL,kavippu,CONCAT(inside,' ',kavippu)) WHERE house = kavippu_house;
+	
+
+	-- Jama House 12 
+	UPDATE temp_data SET outside = hs12 WHERE house=12;
+
+	-- Jama House 10 
+	UPDATE temp_data SET outside = hs10 WHERE house=10;
+
+	-- Jama House 9 
+	UPDATE temp_data SET outside = hs9 WHERE house=9;
+
+	-- Jama House 7 
+	UPDATE temp_data SET outside = hs7 WHERE house=7;
+
+	-- Jama House 6 
+	UPDATE temp_data SET outside = hs6 WHERE house=6;
+
+	-- Jama House 4 
+	UPDATE temp_data SET outside = hs4 WHERE house=4;
+
+	-- Jama House 3 
+	UPDATE temp_data SET outside = hs3 WHERE house=3;
+
+	-- Jama House 1 
+	UPDATE temp_data SET outside = hs1 WHERE house=1;
+	
+	COMMIT; -- commit transaction
+
+END$$
+DELIMITER ;

@@ -1,0 +1,441 @@
+/*normal mode*/
+#desk-table {
+    display: block;
+}
+#phone-table {
+    display: none;
+}
+
+/*mobile mode*/
+@media only screen and (max-width: 400px) { // max-width is the size of the web broswer in mobile 
+    #desk-table {
+        display: none;
+    }
+    #phone-table {
+        display: block;
+    }
+}
+
+mark {
+  color: black;
+}
+
+div.blueTable {
+  border: 0px solid #660000;
+  background-color: none;
+  width: 360px;
+  height: 360px;
+  text-align: center;
+  border-collapse: collapse;
+  /* box-shadow: 1px 2px 5px #FF6a40; */
+  margin-left: 10px;
+ 
+}
+.divTable.blueTable, .divTable.blueTable .divTableHead {
+  border: 0px solid #AAAAAA;
+  padding: 3px 2px;
+
+}
+.divTable.blueTable .divTableBody .divTableCell {
+  font-size: 12px;
+}
+.blueTable .tableFootStyle {
+  font-size: 12px;
+}
+.blueTable .tableFootStyle .links {
+	 text-align: center;
+
+}
+.blueTable .tableFootStyle .links a{
+  display: inline-block;
+  background: #1C6EA4;
+  color: #FFFFFF;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+.blueTable.outerTableFooter {
+  border-top: none;
+}
+.blueTable.outerTableFooter .tableFootStyle {
+  padding: 3px 5px; 
+}
+/* DivTable.com */
+.divTable{ display: table; background-color:white}
+.divTableRow { display: table-row; }
+.divTableHeading { display: table-header-group;}
+.divTableCell, .divTableHead 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px #660000;
+
+	background-color: #fff8f9;
+	font-size: 11px;
+	line-height: 15px;
+	font-weight: normal;
+	color: #660000;
+	width: 20%;
+	height: 20%;
+	padding:5px;
+
+	background-image: url(../images/square5.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+	
+	position:relative;
+}
+.divTableOuterCell 
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #B2FCE4;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 11px;
+	font-weight: normal;
+	color: #660000;
+	width: 10%;
+	height: 10%;
+	border:solid 1px #660000;
+	
+	position:relative;
+}
+
+.divTableDummyCell 
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #FFFFFF;
+	text-align:center;
+	vertical-align:middle;
+	width: 5%;
+	height: 5%;
+	font-size: 12px;
+	font-weight: bold;
+	color: black;
+}
+
+.divTableCenterCell 
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: none;
+	text-align:center;
+	vertical-align:middle;
+	font-size: calc(1.7vw-10px);
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:5px;
+	
+}
+
+
+.divTableHeading { display: table-header-group;}
+.divTableFoot { display: table-footer-group;}
+.divTableBody { display: table-row-group;}
+
+ .overlay {
+		position:absolute;
+		top:178px;
+        z-index: 9;
+        margin-left: 107px;
+        background: #FFFFFF;
+		width:145px;
+		height:145px;
+		border:solid 1px #660000;
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 60%;
+		background-position: center;
+		font-size:8px;
+		font-weight: bold;
+		color:#660000;
+}
+
+ .overlay1 {
+		position:absolute;
+		top:108px;
+        z-index: 9;
+        margin-left: 108px;
+        background: #FFFFFF;
+		width:145px;
+		height:145px;
+		border:solid 1px #660000;
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 60%;
+		background-position: center;
+		font-size:8px;
+		font-weight: bold;
+		color:#660000;
+      }	
+
+.overlay2 {
+		position:absolute;
+		/* top:108px; */
+		top: 23%;
+        z-index: 9;
+        margin-left: 111px;
+        background: #FFFFFF;
+		/* width:145px; */
+		/* height:145px; */
+		width:135px;
+		height:28.3%;
+		border:none; /*solid 1px #660000;*/
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 60%;
+		background-position: center;
+		font-size:8px;
+		font-weight: bold;
+		color:#660000;
+		
+      }	  
+	  
+.divTableCenterCell1
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: white;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 12px;
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:0px;
+	
+/*	background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 150%;
+		background-position: left -50% top -10%;*/
+		
+		/*background-image: url(../images/om.png);
+		background-repeat: no-repeat;
+		background-size: 100%;*/
+	
+	
+}
+
+.divTableCenterCell2
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: white;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 12px;
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:0px;
+	
+		/*background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 150%;
+		background-position: right -50% top -10%;
+		
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 100%;*/
+
+	
+	
+}
+
+.divTableCenterCell3
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: white;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 12px;
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:0px;
+	
+	
+		/*background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 150%;
+		background-position: left -50% bottom -15%;
+		
+		background-image: url(../images/swastik.png);
+		background-repeat: no-repeat;
+		background-size: 100%;*/
+	
+}
+
+.divTableCenterCell4
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: white;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 12px;
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:0px;
+	
+		/*background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 150%;
+		background-position: right -50% bottom -15%;
+		
+		background-image: url(../images/karanam.gif);
+		background-repeat: no-repeat;
+		background-size: 100%;*/
+
+	
+}
+
+
+.symbol {
+	font-size:15px;
+	font-weight:bold;
+	/* color: #660000; */
+	color: transparent;
+	
+	position: absolute;
+	top: 2px;
+	right: 2px;
+}
+
+::-webkit-calendar-picker-indicator {
+    color: rgba(0, 0, 0, 0);
+    opacity: 1;
+    display: block;
+    width: 15px;
+    height: 15px;
+    border-width: thin;
+	z-index: 1;
+}
+
+.divTableDegreeCell 
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #FFFFFF;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 11px;
+	font-weight: bold;
+	color: #660000;
+	width: 10%;
+	height: 10%;
+	border:solid 1px #660000;
+	
+	position:relative;
+}
+
+.header
+{
+	color:#660000; 
+	font-family: 'Source Sans Pro', Helvetica, sans-serif;
+	font-weight:bold; 
+	font-size:15px;
+}
+
+.footer
+{
+	color:#660000; 
+	font-family: 'Source Sans Pro', Helvetica, sans-serif;
+	font-weight:bold; 
+	font-size:18px;
+	animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+.title{
+	position: relative;
+	top:0;
+	right:0;
+	padding:40px;
+	height:20px;
+	background-image: url(../images/title2.png);
+	background-color: black;
+	background-size: 50%;
+	background-repeat: no-repeat;
+	background-position: center;
+	text-align: center;
+}
+
+#section1{
+		background:  linear-gradient(90deg,rgba(147,13,36,1),rgba(147,13,36,.5), rgba(147,13,36,.5),rgba(147,13,36,1)), url(../images/background1.jpg);
+		background-size: cover;
+		background-repeat: no-repeat;
+		
+		/* animation-name: rightToLeft;
+		animation-duration: .3s; */
+	}
+	
+#section0{
+		background:  linear-gradient(90deg,rgba(255, 250, 250,0.8),rgba(255, 250, 250,0.8), rgba(255, 250, 250,0.8),rgba(255, 250, 250,0.8)), url(../images/background1.jpg);
+		background-size: cover;
+		background-repeat: no-repeat;
+		
+		/* animation-name: rightToLeft;
+		animation-duration: .3s; */
+	}
+	
+	@keyframes leftToRight {
+  25%  {left:-1000px; top:0px;}
+  100% {left:0px; top:0px;}
+	}
+  
+  	@keyframes rightToLeft {
+  50%  {right:-1000px; top:0px;}
+  100% {right:0px; top:0px;}
+	}
+	
+#container
+	{
+	/* animation-name: rightToLeft;
+	animation-duration: .5s; */
+	}
+#search
+{
+	font-size: 20px;
+	color: #660000;
+}
+
+#search_err
+{
+	font-size: 12px;
+	color: red;
+}
+
+.lagna
+{
+	background-color:blue;
+	color:white;
+}
+
+.mandhi
+{
+	background-color:red;
+	color:white;
+}
+
+.moon
+{
+	background-color:#00ffff;
+	color:black;
+}

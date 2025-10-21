@@ -1,0 +1,920 @@
+:root {
+    /*--chart-background: url(../images/square5.jpg); */
+	--header-background: url(../images/OnePageHeader.png);
+	--chart-background: #ffe6f2;
+	--chart-outer-background: #FFFFFF;
+	--details-background: #ffe44d;
+	--chart-inner-font-size: 10px;
+	--officename-text-color: var(--text-color);
+	--horoscope-sloka-color: Green;
+	--girl-chart-background: #ffe6f2;
+	--boy-chart-background: #ccffff;
+	--girl-chart-font-size: 14px;
+	--chart-inner-font-weight: 600;
+	--text-color: Navy;
+}
+
+
+body {
+  width: 210mm;
+  height: 99%;
+  margin: 5mm auto;
+  padding: 0;
+  font-size: 12pt;
+  /*background-image: url('../images/watermark1.png');
+  background-repeat: repeat;
+  background-position: center;
+  background-size: 100%; */
+}
+* {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+.main-page {
+  width: 210mm !important; 
+  min-height: 99% !important;
+  margin: 15mm auto;
+  background: white;
+  box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+}
+.sub-page {
+  padding: 1cm;
+  height: 297mm;
+}
+@page {
+  size: A4;
+  //size: A3;
+  margin: 5mm;
+}
+@media print {
+  html, body {
+     margin: 0 !important;
+        padding: 0 !important;
+        width: 100%;
+        height: 99% !important;
+   }
+}
+  }
+  .main-page {
+    margin: 0;
+    border: initial;
+    border-radius: initial;
+    width: initial;
+    min-height: initial;
+    box-shadow: initial;
+    background: initial;
+    page-break-after: always;
+  }
+}
+
+
+/*normal mode*/
+#desk-table {
+    display: block;
+}
+#phone-table {
+    display: none;
+}
+
+/*mobile mode*/
+@media only screen and (max-width: 400px) { // max-width is the size of the web broswer in mobile 
+    #desk-table {
+        display: none;
+    }
+    #phone-table {
+        display: block;
+    }
+}
+
+mark {
+  color: black;
+}
+
+div.blueTable {
+  border: 0px solid black !important;
+  background-color: none;
+  width: 80mm;
+  height: 80mm;
+  text-align: center;
+  border-collapse: collapse;
+  /* box-shadow: 1px 2px 5px #FF6a40; */
+ 
+}
+.divTable.blueTable, .divTable.blueTable .divTableHead {
+  border: 0px solid #AAAAAA !important;
+  padding: 3px 2px;
+
+}
+
+.blueTable .tableFootStyle {
+  font-size: 12px;
+}
+.blueTable .tableFootStyle .links {
+	 text-align: center;
+
+}
+.blueTable .tableFootStyle .links a{
+  display: inline-block;
+  background: #1C6EA4;
+  color: #FFFFFF;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+.blueTable.outerTableFooter {
+  border-top: none;
+}
+.blueTable.outerTableFooter .tableFootStyle {
+  padding: 3px 5px; 
+}
+/* DivTable.com */
+.divTable{ display: table; }
+.divTableRow { display: table-row;}
+.divTableHeading { display: table-header-group;}
+
+.divTableCell
+{ 
+	display: table-cell; 
+	background-color: var(--girl-chart-background);
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px var(--text-color) !important;
+	border-collapse: collapse;
+	
+	font-size: var(--chart-inner-font-size);
+	line-height: 14px;
+	font-weight: bold;
+	color: black;
+	width: 20%;
+	min-width: 20%;
+	height: 20%;
+	min-height: 20%;
+	padding:5px;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.divTableOuterCell
+{ 
+	display: table-cell; 
+	background-color: var(--boy-chart-background);
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px var(--text-color) !important;
+	border-collapse: collapse;
+	
+	font-size: var(--chart-inner-font-size);
+	line-height: 14px;
+	font-weight: bold;
+	color: black;
+	width: 20%;
+	min-width: 20%;
+	height: 20%;
+	min-height: 20%;
+	padding:5px;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.divTableDummyCell 
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #FFFFFF;
+	text-align:center;
+	vertical-align:middle;
+	width: 5%;
+	height: 5%;
+	font-size: 12px;
+	font-weight: bold;
+	color: black;
+}
+
+.divTableCenterCell 
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: none;
+	text-align:center;
+	vertical-align:middle;
+	/*font-size: calc(1.7vw-8px);*/
+	font-size: 12px;
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:5px;
+	
+}
+
+
+.divTableHeading { display: table-header-group;}
+.divTableFoot { display: table-footer-group;}
+.divTableBody { display: table-row-group;}
+
+ .overlay {
+		position:absolute;
+		top:178px;
+        z-index: 9;
+        margin-left: 107px;
+        background: #FFFFFF;
+		width:145px;
+		height:145px;
+		border:solid 1px black;
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 60%;
+		background-position: center;
+		font-size:8px;
+		font-weight: bold;
+		color:black;
+}
+
+ .overlay1 {
+		position:absolute;
+		top:108px;
+        z-index: 9;
+        margin-left: 108px;
+        background: #FFFFFF;
+		width:145px;
+		height:145px;
+		border:solid 1px black;
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 60%;
+		background-position: center;
+		font-size:8px;
+		font-weight: bold;
+		color:black;
+      }	
+
+.overlay2 {
+		position:absolute;
+		top:108px;
+        z-index: 9;
+        margin-left: 107px;
+        background: #FFFFFF;
+		width:145px;
+		height:145px;
+		border:solid 1px black;
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 60%;
+		background-position: center;
+		font-size:8px;
+		font-weight: bold;
+		color:black;
+      }	  
+	  
+.kathir {
+	font-size:8px;
+	font-weight:normal;
+	color: black;
+	/* color: transparent; */
+	/* background-color: black; */
+	position: absolute;
+	top: 0px;
+	right: 3px;
+	width: 10px;
+}
+
+.jama_info {
+	font-size:8px;
+	font-weight:normal;
+}
+
+::-webkit-calendar-picker-indicator{
+    margin-left: 0px;
+}
+
+.divTableDegreeCell 
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #FFFFFF;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 11px;
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	border:solid 1px black;
+	
+	position:relative;
+}
+
+.header
+{
+	color:var(--text-color); 
+	font-family: 'Source Sans Pro', Helvetica, sans-serif;
+	font-weight:bold; 
+	font-size:15px;
+}
+
+.footer
+{
+	color:black; 
+	font-family: 'Source Sans Pro', Helvetica, sans-serif;
+	font-weight:bold; 
+	font-size:18px;
+	animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+#section1{
+		/*background:  linear-gradient(90deg,rgba(147,13,36,1),rgba(147,13,36,.5), rgba(147,13,36,.5),rgba(147,13,36,1)), url(../images/background1.jpg);*/
+		background-size: cover;
+		background-repeat: no-repeat;
+		
+		/* animation-name: rightToLeft;
+		animation-duration: .3s; */
+	}
+	
+#section0{
+		/*background:  linear-gradient(90deg,rgba(255, 250, 250,0.8),rgba(255, 250, 250,0.8), rgba(255, 250, 250,0.8),rgba(255, 250, 250,0.8)), url(../images/background1.jpg);*/
+		background-color: #F2F4F4;
+		background-size: cover;
+		background-repeat: no-repeat;
+		
+		/* animation-name: rightToLeft;
+		animation-duration: .3s; */
+	}
+	
+	@keyframes leftToRight {
+  25%  {left:-1000px; top:0px;}
+  100% {left:0px; top:0px;}
+	}
+  
+  	@keyframes rightToLeft {
+  50%  {right:-1000px; top:0px;}
+  100% {right:0px; top:0px;}
+	}
+	
+#container
+	{
+	/* animation-name: rightToLeft;
+	animation-duration: .5s; */
+	}
+#search
+{
+	font-size: 20px;
+	color: black;
+}
+
+#search_err
+{
+	font-size: 12px;
+	color: red;
+}
+
+
+.divTableCenterCell1
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: white;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 10px;
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:0px;
+	font-family: Verdana, Raavi, sans-serif;
+	
+	/*
+	background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 150%;
+		background-position: left -50% top -10%;
+	*/
+}
+
+.divTableCenterCell2
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: white;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 10px;
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:0px;
+	font-family: Verdana, Raavi, sans-serif;
+	
+	/*
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 150%;
+		background-position: right -50% top -10%;
+	*/
+	
+}
+
+.divTableCenterCell3
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: white;
+	text-align:right;
+	vertical-align:middle;
+	font-size: 10px;
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:0px;
+	font-family: Verdana, Raavi, sans-serif;
+	
+	/*
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 150%;
+		background-position: left -50% bottom -15%;
+	*/
+}
+
+.divTableCenterCell4
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: white;
+	text-align:left;
+	vertical-align:middle;
+	font-size: 10px;
+	font-weight: bold;
+	color: black;
+	width: 10%;
+	height: 10%;
+	padding:0px;
+	font-family: Verdana, Raavi, sans-serif;
+	
+	/*
+		background-image: url(../images/ganpati2.jpg);
+		background-repeat: no-repeat;
+		background-size: 150%;
+		background-position: right -50% bottom -15%;
+	*/
+}
+
+.lagna
+{
+	#background-color:var(--text-color);
+	#color:white;
+	color:black;
+	border: 1px solid;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.mandhi
+{
+	color:red;
+	font-weight: bold;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.moon
+{
+	#background-color:#00ffff;
+	color:black;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.udh
+{
+	background-color:#7cfc00;
+	color:black;
+}
+
+.aar
+{
+	background-color:#7cfc00;
+	color:black;
+}
+
+.kav
+{
+	background-color:red;
+	color:white;
+}
+
+.emma_kantam
+{
+	color:red;
+	font-weight: normal;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.rahu_kaalam
+{
+	color:red;
+	font-weight: normal;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+
+.divTableTextHeading 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid .1px black;
+	background-color: var(--details-background);
+	font-size: 8px;
+	color: black;
+	padding:3px;
+	font-weight: 800;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.divTableTextMainHeading 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 10px;
+	color: black;
+	padding:3px;
+	font-weight: 800;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.divTableTextSloka 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 12px;
+	color: var(--horoscope-sloka-color);
+	padding:5px;
+	font-weight: 800;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.divTableTextOfficeName 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 12px;
+	color: var(--officename-text-color);
+	padding:5px;
+	font-weight: 800;
+	line-height: 12px;
+	font-family: Verdana, Raavi, sans-serif;
+	margin-left:20px;
+	margin-right:20px;
+}
+
+.divTableTextMedium 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid .1px black;
+	background-color: #ffffff;
+	font-size: 8px;
+	color: black;
+	padding:3px;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.divTableTextBig
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid .1px black;
+	background-color: #ffffff;
+	font-size: 12px;
+	color: black;
+	padding:5px;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+
+
+
+.divHoroDetailCell
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:top;
+	font-size: 10px;
+	line-height: 15px;
+	font-weight: normal;
+	padding:2px;
+	background-repeat: no-repeat;
+	font-family: Verdana, Raavi, sans-serif;
+	position:relative;
+}
+
+.divStarDetailCell
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:top;
+	font-size: 10px;
+	line-height: 15px;
+	font-weight: normal;
+	padding:2px;
+	background-repeat: no-repeat;
+	width:inherit;
+	height:100%;
+	position:relative;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.PageHeader
+{
+	display: inline-block;
+	text-align: right;
+	vertical-align: middle;
+	color: var(--text-color);
+	font-size: 10px;
+	height:60px;
+	border-bottom:3px double;
+	border-color: black;
+	justify-content: center;
+}
+
+.header-parent { 
+    display: flow;
+	text-align: center;
+	vertical-align: bottom;
+	color: var(--text-color);
+	font-size: 10px;
+	margin-left: 5px;
+	margin-right: 5px;
+	height:55px;
+	border-bottom:3px double;
+	border-width: 100%;
+	border-color: var(--text-color);
+	justify-content: center;
+	width::-webkit-fill-available;
+} 
+.header-left { 
+    float: left; 
+	margin-left:2px;
+	padding-top:20px;
+}
+
+.header-right { 
+    float: right; 
+	margin-right:5px;
+	padding-top:20px;
+}
+
+.header-center { 
+    float: left;
+    /*width: 650px;*/
+	width: 100%;
+    text-align: -webkit-center;
+}
+
+.header-image{
+	display: block;
+	height:30px;
+	width:auto;
+	background-image: url('../images/maavilai.png');
+	background-repeat: repeat;
+	background-position: center;
+	background-size: 25%;
+	margin-left:5px;
+	margin-right:5px;
+}
+
+
+.thithi_soonyam {
+	font-size:9px;
+	font-weight:normal;
+	color: black !important;
+	/* color: transparent; */
+	/* background-color: #FFFFFF; */
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.thithi_soonyam_main {
+	font-size:8px;
+	font-weight:bold;
+	background-color: white !important;
+	color: black !important;
+	/* color: transparent; */
+	/* background-color: #FFFFFF; */
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.thithi_soonyam_main_txt {
+	font-size: 10px;
+	font-weight:bold;
+	background:white !important;
+	color: black !important;
+	/*border: 1px solid; */
+	/* color: transparent; */
+	/* background-color: #FFFFFF; */
+}
+
+.thithi_soonyam_main_txt::after {
+	content: "*";
+}
+
+.indhu{
+	color:black;
+	font-size:var(--chart-inner-font-size);
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+page[size="A4"] {  
+  width: 21cm;
+  height: 29.7cm; 
+}
+
+.retro{
+	color:red;
+	font-size: 8px;
+}
+
+.retro::after {
+    content: "(வ)";
+}
+
+.divTablePanchangHeading 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid .1px black;
+	background-color: var(--details-background);
+	font-size: 10px;
+	color: black;
+	padding:2px;
+	font-weight: 800;
+	font-family: Verdana, Raavi, sans-serif;
+}
+
+.divTablePanchangMedium 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid .1px black;
+	background-color: #ffffff;
+	font-size: 8px;
+	color: black;
+	padding:2px;
+	font-family: Verdana, Raavi, sans-serif;
+	line-height: 12px;
+}
+
+.divTablePanchangBig
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid .1px black;
+	background-color: #ffffff;
+	font-size: 10px;
+	color: black;
+	padding:2px;
+	font-family: Verdana, Raavi, sans-serif;
+	line-height: 12px;
+}
+
+.divGirlPanchangHeading 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px var(--text-color);
+
+	background-color: var(--girl-chart-background);
+	font-size: var(--chart-inner-font-size);
+	color: var(--text-color);
+	width: 20%;
+	height: 20%;
+	padding:5px;
+	
+	font-weight: bold;
+}
+
+.divGirlPanchang 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px var(--text-color);
+
+	background-color: #ffffff;
+	font-size: var(--chart-inner-font-size);
+	color: var(--text-color);
+	width: 20%;
+	height: 20%;
+	padding:5px;
+}
+
+.divBoyPanchangHeading 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px var(--text-color);
+
+	background-color: var(--boy-chart-background);
+	font-size: var(--chart-inner-font-size);
+	color: var(--text-color);
+	width: 20%;
+	height: 20%;
+	padding:5px;
+	
+	font-weight: bold;
+}
+
+.divBoyPanchang 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px var(--text-color);
+
+	background-color: #ffffff;
+	font-size: var(--chart-inner-font-size);
+	color: var(--text-color);
+	width: 20%;
+	height: 20%;
+	padding:5px;
+}
+
+.divMatchingHeading 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px var(--text-color);
+
+	background: rgb(255,210,232);
+	background: linear-gradient(90deg, rgba(255,210,232,1) 0%, rgba(255,210,232,1) 31%, rgba(188,255,255,1) 73%, rgba(188,255,255,1) 100%);
+	font-size: var(--chart-inner-font-size);
+	color: var(--text-color);
+	width: 10%;
+	height: auto;
+	padding:5px;
+	line-height:10px;
+	font-weight: bold;
+}
+
+.divMatchingTitle 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px var(--text-color);
+
+	background: rgb(255,210,232);
+	background: linear-gradient(90deg, rgba(255,210,232,1) 0%, rgba(255,210,232,1) 31%, rgba(188,255,255,1) 73%, rgba(188,255,255,1) 100%);
+	font-size: 12px;
+	color: var(--text-color);
+	width: 20%;
+	height: 20%;
+	padding:5px;
+	
+	font-weight: bold;
+}
+
+.divStarMatch{
+	font-size: 8px;
+	line-height: 10px;
+}
+
+.divMatchingPercent
+{
+	display:block;
+	border: 2px solid black;
+	width:60px;
+	height:60px;
+	padding:5px;
+	background-color:white;
+	margin-top:20px;
+	margin-bottom:5px;
+	font-size:14px;
+	font-weight:bold;
+	text-align:center;
+	align-content: center;
+}
+
+.matchingSymbol {
+	font-size:8px;
+	font-weight:normal;
+	position: relative;
+	top: 0px;
+	right: 0px;
+	width: 10px;
+	z-index: 9;
+}
+

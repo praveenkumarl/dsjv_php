@@ -1,0 +1,120 @@
+/*normal mode*/
+#desk-table {
+    display: block;
+}
+#phone-table {
+    display: none;
+}
+
+/*mobile mode*/
+@media only screen and (max-width: 400px) { // max-width is the size of the web broswer in mobile 
+    #desk-table {
+        display: none;
+    }
+    #phone-table {
+        display: block;
+    }
+}
+
+mark {
+  background-color: white;
+  color: black;
+}
+
+div.blueTable {
+  border: 0px solid #1C6EA4;
+  background-color: white;
+  width: 400px;
+  height: 400px;
+  text-align: center;
+  border-collapse: collapse;
+}
+.divTable.blueTable, .divTable.blueTable .divTableHead {
+  border: 0px solid #AAAAAA;
+  padding: 3px 2px;
+}
+.divTable.blueTable .divTableBody .divTableCell {
+  font-size: 12px;
+}
+.blueTable .tableFootStyle {
+  font-size: 12px;
+}
+.blueTable .tableFootStyle .links {
+	 text-align: center;
+}
+.blueTable .tableFootStyle .links a{
+  display: inline-block;
+  background: #1C6EA4;
+  color: #FFFFFF;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+.blueTable.outerTableFooter {
+  border-top: none;
+}
+.blueTable.outerTableFooter .tableFootStyle {
+  padding: 3px 5px; 
+}
+/* DivTable.com */
+.divTable{ display: table; }
+.divTableRow { display: table-row; }
+.divTableHeading { display: table-header-group;}
+.divTableCell, .divTableHead 
+{ 
+	display: table-cell;
+	text-align:center;
+	vertical-align:middle;
+	border:solid 1px #000000;
+	background-color: #ffffff;
+	font-size: 10px;
+	font-weight: bold;
+	color: #000000;
+	width: 60px;
+	height: 60px;
+	padding:5px;
+	
+}
+.divTableOuterCell 
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #ffffff;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 12px;
+	font-weight: bold;
+	width: 60px;
+	height: 60px;
+	border:solid 1px #000000;
+}
+
+.divTableDummyCell 
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: #ffffff;
+	text-align:center;
+	vertical-align:middle;
+	width: 60px;
+	height: 60px;
+}
+
+.divTableCenterCell 
+{ 
+	display: table-cell; 
+	border: none;
+	background-color: ffffcc;
+	text-align:center;
+	vertical-align:middle;
+	font-size: calc(1.7vw-10px);
+	font-weight: bold;
+	color: #000000;
+	width: 60px;
+	height: 60px;
+	padding:5px;
+}
+
+
+.divTableHeading { display: table-header-group;}
+.divTableFoot { display: table-footer-group;}
+.divTableBody { display: table-row-group;}

@@ -1,0 +1,168 @@
+case "Sun":
+					$planet="சூரி";
+					break;
+				case "Moon":
+					$planet="சந்";
+					break;
+				case "Mercury":
+					$planet="புத";
+					break;
+				case "Venus":
+					$planet="சுக்";
+					break;
+				case "Mars":
+					$planet="செ";
+					break;
+				case "Jupiter":
+					$planet="குரு";
+					break;
+				case "Saturn":
+					$planet="சனி";
+					break;
+				case "true Node":
+					$planet="ரா/கே";
+
+
+"சூரி"=>5,
+"சந்"=>21,
+"செ"=>8,
+"புத"=>16,
+"குரு"=>10,
+"சுக்"=>20,
+"சனி"=>4,
+"ரா"=>4,
+"கே"=>4
+
+
+
+["அசுவினி"=>"குதிரை",
+"பரணி"=>"யானை",
+"கார்த்திகை"=>"ஆடு",
+"ரோகிணி"=>"நாகம்",
+"மிருகசீரிஷம்"=>"சாரை",
+"திருவாதிரை"=>"நாய்",
+"புனர்பூசம்"=>"பூனை",
+"பூசம்"=>"ஆடு",
+"ஆயில்யம்"=>"பூனை",
+"மகம்"=>"எலி",
+"பூரம்"=>"எலி",
+"உத்தரம்"=>"எருது",
+"அஸ்தம்"=>"எருமை",
+"சித்திரை"=>"புலி",
+"சுவாதி"=>"எருமை",
+"விசாகம்"=>"புலி",
+"அனுஷம்"=>"மான்",
+"கேட்டை"=>"கலைமான்",
+"மூலம்"=>"நாய்",
+"பூராடம்"=>"குரங்கு",
+"உத்திராடம்"=>"மலட்டு பசு",
+"திருவோணம்"=>"குரங்கு",
+"அவிட்டம்"=>"சிங்கம்",
+"சதயம்"=>"குதிரை",
+"பூரட்டாதி"=>"சிங்கம்",
+"உத்திரட்டாதி"=>"பாற்பசு",
+"ரேவதி"=>"யானை"]
+
+
+
+
+
+"அசுவினி"
+"மிருகசிரீஷம்"
+ "புனர்பூசம்"
+ "பூசம்"
+ "ஹஸ்தம்"
+ "சுவாதி"
+ "அனுஷம்"
+ "திருவோணம்"
+ "ரேவதி"
+"பரணி"
+ "ரோகிணி"
+ "திருவாதிரை"
+ "பூரம்"
+ "உத்திரம்"
+ "பூராடம்"
+ "உத்திராடம்"
+ "பூரட்டாதி"
+"உத்திரட்டாதி"
+"கிருத்திகை"
+ "ஆயில்யம்"
+ "மகம்"
+ "சித்திரை"
+ "விசாகம்"
+ "கேட்டை"
+ "மூலம்"
+ "அவிட்டம்"
+"சதயம்"
+
+
+
+sirasu = [மிருகசிரீஷம், சித்திரை, அவிட்டம்];
+kanta = [ரோகிணி, திருவாதிரை, ஹஸ்தம், சுவாதி, திருவோணம், சதயம்];
+uthara = [கிருத்திகை, புனர்பூசம், உத்திரம்,விசாகம், உத்திராடம், பூரட்டாதி];
+ooru = [பரணி, பூசம், பூரம், அனுஷம், பூராடம், உத்திரட்டாதி];
+paatha = [அசுவினி, ஆயில்யம், மகம், கேட்டை,மூலம்,  ரேவதி];
+
+
+["மேஷம்", "ரிஷபம்", "மிதுனம்", "கடகம்", "சிம்மம்", "கன்னி", "துலாம்", "விருச்சிகம்", "தனுசு", "மகரம்", "கும்பம்", "மீனம்"]
+
+
+
+$name = $row["name"];
+$phone = $row["phone"];
+$user_type = $row["user_type"];
+
+e43grl6515l3sfbpvhde08ov24
+
+03uo85vcjqa112dpbcbh889dlk
+
+
+
+<div class="menu-container">
+		<div class='menuBtn' onClick="window.open('Jamakol_input.php','_self')">ஜாமக்கோள்</div>
+		<div class='menuBtn' onClick="window.open('Birth_input.php','_self')">பிறப்பு ஜாதகம்</div>
+		<div class='menuBtn' onClick="window.open('Matching_input.php','_self')">திருமண பொருத்தம்</div>
+		<div class='menuBtn' onClick="window.open('planet_kaaragam.php','_self')">கிரக காரகம்</div>
+		<div class='menuBtn' onClick="window.open('raasi_kaaragam.php','_self')">ராசி காரகம்</div>
+		<div class='menuBtn' onClick="window.open('hora.php','_self')">ஹோரை</div>
+		<div class='menuBtn' onClick="window.open('star_thaara_palan.php','_self')">தாரா பலன்</div>
+	</div>
+
+<div class="menu-container">
+	<div class='menuBtn' onClick="window.open('index.php','_self')">Home</div>
+	<div class='menuBtn' onClick="window.open('jamaChartDisplay.php','_self')">History</div>
+</div> 
+
+
+function generatePDF() {
+			// hide unncessary elements
+			var ele = document.getElementById('menu');
+			ele.style.display = 'none';
+			
+			displayAll();
+			
+			// Choose the element that our invoice is rendered in.
+			const element = document.getElementById('section0');
+			
+			var opt = {
+			  margin:       1,
+			  filename:     'pkastro.pdf',
+			  image:        { type: 'png', quality: 2.0 },
+			  html2canvas:  { scale: 2 },
+			  jsPDF:        { unit: 'in', format: 'A4', orientation: 'portrait' }
+			};
+			
+			// Choose the element and save the PDF for our user.
+			html2pdf().from(element).set(opt).save();
+			
+			//ele.style.display = 'block';
+		}
+
+
+sun_house=9 sun_degree=21.55 in_degree=1 in_debug=1
+
+
+
+
+
+LOAD DATA INFILE 'C:\\Users\\praveenkumarl\\OneDrive - HCL Technologies Ltd\\Desktop\\pkastro_test\\DB data\\world_cities_new_9Jan2023.csv' INTO TABLE world_cities FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n';

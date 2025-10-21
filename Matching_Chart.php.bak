@@ -1,0 +1,2542 @@
+<?php
+session_start();
+include "db.php";
+require "lib.php";
+
+?>
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="canonical" href="https://html5-templates.com/" />
+    <title>PK Astro</title>
+    <meta name="description" content="One stop website for Jamakol Prasannam">
+	
+	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/matching_chart_style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	
+	<link href='https://fonts.googleapis.com/css?family=Julius Sans One' rel='stylesheet'>
+	
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>  
+	<script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+	<script type="text/javascript" src="scrolloverflow.js"></script> 
+    <script src="script.js"></script>
+    <script type="text/javascript">
+		$(document).ready(function() {
+			$('#fullpage').fullpage({
+			  //sectionsColor: ['#1bbc9b', '#4BBFC3', '#7BAABE', 'whitesmoke', '#ccddff'],
+			  //sectionsColor: ['#FFe6df', '#FFcdbf', '#FFe6df', 'whitesmoke', '#ccddff'],
+			   sectionsColor: ['#FF8360', '#FFe6df', '#FFe6df', 'whitesmoke', '#ccddff'],
+			  anchors: ['firstPage','secondPage', '3rdPage', '4thpage', 'lastPage'],
+			  responsiveHeight: 800
+			});
+		});
+/******** this code is to take screenshot of the chart **************	
+		var dataURL = {};  
+		 $(document).ready(function(){
+		$('a').click(function(){
+			html2canvas(document.querySelector("#chart")).then(canvas => {  
+				document.body.appendChild(canvas);  
+				dataURL = canvas.toDataURL(); 
+				post_data(dataURL); 
+		  });
+		});
+		});
+  
+		function post_data(imageURL) {  
+            //console.log(imageURL);  
+			alert(imageURL);
+            $.ajax({  
+                url: "save_data.php",  
+                type: "POST",  
+                data: {  
+                    image: imageURL  
+                },  
+                dataType: "html",  
+                success: function() {  
+                    alert('Success!!');  
+                    location.reload();  
+                }  
+            });  
+        }   
+****** this code is to take screenshot of the chart ***************/
+
+		function init(){
+			
+		} 
+		
+		function updateNow() {
+			  const date = new Date();
+			  
+			  var dd = date.getDate();
+			  var mm = date.getMonth()+1; 
+			  var yyyy = date.getFullYear();
+			  if(dd<10) 
+			  {
+				  dd='0'+dd;
+			  } 
+
+			  if(mm<10) 
+			  {
+				  mm='0'+mm;
+			  } 
+			  var today = yyyy+'-'+mm+'-'+dd;
+
+			  var H=date.getHours();
+			  var M=date.getMinutes();
+			  var S=date.getSeconds();
+
+			  if(H<10) 
+			  {
+				  H='0'+H;
+			  } 
+
+			  if(M<10) 
+			  {
+				  M='0'+M;
+			  } 
+
+			  if(S<10) 
+			  {
+				  S='0'+S;
+			  } 
+			  var time = H+':'+M+':'+S;
+
+			  document.getElementById('nDate').value= today ; 
+			  document.getElementById('nTime').value= time ; 
+			  
+			  return true;
+			}
+
+		
+		$('nTime').on('change', function() {
+			var dataString = $(this).serialize();
+			alert("test");
+			$.ajax({
+			  type: "POST",
+			  url: "Jamakol_Chart.php",
+			  data: dataString,
+			  success: function () {
+				// Display message back to the user here
+			  }
+					});
+			 
+				e.preventDefault();
+		});
+		
+		$('nDate').on('change', function() {
+			var dataString = $(this).serialize();
+			alert("test");
+			$.ajax({
+			  type: "POST",
+			  url: "Jamakol_Chart.php",
+			  data: dataString,
+			  success: function () {
+				// Display message back to the user here
+			  }
+					});
+			 
+				e.preventDefault();
+		});
+				
+	</script>
+</head>
+<?php
+
+$DEBUG= (int) isset($_SESSION['debug']) ? $_SESSION['debug'] : 0;
+$conn="";
+$lat="";
+$lon="";
+$gmt_offset="";
+$tz_offset;
+$today_sunrise="";
+$today_sunset="";
+$tomo_sunrise="";
+$sun_degree=0;
+$moon_degree=0;
+$transit_moon_degree=0;
+$sun_house=0;
+$moon_house=0;
+$transit_moon_house=0;
+$transit_sun_degree=0;
+$transit_sun_house=0;
+$ragu_house=-1;
+$tr_ragu_house=-1;
+$sw_planet = array(null,null,null,null,null,null,null,null,null,null,null,null);
+$tr_sw_planet = array(null,null,null,null,null,null,null,null,null,null,null,null);
+$sw_degree = array();
+$tr_sw_degree = array(null,null,null,null,null,null,null,null,null,null,null,null);
+$out_planet_degree = array();
+$sw_dir = array(null,null,null,null,null,null,null,null,null,null,null,null);
+$tr_sw_dir = array(null,null,null,null,null,null,null,null,null,null,null,null);
+$dayofweek=-1;
+$transit_dayofweek=-1;
+$day=-1;
+$transit_day=-1;
+$output=array();
+$lagna_house=null;
+$lagna_degree=null;
+$cricketMenu=0;
+$autoAnalysisMenu=0;
+$planetDeg = array();
+$planetDeg_transit = array();
+$mandhi_degree=0;
+$mandhi_degree_transit=0;
+$panchang = array();
+$boy_nak = "";
+$girl_nak = "";
+
+// ------- Swiss ephemeris // ------- 
+$libPath = './sweph/';
+putenv("PATH=$libPath");
+// ------- Swiss ephemeris // ------- 
+
+$chart_time = isset($_POST["nTime"]) ? $_POST["nTime"] : $_POST["in_time_girl"];
+$chart_date = isset($_POST["nDate"]) ? $_POST["nDate"] : $_POST["in_date_girl"];
+
+$_SESSION["date"] = date("d-m-Y",strtotime($chart_date));
+$_SESSION["time"] = $chart_time;
+
+$dayofweek = date('w', strtotime($chart_date));
+
+?>
+
+<body onLoad="init();">
+
+
+<?php
+
+function isFilled($str)
+{
+	if(isset($str)) {
+		echo "already has value";
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+function findKethuPos($pos)
+{
+	global $DEBUG;
+	$kethuHouse=0;
+	
+	if($DEBUG==1) {
+		echo "<BR>findKethuPos() pos=" . $pos . "</BR>";
+	}
+	
+	switch ($pos) {
+		case 0:
+			$kethuHouse=6;
+			break;
+		case 1:
+			$kethuHouse=7;
+			break;
+		case 2:
+			$kethuHouse=8;
+			break;
+		case 3:
+			$kethuHouse=9;
+			break;
+		case 4:
+			$kethuHouse=10;
+			break;
+		case 5:
+			$kethuHouse=11;
+			break;
+		case 6:
+			$kethuHouse=0;
+			break;
+		case 7:
+			$kethuHouse=1;
+			break;
+		case 8:
+			$kethuHouse=2;
+			break;
+		case 9:
+			$kethuHouse=3;
+			break;
+		case 10:
+			$kethuHouse=4;
+			break;
+		case 11:
+			$kethuHouse=5;
+			break;
+	  default:
+		break;
+	}
+	
+	return $kethuHouse;
+}
+
+
+
+function updatePlanet(array $planets,array $retro, $in_ragu_house)
+{
+	global $DEBUG;
+	
+	if($DEBUG==1) {
+		echo "<BR>UPDATE PLANET before update</BR>";
+		var_dump($planets);
+		echo "<BR>UPDATE PLANET before update</BR>";
+		var_dump($retro);
+	}
+	
+	
+	$out = str_replace('Sun','சூரி',$planets);
+	
+	$out = str_replace('Moon','சந்',$out);
+	
+	if($retro[4]==1){
+		$out = str_replace('Mars','செ',$out);
+	}else{
+		$out = str_replace('Mars','<span style="color:red">செ</span>',$out);
+	}
+	
+	if($retro[3]==1){
+		$out = str_replace('Venus','சுக்',$out);
+	}else{
+		$out = str_replace('Venus','<span style="color:red">சுக்</span>',$out);
+	}
+	
+	if($retro[2]==1){
+		$out = str_replace('Mercury','புத',$out);
+	}else{
+		$out = str_replace('Mercury','<span style="color:red">புத</span>',$out);
+	}
+	
+	if($retro[5]==1){
+		$out = str_replace('Jupiter','குரு',$out);
+	}else{
+		$out = str_replace('Jupiter','<span style="color:red">குரு</span>',$out);
+	}
+	
+	if($retro[6]==1){
+		$out = str_replace('Saturn','சனி',$out);
+	}else{
+		$out = str_replace('Saturn','<span style="color:red">சனி</span>',$out);
+	}
+	
+	$out = str_replace('true Node','ரா',$out);
+	$out = str_replace('Ascendant','லக்',$out);
+	
+	//trim spaces
+	$out = array_map('trim', $out);
+	
+	$Kethu_pos = findKethuPos($in_ragu_house);
+	
+	$out[$Kethu_pos] = 'கே ' . $out[$Kethu_pos];
+	
+	if($DEBUG==1) {
+		
+		echo "<BR>UPDATE PLANET after update</BR>";
+		echo "<BR>KETHU position: ".$Kethu_pos . "</BR>";
+		var_dump($out);
+	}
+	
+	return $out;
+}
+
+function updateSymbols(array $planets)
+{
+	global $DEBUG;
+	
+	if($DEBUG==1) {
+		echo "<BR>UPDATE SYMBOL before update</BR>";
+		var_dump($planets);
+	}
+	
+	$out = str_replace("சூரி","சூரி<br><span class='symbol'>&#9737;<span>",$planets);
+	$out = str_replace("செ","செ<br><span class='symbol'>&#9794;<span>",$out);
+	$out = str_replace("ரா","ரா<br><span class='symbol'>&#9738;<span>",$out);
+	$out = str_replace("குரு","குரு<br><span class='symbol'>&#9795;<span>",$out);
+	$out = str_replace("புத","புத<br><span class='symbol'>&#9791;<span>",$out);
+	$out = str_replace("சுக்","சுக்<br><span class='symbol'>&#9792;<span>",$out);
+	$out = str_replace("சனி","சனி<br><span class='symbol'>&#9796;<span>",$out);
+	$out = str_replace("சந்","சந்<br><span class='symbol'>&#9790;<span>",$out);
+	
+	
+	if($DEBUG==1) {
+		
+		echo "<BR>UPDATE SYMBOL after update</BR>";
+		var_dump($out);
+	}
+	
+	return $out;
+}
+
+
+function targetHouse($start_house,$number_of_houses)
+{
+	debug($start_house);
+	debug($number_of_houses);
+	
+	if($start_house+$number_of_houses > 12){
+		return $start_house - 1 + $number_of_houses-12;
+	}
+	else {
+		return $number_of_houses + $start_house - 1;
+	}
+}
+
+function targetJamaHouse($start_house,$number_of_houses)
+{
+	$temp = 0;
+	debug($start_house);
+	debug($number_of_houses);
+	
+	if($start_house-$number_of_houses > 0){
+		$temp = $start_house - $number_of_houses;
+		
+		if($temp == 1 || $temp == 4 || $temp == 7 || $temp == 10){
+			$temp = $temp - 1;
+		}
+	}
+	else {
+		$temp = 12 - abs($start_house-$number_of_houses);
+		
+		if($temp == 1 || $temp == 4 || $temp == 7 || $temp == 10){
+			$temp = $temp - 1;
+		}
+	}
+	
+	debug("targetJH-".$start_house."-".$number_of_houses."-".$temp."<BR>");
+	
+	return $temp;
+}
+
+
+function updateMandhi(array $out, array $in, $in_sun_degree, $in_day, $in_dayofweek,$in_sun_house)
+{	
+	global $datetime,$today_sunrise;
+	
+	if(strtotime($datetime) < strtotime($today_sunrise)){
+		$in_dayofweek = $in_dayofweek - 1;
+		
+		if($in_dayofweek < 0){
+			$in_dayofweek = 6;
+		}
+	}
+		
+	$mandhi_house = targetHouse($in_sun_house,findMandhiHouse($in_dayofweek,$in_sun_degree, $in_day));
+	
+	debug($mandhi_house);
+	
+	foreach ($in as $key => $value) {
+		//mandhi house update
+		if($key == $mandhi_house){
+			$out[$key] = $out[$key] . " <span>மா</span>";
+		}
+	}
+	
+	return $out;
+}
+
+function updateMandhi_transit(array $out, array $in, $in_sun_degree, $in_day, $in_dayofweek,$in_sun_house)
+{	
+	global $transit_datetime,$today_sunrise;
+	
+	if(strtotime($transit_datetime) < strtotime($today_sunrise)){
+		$in_dayofweek = $in_dayofweek - 1;
+		
+		if($in_dayofweek < 0){
+			$in_dayofweek = 6;
+		}
+	}
+	
+	$mandhi_house = targetHouse($in_sun_house,findMandhiHouse_transit($in_dayofweek,$in_sun_degree, $in_day));
+	
+	debug($mandhi_house);
+	
+	foreach ($in as $key => $value) {
+		//mandhi house update
+		if($key == $mandhi_house){
+			$out[$key] = $out[$key] . " <span>மா</span>";
+		}
+	}
+	
+	return $out;
+}
+
+function getDegree($in_deg)
+{
+// Converts decimal longitude / latitude to DMS
+// ( Degrees / minutes / seconds ) 
+
+// This is the piece of code which may appear to 
+// be inefficient, but to avoid issues with floating
+// point math we extract the integer part and the float
+// part by using a string function.
+
+    $vars = explode(".",$in_deg);
+    $deg = $vars[0]+(isset($vars[1]) ? $vars[1] : 0)/100;
+    
+	return $deg;
+} 
+
+
+function displayDegree($sw_degree)
+{
+	global $out_planet_degree;
+	
+	$txt="";
+	$planet="";
+	
+	foreach ($sw_degree as $key => $val) {
+		if($val!=null) {
+			
+			switch (trim($key)) {
+				case "Sun":
+					$planet="சூரி";
+					break;
+				case "Moon":
+					$planet="சந்";
+					break;
+				case "Mercury":
+					$planet="புத";
+					break;
+				case "Venus":
+					$planet="சுக்";
+					break;
+				case "Mars":
+					$planet="செ";
+					break;
+				case "Jupiter":
+					$planet="குரு";
+					break;
+				case "Saturn":
+					$planet="சனி";
+					break;
+				case "true Node":
+					$planet="ரா/கே";
+					break;
+				case "Ascendant":
+					$planet="லக்";
+					break;
+				case "mandhi":
+					$planet="மா";
+					break;
+				default:
+					break;
+			}
+			
+			$out_planet_degree[$planet] = $val;
+			
+			$txt = $txt . " " . $planet . "-" . $val;
+		}
+	}
+	
+	return $txt;
+}
+
+
+function uchchaDetails()
+{
+	global $outside;
+	$uchchaDetails="இல்லை";
+	$uPlanet="";
+	
+	foreach ($outside as $value){
+		if(strlen($value)>0 && strpos($value,"&#8593;")>0){
+		$nPlanet=$value;
+		}
+	}
+	
+	if(strlen($uPlanet)>0){
+		$uchchaDetails = $uPlanet;
+	}
+	
+	return $uchchaDetails;
+}
+
+function nechchaDetails()
+{
+	global $outside;
+	$nechchaDetails="இல்லை";
+	$nPlanet="";
+	
+	foreach ($outside as $value){
+		if(strlen($value)>0 && strpos($value,"&#8595;")>0){
+		$nPlanet=$value;
+		}
+	}
+	
+	if(strlen($nPlanet)>0){
+		$nechchaDetails = $nPlanet;
+	}
+	
+	return $nechchaDetails;
+}
+
+
+function findMandhiHouse($in_dayofweek,$in_sun_degree,$in_day)
+{
+	global $mandhi_degree;
+	
+	switch ($in_dayofweek) {
+		case 0: //Sun
+			if($in_day==1){
+				$mandhi_degree=$in_sun_degree+156;
+			}
+			else{
+				$mandhi_degree=$in_sun_degree+240;
+			}
+			break;
+		case 1: //Mon
+			if($in_day==1){
+				$mandhi_degree=$in_sun_degree+132;
+			}
+			else{
+				$mandhi_degree=$in_sun_degree+216;
+			}
+			break;
+		case 2: //Tue
+			if($in_day==1){
+				$mandhi_degree=$in_sun_degree+108;
+			}
+			else{
+				$mandhi_degree=$in_sun_degree+192;
+			}
+			break;
+		case 3: //Wed
+			if($in_day==1){
+				$mandhi_degree=$in_sun_degree+84;
+			}
+			else{
+				$mandhi_degree=$in_sun_degree+336;
+			}
+			
+			debug("(((((((((".$mandhi_degree."))))))))");
+			break;
+		case 4: //Thur
+			if($in_day==1){
+				$mandhi_degree=$in_sun_degree+60;
+			}
+			else{
+				$mandhi_degree=$in_sun_degree+312;
+			}
+			break;
+		case 5: //Fri
+			if($in_day==1){
+				$mandhi_degree=$in_sun_degree+36;
+			}
+			else{
+				$mandhi_degree=$in_sun_degree+288;
+			}
+			break;
+		case 6:  //Sat
+			if($in_day==1){
+				$mandhi_degree=$in_sun_degree+12;
+			}
+			else{
+				$mandhi_degree=$in_sun_degree+264;
+			}
+			break;
+	  default:
+		break;
+	}
+	
+	$mandhi_house = (int)(($mandhi_degree % 360)/30);
+	
+	debug("FINDMANDHI - WEEK DAY=" . $in_dayofweek);
+	debug("FINDMANDHI - DAYTIME=" . $in_day);
+	debug("FINDMANDHI - MANDHI DEGREE=" . ($mandhi_degree % 30));
+	debug("FINDMANDHI - SUN DEGREE=" . $in_sun_degree);
+	debug("FINDMANDHI - MANDHI DEGREE FROM SUN=" . $mandhi_degree);
+	debug("FINDMANDHI - MANDHI HOUSE=" . $mandhi_house);
+	
+	//update mandhi degree in degree array
+	$sw_degree["mandhi"] = DECtoDMS($mandhi_degree % 30);
+	
+	return $mandhi_house;
+}
+
+function findMandhiHouse_transit($in_dayofweek,$in_sun_degree,$in_day)
+{
+	global $mandhi_degree_transit;
+	
+	switch ($in_dayofweek) {
+		case 0: //Sun
+			if($in_day==1){
+				$mandhi_degree_transit=$in_sun_degree+156;
+			}
+			else{
+				$mandhi_degree_transit=$in_sun_degree+240;
+			}
+			break;
+		case 1: //Mon
+			if($in_day==1){
+				$mandhi_degree_transit=$in_sun_degree+132;
+			}
+			else{
+				$mandhi_degree_transit=$in_sun_degree+216;
+			}
+			break;
+		case 2: //Tue
+			if($in_day==1){
+				$mandhi_degree_transit=$in_sun_degree+108;
+			}
+			else{
+				$mandhi_degree_transit=$in_sun_degree+192;
+			}
+			break;
+		case 3: //Wed
+			if($in_day==1){
+				$mandhi_degree_transit=$in_sun_degree+84;
+			}
+			else{
+				$mandhi_degree_transit=$in_sun_degree+336;
+			}
+			
+			debug ("(((((((((".$mandhi_degree_transit."))))))))");
+			break;
+		case 4: //Thur
+			if($in_day==1){
+				$mandhi_degree_transit=$in_sun_degree+60;
+			}
+			else{
+				$mandhi_degree_transit=$in_sun_degree+312;
+			}
+			break;
+		case 5: //Fri
+			if($in_day==1){
+				$mandhi_degree_transit=$in_sun_degree+36;
+			}
+			else{
+				$mandhi_degree_transit=$in_sun_degree+288;
+			}
+			break;
+		case 6:  //Sat
+			if($in_day==1){
+				$mandhi_degree_transit=$in_sun_degree+12;
+			}
+			else{
+				$mandhi_degree_transit=$in_sun_degree+264;
+			}
+			break;
+	  default:
+		break;
+	}
+	
+	$mandhi_house = (int)(($mandhi_degree_transit % 360)/30);
+	
+	debug("FINDMANDHI Transit - WEEK DAY=" . $in_dayofweek);
+	debug("FINDMANDHI Transit - DAYTIME=" . $in_day);
+	debug("FINDMANDHI Transit - MANDHI DEGREE=" . ($mandhi_degree_transit % 30));
+	debug("FINDMANDHI Transit - SUN DEGREE=" . $in_sun_degree);
+	debug("FINDMANDHI Transit - MANDHI DEGREE FROM SUN=" . $mandhi_degree_transit);
+	debug("FINDMANDHI Transit - MANDHI HOUSE=" . $mandhi_house);
+	
+	//update mandhi degree in degree array
+	$tr_sw_degree["mandhi"] = DECtoDMS($mandhi_degree_transit % 30);
+	
+	return $mandhi_house;
+}
+
+function displayChart($in,$out)
+{
+
+echo <<<EOL
+	<div class="divTable blueTable" id="chart">
+		<div class="overlay1"><br>பெரியநாயகி துணை</br></div>
+		<div class="divTableBody">
+			<div class="divTableRow">
+					<div class="divTableOuterCell">$out[11]</div>
+					<div class="divTableDummyCell"></div>
+					<div class="divTableOuterCell">$out[0]</div>
+					<div class="divTableDummyCell"></div>
+					<div class="divTableDummyCell"></div>
+					<div class="divTableOuterCell">$out[2]</div>
+			</div>
+			<div class="divTableRow">
+					<div class="divTableDummyCell"></div>
+					<div class="divTableCell">$in[11]<span class='symbol'>&#9795;<span></div>
+					<div class="divTableCell">$in[0]<span class='symbol'>&#9794;<span></div>
+					<div class="divTableCell">$in[1]<span class='symbol'>&#9792;<span></div>
+					<div class="divTableCell">$in[2]<span class='symbol'>&#9791;<Cspan></div>
+					<div class="divTableDummyCell"></div>
+			</div>
+			<div class="divTableRow">
+					<div class="divTableDummyCell"></div>
+					<div class="divTableCell">$in[10]<span class='symbol'>&#9796;<span></div>
+					<div class="divTableCenterCell1"></div>
+					<div class="divTableCenterCell2"></div>
+					<div class="divTableCell">$in[3]<span class='symbol'>&#9790;<span></div>
+					<div class="divTableOuterCell">$out[3]</div>
+			</div>
+			<div class="divTableRow">
+					<div class="divTableOuterCell">$out[9]</div>
+					<div class="divTableCell">$in[9]<span class='symbol'>&#9796;<span></div>
+					<div class="divTableCenterCell3"></div>
+					<div class="divTableCenterCell4"></div>
+					<div class="divTableCell">$in[4]<span class='symbol'>&#9737;<span></div>
+					<div class="divTableDummyCell"></div>
+			</div>
+			<div class="divTableRow">
+					<div class="divTableDummyCell"></div>
+					<div class="divTableCell">$in[8]<span class='symbol'>&#9795;<span></div>
+					<div class="divTableCell">$in[7]<span class='symbol'>&#9794;<span></div>
+					<div class="divTableCell">$in[6]<span class='symbol'>&#9792;<span></div>
+					<div class="divTableCell">$in[5]<span class='symbol'>&#9791;<span></div>
+					<div class="divTableDummyCell"></div>
+			</div>
+			<div class="divTableRow">
+					<div class="divTableOuterCell">$out[8]</div>
+					<div class="divTableDummyCell"></div>
+					<div class="divTableDummyCell"></div>
+					<div class="divTableOuterCell">$out[6]</div>
+					<div class="divTableDummyCell"></div>
+					<div class="divTableOuterCell">$out[5]</div>
+			</div>
+		</div>	
+	</div>
+
+EOL;
+}
+
+function createAutoAnalysisSection()
+{
+	global $Analysis;
+	
+	echo <<<EOL
+		<div class="section" id="section1">
+			<div class="intro">
+				<div class="container">
+					<div style="height:60px"></div>
+					<div class="divTable blueTable" style="height:40px;width:360px;">
+						<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
+							<div class="divTableOuterCell" colspan=3 style="border:none;">
+							<div class="header">Auto Analysis</div>
+							</div>
+						</div>
+					</div>
+			
+					<div class="divTable blueTable">
+						<div class="divTableBody">
+EOL;
+
+foreach ($Analysis as $key => $value){
+//foreach ($out_planet_degree as $key => $value){
+	echo "<div class='divTableRow'>";
+	echo "<div class='divTableDegreeCell'>$key</div>";
+	echo "<div class='divTableDegreeCell'>$value</div>";
+	echo "</div>";	
+}
+
+echo <<<EOL
+						</div>
+					</div>
+					<div class="divTable blueTable" style="height:40px;width:360px;">
+						<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
+							<div class="divTableDummyCell" colspan=3>
+							<div class="footer">Scroll up for chart details	&#9650;</div>
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+EOL;
+
+}
+
+function planetSort($inArray)
+{
+	global $planetDeg, $DEBUG;
+	$count = 0;
+	
+	foreach ($inArray as $key => $line)
+	{
+		$row = explode(',',$line);
+		$count = $count + 1;
+		
+		if($count>8 && $count!=21) {continue;}
+
+		debug($count."[".$row[0]."|".$row[1]."|".$row[2]."]<Br>");
+		$planetDeg[trim($row[0])] = round(fmod(floatval($row[1]), 30.0),2);		
+	}
+	
+	debug("PLANET+DEGREE");
+	if($DEBUG==1){var_dump($planetDeg);}
+	
+	debug("PLANET+DEGREE+SORTED");
+	asort($planetDeg);
+	
+	if($DEBUG==1){var_dump($planetDeg);}
+	
+	foreach ($planetDeg as $key => $val) {
+		if($val!=null or $val>=0) {
+			
+			switch (trim($key)) {
+				case "Sun":
+					$planet="சூரி";
+					break;
+				case "Moon":
+					$planet="சந்";
+					break;
+				case "Mercury":
+					$planet="புத";
+					break;
+				case "Venus":
+					$planet="சுக்";
+					break;
+				case "Mars":
+					$planet="செ";
+					break;
+				case "Jupiter":
+					$planet="குரு";
+					break;
+				case "Saturn":
+					$planet="சனி";
+					break;
+				case "true Node":
+					$planet="ரா";
+					break;
+				case "Ascendant":
+					$planet="லக்";
+					break;
+				case "mandhi":
+					$planet="மா";
+					break;
+				default:
+					break;
+			}
+			
+			$out_planet_degree[$planet] = $val;
+		}
+	}
+	
+	$planetDeg = $out_planet_degree;
+}
+
+function planetSort_transit($inArray)
+{
+	global $planetDeg_transit, $DEBUG;
+	$count = 0;
+	
+	foreach ($inArray as $key => $line)
+	{
+		$row = explode(',',$line);
+		$count = $count + 1;
+		
+		if($count>8 && $count!=21) {continue;}
+
+		debug($count."[".$row[0]."|".$row[1]."|".$row[2]."]<Br>");
+		$planetDeg_transit[trim($row[0])] = round(fmod(floatval($row[1]), 30.0),1);		
+	}
+	
+	debug("PLANET+DEGREE");
+	if($DEBUG==1){var_dump($planetDeg_transit);}
+	
+	debug("PLANET+DEGREE+SORTED");
+	asort($planetDeg_transit);
+	
+	if($DEBUG==1){var_dump($planetDeg_transit);}
+	
+	foreach ($planetDeg_transit as $key => $val) {
+		if($val!=null) {
+			
+			switch (trim($key)) {
+				case "Sun":
+					$planet="சூரி";
+					break;
+				case "Moon":
+					$planet="சந்";
+					break;
+				case "Mercury":
+					$planet="புத";
+					break;
+				case "Venus":
+					$planet="சுக்";
+					break;
+				case "Mars":
+					$planet="செ";
+					break;
+				case "Jupiter":
+					$planet="குரு";
+					break;
+				case "Saturn":
+					$planet="சனி";
+					break;
+				case "true Node":
+					$planet="ரா";
+					break;
+				case "Ascendant":
+					$planet="லக்";
+					break;
+				case "mandhi":
+					$planet="மா";
+					break;
+				default:
+					break;
+			}
+			
+			$out_planet_degree[$planet] = $val;
+		}
+	}
+	
+	$planetDeg_transit = $out_planet_degree;
+}
+
+function sortDegree($inArray) // new function
+{
+	global $planetDeg,$mandhi_degree;
+	
+	$kethuUpdated = false;
+	$mandhiUpdated = false;
+	$outArray=array(null,null,null,null,null,null,null,null,null,null,null,null);
+	
+	foreach ($planetDeg as $planet => $deg) {
+		foreach ($inArray as $house => $inPlanet)
+		{	
+			//$inArray[$house] = str_replace($planet, $planet. " " . $planetDeg[$planet],$inArray[$house]);
+			
+			if(strpos($inArray[$house],$planet)===0 || strpos($inArray[$house],$planet)>0){	
+				if(strpos($inArray[$house],'red">'.$planet)>0 || strpos($inArray[$house],'red">'.$planet)===0){
+					$outArray[$house] = $outArray[$house] . " " . "<span style='color:red'>$planet</span>" . "-". $planetDeg[$planet];
+				}
+				else{
+					$outArray[$house] = $outArray[$house] . " " . $planet . "-". $planetDeg[$planet];
+				}
+			}
+			
+			if($kethuUpdated==false && (strpos($inArray[$house],"கே")===0 || strpos($inArray[$house],"கே")>0)){	
+					$outArray[$house] = $outArray[$house] . " " . "கே" . "-". $planetDeg["ரா"];
+					$kethuUpdated = true;
+			}
+			
+			if($mandhiUpdated==false && (strpos($inArray[$house],"மா")===0 || strpos($inArray[$house],"மா")>0)){	
+				$outArray[$house] = $outArray[$house] . " " . "மா" . "-". strval(DECtoDMS($mandhi_degree % 30.0));
+				$mandhiUpdated = true;
+			}
+			
+			/*//$inArray[$house] = str_replace($planet, $planet . "-". $planetDeg[$planet],$inArray[$house]);
+				
+			if(strpos($planet,"ரா")===0 and strpos($inPlanet,"கே")===0){
+				//$inArray[$house] = str_replace($inPlanet, trim($inPlanet). "." . $planetDeg[$planet],$inArray[$house]);
+				$inArray[$house] = substr_replace($inArray[$house], "-".$planetDeg[$planet],6,0);
+				
+			}*/
+		}
+	}
+	
+	//$inArray = str_replace("மா", "மா". "-" . strval($mandhi_degree % 30.0),$inArray);
+	
+	//return $inArray;
+	return $outArray;
+}
+
+function sortDegree_transit($inArray) // new function
+{
+	global $planetDeg_transit,$mandhi_degree;
+	
+	$outArray=array(null,null,null,null,null,null,null,null,null,null,null,null);
+	
+	foreach ($planetDeg_transit as $planet => $deg) {
+		foreach ($inArray as $house => $inPlanet)
+		{	
+			//$inArray[$house] = str_replace($planet, $planet. " " . $planetDeg_transit[$planet],$inArray[$house]);
+			if(strpos($inArray[$house],$planet)===0 || strpos($inArray[$house],$planet)>0){
+				$outArray[$house] = $outArray[$house] . " " . $planet . "-". $planetDeg_transit[$planet];
+			}
+			
+			//$inArray[$house] = str_replace($planet, $planet . "-". $planetDeg_transit[$planet],$inArray[$house]);
+				
+			if(strpos($planet,"ரா")===0 and strpos($inPlanet,"கே")===0){
+				//$inArray[$house] = str_replace($inPlanet, trim($inPlanet). "." . $planetDeg_transit[$planet],$inArray[$house]);
+				$inArray[$house] = substr_replace($inArray[$house], "-".$planetDeg_transit[$planet],6,0);
+				
+			}
+		}
+	}
+	
+	$inArray = str_replace("மா", "மா". "-" . strval($mandhi_degree % 30.0),$inArray);
+	
+	//return $inArray;
+	return $outArray;
+}
+
+
+function old_sortDegree($inArray)
+{
+	global $planetDeg,$mandhi_degree;
+	
+	foreach ($planetDeg as $planet => $deg) {
+		foreach ($inArray as $house => $inPlanet)
+		{	
+			//$inArray[$house] = str_replace($planet, $planet. " " . $planetDeg[$planet],$inArray[$house]);
+			$inArray[$house] = str_replace($planet, $planet . "-". $planetDeg[$planet],$inArray[$house]);
+				
+			if(strpos($planet,"ரா")===0 and strpos($inPlanet,"கே")===0){
+				//$inArray[$house] = str_replace($inPlanet, trim($inPlanet). "." . $planetDeg[$planet],$inArray[$house]);
+				$inArray[$house] = substr_replace($inArray[$house], "-".$planetDeg[$planet],6,0);
+				
+			}
+		}
+	}
+	
+	$inArray = str_replace("மா", "மா". "-" . strval($mandhi_degree % 30.0),$inArray);
+	
+	return $inArray;
+}
+
+//find house
+function findHouse($inArray,$inStr)
+{
+	foreach($inArray as $house => $planets){
+		if(strpos($planets,$inStr)===0 || strpos($planets,$inStr)>0){
+			return $house;
+		}
+	}
+}
+
+// The house where Mars placed should not have Rahu, Sani in matching chart and viz versa
+function matchingRule1()
+{
+	global $sw_planet, $tr_sw_planet;
+	
+	$boyChart_mars = findHouse($sw_planet,"செ");
+	$boyChart_sat = findHouse($sw_planet,"சனி");
+	$boyChart_rah = findHouse($sw_planet,"ரா");
+	
+	$girlChart_mars = findHouse($tr_sw_planet,"செ");
+	$girlChart_sat = findHouse($tr_sw_planet,"சனி");
+	$girlChart_rah = findHouse($tr_sw_planet,"ரா");
+	
+	if($boyChart_mars == $girlChart_sat || $boyChart_mars == $girlChart_rah){
+		echo "Mars/Rahu/Sani rule failed";
+	}
+	else if ($girlChart_mars == $boyChart_sat || $girlChart_mars == $boyChart_rah){
+		echo "Mars/Rahu/Sani failed";
+	}
+	else{
+		echo "Mars/Rahu/Sani rule passed";
+	}
+}
+
+// One Neesa graka should not be neesa in another chart viz versa
+function matchingRule2()
+{
+	global $sw_planet, $tr_sw_planet;
+	
+	if(findHouse($sw_planet,"செ")==3 && findHouse($tr_sw_planet,"செ")==3){
+		echo "<br>Neesam Rule failed, mars neesam";
+	}
+	elseif(findHouse($sw_planet,"சூரி")==6 && findHouse($tr_sw_planet,"சூரி")==6){
+		echo "<br>Neesam Rule failed, sun neesam";
+	}
+	elseif(findHouse($sw_planet,"சந்")==7 && findHouse($tr_sw_planet,"சந்")==7){
+		echo "<br>Neesam Rule failed, moon neesam";
+	}
+	elseif(findHouse($sw_planet,"புத")==11 && findHouse($tr_sw_planet,"புத")==11){
+		echo "<br>Neesam Rule failed, mercury neesam";
+	}
+	elseif(findHouse($sw_planet,"சுக்")==5 && findHouse($tr_sw_planet,"சுக்")==5){
+		echo "<br>Neesam Rule failed, venus neesam";
+	}
+	elseif(findHouse($sw_planet,"குரு")==9 && findHouse($tr_sw_planet,"குரு")==9){
+		echo "<br>Neesam Rule failed, jupitor neesam";
+	}
+	elseif(findHouse($sw_planet,"சனி")==0 && findHouse($tr_sw_planet,"சனி")==0){
+		echo "<br>Neesam Rule failed, saturn neesam";
+	}
+	else{
+		echo "<br>Neesam rule passed";
+	}
+}
+
+// Lagna matching, panjcha bootha, paathaga
+function matchingRule4()
+{
+	global $sw_planet, $tr_sw_planet;
+	
+	$result = false;
+	
+	$boyChart_lagna = findHouse($sw_planet,"லக்");
+	$girlChart_lagna = findHouse($tr_sw_planet,"லக்");
+
+	if($boyChart_lagna == $girlChart_lagna){
+		$result = true;
+	}
+	elseif(($boyChart_lagna == 0 && $girlChart_lagna == 4) ||      //based on pancha bootha fire x fire
+			($boyChart_lagna == 0 && $girlChart_lagna == 8) ||     // fire x fire
+			($boyChart_lagna == 4 && $girlChart_lagna == 8) ||     // fire x fire
+			($boyChart_lagna == 1 && $girlChart_lagna == 5) ||     // land x land
+			($boyChart_lagna == 1 && $girlChart_lagna == 9) ||     // land x land
+			($boyChart_lagna == 5 && $girlChart_lagna == 9) ||     // land x land
+			($boyChart_lagna == 2 && $girlChart_lagna == 6) ||     // air x air
+			($boyChart_lagna == 2 && $girlChart_lagna == 10) ||    // air x air
+			($boyChart_lagna == 6 && $girlChart_lagna == 10) ||    // air x air
+			($boyChart_lagna == 3 && $girlChart_lagna == 7) ||     // water x water
+			($boyChart_lagna == 3 && $girlChart_lagna == 11) ||    // water x water
+			($boyChart_lagna == 7 && $girlChart_lagna == 11) ||    // water x water
+			($boyChart_lagna == 0 && $girlChart_lagna == 2) ||     // fire x air
+			($boyChart_lagna == 0 && $girlChart_lagna == 5) ||     // fire x air
+			($boyChart_lagna == 0 && $girlChart_lagna == 10) ||    // fire x air
+			($boyChart_lagna == 2 && $girlChart_lagna == 0) ||     // air x fire
+			($boyChart_lagna == 5 && $girlChart_lagna == 0) ||     // air x fire
+			($boyChart_lagna == 10 && $girlChart_lagna == 0) ||    // air x fire
+			($boyChart_lagna == 1 && $girlChart_lagna == 3) ||     // land x water
+			($boyChart_lagna == 1 && $girlChart_lagna == 7) ||     // land x water
+			($boyChart_lagna == 1 && $girlChart_lagna == 11) ||    // land x water
+			($boyChart_lagna == 3 && $girlChart_lagna == 1) ||     // water x land
+			($boyChart_lagna == 7 && $girlChart_lagna == 1) ||     // water x land
+			($boyChart_lagna == 11 && $girlChart_lagna == 1) ||     // water x land
+			($boyChart_lagna == 4 && $girlChart_lagna == 10) ||     // fire x air
+			($boyChart_lagna == 4 && $girlChart_lagna == 6) ||      // fire x air
+			($boyChart_lagna == 4 && $girlChart_lagna == 2)){       // fire x air
+		$result = true;
+	}
+	else{
+		$result = false;
+		echo "<BR>Lagna rule failed (panja bootha)";
+	}
+	
+	if(($boyChart_lagna == 0 && $girlChart_lagna == 10) || //paathaga sthana
+		($boyChart_lagna == 1 && $girlChart_lagna == 8) || 
+		($boyChart_lagna == 2 && $girlChart_lagna == 8) ||
+		($boyChart_lagna == 3 && $girlChart_lagna == 1) ||
+		($boyChart_lagna == 4 && $girlChart_lagna == 0) ||
+		($boyChart_lagna == 5 && $girlChart_lagna == 11) ||
+		($boyChart_lagna == 6 && $girlChart_lagna == 4) ||
+		($boyChart_lagna == 7 && $girlChart_lagna == 3) ||
+		($boyChart_lagna == 8 && $girlChart_lagna == 2) ||
+		($boyChart_lagna == 9 && $girlChart_lagna == 7) ||
+		($boyChart_lagna == 10 && $girlChart_lagna == 6) ||
+		($boyChart_lagna == 11 && $girlChart_lagna == 5)){
+		echo "<BR>Lagna rule failed (paathaga)";
+		$result = false;
+	}
+	
+	if($result == true){
+		echo "<BR>Lagna rule passed";
+	}
+	else{
+		echo "---Lagna rule failed";
+	}
+	
+}
+
+// Lagna lords should not be 6 or 8. Also lagna should not be in the 6th or 8th to Venues and sukran
+function matchingRule5()
+{
+	global $sw_planet, $tr_sw_planet;
+	
+	$result = false;
+	
+	$girlLagnaHouse = findHouse($sw_planet, "லக்");
+	$boyLagnaHouse = findHouse($tr_sw_planet, "லக்");
+	
+	$girlLagnaLord = findAthipathi($girlLagnaHouse);
+	$boyLagnaLord = findAthipathi($boyLagnaHouse);
+	
+	$girlVenHouse = findHouse($sw_planet, "சுக்");
+	$boyVenHouse = findHouse($tr_sw_planet, "சுக்");
+	
+	$girlMarHouse = findHouse($sw_planet, "செ");
+	$boyMarHouse = findHouse($tr_sw_planet, "செ");
+	
+	$girlLagnaLordHouse = findHouse($sw_planet, $girlLagnaLord);
+	$boyLagnaLordHouse = findHouse($tr_sw_planet, $boyLagnaLord);
+	
+	$girlBoyLagnaCount = countHouses($girlLagnaHouse, $boyLagnaHouse);
+	
+	$girlLagnaLordBoyVenCount = countHouses($girlLagnaLordHouse, $boyVenHouse);
+	$boyLagnaLordGirlVenCount = countHouses($boyLagnaLordHouse, $girlVenHouse);
+	
+	$girlLagnaLordBoyMarCount = countHouses($girlLagnaLordHouse, $boyMarHouse);
+	$boyLagnaLordGirlMarCount = countHouses($boyLagnaLordHouse, $girlMarHouse);
+	
+	if($girlBoyLagnaCount == 6 || $girlBoyLagnaCount == 8){
+		echo "<br>Lagna 6/8";
+		$result = false;
+	}
+	elseif($girlLagnaLordBoyVenCount == 6 || $girlLagnaLordBoyVenCount == 8){
+		$result = false;
+		echo "<br>Girl Venus Boy lagna lord 6/8";
+	}
+	elseif($boyLagnaLordGirlMarCount == 6 || $boyLagnaLordGirlMarCount == 8){
+		$result = false;
+		echo "<br>Boy Mars Girl lagna lord 6/8";
+	}
+	
+	if($result == false){
+		echo "---Lagna lord rule failed";
+	}
+	else{
+		echo "<br>Lagna lord rule passed";
+	}
+}
+
+// Guna or Gana nak poruththam
+function matchingRule6()
+{
+	global $sw_planet, $tr_sw_planet, $girl_nak, $boy_nak;
+	
+	$deva_ganam = array("அசுவினி","மிருகசிரீஷம்", "புனர்பூசம்", "பூசம்", "ஹஸ்தம்", "சுவாதி", "அனுஷம்", "திருவோணம்", "ரேவதி"); //sathveega
+	$manu_ganam = array("பரணி", "ரோகிணி", "திருவாதிரை", "பூரம்", "உத்திரம்", "பூராடம்", "உத்திராடம்", "பூரட்டாதி","உத்திரட்டாதி"); //thamo
+	$raksh_ganam = array("கிருத்திகை", "ஆயில்யம்", "மகம்", "சித்திரை", "விசாகம்", "கேட்டை", "மூலம்", "அவிட்டம்","சதயம்"); //Rakshasha
+	
+	$result = false;
+	
+	if(in_array($girl_nak,$deva_ganam)){
+		$girl_guna=1;
+	}
+	elseif(in_array($girl_nak,$manu_ganam)){
+		$girl_guna=2;
+	}
+	elseif(in_array($girl_nak,$raksh_ganam)){
+		$girl_guna=3;
+	}
+	
+	if(in_array($boy_nak,$deva_ganam)){
+		$boy_guna=1;
+	}
+	elseif(in_array($boy_nak,$manu_ganam)){
+		$boy_guna=2;
+	}
+	elseif(in_array($boy_nak,$raksh_ganam)){
+		$boy_guna=3;
+	}
+	
+	if($girl_guna==$boy_guna){
+		echo "matched";
+	}
+	elseif($girl_guna){
+	}
+}
+
+function displayGirlPanchang(){
+	global $moon_degree, $moon_house, $sun_house, $sun_degree, $dayofweek, $girl_nak;
+	
+	$tithi = array("Prathame/பிரதமை","Dwithiya/துவிதியை","Thrithiya/திருதியை","Chathurthi/சதுர்த்தி","Panchami/பஞ்சமி","Shrashti/சஷ்டி","Saptami/சப்தமி","Ashtami/அஷ்டமி","Navami/நவமி","Dashami/தசமி","Ekadashi/ஏகாதசி","Dwadashi/துவாதசி","Thrayodashi/திரயோதசி","Chaturdashi/சதுர்த்தசி","Poornima/பௌர்ணமி","Prathame/பிரதமை","Dwithiya/துவிதியை","Thrithiya/திருதியை","Chathurthi/சதுர்த்தி","Panchami/பஞ்சமி","Shrashti/சஷ்டி","Saptami/சப்தமி","Ashtami/அஷ்டமி","Navami/நவமி","Dashami/தசமி","Ekadashi/ஏகாதசி","Dwadashi/துவாதசி","Thrayodashi/திரயோதசி","Chaturdashi/சதுர்த்தசி","Amavasya/அமாவாசை");
+	
+	$karan_sukla = array(array("Kimstughna/கிம்ஸ்துக்கினம்","Bava/பவ"),
+						array("Balava/பாலவ","Kaulava/கௌலவ"),
+						array("Taitula/தைதுலை","Garija/கரசை"),
+						array("Vanija/வணிசை","Visti/பத்தரை"),
+						array("Bava/பவ","Balava/பாலவ"),
+						array("Kaulava/கௌலவ","Taitula/தைதுலை"),
+						array("Garija/கரசை","Vanija/வணிசை"),
+						array("Visti/பத்தரை","Bava/பவ"),
+						array("Balava/பாலவ","Kaulava/கௌலவ"),
+						array("Taitula/தைதுலை","Garija/கரசை"),
+						array("Vanija/வணிசை","Visti/பத்தரை"),
+						array("Bava/பவ","Balava/பாலவ"),
+						array("Kaulava/கௌலவ","Taitula/தைதுலை"),
+						array("Garija/கரசை","Vanija/வணிசை"),
+						array("Visti/பத்தரை","Bava/பவ"));
+	$karan_krishna = array(array("Balava/பாலவ","Kaulava/கௌலவ"),
+						array("Taitula/தைதுலை","Garija/கரசை"),
+						array("Vanija/வணிசை","Visti/பத்தரை"),
+						array("Bava/பவ","Balava/பாலவ"),
+						array("Kaulava/கௌலவ","Taitula/தைதுலை"),
+						array("Garija/கரசை","Vanija/வணிசை"),
+						array("Visti/பத்தரை","Bava/பவ"),
+						array("Balava/பாலவ","Kaulava/கௌலவ"),
+						array("Taitula/தைதுலை","Garija/கரசை"),
+						array("Vanija/வணிசை","Visti/பத்தரை"),
+						array("Bava/பவ","Balava/பாலவ"),
+						array("Kaulava/கௌலவ","Taitula/தைதுலை"),
+						array("Garija/கரசை","Vanija/வணிசை"),
+						array("Visti/பத்தரை","Sakuni/சகுனி"),
+						array("Chatuspada/சதுஷ்பாத","Naga/நாகவ"));
+	
+	$weekday_arr = array("Sunday/ஞாயிற்றுக்கிழமை","Monday/திங்கட்கிழமை","Tuesday/செவ்வாய்க்கிழமை","Wednesday/புதன்கிழமை",
+					"Thursday/வியாழக்கிழமை","Friday/வெள்ளிக்கிழமை","Saturday/சனிக்கிழமை");
+	
+	$panchang = array();
+	
+	$nak_array = array("dummy","Aswini 1/அசுவினி 1","Aswini 2/அசுவினி 2","Aswini 3/அசுவினி 3","Aswini 4/அசுவினி 4",
+						"Bharani 1/பரணி 1","Bharani 2/பரணி 2","Bharani 3/பரணி 3","Bharani 4/பரணி 4",
+						"Krithika 1/கிருத்திகை 1","Krithika 2/கிருத்திகை 2","Krithika 3/கிருத்திகை 3","Krithika 4/கிருத்திகை 4",
+						"Rohini 1/ரோகிணி 1","Rohini 2/ரோகிணி 2","Rohini 3/ரோகிணி 3","Rohini 4/ரோகிணி 4",
+						"Mrigashirsha 1/மிருகசிரீஷம் 1","Mrigashirsha 2/மிருகசிரீஷம் 2","Mrigashirsha 3/மிருகசிரீஷம் 3","Mrigashirsha 4/மிருகசிரீஷம் 4",
+						"Arudra 1/திருவாதிரை 1","Arudra 2/திருவாதிரை 2","Arudra 3/திருவாதிரை 3","Arudra 4/திருவாதிரை 4",
+						"Punarvasu 1/புனர்பூசம் 1","Punarvasu 2/புனர்பூசம் 2","Punarvasu 3/புனர்பூசம் 3","Punarvasu 4/புனர்பூசம் 4",
+						"Pushyami 1/பூசம் 1","Pushyami 2/பூசம் 2","Pushyami 3/பூசம் 3","Pushyami 4/பூசம் 4",
+						"Ashlesha 1/ஆயில்யம் 1","Ashlesha 2/ஆயில்யம் 2","Ashlesha 3/ஆயில்யம் 3","Ashlesha 4/ஆயில்யம் 4",
+						"Magha 1/மகம் 1","Magha 2/மகம் 2","Magha 3/மகம் 3","Magha 4/மகம் 4",
+						"Poorva Phalguni 1/பூரம் 1","Poorva Phalguni 2/பூரம் 2","Poorva Phalguni 3/பூரம் 3","Poorva Phalguni 4/பூரம் 4",
+						"Uthra phalguni 1/உத்திரம் 1","Uthra phalguni 2/உத்திரம் 2","Uthra phalguni 3/உத்திரம் 3","Uthra phalguni 4/உத்திரம் 4",
+						"Hastha 1/ஹஸ்தம் 1","Hastha 2/ஹஸ்தம் 2","Hastha 3/ஹஸ்தம் 3","Hastha 4/ஹஸ்தம் 4",
+						"Chitra 1/சித்திரை 1","Chitra 2/சித்திரை 2","Chitra 3/சித்திரை 3","Chitra 4/சித்திரை 4",
+						"Swaathi 1/சுவாதி 1","Swaathi 2/சுவாதி 2","Swaathi 3/சுவாதி 3","Swaathi 4/சுவாதி 4",
+						"Vishaakha 1/விசாகம் 1","Vishaakha 2/விசாகம் 2","Vishaakha 3/விசாகம் 3","Vishaakha 4/விசாகம் 4",
+						"Anuraadha 1/அனுஷம் 1","Anuraadha 2/அனுஷம் 2","Anuraadha 3/அனுஷம் 3","Anuraadha 4/அனுஷம் 4",
+						"Jyeshta 1/கேட்டை 1","Jyeshta 2/கேட்டை 2","Jyeshta 3/கேட்டை 3","Jyeshta 4/கேட்டை 4",
+						"Moola 1/மூலம் 1","Moola 2/மூலம் 2","Moola 3/மூலம் 3","Moola 4/மூலம் 4",
+						"Poorva Ashaada 1/பூராடம் 1","Poorva Ashaada 2/பூராடம் 2","Poorva Ashaada 3/பூராடம் 3","Poorva Ashaada 4/பூராடம் 4",
+						"Uthra Ashaada 1/உத்திராடம் 1","Uthra Ashaada 2/உத்திராடம் 2","Uthra Ashaada 3/உத்திராடம் 3","Uthra Ashaada 4/உத்திராடம் 4",
+						"Shraavan 1/திருவோணம் 1","Shraavan 2/திருவோணம் 2","Shraavan 3/திருவோணம் 3","Shraavan 4/திருவோணம் 4",
+						"Dhanishta 1/அவிட்டம் 1","Dhanishta 2/அவிட்டம் 2","Dhanishta 3/அவிட்டம் 3","Dhanishta 4/அவிட்டம் 4",
+						"Shathabhisha 1/சதயம் 1","Shathabhisha 2/சதயம் 2","Shathabhisha 3/சதயம் 3","Shathabhisha 4/சதயம் 4",
+						"Poorva bhadrapada 1/பூரட்டாதி 1","Poorva bhadrapada 2/பூரட்டாதி 2","Poorva bhadrapada 3/பூரட்டாதி 3","Poorva bhadrapada 4/பூரட்டாதி 4",
+						"Uthra bhadrapada 1/உத்திரட்டாதி 1","Uthra bhadrapada 2/உத்திரட்டாதி 2","Uthra bhadrapada 3/உத்திரட்டாதி 3","Uthra bhadrapada 4/உத்திரட்டாதி 4",
+						"Revathi 1/ரேவதி 1","Revathi 2/ரேவதி 2","Revathi 3/ரேவதி 3","Revathi 4/ரேவதி 4");
+						
+	$yoga_arr = array("dummy","விஷ்கம்பம்","ப்ரீதி","ஆயுஷ்மான்", "செளபாக்யம்", "சோபனம்", "அதி கண்டம்", "சுகர்மம்", "திருதி", "சூலம்", "கண்டம்", "விருத்தி", "துருவம்","வ்யாகதம்",
+					"ஹர்ஷணம்", "வஜ்ரம்","சித்தி","வியதீபாதம்","வரீயான்", "பரிகம்","சிவம்", "சித்தம்", "சாத்தியம்","சுபம்","சுப்பிரம்","பிராம்மியம்","ஐந்திரம்","வைதிருதி");
+	
+	//Day calculation
+	$panchang["vaaram"] = $weekday_arr[$dayofweek];
+	
+	//Nakshatra calculation
+	$full_moon_deg = (($moon_house-1) * 30 + $moon_degree);
+	$nak_idx = ceil($full_moon_deg/3.333333);
+	
+	$panchang["nak"] = $nak_array[$nak_idx];
+	$girl_nak = explode(' ',explode('/',$nak_array[$nak_idx])[1])[0];
+	
+	//thithi calculation
+	$full_sun_deg = ($sun_house-1)*30+$sun_degree;
+	
+	if($full_moon_deg - $full_sun_deg < 180){
+		if($full_moon_deg - $full_sun_deg < 0){
+		
+			$idx = ($full_moon_deg - $full_sun_deg+360) / 12;
+			
+			$thi_idx = floor($idx);
+			
+			if($idx > 29){
+				$thi_idx = 29;
+				$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]$idx";
+			}
+			else{
+				$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]";
+			}
+			
+			
+		}
+		else{
+			$idx = ($full_moon_deg - $full_sun_deg) / 12;
+			
+			$thi_idx = floor($idx);
+			
+			if($idx > 14){
+				$thi_idx = 14;
+				$panchang["thithi"] = $tithi[$thi_idx]."[shukla/வளர்]";
+			}
+			else{
+				$panchang["thithi"] = $tithi[$thi_idx]."[shukla/வளர்]";
+			}
+			
+		}
+	}
+	else{
+		$idx = ($full_moon_deg - $full_sun_deg) / 12;
+		
+		if($idx < 1){
+			$idx = 14;
+			
+			$thi_idx = floor($idx);
+		
+			$panchang["thithi"] = $tithi[$thi_idx];
+		}
+		else{
+			$thi_idx = floor($idx);
+		
+			$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]";
+			
+		}
+	}
+	
+	
+	
+	
+	debug("--THI IDX--".floor($idx)."----");
+
+	
+/*	if($moon_house > $sun_house){
+		$diff = ($full_moon_deg - $full_sun_deg)/12;
+	}
+	elseif($moon_house < $sun_house){
+		$diff = ($full_sun_deg - $full_moon_deg)/12;
+	}
+	else{
+		$diff = ($full_sun_deg - $full_moon_deg)/12;
+	}
+	
+	debug("<BR>diff=".$diff);
+	
+	if(floor($diff) > 0){	
+		$thi_idx = floor($diff);
+		$panchang["thithi"] = $tithi[$thi_idx]."[shukla/வளர்]";
+		
+		debug(__LINE__.":" . "THITHI IDX=".$thi_idx);
+	}
+	elseif(floor($diff) < 0){	
+		$thi_idx = 30 - floor($diff) ;
+		$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]";
+		
+		debug(__LINE__.":" . "THITHI IDX=".$thi_idx);
+	}else{
+		if($moon_house==$sun_house){
+			$thi_idx = 29; 
+		}
+		else{
+			$thi_idx = 14; 
+		}
+		$panchang["thithi"] = $tithi[$thi_idx];
+		debug(__LINE__.":" . "THITHI IDX=".$thi_idx);
+	}
+*/	
+	
+	//karanam calculation
+	$kar = $idx-floor($idx);
+	//$kar = $thi_idx-floor($thi_idx);
+	
+	if($thi_idx < 15){
+		
+		if($kar < 0.5){
+			$panchang["karan"] = $karan_sukla[$thi_idx][0];
+		}
+		else{
+			$panchang["karan"] = $karan_sukla[$thi_idx][1];
+		}
+		
+		debug("THI-IDX=".$thi_idx . "KAR=". $kar . "&&&&&&");
+	}
+	else{
+		if($kar < 0.5){
+			$panchang["karan"] = $karan_krishna[$thi_idx-15][0];
+		}
+		else{
+			$panchang["karan"] = $karan_krishna[$thi_idx-15][1];
+		}
+		
+		debug("THI-IDX-15=".($thi_idx-15) . "KAR=". $kar . "&&&&&&");
+	}
+	
+	/*if($full_moon_deg % 180 > $full_sun_deg){
+		$kar = ($full_moon_deg - $full_sun_deg)/12;
+		debug("krishna".(abs(($full_moon_deg - $full_sun_deg) - 180.0)) % 12 . "|" . $thi_idx) ;
+		
+		if((abs(($full_moon_deg - $full_sun_deg) - 180.0)) % 12 <= 6){
+			if($thi_idx > 14){
+				$panchang["karan"] = $karan_krishna[$thi_idx-15][0];debug("^^^^^");
+			}
+			else{
+				$panchang["karan"] = $karan_krishna[$thi_idx][0]; debug("#####");
+			}
+		}
+		else{
+			if($thi_idx > 14){
+				$panchang["karan"] = $karan_krishna[$thi_idx-15][1];debug("%%%%");
+			}
+			else{
+				echo $thi_idx; 
+				$panchang["karan"] = $karan_krishna[$thi_idx][1]; debug("$$$$$");
+			}
+		}
+	}
+	else{
+		$kar = ($full_sun_deg - $full_moon_deg)/12;
+		debug("shukla".((abs(($full_sun_deg - $full_moon_deg) - 180))) . "|")  ; 
+		
+		if((abs(($full_sun_deg - $full_moon_deg) - 180.0)) % 12 <= 6){
+			if($thi_idx > 14){
+				$panchang["karan"] = $karan_sukla[$thi_idx-15][0]; debug("^^^^^");
+			}
+			else{
+				$panchang["karan"] = $karan_sukla[$thi_idx][0]; debug("#####");
+			}
+		}
+		else{
+			if($thi_idx > 14){
+				$panchang["karan"] = $karan_sukla[$thi_idx-15][1]; debug("%%%%");
+			}
+			else{
+				$panchang["karan"] = $karan_sukla[$thi_idx][1]; debug("$$$$$");
+			}
+		}
+	}*/
+	
+	//calculate yogam
+	$deg = ($full_moon_deg+$full_sun_deg);
+	
+	// deduct 360 if the sum is over 360 degrees
+	if($deg > 360){
+		$deg = $deg - 360;
+	}
+	
+	$yoga_idx = ceil($deg / 13.333333); //divide by 13 deg 20 min in decimal, we will get the index of the yoga (1-27)
+	
+	$panchang["yoga"] = $yoga_arr[$yoga_idx];
+	
+	//display panchang table
+	echo "<center><div class='divTable blueTable' style='height:40px;width:360px;'>"; 
+		echo "<div class='divTableRow'>";
+			echo "<div class='divGirlPanchangHeading'>Vaaram/வாரம்</div>";
+			echo "<div class='divGirlPanchang'>".$panchang['vaaram']."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divGirlPanchangHeading'>Nakshatra/நட்சத்திரம்</div>";
+			echo "<div class='divGirlPanchang'>".$panchang['nak']."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divGirlPanchangHeading'>Thithi/திதி</div>";
+			echo "<div class='divGirlPanchang'>".$panchang['thithi']."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divGirlPanchangHeading'>Karanam/கரணம்</div>";
+			echo "<div class='divGirlPanchang'>".$panchang['karan']."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divGirlPanchangHeading'>Yogam/யோகம்</div>";
+			echo "<div class='divGirlPanchang'>".$panchang['yoga']."</div>";
+		echo "</div>";
+	echo "</div></center>";
+	
+}
+
+function displayBoyPanchang(){
+	global $transit_moon_degree, $transit_moon_house, $transit_sun_house, $transit_sun_degree, $transit_dayofweek, $boy_nak;
+	
+	$tithi = array("Prathame/பிரதமை","Dwithiya/துவிதியை","Thrithiya/திருதியை","Chathurthi/சதுர்த்தி","Panchami/பஞ்சமி","Shrashti/சஷ்டி","Saptami/சப்தமி","Ashtami/அஷ்டமி","Navami/நவமி","Dashami/தசமி","Ekadashi/ஏகாதசி","Dwadashi/துவாதசி","Thrayodashi/திரயோதசி","Chaturdashi/சதுர்த்தசி","Poornima/பௌர்ணமி","Prathame/பிரதமை","Dwithiya/துவிதியை","Thrithiya/திருதியை","Chathurthi/சதுர்த்தி","Panchami/பஞ்சமி","Shrashti/சஷ்டி","Saptami/சப்தமி","Ashtami/அஷ்டமி","Navami/நவமி","Dashami/தசமி","Ekadashi/ஏகாதசி","Dwadashi/துவாதசி","Thrayodashi/திரயோதசி","Chaturdashi/சதுர்த்தசி","Amavasya/அமாவாசை");
+	
+	$karan_sukla = array(array("Kimstughna/கிம்ஸ்துக்கினம்","Bava/பவ"),
+						array("Balava/பாலவ","Kaulava/கௌலவ"),
+						array("Taitula/தைதுலை","Garija/கரசை"),
+						array("Vanija/வணிசை","Visti/பத்தரை"),
+						array("Bava/பவ","Balava/பாலவ"),
+						array("Kaulava/கௌலவ","Taitula/தைதுலை"),
+						array("Garija/கரசை","Vanija/வணிசை"),
+						array("Visti/பத்தரை","Bava/பவ"),
+						array("Balava/பாலவ","Kaulava/கௌலவ"),
+						array("Taitula/தைதுலை","Garija/கரசை"),
+						array("Vanija/வணிசை","Visti/பத்தரை"),
+						array("Bava/பவ","Balava/பாலவ"),
+						array("Kaulava/கௌலவ","Taitula/தைதுலை"),
+						array("Garija/கரசை","Vanija/வணிசை"),
+						array("Visti/பத்தரை","Bava/பவ"));
+	$karan_krishna = array(array("Balava/பாலவ","Kaulava/கௌலவ"),
+						array("Taitula/தைதுலை","Garija/கரசை"),
+						array("Vanija/வணிசை","Visti/பத்தரை"),
+						array("Bava/பவ","Balava/பாலவ"),
+						array("Kaulava/கௌலவ","Taitula/தைதுலை"),
+						array("Garija/கரசை","Vanija/வணிசை"),
+						array("Visti/பத்தரை","Bava/பவ"),
+						array("Balava/பாலவ","Kaulava/கௌலவ"),
+						array("Taitula/தைதுலை","Garija/கரசை"),
+						array("Vanija/வணிசை","Visti/பத்தரை"),
+						array("Bava/பவ","Balava/பாலவ"),
+						array("Kaulava/கௌலவ","Taitula/தைதுலை"),
+						array("Garija/கரசை","Vanija/வணிசை"),
+						array("Visti/பத்தரை","Sakuni/சகுனி"),
+						array("Chatuspada/சதுஷ்பாத","Naga/நாகவ"));
+	
+	$weekday_arr = array("Sunday/ஞாயிற்றுக்கிழமை","Monday/திங்கட்கிழமை","Tuesday/செவ்வாய்க்கிழமை","Wednesday/புதன்கிழமை",
+					"Thursday/வியாழக்கிழமை","Friday/வெள்ளிக்கிழமை","Saturday/சனிக்கிழமை");
+	
+	$panchang = array();
+	
+	$nak_array = array("dummy","Aswini 1/அசுவினி 1","Aswini 2/அசுவினி 2","Aswini 3/அசுவினி 3","Aswini 4/அசுவினி 4",
+						"Bharani 1/பரணி 1","Bharani 2/பரணி 2","Bharani 3/பரணி 3","Bharani 4/பரணி 4",
+						"Krithika 1/கிருத்திகை 1","Krithika 2/கிருத்திகை 2","Krithika 3/கிருத்திகை 3","Krithika 4/கிருத்திகை 4",
+						"Rohini 1/ரோகிணி 1","Rohini 2/ரோகிணி 2","Rohini 3/ரோகிணி 3","Rohini 4/ரோகிணி 4",
+						"Mrigashirsha 1/மிருகசிரீஷம் 1","Mrigashirsha 2/மிருகசிரீஷம் 2","Mrigashirsha 3/மிருகசிரீஷம் 3","Mrigashirsha 4/மிருகசிரீஷம் 4",
+						"Arudra 1/திருவாதிரை 1","Arudra 2/திருவாதிரை 2","Arudra 3/திருவாதிரை 3","Arudra 4/திருவாதிரை 4",
+						"Punarvasu 1/புனர்பூசம் 1","Punarvasu 2/புனர்பூசம் 2","Punarvasu 3/புனர்பூசம் 3","Punarvasu 4/புனர்பூசம் 4",
+						"Pushyami 1/பூசம் 1","Pushyami 2/பூசம் 2","Pushyami 3/பூசம் 3","Pushyami 4/பூசம் 4",
+						"Ashlesha 1/ஆயில்யம் 1","Ashlesha 2/ஆயில்யம் 2","Ashlesha 3/ஆயில்யம் 3","Ashlesha 4/ஆயில்யம் 4",
+						"Magha 1/மகம் 1","Magha 2/மகம் 2","Magha 3/மகம் 3","Magha 4/மகம் 4",
+						"Poorva Phalguni 1/பூரம் 1","Poorva Phalguni 2/பூரம் 2","Poorva Phalguni 3/பூரம் 3","Poorva Phalguni 4/பூரம் 4",
+						"Uthra phalguni 1/உத்திரம் 1","Uthra phalguni 2/உத்திரம் 2","Uthra phalguni 3/உத்திரம் 3","Uthra phalguni 4/உத்திரம் 4",
+						"Hastha 1/ஹஸ்தம் 1","Hastha 2/ஹஸ்தம் 2","Hastha 3/ஹஸ்தம் 3","Hastha 4/ஹஸ்தம் 4",
+						"Chitra 1/சித்திரை 1","Chitra 2/சித்திரை 2","Chitra 3/சித்திரை 3","Chitra 4/சித்திரை 4",
+						"Swaathi 1/சுவாதி 1","Swaathi 2/சுவாதி 2","Swaathi 3/சுவாதி 3","Swaathi 4/சுவாதி 4",
+						"Vishaakha 1/விசாகம் 1","Vishaakha 2/விசாகம் 2","Vishaakha 3/விசாகம் 3","Vishaakha 4/விசாகம் 4",
+						"Anuraadha 1/அனுஷம் 1","Anuraadha 2/அனுஷம் 2","Anuraadha 3/அனுஷம் 3","Anuraadha 4/அனுஷம் 4",
+						"Jyeshta 1/கேட்டை 1","Jyeshta 2/கேட்டை 2","Jyeshta 3/கேட்டை 3","Jyeshta 4/கேட்டை 4",
+						"Moola 1/மூலம் 1","Moola 2/மூலம் 2","Moola 3/மூலம் 3","Moola 4/மூலம் 4",
+						"Poorva Ashaada 1/பூராடம் 1","Poorva Ashaada 2/பூராடம் 2","Poorva Ashaada 3/பூராடம் 3","Poorva Ashaada 4/பூராடம் 4",
+						"Uthra Ashaada 1/உத்திராடம் 1","Uthra Ashaada 2/உத்திராடம் 2","Uthra Ashaada 3/உத்திராடம் 3","Uthra Ashaada 4/உத்திராடம் 4",
+						"Shraavan 1/திருவோணம் 1","Shraavan 2/திருவோணம் 2","Shraavan 3/திருவோணம் 3","Shraavan 4/திருவோணம் 4",
+						"Dhanishta 1/அவிட்டம் 1","Dhanishta 2/அவிட்டம் 2","Dhanishta 3/அவிட்டம் 3","Dhanishta 4/அவிட்டம் 4",
+						"Shathabhisha 1/சதயம் 1","Shathabhisha 2/சதயம் 2","Shathabhisha 3/சதயம் 3","Shathabhisha 4/சதயம் 4",
+						"Poorva bhadrapada 1/பூரட்டாதி 1","Poorva bhadrapada 2/பூரட்டாதி 2","Poorva bhadrapada 3/பூரட்டாதி 3","Poorva bhadrapada 4/பூரட்டாதி 4",
+						"Uthra bhadrapada 1/உத்திரட்டாதி 1","Uthra bhadrapada 2/உத்திரட்டாதி 2","Uthra bhadrapada 3/உத்திரட்டாதி 3","Uthra bhadrapada 4/உத்திரட்டாதி 4",
+						"Revathi 1/ரேவதி 1","Revathi 2/ரேவதி 2","Revathi 3/ரேவதி 3","Revathi 4/ரேவதி 4");
+						
+	$yoga_arr = array("dummy","விஷ்கம்பம்","ப்ரீதி","ஆயுஷ்மான்", "செளபாக்யம்", "சோபனம்", "அதி கண்டம்", "சுகர்மம்", "திருதி", "சூலம்", "கண்டம்", "விருத்தி", "துருவம்","வ்யாகதம்",
+					"ஹர்ஷணம்", "வஜ்ரம்","சித்தி","வியதீபாதம்","வரீயான்", "பரிகம்","சிவம்", "சித்தம்", "சாத்தியம்","சுபம்","சுப்பிரம்","பிராம்மியம்","ஐந்திரம்","வைதிருதி");
+	
+	//Day calculation
+	$panchang["vaaram"] = $weekday_arr[$transit_dayofweek];
+	
+	//Nakshatra calculation
+	$full_moon_deg = (($transit_moon_house-1) * 30 + $transit_moon_degree);
+	$nak_idx = ceil($full_moon_deg/3.333333);
+	
+	$panchang["nak"] = $nak_array[$nak_idx];
+	$boy_nak = explode(' ',explode('/',$nak_array[$nak_idx])[1])[0];
+	
+	//thithi calculation
+	$full_sun_deg = ($transit_sun_house-1)*30+$transit_sun_degree;
+	
+	if($full_moon_deg - $full_sun_deg < 180){
+		if($full_moon_deg - $full_sun_deg < 0){
+		
+			$idx = ($full_moon_deg - $full_sun_deg+360) / 12;
+			
+			$thi_idx = floor($idx);
+			
+			if($idx > 29){
+				$thi_idx = 29;
+				$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]$idx";
+			}
+			else{
+				$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]";
+			}
+			
+			
+		}
+		else{
+			$idx = ($full_moon_deg - $full_sun_deg) / 12;
+			
+			$thi_idx = floor($idx);
+			
+			if($idx > 14){
+				$thi_idx = 14;
+				$panchang["thithi"] = $tithi[$thi_idx]."[shukla/வளர்]";
+			}
+			else{
+				$panchang["thithi"] = $tithi[$thi_idx]."[shukla/வளர்]";
+			}
+			
+		}
+	}
+	else{
+		$idx = ($full_moon_deg - $full_sun_deg) / 12;
+		
+		if($idx < 1){
+			$idx = 14;
+			
+			$thi_idx = floor($idx);
+		
+			$panchang["thithi"] = $tithi[$thi_idx];
+		}
+		else{
+			$thi_idx = floor($idx);
+		
+			$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]";
+			
+		}
+	}
+	
+	
+	
+	
+	debug("--THI IDX--".floor($idx)."----");
+
+	
+/*	if($moon_house > $sun_house){
+		$diff = ($full_moon_deg - $full_sun_deg)/12;
+	}
+	elseif($moon_house < $sun_house){
+		$diff = ($full_sun_deg - $full_moon_deg)/12;
+	}
+	else{
+		$diff = ($full_sun_deg - $full_moon_deg)/12;
+	}
+	
+	debug("<BR>diff=".$diff);
+	
+	if(floor($diff) > 0){	
+		$thi_idx = floor($diff);
+		$panchang["thithi"] = $tithi[$thi_idx]."[shukla/வளர்]";
+		
+		debug(__LINE__.":" . "THITHI IDX=".$thi_idx);
+	}
+	elseif(floor($diff) < 0){	
+		$thi_idx = 30 - floor($diff) ;
+		$panchang["thithi"] = $tithi[$thi_idx]."[krishna/தேய்]";
+		
+		debug(__LINE__.":" . "THITHI IDX=".$thi_idx);
+	}else{
+		if($moon_house==$sun_house){
+			$thi_idx = 29; 
+		}
+		else{
+			$thi_idx = 14; 
+		}
+		$panchang["thithi"] = $tithi[$thi_idx];
+		debug(__LINE__.":" . "THITHI IDX=".$thi_idx);
+	}
+*/	
+	
+	//karanam calculation
+	$kar = $idx-floor($idx);
+	//$kar = $thi_idx-floor($thi_idx);
+	
+	if($thi_idx < 15){
+		
+		if($kar < 0.5){
+			$panchang["karan"] = $karan_sukla[$thi_idx][0];
+		}
+		else{
+			$panchang["karan"] = $karan_sukla[$thi_idx][1];
+		}
+		
+		debug("THI-IDX=".$thi_idx . "KAR=". $kar . "&&&&&&");
+	}
+	else{
+		if($kar < 0.5){
+			$panchang["karan"] = $karan_krishna[$thi_idx-15][0];
+		}
+		else{
+			$panchang["karan"] = $karan_krishna[$thi_idx-15][1];
+		}
+		
+		debug("THI-IDX-15=".($thi_idx-15) . "KAR=". $kar . "&&&&&&");
+	}
+	
+	/*if($full_moon_deg % 180 > $full_sun_deg){
+		$kar = ($full_moon_deg - $full_sun_deg)/12;
+		debug("krishna".(abs(($full_moon_deg - $full_sun_deg) - 180.0)) % 12 . "|" . $thi_idx) ;
+		
+		if((abs(($full_moon_deg - $full_sun_deg) - 180.0)) % 12 <= 6){
+			if($thi_idx > 14){
+				$panchang["karan"] = $karan_krishna[$thi_idx-15][0];debug("^^^^^");
+			}
+			else{
+				$panchang["karan"] = $karan_krishna[$thi_idx][0]; debug("#####");
+			}
+		}
+		else{
+			if($thi_idx > 14){
+				$panchang["karan"] = $karan_krishna[$thi_idx-15][1];debug("%%%%");
+			}
+			else{
+				echo $thi_idx; 
+				$panchang["karan"] = $karan_krishna[$thi_idx][1]; debug("$$$$$");
+			}
+		}
+	}
+	else{
+		$kar = ($full_sun_deg - $full_moon_deg)/12;
+		debug("shukla".((abs(($full_sun_deg - $full_moon_deg) - 180))) . "|")  ; 
+		
+		if((abs(($full_sun_deg - $full_moon_deg) - 180.0)) % 12 <= 6){
+			if($thi_idx > 14){
+				$panchang["karan"] = $karan_sukla[$thi_idx-15][0]; debug("^^^^^");
+			}
+			else{
+				$panchang["karan"] = $karan_sukla[$thi_idx][0]; debug("#####");
+			}
+		}
+		else{
+			if($thi_idx > 14){
+				$panchang["karan"] = $karan_sukla[$thi_idx-15][1]; debug("%%%%");
+			}
+			else{
+				$panchang["karan"] = $karan_sukla[$thi_idx][1]; debug("$$$$$");
+			}
+		}
+	}*/
+	
+	//calculate yogam
+	$deg = ($full_moon_deg+$full_sun_deg);
+	
+	// deduct 360 if the sum is over 360 degrees
+	if($deg > 360){
+		$deg = $deg - 360;
+	}
+	
+	$yoga_idx = ceil($deg / 13.333333); //divide by 13 deg 20 min in decimal, we will get the index of the yoga (1-27)
+	
+	$panchang["yoga"] = $yoga_arr[$yoga_idx];
+	
+	//display panchang table
+	echo "<center><div class='divTable blueTable' style='height:40px;width:360px;'>"; 
+		echo "<div class='divTableRow'>";
+			echo "<div class='divBoyPanchangHeading'>Vaaram/வாரம்</div>";
+			echo "<div class='divBoyPanchang'>".$panchang['vaaram']."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divBoyPanchangHeading'>Nakshatra/நட்சத்திரம்</div>";
+			echo "<div class='divBoyPanchang'>".$panchang['nak']."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divBoyPanchangHeading'>Thithi/திதி</div>";
+			echo "<div class='divBoyPanchang'>".$panchang['thithi']."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divBoyPanchangHeading'>Karanam/கரணம்</div>";
+			echo "<div class='divBoyPanchang'>".$panchang['karan']."</div>";
+		echo "</div>";
+		echo "<div class='divTableRow'>";
+			echo "<div class='divBoyPanchangHeading'>Yogam/யோகம்</div>";
+			echo "<div class='divBoyPanchang'>".$panchang['yoga']."</div>";
+		echo "</div>";
+	echo "</div></center>";
+	
+}
+
+$conn = dbConnect($conn);
+
+startSqlTxn($conn);
+
+if($DEBUG==0){
+	try {
+		$sql="CREATE TEMPORARY TABLE `input_data` (
+		  `in_sunrise` datetime NOT NULL,
+		  `in_sunset` datetime NOT NULL,
+		  `in_sunrise_tom` datetime NOT NULL,
+		  `in_sunset_prev` datetime NOT NULL,
+		  `in_chart_date` date NOT NULL,
+		  `in_chart_time` datetime NOT NULL,
+		  `in_place` varchar(20) NOT NULL,
+		  `in_timezone` time NOT NULL
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+
+		if($res=mysqli_query($conn, $sql)){
+			if($DEBUG==1){ echo "CREATE TEMPORARY TABLE executed"; }
+		} else{
+			echo "ERROR: Could not able to execute $sql. " . mysqli_error($conn);
+		}
+		
+		/* If code reaches this point without errors then commit the data in the database */
+		commitSqlTxn($conn);	
+	}catch (mysqli_sql_exception $exception) {
+		mysqli_rollback($mysqli);
+
+		throw $exception;
+	}	
+
+	try {
+		$sql="CREATE TEMPORARY TABLE `temp_data` (
+		  `house` tinyint(4) NOT NULL,
+		  `outside` varchar(20) DEFAULT NULL,
+		  `inside` varchar(250) DEFAULT NULL,
+		  `start_time` datetime NOT NULL,
+		  `end_time` datetime NOT NULL
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+
+
+		if($res=mysqli_query($conn, $sql)){
+			if($DEBUG==1){ echo "prepareChartData() executed"; }
+		} else{
+			echo "ERROR: Could not able to execute $sql. " . mysqli_error($conn);
+		}
+		
+		/* If code reaches this point without errors then commit the data in the database */
+		commitSqlTxn($conn);	
+	}catch (mysqli_sql_exception $exception) {
+		mysqli_rollback($mysqli);
+
+		throw $exception;
+	}
+}
+
+$in_place_girl = isset($_POST["place_girl"]) ? $_POST["place_girl"] : $_POST["nPlace_girl"];
+$place_girl=strtok($in_place_girl,"|");
+$TZ_girl=strtok("|");
+
+$_SESSION["place_girl"]=$place_girl;
+
+$cookie_name = "place_girl";
+$cookie_value = $in_place_girl;
+setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
+
+$in_place_boy = isset($_POST["place_boy"]) ? $_POST["place_boy"] : $_POST["nPlace_boy"];
+$place_boy=strtok($in_place_boy,"|");
+$TZ_boy=strtok("|");
+
+$_SESSION["place_boy"]=$place_boy;
+
+$cookie_name = "place_boy";
+$cookie_value = $in_place_girl;
+setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
+
+$sql = "SELECT Latitude, Longitude, GMT_offset, GMT_offset_dsl FROM world_cities WHERE Place="."'".$place_girl."'";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+  // output data of each row
+  while($row = $result->fetch_assoc()) {
+    $lat = $row["Latitude"];
+    $lon = $row["Longitude"];
+    $gmt_offset = $row["GMT_offset"];
+    $gmt_offset_dst=$row["GMT_offset_dsl"];
+  }
+} else {
+  echo "0 results";
+}
+
+if($DEBUG==1){
+echo "DATE: " . $chart_date."<BR>";
+echo "TIME: " . $chart_time."<BR>";
+echo "PLACE: " . $place_girl."<BR>";
+echo "LAT: " . $lat."<BR>";
+echo "LONG: " . $lon."<BR>";
+echo "GMT offset: " . $gmt_offset."<BR>";
+echo "GMT offset dst: " . $gmt_offset_dst."<BR>";
+echo "TZ: " . $TZ_girl ."<BR>";
+}
+
+date_default_timezone_set($TZ_girl);
+
+if(date('I')==1) { // DST
+   $hour=(int)strtok($gmt_offset_dst,":");
+   $min=(int)strtok(":");
+   $offset=$hour+$min/60;
+   $tz_offset=$gmt_offset_dst;
+}
+else {
+   $hour=(int)strtok($gmt_offset,":");
+   $min=(int)strtok(":");
+   $offset=$hour+$min/60;
+   $tz_offset=$gmt_offset;
+}
+
+// ------- Swiss ephemeris // ------- 
+
+$date = date("d.m.Y",strtotime($chart_date));
+$time = date("H:i:s",strtotime($chart_time));
+$datetime = $date . " " . $time;
+$h_sys='P';
+
+if($DEBUG==1){ 
+	echo 'DATETIME =' . $datetime; echo '<br>';
+	echo 'HOUSE SYSTEM =' . $h_sys; echo '<br>';
+}
+
+/**
+ * Converting birth date/time to UTC
+ */
+//$birthTimestamp = date('Y-m-d H:i:s',strtotime($datetime));
+$birthTimestamp = strtotime($datetime);
+$utcTimestamp = $birthTimestamp - $offset * (60 * 60);
+
+$date = date('d.m.Y', $utcTimestamp);
+$time = date('H:i:s', $utcTimestamp);
+
+if($DEBUG==1){ 
+	echo 'DATE =' . $date ;
+	echo 'TIME =' . $time;
+	echo 'OFFSET =' . $offset; echo '<br>';
+	echo 'birthTimestamp =' . $birthTimestamp; echo '<br>';
+	echo 'utcTimestamp =' . $utcTimestamp; echo '<br>';
+	echo 'UTC time=' . date('Y-m-d H:i:s', $utcTimestamp); echo '<br>';
+}
+
+$next_day=date("Y-m-d",strtotime($chart_date. ' + 1 days'));
+$previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
+
+$today_sunrise = $chart_date . " " . getSunrise(strtotime($chart_date),floatval($lat), floatval($lon));
+$today_sunset = $chart_date . " " .  getSunset(strtotime($chart_date),floatval($lat), floatval($lon));
+$tomo_sunrise = $next_day . " " .  getSunrise(strtotime($next_day),floatval($lat), floatval($lon));
+$prev_sunset = $previous_day . " " .  getSunset(strtotime($previous_day),floatval($lat), floatval($lon));
+
+debug("CHART date=".$chart_date);
+debug("CHART TIME=".$chart_time);
+debug("CHART SUNRISE=".date("H:i:s",strtotime($today_sunrise)));
+debug("CHART SUNSET=".date("H:i:s",strtotime($today_sunset)));
+
+// find if it's day or night for mandhi calculation
+if(strtotime($datetime) >= strtotime($today_sunrise) && strtotime($datetime) <= strtotime($today_sunset)) {
+	$day=1;
+}else {
+	$day=0;
+}
+
+debug("DAY=" . $day);
+
+
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+	debug('RUNNING ON WINDOWS');
+	
+	//exec ("swetest -edir$libPath -b$date -ut$time -p0123456t -n1 -sid1 -eswe -fPls -g, -head -house$lon,$lat,$h_sys", $output);
+	//64 version runs little faster
+	exec ("swetest64 -edir$libPath -b$date -ut$time -p0123456t -n1 -sid1 -eswe -fPls -g, -head -house$lon,$lat,$h_sys", $output);
+	debug("<BR>swetest64 -edir$libPath -b$date -ut$time -p0123456t -n1 -sid1 -eswe -fPls -g, -head -house$lon,$lat,$h_sys</BR>");
+} else {
+	debug('RUNNING ON LINUX');
+	
+	//on linux
+	exec ("swetest -edir$libPath -b$date -ut$time -p0123456t -n1 -sid1 -eswe -fPls -g, -head -house$lon,$lat,$h_sys", $output);
+	debug("<BR>swetest -edir$libPath -b$date -ut$time -p0123456t -n1 -sid1 -eswe -fPls -g, -head -house$lon,$lat,$h_sys</BR>");
+}
+
+debug("swetest64 -edir$libPath -b$date -ut$time -p0123456t -n1 -sid1 -eswe -fPls -g, -head -house$lon,$lat,$h_sys");
+
+# OUTPUT ARRAY
+# Planet Name, Planet Degree, Planet Speed per day
+ 
+if($DEBUG==1){ 
+	var_dump($output);
+}
+
+planetSort($output);
+
+$count=0;
+foreach ($output as $key => $line)
+  {
+	global $ragu_house,$sun_degree, $sun_house;
+	$count=$count+1;
+    $row = explode(',',$line);
+	
+	if($DEBUG==1){ var_dump($row);}
+    
+	if($count>8 && $count!=21) {continue;}
+	//$sw_planet[$key] = $row[0];
+    $tot_degree[$key] = $row[1];
+	
+	$sw_house[$key] = (int)((float)$tot_degree[$key]/30.0);
+	
+	//$sw_degree[$key] = DECtoDMS(round($tot_degree[$key] - $sw_house[$key]*30,2));
+	
+	//$sw_degree[$row[0]] = DECtoDMS(round($tot_degree[$key] - $sw_house[$key]*30,2));
+	$sw_degree[$row[0]] = round($tot_degree[$key] - $sw_house[$key]*30,2);
+	
+    if($count!=21){
+		$sw_dir[$key] = ($row[2] > 0) - ($row[2] < 0);
+	}
+	
+	if($sun_house==0 and strpos($row[0],'Sun')===0){
+		$sun_house = (int)($tot_degree[$key]/30)+1;
+		$sun_degree = getDegree(round($tot_degree[$key] - $sw_house[$key]*30,2));
+	}
+	
+	if($moon_house==0 and strpos($row[0],'Moon')===0){
+		$moon_house = (int)($tot_degree[$key]/30)+1;
+		$moon_degree = getDegree(round($tot_degree[$key] - $sw_house[$key]*30,2));
+	}
+	
+	$sw_planet[$sw_house[$key]] = $sw_planet[$sw_house[$key]]." ".$row[0];
+	
+	$tot_degree[$row[0]] = $row[1];
+	
+	// Store ragu house position for future use to find kethu position.
+	if(strpos($row[0],"true Node")===0){ // using === because this strpos returns 0 when true Node found and also false(0) when it's not found. So we need to use ===
+		
+		$ragu_house = $sw_house[$key];
+		if($DEBUG==1){ echo "ragu_house=" . $sw_house[$key]."<br>";}
+	}
+		
+	if($DEBUG==1 && $count!=21){ echo $row[0] ."|".$sw_house[$key]."|".$sw_planet[$key]."|".$sw_degree[$key]."|".$sw_dir[$key]."|"."<br>";}
+  };
+  
+if($DEBUG==1){ 
+  echo "<br>Birth[".$sw_planet[0]."]</br>";
+  var_dump($sw_planet);
+  var_dump($sw_degree);
+  var_dump($sw_dir);
+}
+  $sw_planet = updatePlanet($sw_planet,$sw_dir, $ragu_house);
+
+// ------- Swiss ephemeris -------------
+
+if($DEBUG==1){
+	echo "HOUR:" . $hour."<BR>";
+	echo "MIN:" . $min."<BR>";
+	echo "OFFSET:" . $offset."<BR>";
+	echo "PLACE:" . $place."<BR>";
+	echo "tz offset :" . $tz_offset."<BR>";
+}
+
+// Update Mandhi
+$sw_planet = updateMandhi($sw_planet,$sw_planet,$sun_degree,$day,$dayofweek,$sun_house);
+
+if($DEBUG==1){
+	var_export($sw_planet);
+}
+
+//Update planet symbol in Jama planets (tr_sw_planet)
+//$tr_sw_planet = updateSymbols($tr_sw_planet);
+
+//Update planet strengths
+$sw_planet = updateStrength($sw_planet);
+
+//Get transit data (outside)
+
+$transit_date = isset($_POST['in_date_boy']) ? $_POST['in_date_boy'] : date('Y-m-d');
+$transit_time = isset($_POST['in_time_boy']) ? $_POST['in_time_boy'] : date('H:i:s');
+
+$date = date("d.m.Y",strtotime($transit_date));
+$time = date("H:i:s",strtotime($transit_time));
+
+$transit_datetime = $date . " " . $time;
+
+$transitTimestamp = strtotime($transit_datetime);
+$utcTimestamp = $transitTimestamp - $offset * (60 * 60);
+
+$currUTC_date = date('d.m.Y', $utcTimestamp);
+$currUTC_time = date('H:i:s', $utcTimestamp);
+
+$transit_dayofweek = date('w', strtotime($transit_date));
+
+$transit_next_day=date("Y-m-d",strtotime($transit_date. ' + 1 days'));
+$transit_previous_day=date("Y-m-d",strtotime($transit_date. ' - 1 days'));
+
+$transit_today_sunrise = $transit_date . " " . getSunrise(strtotime($transit_date),floatval($lat), floatval($lon));
+$transit_today_sunset = $transit_date . " " .  getSunset(strtotime($transit_date),floatval($lat), floatval($lon));
+$transit_tomo_sunrise = $transit_next_day . " " .  getSunrise(strtotime($transit_next_day),floatval($lat), floatval($lon));
+$transit_prev_sunset = $transit_previous_day . " " .  getSunset(strtotime($transit_previous_day),floatval($lat), floatval($lon));
+
+debug("TRANSIT DATE=".$transit_date);
+debug("TRANSIT TIME=".$transit_time);
+debug("TRANSIT TODAY SUNRISE=".date("H:i:s",strtotime($transit_today_sunrise)));
+debug("TRANSIT TODAY SUNSET=".date("H:i:s",strtotime($transit_today_sunset)));
+
+// find if it's day or night for mandhi calculation
+if(strtotime($transit_datetime) >= strtotime($transit_today_sunrise) && strtotime($transit_datetime) <= strtotime($transit_today_sunset)) {
+	$transit_day=1;
+}else {
+	$transit_day=0;
+}
+
+debug("TRANSIT DAY=" . $transit_day);
+
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+	debug('RUNNING ON WINDOWS');
+	
+	//exec ("swetest -edir$libPath -b$currUTC_date -ut$currUTC_time -p0123456t -n1 -sid1 -eswe -fPls -g, -head -house$lon,$lat,$h_sys", $transit);
+	//64 version runs little faster
+	exec ("swetest64 -edir$libPath -b$currUTC_date -ut$currUTC_time -p0123456t -n1 -sid1 -eswe -fPls -g, -head -house$lon,$lat,$h_sys", $transit);
+	debug("<BR>swetest64 -edir$libPath -b$currUTC_date -ut$currUTC_time -p0123456t -n1 -sid1 -eswe -fPls -g, -head -house$lon,$lat,$h_sys</BR>");
+} else {
+	debug('RUNNING ON LINUX');
+	
+	//on linux
+	exec ("swetest -edir$libPath -b$currUTC_date -ut$currUTC_time -p0123456t -n1 -sid1 -eswe -fPls -g, -head -house$lon,$lat,$h_sys", $transit);
+	debug("<BR>swetest -edir$libPath -b$currUTC_date -ut$currUTC_time -p0123456t -n1 -sid1 -eswe -fPls -g, -head -house$lon,$lat,$h_sys</BR>");
+}
+
+debug("swetest64 -edir$libPath -b$currUTC_date -ut$currUTC_time -p0123456t -n1 -sid1 -eswe -fPls -g, -head -house$lon,$lat,$h_sys");
+
+
+planetSort_transit($transit);
+
+// Transit calculation
+$count=0;
+foreach ($transit as $key => $line)
+  {
+	global $tr_ragu_house,$transit_sun_degree, $transit_sun_house;
+	$count=$count+1;
+    $row = explode(',',$line);
+	
+	if($DEBUG==1){ var_dump($row);}
+    
+	if($count>8 && $count!=21) {continue;}
+	//$sw_planet[$key] = $row[0];
+    $tot_degree[$key] = $row[1];
+	
+	$tr_sw_house[$key] = (int)((float)$tot_degree[$key]/30.0);
+	
+	//$sw_degree[$key] = DECtoDMS(round($tot_degree[$key] - $sw_house[$key]*30,2));
+	
+	$tr_sw_degree[$row[0]] = DECtoDMS(round($tot_degree[$key] - $tr_sw_house[$key]*30,2));
+	
+    if($count!=21){
+		$tr_sw_dir[$key] = ($row[2] > 0) - ($row[2] < 0);
+	}
+	
+	if($transit_sun_house==0 and strpos($row[0],'Sun')===0){
+		$transit_sun_house = (int)($tot_degree[$key]/30)+1;
+		$transit_sun_degree = getDegree(round($tot_degree[$key] - $tr_sw_house[$key]*30,2)); 
+	}
+	
+	if($transit_moon_house==0 and strpos($row[0],'Moon')===0){
+		$transit_moon_house = (int)($tot_degree[$key]/30)+1;
+		$transit_moon_degree = getDegree(round($tot_degree[$key] - $tr_sw_house[$key]*30,2));
+	}
+	
+	$tr_sw_planet[$tr_sw_house[$key]] = $tr_sw_planet[$tr_sw_house[$key]]." ".$row[0];
+	
+	$tot_degree[$row[0]] = $row[1];
+	
+	// Store ragu house position for future use to find kethu position.
+	if(strpos($row[0],"true Node")===0){ // using === because this strpos returns 0 when true Node found and also false(0) when it's not found. So we need to use ===
+		
+		$tr_ragu_house = $tr_sw_house[$key];
+		if($DEBUG==1){ echo "tr_ragu_house=" . $tr_sw_house[$key]."<br>";}
+	}
+		
+	if($DEBUG==1 && $count!=21){ echo $row[0] ."|".$tr_sw_planet[$key]."|".$tr_sw_planet[$key]."|".$tr_sw_degree[$key]."|".$tr_sw_dir[$key]."|"."<br>";}
+  };
+  
+if($DEBUG==1){ 
+  echo "<br>Transit[".$sw_planet[0]."]</br>";
+  var_dump($tr_sw_planet);
+  var_dump($tr_sw_degree);
+  var_dump($tr_sw_dir);
+}
+  $tr_sw_planet = updatePlanet($tr_sw_planet,$tr_sw_dir, $tr_ragu_house);
+
+// ------- Swiss ephemeris -------------
+
+if($DEBUG==1){
+	echo "HOUR:" . $hour."<BR>";
+	echo "MIN:" . $min."<BR>";
+	echo "OFFSET:" . $offset."<BR>";
+	echo "PLACE:" . $place."<BR>";
+	echo "tz offset :" . $tz_offset."<BR>";
+}
+
+// Update Mandhi
+$tr_sw_planet = updateMandhi_transit($tr_sw_planet,$tr_sw_planet,$transit_sun_degree,$transit_day,$transit_dayofweek,$transit_sun_house);
+
+
+if($DEBUG==1){
+	var_export($tr_sw_planet);
+	var_export($sw_planet);
+}
+
+//Update planet symbol in Jama planets (tr_sw_planet)
+//$tr_sw_planet = updateSymbols($tr_sw_planet);
+
+//Update planet strengths
+$tr_sw_planet = updateStrength($tr_sw_planet);
+
+
+$chartdate=date("d/m/Y",strtotime($chart_date));
+$Planet_degree=displayDegree($sw_degree);
+$Transit_Planet_degree=displayDegree($tr_sw_degree);
+
+//$sw_degree = sortDegree($sw_degree);
+$sw_planet = sortDegree($sw_planet);
+
+/* panchang data creation 
+
+$p = new Panchang();
+$dd = date("d",strtotime($chart_date));
+$mm = date("m",strtotime($chart_date));
+$yy = date("Y",strtotime($chart_date));
+$hh = date("H",strtotime($chart_time));
+$mn = date("i",strtotime($chart_time));
+
+//echo "$dd-$mm-$yy-$hh-$mn";
+
+$temp = explode(":",$tz_offset,-1);
+
+$zhh = $temp[0];
+$zmn = $temp[1];
+
+$hr = $hh + $mn/60.0;
+$zhr = $zhh + $zmn/60.0;
+
+$data = $p->calcPanchanga($dd, $mm, $yy, $hr, $zhr);
+
+foreach($data as $key => $value){
+	$panchang[$key] = $value;
+}*/
+
+echo <<<EOL
+	<div class="title"></div>
+	<div id="fullpage">
+		<div class="section fp-auto-height-responsive" id="section0">
+
+			<div class="intro">
+					<BR><BR><BR><BR><BR>
+					
+					<center>
+					<div class="divTable blueTable" style="height:70px;width:360px;">
+					<P style="color:#660000;font-weight:bold; font-size:12px; text-align:center; background-color:gold;width:360px;line-height:30px">திருமண பொருத்த/Marriage Matching Chart</P>
+								<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
+									<div class="divTableDummyCell" colspan=3 style="border-radius: 20px 20px 0 0;">
+										
+										<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:15px"><span style="background-color:lightpink">$place_girl</span>&emsp;&emsp;&emsp;<span style="background-color:#B2FCE4">$place_boy</span></H4>
+										<form name='updateChart' action='Matching_Chart.php' method='post'>
+											<input type='hidden' id='nPlace_girl' name='nPlace_girl' value=$in_place_girl>
+											<input type='hidden' id='nPlace_boy' name='nPlace_boy' value=$in_place_boy>
+											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Girl BD: <input type='date' id='nDate' name='nDate' style="background-color:lightpink;color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$chart_date > Girl BT: <input type='time' id='nTime' name='nTime' style="background-color:lightpink;color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$chart_time></H4>
+											<H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">Boy BD: <input type='date' id='in_date_boy' name='in_date_boy' style="background-color:#B2FCE4;color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$transit_date> Boy BT: <input type='time' id='in_time_boy' name='in_time_boy' style="background-color:#B2FCE4;color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$transit_time></H4>
+											<BR>
+											<input type='submit' id='submit' value='Submit' style="background-color:gold;color:#660000;font-weight:bold;font-size:10px;">
+
+										</form>
+										
+										<ul id="menu" align="center">
+												<li data-menuanchor="mainPage"><a href="Matching_input.php">Create chart</a></li>
+EOL;
+											if(!isset($_SESSION['phone'])){
+												echo '<li data-menuanchor="firstPage"><a href="index.php">Home</a></li>';
+											}
+echo <<<EOL
+												<li data-menuanchor="secondPage"><a href="viewHistoricalCharts.php" target="_blank">Charts history</a></li>
+											</ul>
+									</div>
+								</div>
+							</div>
+				<div class="container" id="container" style="horizontal-align:center">
+					
+					<div class="divTable blueTable" id="chart">
+						<div class="overlay2"><br>பெரியநாயகி துணை</br></div>
+						<div class="divTableBody">
+							<div class="divTableRow">
+									<div class="divTableOuterCell">$tr_sw_planet[11]</div>
+									<div class="divTableOuterCell"></div>
+									<div class="divTableOuterCell">$tr_sw_planet[0]</div>
+									<div class="divTableOuterCell">$tr_sw_planet[1]</div>
+									<div class="divTableOuterCell"></div>
+									<div class="divTableOuterCell">$tr_sw_planet[2]</div>
+							</div>
+							<div class="divTableRow">
+									<div class="divTableOuterCell"></div>
+									<div class="divTableCell">$sw_planet[11]<span class='symbol'>&#9795;<span></div>
+									<div class="divTableCell">$sw_planet[0]<span class='symbol'>&#9794;<span></div>
+									<div class="divTableCell">$sw_planet[1]<span class='symbol'>&#9792;<span></div>
+									<div class="divTableCell">$sw_planet[2]<span class='symbol'>&#9791;<span></div>
+									<div class="divTableOuterCell"></div>
+							</div>
+							<div class="divTableRow">
+									<div class="divTableOuterCell">$tr_sw_planet[10]</div>
+									<div class="divTableCell">$sw_planet[10]<span class='symbol'>&#9796;<span></div>
+									<div class="divTableCenterCell1"></div>
+									<div class="divTableCenterCell2"></div>
+									<div class="divTableCell">$sw_planet[3]<span class='symbol'>&#9790;<span></div>
+									<div class="divTableOuterCell">$tr_sw_planet[3]</div>
+							</div>
+							<div class="divTableRow">
+									<div class="divTableOuterCell">$tr_sw_planet[9]</div>
+									<div class="divTableCell">$sw_planet[9]<span class='symbol'>&#9796;<span></div>
+									<div class="divTableCenterCell3"></div>
+									<div class="divTableCenterCell4"></div>
+									<div class="divTableCell">$sw_planet[4]<span class='symbol'>&#9737;<span></div>
+									<div class="divTableOuterCell">$tr_sw_planet[4]</div>
+							</div>
+							<div class="divTableRow">
+									<div class="divTableOuterCell"></div>
+									<div class="divTableCell">$sw_planet[8]<span class='symbol'>&#9795;<span></div>
+									<div class="divTableCell">$sw_planet[7]<span class='symbol'>&#9794;<span></div>
+									<div class="divTableCell">$sw_planet[6]<span class='symbol'>&#9792;<span></div>
+									<div class="divTableCell">$sw_planet[5]<span class='symbol'>&#9791;<span></div>
+									<div class="divTableOuterCell"></div>
+							</div>
+							<div class="divTableRow">
+									<div class="divTableOuterCell">$tr_sw_planet[8]</div>
+									<div class="divTableOuterCell"></div>
+									<div class="divTableOuterCell">$tr_sw_planet[7]</div>
+									<div class="divTableOuterCell">$tr_sw_planet[6]</div>
+									<div class="divTableOuterCell"></div>
+									<div class="divTableOuterCell">$tr_sw_planet[5]</div>
+							</div>
+						</div>	
+					</div>
+					<div class="divTable blueTable" style="height:40px;width:360px;">
+						<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
+							<div class="divTableCell" colspan=3 style="padding:0px;">
+								<H6 style='font-weight:bold'>Girl chart (inner)</H6>
+								<H6 style='background-color:white;'>$Planet_degree</H6>
+							</div>
+						</div>
+						<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
+						<div class="divTableOuterCell" colspan=3>
+							<H6 style='font-weight:bold;font-size:12px'>Boy chart (outer)</H6>
+							<H6 style='background-color:white;font-size:12px'>$Transit_Planet_degree</H6>
+							<div style="color:white;font-size:14px;background-color:white;"><a href="saveBirthChart.php" id="save" onClick="window.open('saveBirthChart.php', 'saveChart', 'toolbar=no, directories=no,location=no, status=yes, menubar=no, resizable=no, scrollbars=yes'); return false">Click to save chart</a></div>
+						</div>
+					</div>
+					<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
+					<div class="divTableOuterCell" colspan=3 style="border-radius:  0 0 20px 20px;">
+EOL;
+	
+						/* Panchang display
+						echo "<table>";
+							echo "<TR>";
+								echo "<TD>Thithi</TD><td>".$panchang['tithi']."</td>";
+							echo "</TR>";
+							echo "<TR>";
+								echo "<TD>Paksha</TD><td>".$panchang['Paksha']."</td>";
+							echo "</TR>";
+							echo "<TR>";
+								echo "<TD>Nakshatra</TD><td>".$panchang['nakshatra']."</td>";
+							echo "</TR>";
+							echo "<TR>";
+								echo "<TD>Yoga</TD><td>".$panchang['yoga']."</td>";
+							echo "</TR>";
+							echo "<TR>";
+								echo "<TD>Karana</TD><td>".$panchang['karana']."</td>";
+							echo "</TR>";
+							echo "<TR>";
+								echo "<TD>Rashi</TD><td>".$panchang['rashi']."</td>";
+							echo "</TR>";
+						echo "</TABLE>"; */
+echo <<<EOL
+
+							
+					</div>
+				</div>
+						
+EOL;
+								/*if($autoAnalysisMenu==1){
+									echo "<div class='footer'>Scroll down for Auto Analysis details &#9660;</div>";
+								}*/
+echo <<<EOL
+								
+						</div>
+						
+					</div>
+				
+					<div class="divTable blueTable" style="height:40px;width:360px;">
+						<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
+							<div class="divTableCell" colspan=3>
+								<H6 style='font-weight:bold'>Panchangam/பஞ்சாங்கம்(Girl)</H6>
+							</div>
+						</div>
+					</div>
+EOL;
+					displayGirlPanchang();
+					
+echo <<<EOL
+					<div class="divTable blueTable" style="height:40px;width:360px;">
+						<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
+							<div class="divTableOuterCell" colspan=3>
+								<H6 style='font-weight:bold'>Panchangam/பஞ்சாங்கம்(Boy)</H6>
+							</div>
+						</div>
+					</div>
+EOL;
+					displayBoyPanchang();
+					matchingRule1();
+					matchingRule2();
+					matchingRule4();
+					matchingRule5();
+					matchingRule6();
+
+echo <<<EOL
+			
+					</div></center>
+				</div>
+			</div>
+		</div>
+		
+		
+EOL;
+
+if($autoAnalysisMenu==1){
+	createAutoAnalysisSection();
+}
+
+if($cricketMenu==1){
+	createCricketSection();
+}
+
+//Log user acitivity
+if(isset($_COOKIE["phone"])) {
+	$activity = 'Birth|'.$place."|".$chart_date."|".$chart_time."|".$transit_date."|".$transit_time;
+	logActivity($conn,$_COOKIE["phone"],$activity,date('Y-m-d H:i:s'));
+}
+
+dbDisconnect($conn);
+
+$_POST["mTime"]="";
+$_SESSION["charttime"]="";
+$_SESSION["inside"]=$sw_planet;
+$_SESSION["outside"]=$tr_sw_planet;
+$_SESSION["planet_degree"]=$Planet_degree;
+$_SESSION["transit_planet_degree"]=$Transit_Planet_degree;
+$_SESSION["transit_date"]=$transit_date;
+$_SESSION["transit_time"]=$transit_time;
+?>
+
+</body>
+</html>
