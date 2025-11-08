@@ -165,6 +165,23 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
     <title>DSJV app</title>
     <meta name="description" content="One stop website for astrology">
 	
+	<!-- Critical CSS to prevent flash of desktop buttons on mobile -->
+	<style>
+		@media only screen and (max-width: 600px) {
+			.btn-desktop, .btn-desktop-nav {
+				display: none !important;
+			}
+			.mobile-dropdown, .mobile-nav-dropdown, .btn-mobile {
+				display: inline-flex !important;
+			}
+		}
+		@media only screen and (min-width: 601px) {
+			.mobile-dropdown, .mobile-nav-dropdown, .btn-mobile {
+				display: none !important;
+			}
+		}
+	</style>
+	
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/birth_chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
@@ -350,6 +367,10 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 				$(this).parents(".search-box").find('input[type="text"]').val($(this).text());
 				$(this).parent(".result").empty();
 				$(this).parent("#lplace").hide();
+				// Auto-submit form when place is selected
+				if(validateForm()==true){
+					document.forms["updatePanchang"].submit();
+				}
 			});
 		});
 		
@@ -555,7 +576,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 	}
 	
 	function genPanchang(place){
-			var url = "gen_panchang_form.php"+"?place="+place;
+			var url = "gen_panchang_form.php"+"?place="+encodeURIComponent(place);
 			//window.open("gen_panchang_form.php","_self");
 			window.open(url,"_self");
 			return false;
@@ -681,7 +702,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 	];
 
 	const nakshatras_ta = [
-		"அசுவினி", "பரணி", "கிருத்திகை", "ரோகிணி", "மிருகசீரிடம்", "திருவாதிரை", "புனர்பூசம்",
+		"அசுவினி", "பரணி", "கிருத்திகை", "ரோகிணி", "மிருகசிரீஷம்", "திருவாதிரை", "புனர்பூசம்",
 		"பூசம்", "ஆயில்யம்", "மகம்", "பூரம்", "உத்திரம்", "ஹஸ்தம்", "சித்திரை",
 		"சுவாதி", "விசாகம்", "அனுஷம்", "கேட்டை", "மூலம்", "பூராடம்", "உத்திராடம்",
 		"திருவோணம்", "அவிட்டம்", "சதயம்", "பூரட்டாதி", "உத்திரட்டாதி", "ரேவதி"
@@ -694,7 +715,9 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 	const totalMinutes = (end - start) / (1000 * 60);
 	const segmentMinutes = totalMinutes / 27;
 
+	console.log(startNakshatra);
 	let startIndex = nakshatras_ta.findIndex(n => n.toLowerCase() === startNakshatra.toLowerCase());
+	
 	if (startIndex === -1) {
 		alert("Invalid Nakshatra name.");
 		return;
@@ -1757,15 +1780,6 @@ function displayHoroDetails()
 			echo "<div class='divPanchang' id='abhijith'>".getAbhijit()."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>முகூர்த்தங்கள்</div>";
-			//echo "<div class='divPanchang' onClick='generateMuhurtam(\"$today_sunrise\",\"$tomo_sunrise\");' style='color:blue;cursor:pointer'>Click to see</div>";
-			echo "<div class='divPanchang' onClick='generateMuhurtam_default();' style='color:blue;cursor:pointer'>Click to see</div>";
-		echo "</div>";
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>புஷ்கர நவாம்சம்</div>";
-			echo "<div class='divPanchang' id='pushkara-link' onClick='showPushkaraTimes();' style='color:gray;cursor:wait'>Loading...</div>";
-		echo "</div>";
-		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeadingRed'>அவயோகி</div>";
 			echo "<div class='divPanchang' id='avayogi' OnClick='showDetailsDiv(event, 4)' style='color:blue;cursor:pointer'>".$yogi_arr[3]." (".$yogi_arr[2].")</div>";
 		echo "</div>";
@@ -2154,25 +2168,40 @@ echo <<<EOL
 						<CENTER><P style="color:#660000;font-weight:bold; font-size:16px; background-color:white;width:200px;">பஞ்சாங்கம்</P></CENTER>
 						<TR>
 							<TD>
-								Date: <input type='date' id='nDate' name='nDate' onChange='onDateChange();' style="background-color:#FDE966;color:#000000;font-size:14px;font-weight:bold;width:110px;" value=$chart_date> 
+								Date: <input type='date' id='nDate' name='nDate' onChange='onDateChange();' style="background-color:#FDE966;color:#000000;font-size:14px;font-weight:bold;width:110px;text-align:center;" value=$chart_date> 
 								
 							</TD>
 							<TD>
-								Time: <input type='time' id='nTime' name='nTime' onChange='onTimeChange();' style="background-color:#FDE966;color:#000000;font-size:14px;font-weight:bold;width:110px" step='1' value=$chart_time>								
+								Time: <input type='time' id='nTime' name='nTime' onChange='onTimeChange();' style="background-color:#FDE966;color:#000000;font-size:14px;font-weight:bold;width:110px;text-align:center;" step='1' value=$chart_time>								
 							</TD>
 						</TR>
 						<TR>
 							<TD colspan=2>
 								<center>
-									<input type='button' class='actionBtnSmall' id='prevDay' onClick='movePanchang(-1);' value='&#x25C0;நா' />	
-									<button class='actionBtnSmall' id='prevMonth' onClick='movePanchang(-30);'>&#x25C0;மா</button> 
-									<button class='actionBtnSmall' id='prevYear' onClick='movePanchang(-365);'>&#x25C0;வரு</button> 
-									<button class='actionBtnSmall' id='nextYear' onClick='movePanchang(365);'>வரு&#x25B6;</button>
-									<button class='actionBtnSmall' id='nextMonth' onClick='movePanchang(30);'>மா&#x25B6;</button>
-									<button class='actionBtnSmall' id='nextDay' onClick='movePanchang(1);'>நா&#x25B6;</button>
-									<BR>
-									<button class='actionBtn' id='now' onClick='updateNow();window.reload();'>தற்போது</button>
-									<button class='actionBtn' id='now' onClick='updateToday();'>இன்று</button>
+									<div class='nav-button-container'>
+										<!-- Desktop buttons -->
+										<input type='button' class='actionBtnSmall btn-desktop-nav' id='prevDay' onClick='movePanchang(-1);' value='◀நா' />	
+										<button class='actionBtnSmall btn-desktop-nav' id='prevMonth' onClick='movePanchang(-30);'>◀மா</button> 
+										<button class='actionBtnSmall btn-desktop-nav' id='prevYear' onClick='movePanchang(-365);'>◀வரு</button> 
+										<button class='actionBtnSmall btn-desktop-nav' id='nextYear' onClick='movePanchang(365);'>வரு▶</button>
+										<button class='actionBtnSmall btn-desktop-nav' id='nextMonth' onClick='movePanchang(30);'>மா▶</button>
+										<button class='actionBtnSmall btn-desktop-nav' id='nextDay' onClick='movePanchang(1);'>நா▶</button>
+										<button class='actionBtn btn-desktop-nav' id='now' onClick='updateNow();window.reload();'>தற்போது</button>
+										<button class='actionBtn btn-desktop-nav' id='now' onClick='updateToday();'>இன்று</button>
+
+										<!-- Mobile controls -->
+										<button class='actionBtn btn-mobile' id='mobileNowBtn' onClick='updateNow();window.reload();'>தற்போது</button>
+										<button class='actionBtn btn-mobile' id='mobileTodayBtn' onClick='updateToday();'>இன்று</button>
+										<select class='actionBtnSmall mobile-nav-dropdown' onchange="handleNavigation(this)">
+											<option value=''>மற்றவை</option>
+											<option value='-365'>◀ முந்தைய ஆண்டு</option>
+											<option value='-30'>◀ முந்தைய மாதம்</option>
+											<option value='-1'>◀ முந்தைய நாள்</option>
+											<option value='1'>அடுத்த நாள் ▶</option>
+											<option value='30'>அடுத்த மாதம் ▶</option>
+											<option value='365'>அடுத்த ஆண்டு ▶</option>
+										</select>
+									</div>
 								</center>
 							</TD>
 						</TR>
@@ -2183,11 +2212,24 @@ echo <<<EOL
 						</TR>
 						</TABLE>
 					</H4>
-				<input type='button' id='sub_button' class='actionBtn' value='Submit' onClick="formSubmitButton();">
-				<input type='button' id='downloadPanchang' class='actionBtn' value='Monthly' onClick="genPanchang('$place');" /> 
-				<input type='button' class='actionBtn' id='onePageBtn' onclick="displayOnePagePanchang()" value="Download" />
-				<input type='button' class="actionBtn" id="showNakshatraBtn" value='நட்.பகிர்வு' />
-				<BR><BR>
+				<div class='button-container'>
+					<input type='button' id='downloadPanchang' class='actionBtn btn-desktop' value='Monthly' onClick="genPanchang('$place');" /> 
+					<input type='button' class='actionBtn btn-desktop' id='onePageBtn' onclick="displayOnePagePanchang()" value="Download" />
+					<input type='button' class="actionBtn btn-desktop" id="showNakshatraBtn" value='நட்.பகிர்வு' />
+					<input type='button' class="actionBtn btn-desktop" id="showPushkaraBtn" value='புஷ்கர' onclick="showPushkaraTimes()" />
+					<input type='button' class="actionBtn btn-desktop" id="showMuhurtamBtn" value='முகூர்த்தம்' onclick="generateMuhurtam_default()" />
+					
+					<!-- Mobile dropdown -->
+					<select id='mobileActionsMenu' class='actionBtn mobile-dropdown' onchange="handleMobileAction(this)">
+						<option value=''>மேலும்...</option>
+						<option value='monthly'>மாதாந்திரம்</option>
+						<option value='download'>பதிவிறக்கு</option>
+						<option value='nakshatra'>நட்.பகிர்வு</option>
+						<option value='pushkara'>புஷ்கர</option>
+						<option value='muhurtam'>முகூர்த்தம்</option>
+					</select>
+				</div>
+				<BR>
 			</form>
 
 EOL;
@@ -2352,7 +2394,190 @@ unset($_SESSION['menu_clicked']);
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* Button container */
+.button-container, .nav-button-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.nav-button-container {
+    justify-content: center;
+}
+
+/* Hide mobile dropdown by default */
+.mobile-dropdown, .mobile-nav-dropdown {
+    display: none;
+}
+
+/* Vertical centering for all buttons and dropdowns */
+.actionBtn, .actionBtnSmall, select.mobile-dropdown, select.mobile-nav-dropdown {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    vertical-align: middle !important;
+    line-height: normal !important;
+}
+
+/* Mobile view - show dropdown, hide other buttons */
+@media only screen and (max-width: 600px) {
+    .btn-desktop, .btn-desktop-nav {
+        display: none !important;
+    }
+    
+	/* Show mobile-only buttons */
+	.btn-mobile {
+		display: inline-flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+		padding: 6px 12px !important;
+		font-size: 13px !important;
+		min-height: 34px !important;
+	}
+    
+    .mobile-dropdown, .mobile-nav-dropdown {
+		display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: auto !important;
+        margin: 3px !important;
+        padding: 6px 12px !important;
+        font-size: 13px !important;
+		border: 2px solid #000 !important;
+		background-color: #A0522D !important;
+        color: white !important;
+        border-radius: 4px !important;
+        cursor: pointer !important;
+        vertical-align: middle !important;
+        height: auto !important;
+        min-height: 34px !important;
+		appearance: none !important;
+		-webkit-appearance: none !important;
+		-moz-appearance: none !important;
+		line-height: 1.2 !important;
+		font-weight: bold !important;
+    }
+    
+    select.mobile-nav-dropdown {
+        font-size: 13px !important;
+        padding: 6px 10px !important;
+        min-height: 34px !important;
+        max-width: 120px !important;
+        width: auto !important;
+    }    .button-container, .nav-button-container {
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    #sub_button {
+        padding: 10px 20px !important;
+        font-size: 14px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+}
+
+/* Desktop layout - hide dropdown, show all buttons */
+@media only screen and (min-width: 601px) {
+    .mobile-dropdown, .mobile-nav-dropdown {
+        display: none !important;
+    }
+    
+	/* Hide mobile-only buttons on desktop */
+	.btn-mobile {
+		display: none !important;
+	}
+    
+    .btn-desktop, .btn-desktop-nav {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    .button-container, .nav-button-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    
+    .nav-button-container {
+        justify-content: center;
+    }
+    
+    .actionBtn, .actionBtnSmall {
+        flex: 0 1 auto;
+        margin: 3px !important;
+        padding: 8px 15px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+}
 </style>
+
+<script>
+function handleMobileAction(select) {
+    var action = select.value;
+    if (!action) return;
+    
+    switch(action) {
+        case 'monthly':
+            genPanchang('<?php echo $place; ?>');
+            break;
+        case 'download':
+            displayOnePagePanchang();
+            break;
+        case 'nakshatra':
+            document.getElementById('showNakshatraBtn').click();
+            break;
+        case 'pushkara':
+            showPushkaraTimes();
+            break;
+        case 'muhurtam':
+            generateMuhurtam_default();
+            break;
+    }
+    
+    // Reset dropdown
+    select.value = '';
+}
+
+function handleNavigation(select) {
+    var days = parseInt(select.value);
+    if (isNaN(days)) return;
+    
+    movePanchang(days);
+    
+    // Reset dropdown
+    select.value = '';
+}
+
+function handleTimeAction(select) {
+    var action = select.value;
+    if (!action) return;
+    
+    switch(action) {
+        case 'now':
+            updateNow();
+            window.reload();
+            break;
+        case 'today':
+            updateToday();
+            break;
+    }
+    
+    // Reset dropdown
+    select.value = '';
+}
+</script>
 
 <script>
 // Global flag to track Pushkara data loading status

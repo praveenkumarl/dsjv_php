@@ -7,12 +7,14 @@ $baseLat = 13.0878;
 $baseLon = 80.2785;
 // Desired display timezone, overridable by query param 'tz'
 $timezone = isset($_GET['tz']) ? $_GET['tz'] : 'Asia/Kolkata';
-// Swiss Ephemeris CLI (used for exact refinement mode)
-$swetest_path = '.\\swetest64.exe';
-$sweph_path = '.\\sweph\\';
-// The lagna.txt file lines are minutes starting at 00:00 UTC for a given date.
-// You may pass a date via ?date=YYYY-MM-DD (UTC) to map the minutes to that day.
-$date = isset($_GET['date']) ? $_GET['date'] : gmdate('Y-m-d');
+// Swiss Ephemeris CLI (auto-detect based on OS)
+// On Linux, swetest is in sweph folder; on Windows it's in current directory
+$swetest_path = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ? 'swetest64' : './sweph/swetest';
+$sweph_path = './sweph/';
+// The lagna.txt file contains 1440 minutes starting at 00:00 LOCAL time for a given date.
+// Each line represents one minute of the local day (minute 0 = 00:00 local, minute 1439 = 23:59 local).
+// You may pass a date via ?date=YYYY-MM-DD to generate lagna for that local date.
+$date = isset($_GET['date']) ? $_GET['date'] : date('Y-m-d');
 date_default_timezone_set($timezone); // set default for output formatting
 $utcTz = new DateTimeZone('UTC');
 $localTz = new DateTimeZone($timezone);
@@ -59,31 +61,52 @@ $exactRefine = isset($_GET['exact']) && $_GET['exact'] == '1';
 
 // Function to generate lagna data for a specific location and date
 function generateLagnaData($swetest_path, $sweph_path, $date, $lon, $lat, $timezone) {
-    // Always start at midnight UTC (00:00:00) for lagna.txt generation
-    $dt_utc = new DateTime($date . ' 00:00:00', new DateTimeZone('UTC'));
-    $utc_start_time = '00:00:00';
+    // Start from midnight LOCAL time, convert to UTC for swetest
+    // This ensures lagna.txt contains data for local day (00:00 to 23:59 local time)
+    $dt_local = new DateTime($date . ' 00:00:00', new DateTimeZone($timezone));
+    $dt_utc = clone $dt_local;
+    $dt_utc->setTimezone(new DateTimeZone('UTC'));
+    
+    $utc_start_time = $dt_utc->format('H:i:s');
     $utc_date = $dt_utc->format('d.m.Y');
-    // Build swetest command - match generate_lagna_txt.php
-    $cmd = "$swetest_path -edir$sweph_path -b$utc_date -ut$utc_start_time -n1440 -s1m -sid1 -eswe -fPl -head -house$lon,$lat,P";
     
-    // Run swetest and capture output
-    $output = [];
-    $ret = 0;
-    // Expose the command for debugging in the page
-    $GLOBALS['__last_swetest_cmd'] = $cmd;
-    exec($cmd, $output, $ret);
-    
-    if ($ret !== 0 || empty($output)) {
-        error_log("ERROR: swetest failed for lon=$lon, lat=$lat, date=$date");
-        return false;
-    }
-    
-    // Parse Ascendant lines
+    // Run in batches to avoid swetest's line limit (36525 lines)
+    // Each iteration outputs ~33 lines, so max iterations per batch = 36525/33 ≈ 1100
+    $batch_size = 1100;
+    $total_minutes = 1440;
     $lagnaData = [];
-    foreach ($output as $line) {
-        $line = trim($line);
-        if (preg_match('/^Ascendant\s+([0-9]+(\.[0-9]+)?)/', $line, $matches)) {
-            $lagnaData[] = "Ascendant $matches[1]";
+    
+    for ($offset = 0; $offset < $total_minutes; $offset += $batch_size) {
+        $remaining = min($batch_size, $total_minutes - $offset);
+        
+        // Calculate start time for this batch
+        $batch_dt = clone $dt_utc;
+        $batch_dt->modify("+$offset minutes");
+        $batch_time = $batch_dt->format('H:i:s');
+        $batch_date = $batch_dt->format('d.m.Y');
+        
+        $cmd = "$swetest_path -edir$sweph_path -b$batch_date -ut$batch_time -n$remaining -s1m -sid1 -eswe -fPl -head -house$lon,$lat,P";
+        
+        $output = [];
+        $ret = 0;
+        // Capture stderr as well for debugging
+        @exec($cmd . " 2>&1", $output, $ret);
+        
+        if ($ret !== 0 || empty($output)) {
+            error_log("ERROR: swetest failed for lon=$lon, lat=$lat, date=$date, offset=$offset, ret=$ret");
+            error_log("Command: $cmd");
+            if (!empty($output)) {
+                error_log("Output: " . implode("\n", $output));
+            }
+            return false;
+        }
+        
+        // Extract Ascendant lines from this batch
+        foreach ($output as $line) {
+            $line = trim($line);
+            if (preg_match('/^Ascendant\s+([0-9]+(\.[0-9]+)?)/', $line, $matches)) {
+                $lagnaData[] = "Ascendant $matches[1]";
+            }
         }
     }
     
@@ -116,6 +139,27 @@ function getNakshatraAndPada($total_pada) {
     return ['nakshatra' => $nakshatras[$nakshatra_index], 'pada_number' => $pada_number];
 }
 
+// Clean up old lagna cache files (from previous dates)
+function cleanupOldLagnaCache($currentDate) {
+    $dir = __DIR__ . DIRECTORY_SEPARATOR;
+    $pattern = $dir . 'lagna_*.txt';
+    $files = glob($pattern);
+    
+    foreach ($files as $file) {
+        // Extract date from filename: lagna_YYYY-MM-DD_lat_lon.txt
+        if (preg_match('/lagna_(\d{4}-\d{2}-\d{2})_/', basename($file), $matches)) {
+            $fileDate = $matches[1];
+            // Delete if not today's date
+            if ($fileDate !== $currentDate) {
+                @unlink($file);
+            }
+        }
+    }
+}
+
+// Clean up cache files from previous dates
+cleanupOldLagnaCache($date);
+
 // Generate Lagna data dynamically for the requested location and date
 $lagnaData = generateLagnaData($swetest_path, $sweph_path, $date, $useLon, $useLat, $timezone);
 if ($lagnaData === false || count($lagnaData) < 1000) {
@@ -140,19 +184,20 @@ $pushStartPada = null;
 $prevLagna = null; // lagna of previous minute (used to set end lagna accurately)
 $prevPada = null;
 
-// helper: convert UTC minute index to DateTime in local timezone
-function minuteIndexToLocalDateTime($dateUtcStr, $minuteIndex, $utcTz, $localTz) {
-    $dt = DateTimeImmutable::createFromFormat('Y-m-d H:i', $dateUtcStr . ' 00:00', $utcTz);
+// helper: convert minute index to DateTime in local timezone
+// Since lagna.txt starts at 00:00 LOCAL time, minute index directly maps to local time
+function minuteIndexToLocalDateTime($dateLocalStr, $minuteIndex, $utcTz, $localTz) {
+    $dt = DateTimeImmutable::createFromFormat('Y-m-d H:i', $dateLocalStr . ' 00:00', $localTz);
     if ($dt === false) return false;
     $dt = $dt->add(new DateInterval('PT' . intval($minuteIndex) . 'M'));
-    return $dt->setTimezone($localTz);
+    return $dt;
 }
 
 // Flex variant to support negative and >1440 minute indices
-function minuteIndexToLocalDateTimeFlex($dateUtcStr, $minuteIndex, $utcTz, $localTz) {
-    $dt = new DateTimeImmutable($dateUtcStr . ' 00:00:00', $utcTz);
+function minuteIndexToLocalDateTimeFlex($dateLocalStr, $minuteIndex, $utcTz, $localTz) {
+    $dt = new DateTimeImmutable($dateLocalStr . ' 00:00:00', $localTz);
     $dt = $dt->modify(($minuteIndex >= 0 ? '+' : '') . intval($minuteIndex) . ' minutes');
-    return $dt->setTimezone($localTz);
+    return $dt;
 }
 
 // Normalize minute index into [0, 1439]
@@ -294,18 +339,10 @@ function shiftResultsForLongitude(array $results, $date, $baseLon, $targetLon, $
         return $out;
     }
 
-// helper: convert IST time to lagna.txt minute index (lagna.txt starts at 00:00 UTC)
-function istToLagnaMinuteIndex($hour, $minute) {
-    // IST is UTC+5:30
-    $totalMinutesIST = $hour * 60 + $minute;
-    $totalMinutesUTC = $totalMinutesIST - (5 * 60 + 30);
-    if ($totalMinutesUTC < 0) $totalMinutesUTC += 1440; // wrap around midnight
-    return $totalMinutesUTC;
-}
-
-// Example usage: get lagna for a specific IST time (e.g., 5:55 AM IST)
-function getLagnaForIST($lagnaData, $hour, $minute) {
-    $idx = istToLagnaMinuteIndex($hour, $minute);
+// helper: get lagna for a specific local time (hour, minute)
+// Since lagna.txt now starts at 00:00 LOCAL time, minute index = hour*60 + minute
+function getLagnaForLocalTime($lagnaData, $hour, $minute) {
+    $idx = $hour * 60 + $minute;
     if (isset($lagnaData[$idx])) {
         $parts = preg_split('/\s+/', trim($lagnaData[$idx]));
         return isset($parts[1]) ? floatval($parts[1]) : null;
@@ -441,3 +478,15 @@ foreach ($results as $row) {
 </div>
 <?php endif; ?>
 </center>
+
+<style>
+#pushkaraDetails .divTableRow {
+    font-weight: bold !important;
+}
+#pushkaraDetails .divPanchang {
+    font-weight: bold !important;
+}
+#pushkaraDetails .divPanchangHeading {
+    font-weight: bold !important;
+}
+</style>
