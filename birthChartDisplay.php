@@ -4,6 +4,7 @@ include_once "lib.php";
 
 $conn="";
 $phone=isset($_SESSION["phone"]) ? $_SESSION["phone"] : 1;
+$usertype = isset($_SESSION['user_type']) ? $_SESSION['user_type'] : FREE;
 
 $chartInfo=array();
 
@@ -59,7 +60,7 @@ function getChartDetails()
 
 function displayHistory()
 {
-	global $chartInfo,$totalRecs;
+	global $chartInfo,$totalRecs,$usertype;
 	
 	getChartDetails();
 	
@@ -88,9 +89,13 @@ echo <<<EOL
 		<BR>
 			<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">சேமிக்கப்பட்ட ஜாதகங்கள்</P>
 			<!-- <input type='button' class='actionBtn' id='Download' value='download' onClick='exportBirthCharts();'> -->
-		<button class='actionBtn' onClick='window.open("matchBirthChart.php")';>பொருத்தம்</button>
 		<BR><BR>
 EOL;
+
+		// Show match button only for allowed user types
+		if($usertype == PAID || $usertype == MATCHING || $usertype == BIRTHMATCH || $usertype == BIRTHPANCHMATCH || $usertype == SUPER || $usertype == ADMIN){
+			echo "<button class='actionBtn' onClick=\"window.open('matchBirthChart.php')\">பொருத்தம்</button><br><br>";
+		}
 		
 			echo '<button class="actionBtn" id="prevButton">Prev</button>';
 			echo '<button class="actionBtn" id="nextButton">Next</button>';
@@ -102,7 +107,11 @@ EOL;
 						echo "<div class='divChartHistoryHeading'>இட</div>";
 						echo "<div class='divChartHistoryHeading'>தே</div>";
 						echo "<div class='divChartHistoryHeading'>நே</div>";
-						echo "<div class='divChartHistoryHeading'>*</div>";
+		
+						// Only show NUM column header for PAID, ADMIN, SUPER users
+						if($usertype == PAID || $usertype == ADMIN || $usertype == SUPER) {
+							echo "<div class='divChartHistoryHeading'>*</div>";
+						}
 				echo "</div>";
 				
 				if(isset($chartInfo['rowid'])){
@@ -118,11 +127,16 @@ EOL;
 							echo "<div class='divChartHistory' id='col31$x'>".$chartInfo['sex'][$i]."</div>";
 							$city = explode('|',$chartInfo['place'][$i])[0];
 							echo "<div class='divChartHistory' id='col4$x'>".$city."</div>";
-							echo "<div class='divChartHistory' id='col5$x'>".$chartInfo['birth_date'][$i]."</div>";
-							echo "<div class='divChartHistory' id='col6$x'>".$chartInfo['birth_time'][$i]."</div>";
-							echo "<div class='divHidden' id='col61$x'>".$chartInfo['notes'][$i]."</div>";
+						echo "<div class='divChartHistory' id='col5$x'>".$chartInfo['birth_date'][$i]."</div>";
+						echo "<div class='divChartHistory' id='col6$x'>".$chartInfo['birth_time'][$i]."</div>";
+						echo "<div class='divHidden' id='col61$x'>".$chartInfo['notes'][$i]."</div>";
+						
+						// Only show numerology button for PAID, ADMIN, SUPER users
+						if($usertype == PAID || $usertype == ADMIN || $usertype == SUPER) {
 							echo "<div class='divChartHistory' id='col8$x'><input type='button' id='numButton' onClick='openNumerology($x)' value='NUM' style='color:red;font-size:10px;font-weight:bold;background-color:#ffffff;border:solid 1px black'></div>";
-							echo "<div class='divChartHistory' id='col7$x'><input type='button' id='delButton' onClick='deleteRecord($x)' style='color:black;font-size:10px;font-weight:bold;width:40px;background: url(images/delete.png);background-size:60%;background-repeat: no-repeat;background-position: center;color:#660000;background-color:#ffffff;'></div>";
+						}
+						
+						echo "<div class='divChartHistory' id='col7$x'><input type='button' id='delButton' onClick='deleteRecord($x)' style='color:black;font-size:10px;font-weight:bold;width:40px;background: url(images/delete.png);background-size:60%;background-repeat: no-repeat;background-position: center;color:#660000;background-color:#ffffff;'></div>";
 						echo "</div>";
 					}
 					

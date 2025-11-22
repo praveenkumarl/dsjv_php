@@ -52,6 +52,17 @@ if(strcmp($usertype,BIRTHPANCH)==0){
 	<button class="menu" onClick='window.open("new_logout.php","_self")'>Logout</button>
 EOL;
 }
+elseif(strcmp($usertype,BIRTHPANCHMATCH)==0){
+    echo <<<EOL
+	<button class="menu" onClick='window.open("Birth_input.php","_self")'>பிறப்பு ஜாதகம்</button>
+	<button class="menu" onClick='window.open("Matching_input.php","_self")'>திருமண பொருத்தம்</button>
+	<button class="menu" onClick='window.open("new_panchang.php","_self")'>பஞ்சாங்கம்</button>
+	<button class="menu" onClick='window.open("hora.php","_self")'>ஓரை</button>
+	<button class="menu" onClick='window.open("star_thaara_palan.php","_self")'>தாரா பலன்</button>
+	<button class="menu" onClick='window.open("new_logout.php","_self")'>Logout</button>
+
+EOL;
+}
 elseif(strcmp($usertype,PANCHANG)==0){
 	echo <<<EOL
 	<button class="menu" onClick='window.open("hora.php","_self")'>ஓரை</button>

@@ -181,7 +181,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			}
 		}
 	</style>
-	
+
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/birth_chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
@@ -2151,19 +2151,17 @@ echo <<<EOL
 				<input type='hidden' id='nPlace' name='nPlace' value='$place'>
 				<input type='hidden' id='place_flag' name='place_flag' value=0>
 					<H4 style="color:#000000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; width:parent;">
-						<!-- <select id="languageSelector" name='language' class='langDropdown' onChange="translateLanguage()">
-						  <option value="tamil">Tamil</option>
-						  <option value="english">English</option>
-						  <option value="hindi">Hindi</option>
-						</select> 
-						-->
-						<!-- 
-						<div id="languageButtonContainer" style="display: flex;justify-content: end;">
-						  <button class="langButton" id='ta' value="tamil" onclick="translateLanguage('tamil')">Ta</button>
-						  <button class="langButton" id='en' value="english" onclick="translateLanguage('english')">En</button>
-						  <hidden id="languageSelector" value='$language'>
-						</div>
-						-->
+							<!-- Language selector (visible and functional) -->
+							<select id="languageSelector" name='language' class='langDropdown' onChange="translateLanguage(this.value)">
+							  <option value="tamil" <?php echo ($language === 'tamil') ? 'selected' : ''; ?>>Tamil</option>
+							  <option value="english" <?php echo ($language === 'english') ? 'selected' : ''; ?>>English</option>
+							  <option value="hindi" <?php echo ($language === 'hindi') ? 'selected' : ''; ?>>Hindi</option>
+							</select>
+							<!-- Quick buttons for touch devices -->
+							<div id="languageButtonContainer" style="display:inline-flex; gap:6px; margin-left:8px;">
+							  <button type="button" class="langButton" id='ta' value="tamil" onclick="translateLanguage('tamil')">Ta</button>
+							  <button type="button" class="langButton" id='en' value="english" onclick="translateLanguage('english')">En</button>
+							</div>
 						<TABLE style='width:inherit'>
 						<CENTER><P style="color:#660000;font-weight:bold; font-size:16px; background-color:white;width:200px;">பஞ்சாங்கம்</P></CENTER>
 						<TR>

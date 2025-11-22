@@ -36,6 +36,7 @@ const BIRTH = "BIRTH";
 const MATCHING = "MATCH";
 const BIRTHMATCH = "BIRTHMATCH";
 const BIRTHPANCH = "BIRTHPANCH";
+const BIRTHPANCHMATCH = "BIRTHPANCHMATCH";
 const PANCHANG = "PANCHANG";
 const JAMAKOL = "JAMAKOL";
 const JAMA_MATCH = "JAMAMATCH";
@@ -50,7 +51,7 @@ const ABHIJIT_PAD_COUNT = 84;
 $g_nak="";
 
 //usertype array used in drop down
-$usertype_arr = [PAID, MATCHING, BIRTH, BIRTHMATCH, BIRTHPANCH, JAMAKOL, JAMA_MATCH, PANCHANG, PRASANNAM, NUMEROLOGY, SUPER, ADMIN, FREE];
+$usertype_arr = [PAID, MATCHING, BIRTH, BIRTHMATCH, BIRTHPANCH, BIRTHPANCHMATCH, JAMAKOL, JAMA_MATCH, PANCHANG, PRASANNAM, NUMEROLOGY, SUPER, ADMIN, FREE];
 
 $timestamp = date('ymdhis');
 
@@ -6859,7 +6860,16 @@ function displayHomePageButtons($in_usertype){
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'new_panchangam.php\',\'_self\')">பஞ்சாங்கம்</button>';
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'hora.php\',\'_self\')">ஹோரை</button>';
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'star_thaara_palan.php\',\'_self\')">நட் தாரா பலன் </button>';
-			break;
+		break;
+		case BIRTHPANCHMATCH:
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'Matching_input.php\',\'_self\')">புதிய திருமண பொருத்தம்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'matchingChartDisplay.php\',\'_self\')">சேமித்த திருமண பொருத்தங்கள்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'Birth_input.php\',\'_self\')">புதிய ஜாதகம்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'birthChartDisplay.php\',\'_self\')">சேமித்த ஜாதகங்கள்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'new_panchangam.php\',\'_self\')">பஞ்சாங்கம்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'hora.php\',\'_self\')">ஹோரை</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'star_thaara_palan.php\',\'_self\')">நட் தாரா பலன் </button>';
+		break;
 		case PANCHANG:
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'new_panchangam.php\',\'_self\')">பஞ்சாங்கம்</button>';
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'hora.php\',\'_self\')">ஹோரை</button>';
@@ -6892,6 +6902,7 @@ function checkUserType($in_usertype){
 		case BIRTH:
 		case BIRTHMATCH:
 		case BIRTHPANCH:
+		case BIRTHPANCHMATCH:
 		case PANCHANG:
 		case JAMAKOL:
 		case JAMA_MATCH:
