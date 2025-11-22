@@ -20,6 +20,7 @@ function getChartDetails()
 		return;
 	}
 
+
 	try {
 		
 		$sql = "SELECT rowid,phone,g_name,g_place,g_birth_date,g_birth_time,b_name,b_place,b_birth_date,b_birth_time,mark FROM matching_chart WHERE phone='$phone' ORDER BY rowid DESC ";
@@ -157,6 +158,28 @@ getChartDetails();
 	$(document).ready(function() 
 	{
 		$('#loader').hide();
+		
+		// Name filter functionality
+		$("#name-filter").on("keyup", function() {
+			var value = $(this).val().toLowerCase().trim().normalize('NFC');
+			$(".divTable.blueTable .divTableRow").each(function(index) {
+				if (index === 0) {
+					// Skip the header row
+					return;
+				}
+				// Check both girl name (col2) and boy name (col6)
+				var girlNameCell = $(this).find("#col2" + $(this).attr('id').replace('row', ''));
+				var boyNameCell = $(this).find("#col6" + $(this).attr('id').replace('row', ''));
+				var girlName = girlNameCell.text().toLowerCase().normalize('NFC');
+				var boyName = boyNameCell.text().toLowerCase().normalize('NFC');
+				
+				if (girlName.includes(value) || boyName.includes(value)) {
+					$(this).show(); // Display matching rows
+				} else {
+					$(this).hide(); // Hide non-matching rows
+				}
+			});
+		});
 	});
 		
     </script>
@@ -204,7 +227,9 @@ getChartDetails();
 				<BR>
 					<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">சேமிக்கப்பட்ட பொருத்தங்கள்</P>
 					<!-- <input type='button' class='actionBtn' id='Download' value='download' onClick='exportMatchingCharts();'> -->
-				<BR><BR>		
+				<BR>
+				<center><div class="divPanchangHeading">Search by Name: <input type="text" id="name-filter" placeholder="Enter name" style="display:inline;font-size: 14px; width: auto;"></div></center>
+				<BR>		
 				
 <?php
 					echo "<div class='divTable blueTable' style='height:40px;'>";
