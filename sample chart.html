@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PkAstro - Modern Maroon Horoscope</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Madurai:wght@600;700&family=Inter:wght@600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        maroon: { 50: '#FDF2F2', 100: '#F9E1E1', 700: '#800000', 800: '#600000', 900: '#4A0404' },
+                        gold: { 400: '#FFD700', 500: '#DAA520' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', 'Hind Madurai', sans-serif; }
+        /* Chart Structure */
+        .chart-grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            grid-template-rows: repeat(4, 1fr); 
+            aspect-ratio: 1 / 1; 
+            background-color: #600000; 
+            gap: 2px; 
+            border: 2px solid #600000;
+        }
+        .house { background-color: #FDF2F2; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2px; }
+        .house-center { background-color: white !important; border-radius: 9999px; margin: 4px; }
+        @media print { .no-print { display: none !important; } }
+    </style>
+</head>
+<body class="bg-maroon-50 text-slate-900 p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto space-y-6">
+        
+        <header class="bg-white rounded-[2rem] border-2 border-maroon-800 shadow-sm overflow-hidden">
+            <div class="bg-maroon-900 p-4 text-white flex flex-col md:flex-row justify-between items-center gap-2">
+                <h1 class="text-xl font-bold tracking-tight">பிறப்பு ஜாதகம்: Praveen <span class="text-maroon-300 font-medium">#3753</span></h1>
+                <div class="flex gap-4 text-xs font-bold">
+                    <span>📅 17/Jul/1976</span>
+                    <span>⏰ 02:14:23 pm</span>
+                    <span>📍 Chennai</span>
+                </div>
+            </div>
+            <div class="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div><p class="text-[10px] font-bold text-maroon-700 uppercase">ராசி</p><p class="text-lg font-bold text-maroon-900">மீனம்</p></div>
+                <div class="border-l border-maroon-100"><p class="text-[10px] font-bold text-maroon-700 uppercase">லக்னம்</p><p class="text-lg font-bold text-maroon-900">விருச்சிகம்</p></div>
+                <div class="border-l border-maroon-100"><p class="text-[10px] font-bold text-maroon-700 uppercase">நட்சத்திரம்</p><p class="text-base font-bold text-maroon-900">உத்திரட்டாதி 3</p></div>
+                <div class="border-l border-maroon-100"><p class="text-[10px] font-bold text-maroon-700 uppercase">வயது</p><p class="text-lg font-bold text-maroon-900">49.5</p></div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <section class="bg-white p-4 rounded-2xl border-l-4 border-maroon-800 shadow-sm space-y-2">
+                <h3 class="text-xs font-bold text-maroon-800 uppercase border-b border-maroon-50 pb-1 mb-2">பஞ்சாங்கம்</h3>
+                <div class="flex justify-between text-sm font-medium"><span>வாரம்: சனி</span><span>திதி: சஷ்டி</span></div>
+                <div class="flex justify-between text-sm font-medium"><span>யோகம்: அதி கண்டம்</span><span>கரணம்: வணிசை</span></div>
+                <div class="mt-2 p-2 bg-maroon-50 rounded-lg text-[11px] font-bold text-maroon-900">
+                    பிறப்பு தசை: சனி (8 வருடம், 9 மாதம், 2 நாள்)
+                </div>
+            </section>
+            <section class="bg-white p-4 rounded-2xl border-l-4 border-maroon-800 shadow-sm space-y-2">
+                <h3 class="text-xs font-bold text-maroon-800 uppercase border-b border-maroon-50 pb-1 mb-2">விசேஷங்கள்</h3>
+                <div class="flex justify-between text-sm font-medium"><span>சந்திராஷ்டமம்: <span class="text-maroon-700">துலாம்</span></span></div>
+                <div class="flex justify-between text-sm font-medium"><span>அவயோகி: புதன்</span><span>முடக்கு: ரிஷபம்</span></div>
+            </section>
+            <section class="bg-white p-4 rounded-2xl border-l-4 border-maroon-800 shadow-sm space-y-2">
+                <h3 class="text-xs font-bold text-maroon-800 uppercase border-b border-maroon-50 pb-1 mb-2">கணிதம்</h3>
+                <div class="flex justify-between text-sm font-medium"><span>சூரிய உதயம்: 05:50:33</span></div>
+                <div class="flex justify-between text-sm font-medium"><span>அட்சரேகை: 13.0878</span><span>பக்ஷி: மயில்</span></div>
+            </section>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white p-5 rounded-3xl border-2 border-maroon-800 shadow-sm">
+                <h3 class="text-center font-bold text-maroon-900 uppercase text-sm mb-4">ராசி கட்டம் (D1)</h3>
+                <div class="chart-grid rounded-xl overflow-hidden">
+                    <div class="house font-bold text-[11px] text-maroon-700 italic">சந்-10°</div>
+                    <div class="house font-bold text-[11px]">கே-15°</div>
+                    <div class="house font-bold text-[11px]">குரு-1°</div>
+                    <div class="house"></div>
+                    <div class="house"></div>
+                    <div class="col-span-2 row-span-2 house-center flex items-center justify-center text-4xl font-bold text-maroon-50 italic">D1</div>
+                    <div class="house text-[9px] font-bold leading-tight text-maroon-900">சூரி-1, புத-3,<br>சுக்-9, சனி-11,<br>மா-13</div>
+                    <div class="house"></div>
+                    <div class="house font-bold text-[11px] text-red-700 italic">செ-12°</div>
+                    <div class="house"></div>
+                    <div class="house bg-maroon-100 font-bold text-[11px] border-2 border-maroon-400">லக்-0°6'</div>
+                    <div class="house font-bold text-[11px]">ரா-15°</div>
+                    <div class="house"></div>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-3xl border-2 border-maroon-800 shadow-sm">
+                <h3 class="text-center font-bold text-maroon-900 uppercase text-sm mb-4">நவாம்சம் (D9)</h3>
+                <div class="chart-grid rounded-xl overflow-hidden">
+                    <div class="house"></div>
+                    <div class="house font-bold text-[11px]">ரா</div>
+                    <div class="house font-bold text-[11px]">குரு</div>
+                    <div class="house"></div>
+                    <div class="house"></div>
+                    <div class="col-span-2 row-span-2 house-center flex items-center justify-center text-4xl font-bold text-maroon-50 italic">D9</div>
+                    <div class="house bg-maroon-100 font-bold text-[10px] leading-tight italic">லக் சூரி<br>செவ்வாய்</div>
+                    <div class="house font-bold text-[11px]">புத கே</div>
+                    <div class="house font-bold text-[11px] text-maroon-700">சுக்</div>
+                    <div class="house font-bold text-[11px] text-red-700 italic">மா</div>
+                    <div class="house font-bold text-[10px] leading-tight">சந் சனி</div>
+                    <div class="house"></div>
+                </div>
+            </div>
+        </div>
+
+        <section class="bg-white rounded-[2rem] border-2 border-maroon-900 overflow-hidden shadow-md mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-maroon-100">
+                <div class="md:col-span-5 p-5 bg-maroon-50 flex flex-col justify-center gap-3">
+                    <h3 class="font-bold text-maroon-900 uppercase text-xs border-b border-maroon-200 pb-1 italic">தசா காலங்கள்</h3>
+                    <div class="flex justify-between text-[11px] font-bold text-slate-500"><span>1985 - 2002: புதன்</span><span>2002 - 2009: கேது</span></div>
+                    <div class="flex justify-between text-[11px] font-bold text-slate-700"><span>2009 - 2029: சுக்கிரன் (நடப்பு)</span></div>
+                </div>
+                
+                <div class="md:col-span-7 p-6 bg-maroon-900 text-white relative overflow-hidden flex flex-col justify-center border-l-4 border-gold-500">
+                    <div class="absolute right-2 top-2 bg-gold-500 text-maroon-900 px-2 py-0.5 text-[10px] font-bold uppercase rounded">நடப்பு தசை: சுக்கிரன்</div>
+                    <p class="text-gold-400 text-[11px] font-bold uppercase tracking-wider mb-1 italic">தற்போதைய காலம் (Current Period)</p>
+                    <h4 class="text-3xl font-bold italic tracking-tight">சுக் - புத</h4>
+                    <p class="text-gold-400 text-base font-bold mt-1 uppercase">18-04-2025 முதல் 16-02-2028 வரை</p>
+                    <div class="mt-4 w-full bg-maroon-800 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-gold-500 h-full w-[45%]"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="text-center py-6 text-[10px] font-bold uppercase tracking-widest text-maroon-900/40 no-print">
+        PkAstro Digital Reports • 2026
+    </footer>
+
+</body>
+</html>

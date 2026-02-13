@@ -1,6 +1,7 @@
 <!doctype html>
 <?php
 include_once "lib.php";
+include_once "lang/lang.php";
 
 $DEBUG= (int) isset($_GET['debug']) ? $_GET['debug'] : 0;
 $phone = isset($_COOKIE["phone"]) ? $_COOKIE["phone"] : 1;
@@ -30,24 +31,37 @@ if (isset($_POST['place'])) {
     }
 }
 
-if(isset($_POST['language'])){
-	$cookie_name = "language";
-	$cookie_value = $_POST['language'];
-	setcookie($cookie_name, $cookie_value, time() + (86400 * 365), "/"); // 86400 = 1 day
-}
-else{
-	$cookie_name = "languageSelector";
-	$cookie_value = 'Tamil';
+// Handle language selection
+// First, normalize any existing cookie to lowercase
+if(isset($_COOKIE['language'])){
+	$_COOKIE['language'] = strtolower($_COOKIE['language']);
 }
 
-if(isset($_POST['language']) && !strcmp($_COOKIE['language'],$_POST['language'])==0){
-	$language = $_POST['languageSelector'];
+if(isset($_POST['language'])){
+	// Language from form POST
+	$language = strtolower($_POST['language']);
+	setcookie('language', $language, time() + (86400 * 365), "/"); 
+}
+elseif(isset($_COOKIE['language'])){
+	// Language from cookie
+	$language = $_COOKIE['language'];
 }
 else{
-	$language = isset($_COOKIE['language']) ? $_COOKIE['language'] : 'tamil';
+	// Default language
+	$language = 'tamil';
+}
+
+// Debug: Show what we're working with
+if($DEBUG) {
+	echo "<!-- DEBUG: Language = $language -->";
+	echo "<!-- DEBUG: Cookie = " . (isset($_COOKIE['language']) ? $_COOKIE['language'] : 'NOT SET') . " -->";
+	echo "<!-- DEBUG: POST = " . (isset($_POST['language']) ? $_POST['language'] : 'NOT SET') . " -->";
 }
 
 $lang = isset($_POST["lang"]) ? $_POST["lang"] : "tamil";
+
+// Initialize the language system
+init_language($language);
 
 debug("PLACE=".$place);
 
@@ -201,9 +215,46 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 	<script src="panchang.js?<?php echo date('ymdhis'); ?>" defer></script>
 	<script src="my_panchang.js?<?php echo date('ymdhis'); ?>" defer></script>
 	<script src="common.js?<?php echo date('ymdhis'); ?>" defer></script>
-	<script src="lang_mapping.js?<?php echo date('ymdhis'); ?>" defer></script>
     <script type="text/javascript">
 	var timezone = '<?php echo $TZ; ?>';
+	var currentLanguage = '<?php echo $language; ?>';
+	
+	// Translations object for JavaScript (if needed for dynamic content)
+	var translations = <?php echo get_translations_json(); ?>;
+	
+	// Tamil to English translation mapping
+	var translationMapping = <?php echo get_translation_mapping_json(); ?>;
+	
+	// JavaScript function to translate Tamil text to English
+	function translateTamil(text) {
+		if (currentLanguage === 'tamil' || !text) {
+			return text;
+		}
+		
+		// Check if we have a direct translation
+		if (translationMapping[text]) {
+			return translationMapping[text];
+		}
+		
+		// Handle text with parentheses like "துவிதியை(சுக்)"
+		// Extract parts and translate each
+		const match = text.match(/^(.+?)\((.+?)\)$/);
+		if (match) {
+			const main = translateTamil(match[1].trim());
+			const sub = translateTamil(match[2].trim());
+			return main + ' (' + sub + ')';
+		}
+		
+		// Handle text with numbers like "கேட்டை (3)"
+		const matchNum = text.match(/^(.+?)\s*\((\d+)\)$/);
+		if (matchNum) {
+			const main = translateTamil(matchNum[1].trim());
+			return main + ' (' + matchNum[2] + ')';
+		}
+		
+		return text;
+	}
+	
 	const panchangTime = "07:00:00" //this is the default panchang time the panchang will be generated on load. Download panchang button will be enabled only if time is equal to panchangTime
 	const panchangDate = new Date(); 
 	
@@ -226,13 +277,6 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			var language = '<?php echo $language; ?>';
 			
 			document.getElementById("languageSelector").value = language;
-			
-			if(language=='tamil'){
-				document.getElementById("ta").style.backgroundColor = 'red';
-			}
-			else{
-				document.getElementById("en").style.backgroundColor = 'red';
-			}
 		} 
 		
 		document.addEventListener('DOMContentLoaded', init);
@@ -629,10 +673,15 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Yoga.name+' '+formatDateTime(panchang.Yoga.start)+" முதல் "+formatDateTime(panchang.Yoga.end)+' வரை'+displayNextYoga(newdate,panchang.Yoga)+'</div>');
 			//document.writeln('</div>');
 			
-			document.getElementById('thithi').innerHTML = panchang.Tithi.name+'<BR><div class="divSmall"> '+formatDateTime(panchang.Tithi.start)+' முதல் <BR> '+formatDateTime(panchang.Tithi.end)+' வரை </div>';
-			document.getElementById('nak').innerHTML = panchang.Nakshatra.name+document.getElementById('nak').innerHTML+'<BR><div class="divSmall"> '+formatDateTime(panchang.Nakshatra.start)+' முதல் <BR> '+formatDateTime(panchang.Nakshatra.end)+' வரை </div>';
-			document.getElementById('yogam').innerHTML = panchang.Yoga.name+'<BR><div class="divSmall"> '+formatDateTime(panchang.Yoga.start)+' முதல் <BR>'+formatDateTime(panchang.Yoga.end)+' வரை </div>';
-			document.getElementById('karanam').innerHTML = panchang.Karna.name+' ('+getKaranaPlanet(panchang.Karna.name)+')'+'<BR><div class="divSmall">'+formatDateTime(panchang.Karna.start)+' முதல் <BR>'+formatDateTime(panchang.Karna.end)+' வரை </div>';
+			document.getElementById('thithi').innerHTML = translateTamil(panchang.Tithi.name)+'<BR><div class="divSmall"> '+formatDateTime(panchang.Tithi.start)+' <?php echo __("from"); ?> <BR> '+formatDateTime(panchang.Tithi.end)+' <?php echo __("to"); ?> </div>';
+			
+			// Use nakshatra name from PHP data attribute instead of panchang library
+			var nakDiv = document.getElementById('nak');
+			var nakName = nakDiv.getAttribute('data-nak-name') || translateTamil(panchang.Nakshatra.name);
+			nakDiv.innerHTML = nakName + nakDiv.innerHTML + '<BR><div class="divSmall"> '+formatDateTime(panchang.Nakshatra.start)+' <?php echo __("from"); ?> <BR> '+formatDateTime(panchang.Nakshatra.end)+' <?php echo __("to"); ?> </div>';
+			
+			document.getElementById('yogam').innerHTML = translateTamil(panchang.Yoga.name)+'<BR><div class="divSmall"> '+formatDateTime(panchang.Yoga.start)+' <?php echo __("from"); ?> <BR>'+formatDateTime(panchang.Yoga.end)+' <?php echo __("to"); ?> </div>';
+			document.getElementById('karanam').innerHTML = translateTamil(panchang.Karna.name)+' ('+translateTamil(getKaranaPlanet(panchang.Karna.name))+')'+'<BR><div class="divSmall">'+formatDateTime(panchang.Karna.start)+' <?php echo __("from"); ?> <BR>'+formatDateTime(panchang.Karna.end)+' <?php echo __("to"); ?> </div>';
 		});
 
 		//storing initial end times for nak, thithi, yogam, karanam as new generation will result in changes to panchang object
@@ -649,7 +698,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 	
 		//To add next nak
 		panchang.calculate(newdate, function() {
-			document.getElementById('nak').innerHTML = document.getElementById('nak').innerHTML + panchang.Nakshatra.name+'<BR><div class="divSmall"> '+formatDateTime(panchang.Nakshatra.start)+' முதல் <BR>'+formatDateTime(panchang.Nakshatra.end)+' வரை </div>';
+			document.getElementById('nak').innerHTML = document.getElementById('nak').innerHTML + translateTamil(panchang.Nakshatra.name)+'<BR><div class="divSmall"> '+formatDateTime(panchang.Nakshatra.start)+' <?php echo __("from"); ?> <BR>'+formatDateTime(panchang.Nakshatra.end)+' <?php echo __("to"); ?> </div>';
 		});
 
 		//To add next karanam
@@ -657,7 +706,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		//newdate = changeTimezone(newdate,timezone);
 	
 		panchang.calculate(newdate, function() {
-			document.getElementById('karanam').innerHTML = document.getElementById('karanam').innerHTML + panchang.Karna.name+' ('+getKaranaPlanet(panchang.Karna.name)+')'+'<BR><div class="divSmall"> '+formatDateTime(panchang.Karna.start)+' முதல் <BR>'+formatDateTime(panchang.Karna.end)+' வரை </div>';
+			document.getElementById('karanam').innerHTML = document.getElementById('karanam').innerHTML + translateTamil(panchang.Karna.name)+' ('+translateTamil(getKaranaPlanet(panchang.Karna.name))+')'+'<BR><div class="divSmall"> '+formatDateTime(panchang.Karna.start)+' <?php echo __("from"); ?> <BR>'+formatDateTime(panchang.Karna.end)+' <?php echo __("to"); ?> </div>';
 		});
 
 		//To add next thithi
@@ -665,7 +714,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		//newdate = changeTimezone(newdate,timezone);
 	
 		panchang.calculate(newdate, function() {
-			document.getElementById('thithi').innerHTML = document.getElementById('thithi').innerHTML + panchang.Tithi.name+' <BR><div class="divSmall">'+formatDateTime(panchang.Tithi.start)+' முதல் <BR> '+formatDateTime(panchang.Tithi.end)+' வரை </div>';
+			document.getElementById('thithi').innerHTML = document.getElementById('thithi').innerHTML + translateTamil(panchang.Tithi.name)+' <BR><div class="divSmall">'+formatDateTime(panchang.Tithi.start)+' <?php echo __("from"); ?> <BR> '+formatDateTime(panchang.Tithi.end)+' <?php echo __("to"); ?> </div>';
 		});
 
 		//To add next yogam
@@ -673,7 +722,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		//newdate = changeTimezone(newdate,timezone);
 	
 		panchang.calculate(newdate, function() {
-			document.getElementById('yogam').innerHTML = document.getElementById('yogam').innerHTML + panchang.Yoga.name+'<BR><div class="divSmall"> '+formatDateTime(panchang.Yoga.start)+' முதல் <BR>'+formatDateTime(panchang.Yoga.end)+' வரை </div>';
+			document.getElementById('yogam').innerHTML = document.getElementById('yogam').innerHTML + translateTamil(panchang.Yoga.name)+'<BR><div class="divSmall"> '+formatDateTime(panchang.Yoga.start)+' <?php echo __("from"); ?> <BR>'+formatDateTime(panchang.Yoga.end)+' <?php echo __("to"); ?> </div>';
 		});
 	}
 	
@@ -832,19 +881,15 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			document.getElementById('panchangDetailsHeading').style.display = 'none';
 			document.getElementById('panchangDetails').style.display = 'none';
 			document.getElementById('transitChartHeading').style.display = 'reset';
-			document.getElementById('transitChart').style.display = 'reset';
-		}
-		
-		if(document.getElementById('languageSelector').value == 'english'){
-			transliterateTamilToEnglish();
-		}
-		
-	}); 
+		document.getElementById('transitChart').style.display = 'reset';
+	}
+	
+	// Language is now handled server-side via PHP, no client-side translation needed
+	
+}); 
 	
 	function generateMuhurtam(today_sunrise,tomm_sunrise) {
-       var count = 0;
-          
-       mukurt_arr = [
+       var count = 0;       mukurt_arr = [
 						["ருத்ர","அசுபமானது"],
 						["ஆஹி","அசுபமானது"],
 						["மித்ர","சுப"],
@@ -1078,8 +1123,20 @@ function closePushkaraTable() {
 				reject(`Div with ID ${divId} not found`);
 				return;
 			}
+			
+			// Check if div has visible content
+			if (div.offsetWidth === 0 || div.offsetHeight === 0) {
+				reject(`Div ${divId} has no dimensions`);
+				return;
+			}
 
-			html2canvas(div).then(canvas => {
+			html2canvas(div, {
+				allowTaint: true,
+				useCORS: true,
+				scale: 2, // Higher quality
+				logging: false,
+				backgroundColor: null
+			}).then(canvas => {
 				// Convert the canvas to an image data URL
 				const imgDataUrl = canvas.toDataURL('image/png');
 
@@ -1087,12 +1144,13 @@ function closePushkaraTable() {
 				const imgElement = document.getElementById(imgId);
 				if (imgElement) {
 					imgElement.src = imgDataUrl;
+					imgElement.style.border = '1px solid black';
 					resolve(imgElement);
 				} else {
 					reject(`Image with ID ${imgId} not found`);
 				}
 			}).catch(error => {
-				reject(`Failed to capture div: ${error}`);
+				reject(`Failed to capture div ${divId}: ${error}`);
 			});
 		});
 	}
@@ -1124,9 +1182,106 @@ function closePushkaraTable() {
 
 		if (loadedCount === totalImages) callback();
 	}
+	
+	// Persistent status logging
+	function logStatus(message, isError = false) {
+		const statusDiv = document.getElementById('captureStatus');
+		if (statusDiv && isError) {
+			const timestamp = new Date().toLocaleTimeString();
+			const color = isError ? 'red' : 'green';
+			statusDiv.style.display = 'block';
+			statusDiv.innerHTML += `<div style="color:${color}">[${timestamp}] ${message}</div>`;
+			// Keep last 20 messages
+			const lines = statusDiv.querySelectorAll('div');
+			if (lines.length > 20) {
+				lines[0].remove();
+			}
+		}
+		console.log(message);
+	}
+	
+	// Wait for element to be fully rendered with content
+	function waitForElementReady(elementId, timeout = 3000) {
+		return new Promise((resolve) => {
+			const startTime = Date.now();
+			logStatus(`Waiting for ${elementId}...`);
+			const checkElement = () => {
+				const element = document.getElementById(elementId);
+				if (!element) {
+					if (Date.now() - startTime < timeout) {
+						setTimeout(checkElement, 100);
+					} else {
+						logStatus(`${elementId} not found (timeout)`, true);
+						resolve(false);
+					}
+					return;
+				}
+				
+				// Check if element has content (text, SVG, canvas, or child elements)
+				const hasContent = element.textContent.trim().length > 0 || 
+								 element.querySelector('svg') !== null ||
+								 element.querySelector('canvas') !== null ||
+								 element.children.length > 0;
+				
+				if (hasContent) {
+					logStatus(`${elementId} ready (${Date.now() - startTime}ms)`);
+					// Give extra 200ms for rendering to complete
+					setTimeout(() => resolve(true), 200);
+				} else if (Date.now() - startTime < timeout) {
+					setTimeout(checkElement, 100);
+				} else {
+					logStatus(`${elementId} has no content (timeout)`, true);
+					resolve(false);
+				}
+			};
+			checkElement();
+		});
+	}
+	
+	// Capture div as image with retry mechanism
+	function captureDivAsImageWithRetry(divId, imgId, maxRetries = 2) {
+		let attempts = 0;
+		
+		const attemptCapture = () => {
+			attempts++;
+			logStatus(`Capturing ${divId} (attempt ${attempts})...`);
+			return captureDivAsImage(divId, imgId)
+				.then(() => {
+					logStatus(`✓ ${divId} captured successfully`);
+				})
+				.catch(error => {
+					logStatus(`✗ Capture attempt ${attempts} failed for ${divId}: ${error}`, true);
+					if (attempts < maxRetries) {
+						// Wait 500ms before retry
+						return new Promise(resolve => setTimeout(resolve, 500))
+							.then(() => attemptCapture());
+					} else {
+						logStatus(`✗✗ Failed to capture ${divId} after ${maxRetries} attempts`, true);
+						return Promise.reject(error);
+					}
+				});
+		};
+		
+		return attemptCapture();
+	}
 
 		
 	function displayOnePagePanchang() {
+		// Ensure snapshot collected (if not yet) and delay until dynamic fields ready
+		const ensureReady = () => {
+			// If snapshot exists and key dynamic fields populated, proceed; else retry shortly
+			const snap = window.panchangSnapshot || {};
+			const needed = ['hora','thithi','nak','karanam','yogam'];
+			const allHave = needed.every(k => (snap[k]||'').trim().length > 0);
+			if(!allHave){
+				// attempt capture again then retry
+				capturePanchangValues().then(()=> setTimeout(displayOnePagePanchang,200));
+				return false;
+			}
+			return true;
+		};
+
+		if(!ensureReady()) return; // will re-call after data ready
 		const container = document.getElementById('divContainer');
 		const divStarlord = document.getElementById('starlordBodyMutable');
 		const divChart = document.getElementById('transitChart');
@@ -1172,83 +1327,250 @@ function closePushkaraTable() {
 		
 		div3.innerHTML = div3.innerHTML;*/
 		
-		document.getElementById('date').innerHTML = divDate.textContent;
-		document.getElementById('day_local').innerHTML = divDay.textContent + "@7:00 AM";
-		document.getElementById('localPlace').innerHTML = divPlace.textContent;
-		document.getElementById('lHorai').innerHTML = document.getElementById('lHorai').innerHTML + ' - ' +divHora.textContent;
-		document.getElementById('lPakshi').innerHTML = document.getElementById('lPakshi').innerHTML + ' - ' +divPakshi.textContent;
-		document.getElementById('lAmirYogam').innerHTML = document.getElementById('lAmirYogam').innerHTML + ' - ' + divAmirYogam.textContent;
-		document.getElementById('lNethram').innerHTML = document.getElementById('lNethram').innerHTML + ' - ' + divNethram.textContent;
-		document.getElementById('lJeevan').innerHTML = document.getElementById('lJeevan').innerHTML + ' - ' + divJeevan.textContent;
-		document.getElementById('lNokku').innerHTML = document.getElementById('lNokku').innerHTML + ' - ' + divNokku.textContent;
-		document.getElementById('lLagnam').innerHTML = document.getElementById('lLagnam').innerHTML + ' - ' + divLagnam.textContent;
+	// Use snapshot values when available to avoid capturing empty async content
+	const snap = window.panchangSnapshot || {};
+	document.getElementById('date').innerHTML = (divDate.textContent || snap.date || '');
+	document.getElementById('day_local').innerHTML = (divDay.textContent || snap.day_local || '') + "@7:00 AM";
+	document.getElementById('localPlace').innerHTML = (divPlace.textContent || snap.localPlace || '');
+	
+	// Simple approach: get label from source table's divPanchangHeading, append value
+	// This is how it worked originally - just copy from source panchang table
+	const labelMapping = {
+		'lHorai': 'hora',
+		'lPakshi': 'pakshi', 
+		'lAmirYogam': 'amirtha_yogam',
+		'lNethram': 'nethram',
+		'lJeevan': 'jeevan',
+		'lNokku': 'nokku',
+		'lLagnam': 'lagnam',
+		'lRaasi': 'raasi',
+		'lAbhijith': 'abhijith',
+		'lAvayogi': 'avayogi',
+		'lThithi_soonyam': 'thithi_soonyam',
+		'lRahu_kaalam': 'rahu_kaalam',
+		'lEma_kantam': 'ema_kantam',
+		'lKuligai': 'kuligai',
+		'lSoolai': 'soolai',
+		'lChandraashtamam': 'chandraashtamam',
+		'lSunrise': 'sunrise',
+		'lSunset': 'sunset'
+	};
+	
+	// Update each inline label: find source value div, get its heading text, combine
+	Object.keys(labelMapping).forEach(labelId => {
+		const valueId = labelMapping[labelId];
+		const sourceValueDiv = document.getElementById(valueId);
+		const labelEl = document.getElementById(labelId);
 		
-		document.getElementById('lRaasi').innerHTML = document.getElementById('lRaasi').innerHTML + ' - ' + divRaasi.textContent;
-		document.getElementById('lAbhijith').innerHTML = document.getElementById('lAbhijith').innerHTML + ' - ' + divAbhijith.textContent;
-		document.getElementById('lAvayogi').innerHTML = document.getElementById('lAvayogi').innerHTML + ' - ' + divAvayogi.textContent;
-		document.getElementById('lThithi_soonyam').innerHTML = document.getElementById('lThithi_soonyam').innerHTML + ' - ' + divThithi_soonyam.textContent;
-		document.getElementById('lRahu_kaalam').innerHTML = document.getElementById('lRahu_kaalam').innerHTML + ' - ' + divRahu_kaalam.textContent;
-		document.getElementById('lEma_kantam').innerHTML = document.getElementById('lEma_kantam').innerHTML + ' - ' + divEma_kantam.textContent;
-		document.getElementById('lKuligai').innerHTML = document.getElementById('lKuligai').innerHTML + ' - ' + divKuligai.textContent;
-		document.getElementById('lSoolai').innerHTML = document.getElementById('lSoolai').innerHTML + ' - ' + divSoolai.textContent;
-		document.getElementById('lChandraashtamam').innerHTML = document.getElementById('lChandraashtamam').innerHTML + ' - ' + divChandraashtamam.textContent;
-		document.getElementById('lSunrise').innerHTML = document.getElementById('lSunrise').innerHTML + ' - ' + divSunrise.textContent;
-		document.getElementById('lSunset').innerHTML = document.getElementById('lSunset').innerHTML + ' - ' + divSunset.textContent;
+		if(!sourceValueDiv || !labelEl) return;
 		
+		// Find the heading (label) that precedes this value div in the source table
+		let headingText = '';
+		const parent = sourceValueDiv.parentElement; // divTableRow
+		if(parent){
+			const heading = parent.querySelector('.divPanchangHeading, .divPanchangHeadingRed');
+			if(heading){
+				headingText = heading.textContent.trim();
+			}
+		}
+		
+		// Get value from source div or snapshot
+		const value = sourceValueDiv.textContent.trim() || snap[valueId] || '';
+		
+		if(headingText && value){
+			labelEl.innerHTML = headingText + ' - ' + value;
+		}
+	});
+	
+	// Populate image captions from source table headings (thithi, nakshatra, yogam, karanam)
+	const captionMapping = {
+		'cap_thithi': 'thithi',
+		'cap_nak': 'nak',
+		'cap_yogam': 'yogam',
+		'cap_karanam': 'karanam'
+	};
+	
+	Object.keys(captionMapping).forEach(capId => {
+		const valueId = captionMapping[capId];
+		const sourceDiv = document.getElementById(valueId);
+		const capEl = document.getElementById(capId);
+		
+		if(!sourceDiv || !capEl) return;
+		
+		const parent = sourceDiv.parentElement;
+		if(parent){
+			const heading = parent.querySelector('.divPanchangHeading');
+			if(heading){
+				capEl.textContent = heading.textContent.trim();
+			}
+		}
+	});
+	
+	// Populate vivaha chakram caption
+	const vivCap = document.getElementById('cap_vivaha');
+	if(vivCap){
+		// Find vivaha chakram heading from source
+		const allHeadings = document.querySelectorAll('.divPanchangHeading');
+		for(const h of allHeadings){
+			if(h.textContent.includes('விவாஹ') || h.textContent.includes('Vivaha') || h.textContent.toLowerCase().includes('marriage')){
+				vivCap.textContent = h.textContent.trim();
+				break;
+			}
+		}
+		// Fallback if not found
+		if(!vivCap.textContent){
+			vivCap.textContent = 'Vivaha Chakram';
+		}
+	}
+	
+	// Populate current_transit and graha_saaram captions
+	const capCurrentTransit = document.getElementById('cap_current_transit');
+	const capGrahaSaaram = document.getElementById('cap_graha_saaram');
+	
+	if(capCurrentTransit){
+		const allHeadings = document.querySelectorAll('.divPanchangHeading');
+		for(const h of allHeadings){
+			if(h.textContent.toLowerCase().includes('transit') || h.textContent.includes('கிரக')){
+				capCurrentTransit.textContent = h.textContent.trim();
+				break;
+			}
+		}
+		if(!capCurrentTransit.textContent){
+			capCurrentTransit.textContent = 'Current Transit';
+		}
+	}
+	
+	if(capGrahaSaaram){
+		const allHeadings = document.querySelectorAll('.divPanchangHeading');
+		for(const h of allHeadings){
+			if(h.textContent.toLowerCase().includes('saaram') || h.textContent.includes('சாரம்')){
+				capGrahaSaaram.textContent = h.textContent.trim();
+				break;
+			}
+		}
+		if(!capGrahaSaaram.textContent){
+			capGrahaSaaram.textContent = 'Graha Saaram';
+		}
+	}
+	
 		//document.getElementById('lviv_chakram').innerHTML = document.getElementById('lviv_chakram').innerHTML + ' - ' + DivVivSunNak.textContent + "<BR>" + DivVivMooNak.textContent + "<BR>" + DivVivChakram.innerHTML;
 		
 		const lviv = document.getElementById('lviv_chakram');
 
 		// Add separator and text
-		lviv.append(' - ' + DivVivSunNak.textContent);
-		lviv.append(document.createElement("br"));
-		lviv.append(DivVivMooNak.textContent);
-		lviv.append(document.createElement("br"));
+		// Preserve original bold label if present
+		if(!lviv.dataset.done){
+			lviv.append(' - ' + DivVivSunNak.textContent);
+			lviv.append(document.createElement("br"));
+			lviv.append(DivVivMooNak.textContent);
+			lviv.append(document.createElement("br"));
+			lviv.appendChild(DivVivChakram.cloneNode(true));
+			lviv.dataset.done = '1';
+		}
+		// (Refactored once-only append logic)
 
-		// Append the styled div directly
-		lviv.appendChild(DivVivChakram.cloneNode(true));
-
+		logStatus('=== Starting One-Page Panchang Display ===');
 		
-		waitForImagesToLoad(() => {
-			// Your image capture code (html2canvas or custom)
-			//captureDivAsImage('day','day_local');
-			captureDivAsImage('transitChart','chart');
-			captureDivAsImage('starlordBodyMutable','starlord');
-			captureDivAsImage('vivahaChakram','vivaha');
-			captureDivAsImage('thithi','thithi_local');
-			captureDivAsImage('nak','nak_local');
-			captureDivAsImage('karanam','kara_local');
-			captureDivAsImage('yogam','yogam_local');
-
+		// Wait for all chart elements to be ready before capturing
+		logStatus('Step 1: Checking element readiness...');
+		Promise.all([
+			waitForElementReady('transitChart'),
+			waitForElementReady('starlordBodyMutable'),
+			waitForElementReady('thithi'),
+			waitForElementReady('nak'),
+			waitForElementReady('karanam'),
+			waitForElementReady('yogam')
+		]).then((results) => {
+			logStatus(`Step 2: Elements ready. Results: ${results.filter(r => r).length}/6`);
+			
+			// Convert waitForImagesToLoad to Promise
+			return new Promise((resolve) => {
+				logStatus('Step 3: Waiting for images to load...');
+				waitForImagesToLoad(() => {
+					logStatus('Step 4: Images loaded. Starting capture...');
+					resolve();
+				});
+			});
+		}).then(() => {
+			// Add small delay to ensure all rendering complete
+			return new Promise(resolve => setTimeout(resolve, 300));
+		}).then(() => {
+			logStatus('Step 5: Capturing images...');
+			// Use retry mechanism for more reliable capture
+			return Promise.all([
+				captureDivAsImageWithRetry('transitChart', 'chart'),
+				captureDivAsImageWithRetry('starlordBodyMutable', 'starlord'),
+				captureDivAsImageWithRetry('thithi', 'thithi_local'),
+				captureDivAsImageWithRetry('nak', 'nak_local'),
+				captureDivAsImageWithRetry('karanam', 'kara_local'),
+				captureDivAsImageWithRetry('yogam', 'yogam_local')
+			]);
+		}).then(() => {
+			logStatus('✓✓✓ All images captured successfully! ✓✓✓');
+			
+			// Update footer with current date/time before saving
+			updateFooter();
+			
+			// Save content to localStorage and redirect to display page
+			setTimeout(() => {
+				saveContent();
+			}, 1000);
+			
+			logStatus('Content saved. Redirecting to display page...');
+		}).catch(error => {
+			logStatus(`ERROR: ${error}`, true);
+			alert('Error capturing images. Please try again.');
 		});
+	}
+	
+	function saveContent() {
+		const content = document.getElementById('divContainer').innerHTML;
+		localStorage.setItem('divContent', content);
+		// Redirect to the display page
+		window.location.href = 'pdfs/onePagePanchang_pdf.html';
+	}
+	
+	function updateFooter() {
+		const footerText = document.getElementById('footerText');
+		if (!footerText) return;
 		
+		const now = new Date();
+		const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+		const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+		
+		const dayName = days[now.getDay()];
+		const day = now.getDate();
+		const month = months[now.getMonth()];
+		const year = now.getFullYear();
+		
+		let hours = now.getHours();
+		const minutes = String(now.getMinutes()).padStart(2, '0');
+		const seconds = String(now.getSeconds()).padStart(2, '0');
+		const ampm = hours >= 12 ? 'pm' : 'am';
+		hours = hours % 12 || 12;
+		
+		const timeStr = `${String(hours).padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
+		
+		// Tamil text + English text
+		const tamilText = currentLanguage === 'tamil' ? 'தமிழ் சங்கவள்ளி தேவசேநா - விதியாவயார்' : 'Tamil Sangavalli Thevasena - Vithiyaavayaar';
+		footerText.textContent = `${tamilText} & Periyanayaki Astro Solutions | ${dayName} ${day} ${month}, ${year} at ${timeStr}`;
+	}
+	
+	function displayOrigPanchang() {
+		const container = document.getElementById('divContainer');
 		const originalContainer = document.getElementById('divOrigContainer');
-		//const backBtn = document.getElementById('backBtn');
 		const onePageBtn = document.getElementById('onePageBtn');
 		const titleBar = document.getElementById('title');
 		
-		container.style.display = 'block';
-		originalContainer.style.display = 'none';
-		onePageBtn.style.display = 'none';
-		//backBtn.style.display = 'initial';
-		//backBtn.style.zIndex = 102;
-		titleBar.style.display = 'none';
+		container.style.display = 'none';
+		originalContainer.style.display = 'block';
+		onePageBtn.style.display = 'initial';
+		titleBar.style.display = 'initial';
 		
-		/*
-		// Set a timeout to allow all changes to be rendered 
-		setTimeout(() => { window.print(); 
-		// Trigger the print dialog 
-		}, 1000); // Adjust the timeout duration as needed
-		*/
-		
-		setTimeout(() => { saveContent(); 
-		// Trigger the print dialog 
-		}, 1000);
-		
+		// TEMPORARILY DISABLED FOR DEBUGGING - check console first
+		setTimeout(() => { saveContent(); }, 1000);
+		// console.log('Auto-redirect disabled. Check console output above. Uncomment saveContent() to re-enable.');
 	}
-
-
-	
 	function saveContent() {
 		const content = document.getElementById('divContainer').innerHTML;
 		localStorage.setItem('divContent', content);
@@ -1295,87 +1617,30 @@ function closePushkaraTable() {
 	}
 	
 	function translateLanguage(language) {
-	  //var div1 = document.getElementById('languageSelector');
+	  // Submit the form to change language via POST instead of cookie
+	  console.log('translateLanguage called with:', language);
 	  
-	  //var language = div1.value;
-	  
-	  if (language === 'english') {
-		  document.getElementById('en').style.backgroundColor = 'red';
-		  document.getElementById('ta').style.backgroundColor = '';
-		   setSelectedOption("english");
-			transliterateTamilToEnglish();  // Function for English transliteration
-	  } else if (language === 'hindi') {
-		  setSelectedOption('hindi');
-			transliterateTamilToHindi();    // Function for Hindi transliteration
-	  }
-	  else{
-		  document.getElementById('ta').style.backgroundColor = 'red';
-		  document.getElementById('en').style.backgroundColor = '';
-		  setCookie('language', 'tamil', 86400);
-		  document.getElementById('languageSelector').value = 'tamil';
-		  location.reload();
+	  // Create a form and submit it
+	  var form = document.getElementById('panchangForm');
+	  if (form) {
+	    // The select already has name='language', so just submit the form
+	    form.submit();
+	  } else {
+	    // Fallback to cookie method
+	    console.log('Form not found, using cookie method');
+	    document.cookie = 'language=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+	    const expires = new Date();
+	    expires.setTime(expires.getTime() + (365 * 24 * 60 * 60 * 1000));
+	    document.cookie = 'language=' + language + '; expires=' + expires.toUTCString() + '; path=/';
+	    setTimeout(function() {
+	      location.reload();
+	    }, 100);
 	  }
 	}
 	
 	function transliterateTamilToHindi(){
 		//no hindi as of now
 	}
-	
-	function setSelectedOption(lang) {
-	  var dropdown = document.getElementById('languageSelector');
-	  var options = dropdown.getElementsByTagName('option');
-	  
-		setCookie('language', lang, 86400);
-
-	 // alert(options[1].value);
-
-	  /*for (var i = 0; i < options.length; i++) {
-		if (options[i].value === lang) {
-			alert(options[i].value);
-			options[i].selected = true;
-		}
-		else{
-			options[i].selected = false;
-		}
-	  }*/
-	  
-		isProgrammaticChange = true; // Set flag to indicate programmatic change
-      dropdown.value = lang; // Update the dropdown value directly
-      console.log("Dropdown updated to:", dropdown.value);
-	}
-	
-	function transliterateTamilToEnglish(){
-			// Get all div elements on the page
-			//const divs = document.querySelectorAll(".divTableCell, .divTableOuterCell, .divPanchang");
-			const divs = document.querySelectorAll("div");
-
-			// Iterate through each div
-			divs.forEach((div) => {
-				 // Exclude divs with the class 'search-box'
-				  if (div.classList.contains('search-box')) {
-					  document.getElementById('place').value = '<?php echo $place; ?>';
-					return; // Skip this div
-				  }
-				  
-				//const tamilText = div.textContent.trim(); // Get the text content of the div
-				const tamilText = div.innerHTML.trim(); // Get the text content of the div
-				//const englishTranslation = tamilToEnglish[tamilText] || tamilText; // Translate or keep original if not found
-				//div.textContent = englishTranslation; // Update the div content
-
-				// Create a regular expression pattern from the keys in the mapping
-				const pattern = new RegExp(Object.keys(tamilToEnglish).join("|"), "gi"); //partial word match
-
-				// Replace Tamil words with English using the regular expression
-				//div.textContent = tamilText.replace(pattern, (match) => tamilToEnglish[match] || match);
-				div.innerHTML = tamilText.replace(pattern, (match) => tamilToEnglish[match] || match);
-			});
-			
-			document.getElementById('languageSelector').value = 'english';
-	}
-	
-
-	// Execute the transliteration function once the page is loaded
-	//window.addEventListener('load', transliterateTamilToEnglish);
 	
 	</script>
 </head>
@@ -1511,7 +1776,7 @@ function calculateBirthPanchang(){
 						"Pushyami 1/பூசம் 1","Pushyami 2/பூசம் 2","Pushyami 3/பூசம் 3","Pushyami 4/பூசம் 4",
 						"Ashlesha 1/ஆயில்யம் 1","Ashlesha 2/ஆயில்யம் 2","Ashlesha 3/ஆயில்யம் 3","Ashlesha 4/ஆயில்யம் 4",
 						"Magha 1/மகம் 1","Magha 2/மகம் 2","Magha 3/மகம் 3","Magha 4/மகம் 4",
-						"Poorva Phalguni 1/பூரம் 1","Poorva Phalguni 2/பூரம் 2","Poorva Phalguni 3/பூரம் 3","Poorva Phalguni 4/பூரம் 4",
+						"Puram 1/பூரம் 1","Puram 2/பூரம் 2","Puram 3/பூரம் 3","Puram 4/பூரம் 4",
 						"Uthra phalguni 1/உத்திரம் 1","Uthra phalguni 2/உத்திரம் 2","Uthra phalguni 3/உத்திரம் 3","Uthra phalguni 4/உத்திரம் 4",
 						"Hastha 1/ஹஸ்தம் 1","Hastha 2/ஹஸ்தம் 2","Hastha 3/ஹஸ்தம் 3","Hastha 4/ஹஸ்தம் 4",
 						"Chitra 1/சித்திரை 1","Chitra 2/சித்திரை 2","Chitra 3/சித்திரை 3","Chitra 4/சித்திரை 4",
@@ -1655,12 +1920,15 @@ function displayHoroDetails()
 {
 	global $panchang, $in_name, $chart_date, $chart_time, $g_dasaBalance, $place, $g_thithi_soonyam_matching_arr,$g_dasaCurrent, $transit_date, $lagna_house, $country,$yogi_arr, 
 		$g_pancha_pakshi, $g_thithi, $g_paksham, $moon_house, $today_sunrise, $tomo_sunrise,$today_sunset,$city,$g_nak, $g_thithi_idx, $g_yoga_idx, $nak_pad_idx, $g_kariNaal, 
-		$lat,$lon, $g_padham, $g_rasi ;
+		$lat,$lon, $g_padham, $g_rasi, $language ;
+	
+	// Determine language index: 0 for English, 1 for Tamil
+	$lang_index = ($language === 'english') ? 0 : 1;
 	
 	echo "<div class='divTable blueTable' style='height:40px;' id='panchangDetailsHeading'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
 				echo "<div class='divPanchangHeading' colspan='3'>";
-					echo "<H6 style='font-weight:bold;color:black'>பஞ்சாங்கம்</H6>";
+					echo "<H6 style='font-weight:bold;color:black'>" . __('panchangam') . "</H6>";
 				echo "</div>";
 			echo "</div>";
 	echo "</div>";
@@ -1668,38 +1936,38 @@ function displayHoroDetails()
 	//display panchang table 
 	echo "<div class='divTable blueTable' id='panchangDetails'>"; 
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>ஆ.தேதி</div>";
+			echo "<div class='divPanchangHeading'>" . __('date') . "</div>";
 			echo "<div class='divPanchang' id='edate'>".date('d-m-Y',strtotime($chart_date))."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>த.தேதி</div>";
-			echo "<div class='divPanchang'>".getTamilDate()."</div>";
+			echo "<div class='divPanchangHeading'>" . __('tamil_date') . "</div>";
+			echo "<div class='divPanchang'>".translate_tamil_date(getTamilDate())."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>நேரம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('time') . "</div>";
 			echo "<div class='divPanchang' id='etime'>".date('h:i:s A',strtotime($chart_time))."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>இடம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('place') . "</div>";
 			echo "<div class='divPanchang' id='placename'>".$city."<BR>(".$lat."°, ".$lon."°)</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>வாரம்</div>";
-			//echo "<div class='divPanchang' id='day'>".explode('/',$panchang['vaaram'])[1].".</div>";
-			echo "<div class='divPanchang' id='day'>".explode('/',$panchang['vaaram'])[1]."&nbsp;</div>";
+			echo "<div class='divPanchangHeading'>" . __('weekday') . "</div>";
+			echo "<div class='divPanchang' id='day'>".explode('/',$panchang['vaaram'])[$lang_index]."&nbsp;</div>";
 		echo "</div>";
 		
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>திதி</div>";
-				echo "<div class='divPanchang' id='thithi' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'></div>";
-			$g_thithi = explode('/',explode('[',$panchang['thithi'])[0])[1];
-			
-			if(strpos($panchang['thithi'],"Amavasya/அமாவாசை")===0 || strpos($panchang['thithi'],"Poornima/பௌர்ணமி")===0){
+	echo "<div class='divTableRow'>";
+		echo "<div class='divPanchangHeading'>" . __('thithi') . "</div>";
+			echo "<div class='divPanchang' id='thithi' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'></div>";
+		$g_thithi = explode('/',explode('[',$panchang['thithi'])[0])[$lang_index];			if(strpos($panchang['thithi'],"Amavasya/அமாவாசை")===0 || strpos($panchang['thithi'],"Poornima/பௌர்ணமி")===0){
 				$g_paksham = "";
 				//echo "<div class='divPanchang' id='thithi' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'>".$g_thithi . $g_paksham . "<BR>". "</div>";
 			}
 			else{
 				$g_paksham = rtrim(explode('/',$panchang['thithi'])[2],']');
+				if ($lang_index == 0 && strpos($g_paksham, '/') !== false) {
+					$g_paksham = explode('/', $g_paksham)[0];
+				}
 				//echo "<div class='divPanchang' id='thithi' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'>".$g_thithi ." [". $g_paksham . "]" . "</div>";
 			}
 		echo "</div>";
@@ -1707,144 +1975,176 @@ function displayHoroDetails()
 		displayDetailsDiv('thi',$g_thithi_idx);
 		
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
-			//echo "<div class='divPanchang' id='nak'>".explode('/',$panchang['nak'])[1]."<BR>".$panchang['nak-end-time']." வரை</div>";
+			echo "<div class='divPanchangHeading'>" . __('nakshatra') . "</div>";
+			//echo "<div class='divPanchang' id='nak'>".explode('/',$panchang['nak'])[$lang_index]."<BR>".$panchang['nak-end-time']." வரை</div>";
 			//echo "<div class='divPanchang' id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'></div>";
-			$g_padham = explode(' ',explode('/',$panchang['nak'])[1])[1];
-			echo "<div class='divPanchang'  id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'> (".($g_padham).")</div>";
+			$nak_full = explode('/',$panchang['nak'])[$lang_index]; // Get full nakshatra string
+			$nak_parts = explode(' ', $nak_full);
+			$g_padham = end($nak_parts); // Get the last element which is the padham number
+			array_pop($nak_parts); // Remove the padham number
+			$nak_name = implode(' ', $nak_parts); // Get nakshatra name without padham
+			$nak_name = translate_tamil_text($nak_name); // Translate nakshatra name using mapping file
+			echo "<div class='divPanchang'  id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer' data-nak-name='" . htmlspecialchars($nak_name) . "'> (".($g_padham).")</div>";
 		echo "</div>";
 		displayDetailsDiv('nak',ceil($nak_pad_idx)/4);
 		
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>யோகம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('yogam') . "</div>";
 			//echo "<div class='divPanchang' id='yogam'>".$panchang['yoga']."</div>";
 			echo "<div class='divPanchang' id='yogam'  OnClick='showDetailsDiv(event, 3)' style='color:blue;cursor:pointer'></div>";
 		echo "</div>";
 		displayDetailsDiv('yogi',$g_yoga_idx);
 		
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>கரணம்</div>";
-			$karan = explode('/',$panchang['karan'])[1];
+			echo "<div class='divPanchangHeading'>" . __('karanam') . "</div>";
+			$karan = explode('/',$panchang['karan'])[$lang_index];
 			//echo "<div class='divPanchang' id='karanam' OnClick='showDetailsDiv(event,2)' style='color:blue;cursor:pointer'>".$karan."(".getKaranaPlanet($karan).")</div>";
 			echo "<div class='divPanchang' id='karanam' OnClick='showDetailsDiv(event,2)' style='color:blue;cursor:pointer'></div>";
 		echo "</div>";
 		displayDetailsDiv('kar',$karan);
 		$yogi_arr = getYogi($panchang['yoga']);
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>யோகி</div>";
-			echo "<div class='divPanchang' id='yogi' OnClick='showDetailsDiv(event, 3)' style='color:blue;cursor:pointer'>".$yogi_arr[1]." (".$yogi_arr[0].")</div>";
+			echo "<div class='divPanchangHeading'>" . __('yogi') . "</div>";
+			echo "<div class='divPanchang' id='yogi' OnClick='showDetailsDiv(event, 3)' style='color:blue;cursor:pointer'>".translate_tamil_text($yogi_arr[1])." (".translate_tamil_text($yogi_arr[0]).")</div>";
 		echo "</div>";
 		displayDetailsDiv('yogi',$g_yoga_idx);
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>தற்போதய ஹோரை</div>";
+			echo "<div class='divPanchangHeading'>" . __('current_horai') . "</div>";
 			echo "<div class='divPanchang' id='hora'></div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>அமிர்தாதி யோகம்</div>";
-			echo "<div class='divPanchang' id='amirtha_yogam'>".getAmrithathiYogam()."</div>";
+			echo "<div class='divPanchangHeading'>" . __('amirthathi') . " " . __('yogam') . "</div>";
+			echo "<div class='divPanchang' id='amirtha_yogam'>".translate_tamil_text(getAmrithathiYogam())."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>நேத்திரம்</div>";
-			echo "<div class='divPanchang' id='nethram'>".getNethram()."</div>";
+			echo "<div class='divPanchangHeading'>" . __('nethram') . "</div>";
+			echo "<div class='divPanchang' id='nethram'>".translate_tamil_text(getNethram())."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>ஜீவன்</div>";
-			echo "<div class='divPanchang' id='jeevan'>".getJeevan()."</div>";
+			echo "<div class='divPanchangHeading'>" . __('jeevan') . "</div>";
+			echo "<div class='divPanchang' id='jeevan'>".translate_tamil_text(getJeevan())."</div>";
 		echo "</div>";
 		
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>நட்சத்திர நோக்கு</div>";
-			echo "<div class='divPanchang' id='nokku'>".getDayType()."</div>";
+			echo "<div class='divPanchangHeading'>" . __('star_direction') . "</div>";
+			echo "<div class='divPanchang' id='nokku'>".translate_tamil_text(getDayType())."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>பஞ்ச பக்ஷி</div>";
+			echo "<div class='divPanchangHeading'>" . __('pancha_pakshi') . "</div>";
 			$g_pancha_pakshi = getPanchaPakshi();
-			echo "<div class='divPanchang' id='pakshi'>".$g_pancha_pakshi."</div>";
+			echo "<div class='divPanchang' id='pakshi'>".translate_tamil_text($g_pancha_pakshi)."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>நக்ஷத்ர நாம எழுத்து </div>";
+			echo "<div class='divPanchangHeading'>" . __('star_letters') . " </div>";
 			echo "<div class='divPanchang'>".getStarLetters($g_nak)[0][0]."<BR>".getStarLetters($g_nak)[1][0]."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>லக்கினம்</div>";
-			echo "<div class='divPanchang' id='lagnam'>".getRasi($lagna_house-1)."</div>";
+			echo "<div class='divPanchangHeading'>" . __('lagna') . "</div>";
+			echo "<div class='divPanchang' id='lagnam'>".translate_tamil_text(getRasi($lagna_house-1))."</div>";
 		echo "</div>";
 		$g_rasi = getRasi($moon_house-1);
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>ராசி</div>";
-			echo "<div class='divPanchang' id='raasi'   OnClick='showDetailsDiv(event, 6)' style='color:blue;cursor:pointer'>" . $g_rasi . "</div>";
+			echo "<div class='divPanchangHeading'>" . __('rasi') . "</div>";
+			echo "<div class='divPanchang' id='raasi'   OnClick='showDetailsDiv(event, 6)' style='color:blue;cursor:pointer'>" . translate_tamil_text($g_rasi) . "</div>";
 		echo "</div>";
 		displayDetailsDiv('rasi',"");
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>அபிஜித் நேரம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('abhijit_time') . "</div>";
 			echo "<div class='divPanchang' id='abhijith'>".getAbhijit()."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeadingRed'>அவயோகி</div>";
-			echo "<div class='divPanchang' id='avayogi' OnClick='showDetailsDiv(event, 4)' style='color:blue;cursor:pointer'>".$yogi_arr[3]." (".$yogi_arr[2].")</div>";
+			echo "<div class='divPanchangHeadingRed'>" . __('avayogi') . "</div>";
+			echo "<div class='divPanchang' id='avayogi' OnClick='showDetailsDiv(event, 4)' style='color:blue;cursor:pointer'>".translate_tamil_text($yogi_arr[3])." (".translate_tamil_text($yogi_arr[2]).")</div>";
 		echo "</div>";
 		displayDetailsDiv('ayogi',$g_yoga_idx);
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeadingRed'>திதி சூன்யம்</div>";
-			echo "<div class='divPanchang' id='thithi_soonyam'>".$g_thithi_soonyam_matching_arr[0]."</div>";
+			echo "<div class='divPanchangHeadingRed'>" . __('thithi_soonyam') . "</div>";
+			echo "<div class='divPanchang' id='thithi_soonyam'>".translate_tamil_text($g_thithi_soonyam_matching_arr[0])."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeadingRed'>ராகு காலம்</div>";
+			echo "<div class='divPanchangHeadingRed'>" . __('rahu_kaalam') . "</div>";
 			echo "<div class='divPanchang' id='rahu_kaalam'>".getRahuKaalam()."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeadingRed'>எம கண்டம்</div>";
+			echo "<div class='divPanchangHeadingRed'>" . __('ema_kantam') . "</div>";
 			echo "<div class='divPanchang' id='ema_kantam'>".getEmaKantam()."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeadingRed'>குளிகை நேரம்</div>";
+			echo "<div class='divPanchangHeadingRed'>" . __('kuligai_time') . "</div>";
 			echo "<div class='divPanchang' id='kuligai'>".getKulikai()."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeadingRed'>வார சூலை</div>";
-			echo "<div class='divPanchang' id='soolai'>".getVaaraSoolai().',<BR> பரிகாரம் - '. getSoolaiParigaaram() ."</div>";
+			echo "<div class='divPanchangHeadingRed'>" . __('vaara_soolai') . "</div>";
+			echo "<div class='divPanchang' id='soolai'>".translate_tamil_text(getVaaraSoolai()).',<BR> '. __('remedy') .' - '. translate_tamil_text(getSoolaiParigaaram()) ."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeadingRed'>சந்திராஷ்டமம்</div>";
-			echo "<div class='divPanchang' id='chandraashtamam'>".getRasi(targetHouse($moon_house-1,6))."</div>";
+			echo "<div class='divPanchangHeadingRed'>" . __('chandraashtamam') . "</div>";
+			echo "<div class='divPanchang' id='chandraashtamam'>".translate_tamil_text(getRasi(targetHouse($moon_house-1,6)))."</div>";
 			//echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house-1,8))."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeadingRed'>கரி நாள்</div>";
-			echo "<div class='divPanchang'>$g_kariNaal</div>";
+			echo "<div class='divPanchangHeadingRed'>" . __('kari_naal') . "</div>";
+			echo "<div class='divPanchang'>".translate_tamil_text($g_kariNaal)."</div>";
 		echo "</div>";
 		//echo "<div class='divTableRow'>";
 			//echo "<div class='divPanchangHeading'>பிறப்பு தசா இருப்பு</div>";
 			//echo "<div class='divPanchang'>".$g_dasaBalance[0]."</div>";
 		//echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>தற்போதைய தசா புக்தி</div>";
-			echo "<div class='divPanchang'>".$g_dasaCurrent[0]."</div>";
+			echo "<div class='divPanchangHeading'>" . __('current_dasa_bukthi') . "</div>";
+			echo "<div class='divPanchang'>".translate_tamil_text($g_dasaCurrent[0])."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>சூரிய உதயம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('sunrise') . "</div>";
 			echo "<div class='divPanchang' id='sunrise'>".explode(' ',$today_sunrise)[1]."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>சூரிய அஸ்தமனம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('sunset') . "</div>";
 			echo "<div class='divPanchang' id='sunset'>".explode(' ',$today_sunset)[1]."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>கணக்கீட்டு முறை</div>";
-			echo "<div class='divPanchang'>திருக்கணிதம்<BR>(லஹரி அயனாம்சம்)</div>";
+			echo "<div class='divPanchangHeading'>" . __('calculation_method') . "</div>";
+			echo "<div class='divPanchang'>" . __('thirukanitham') . "<BR>(" . __('lahiri_ayanamsa') . ")</div>";
 		echo "</div>";
 	echo "</div>";
 }
 
 function displayTransitChart()
 {
-	global $sw_planet,$g_thithi_soonyam_arr;
+	global $sw_planet,$g_thithi_soonyam_arr, $language;
+	
+	// Translate planet abbreviations if language is English
+	$display_planets = $sw_planet;
+	if ($language === 'english') {
+		// Direct planet abbreviation mapping to avoid conflicts
+		$planet_map = [
+			'சூரி' => 'Su',
+			'சந்' => 'Mo',
+			'செ' => 'Ma',
+			'சுக்' => 'Ve',
+			'புத' => 'Me',
+			'குரு' => 'Ju',
+			'சனி' => 'Sa',
+			'ரா' => 'Ra',
+			'கே' => 'Ke',
+			'லக்' => 'As'
+		];
+		
+		for ($i = 0; $i < count($display_planets); $i++) {
+			if (!empty($display_planets[$i])) {
+				// Replace each planet abbreviation, handling HTML tags
+				foreach ($planet_map as $tamil => $english) {
+					$display_planets[$i] = str_replace($tamil, $english, $display_planets[$i]);
+				}
+			}
+		}
+	}
 	
 	echo "<BR>";
 	echo "<div class='divTable blueTable' style='height:40px;'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)' id='transitChartHeading'>";
 				echo "<div class='divPanchangHeading' colspan='3'>";
-					echo "<H6 style='font-weight:bold;color:black'>தற்போதய கோட்சாரம்</H6>";
+					echo "<H6 style='font-weight:bold;color:black'>" . __('current_transit') . "</H6>";
 				echo "</div>";
 			echo "</div>";
 	echo "</div>";
@@ -1862,34 +2162,38 @@ echo <<<EOL
 			</div>
 			<div class="divTableRow">
 					<div class="divTableDummyCell"></div>
-					<div class="divTableCell">$sw_planet[11]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[11]</span></div>
-					<div class="divTableCell">$sw_planet[0]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[0]</span></div>
-					<div class="divTableCell">$sw_planet[1]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[1]</span></div>
-					<div class="divTableCell">$sw_planet[2]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[2]</span></div>
+					<div class="divTableCell">$display_planets[11]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[11]</span></div>
+					<div class="divTableCell">$display_planets[0]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[0]</span></div>
+					<div class="divTableCell">$display_planets[1]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[1]</span></div>
+					<div class="divTableCell">$display_planets[2]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[2]</span></div>
 					<div class="divTableDummyCell"></div>
 			</div>
 			<div class="divTableRow">
 					<div class="divTableDummyCell"></div>
-					<div class="divTableCell">$sw_planet[10]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[10]</span></div>
-					<div class="divTableCenterCell" style='font-size:10px'>ராசி</div>
+					<div class="divTableCell">$display_planets[10]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[10]</span></div>
+					<div class="divTableCenterCell" style='font-size:10px'>
+EOL;
+	echo __('rasi_chart');
+echo <<<EOL
+</div>
 					<div class="divTableCenterCell"></div>
-					<div class="divTableCell">$sw_planet[3]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[3]</span></div>
+					<div class="divTableCell">$display_planets[3]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[3]</span></div>
 					<div class="divTableDummyCell"></div>
 			</div>
 			<div class="divTableRow">
 					<div class="divTableDummyCell"></div>
-					<div class="divTableCell">$sw_planet[9]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[9]</span></div>
+					<div class="divTableCell">$display_planets[9]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[9]</span></div>
 					<div class="divTableCenterCell"></div>
 					<div class="divTableCenterCell" style='font-size:10px'>D1</div>
-					<div class="divTableCell">$sw_planet[4]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[4]</span></div>
+					<div class="divTableCell">$display_planets[4]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[4]</span></div>
 					<div class="divTableDummyCell"></div>
 			</div>
 			<div class="divTableRow">
 					<div class="divTableDummyCell"></div>
-					<div class="divTableCell">$sw_planet[8]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[8]</span></div>
-					<div class="divTableCell">$sw_planet[7]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[7]</span></div>
-					<div class="divTableCell">$sw_planet[6]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[6]</span></div>
-					<div class="divTableCell">$sw_planet[5]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[5]</span></div>
+					<div class="divTableCell">$display_planets[8]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[8]</span></div>
+					<div class="divTableCell">$display_planets[7]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[7]</span></div>
+					<div class="divTableCell">$display_planets[6]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[6]</span></div>
+					<div class="divTableCell">$display_planets[5]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[5]</span></div>
 					<div class="divTableDummyCell"></div>
 			</div>
 			<div class="divTableRow">
@@ -2153,17 +2457,17 @@ echo <<<EOL
 					<H4 style="color:#000000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; width:parent;">
 							<!-- Language selector (visible and functional) -->
 							<select id="languageSelector" name='language' class='langDropdown' onChange="translateLanguage(this.value)">
-							  <option value="tamil" <?php echo ($language === 'tamil') ? 'selected' : ''; ?>>Tamil</option>
-							  <option value="english" <?php echo ($language === 'english') ? 'selected' : ''; ?>>English</option>
-							  <option value="hindi" <?php echo ($language === 'hindi') ? 'selected' : ''; ?>>Hindi</option>
+EOL;
+							  echo "<option value=\"tamil\" " . (($language === 'tamil') ? 'selected' : '') . ">Tamil</option>";
+							  echo "<option value=\"english\" " . (($language === 'english') ? 'selected' : '') . ">English</option>";
+echo <<<EOL
 							</select>
-							<!-- Quick buttons for touch devices -->
-							<div id="languageButtonContainer" style="display:inline-flex; gap:6px; margin-left:8px;">
-							  <button type="button" class="langButton" id='ta' value="tamil" onclick="translateLanguage('tamil')">Ta</button>
-							  <button type="button" class="langButton" id='en' value="english" onclick="translateLanguage('english')">En</button>
-							</div>
 						<TABLE style='width:inherit'>
-						<CENTER><P style="color:#660000;font-weight:bold; font-size:16px; background-color:white;width:200px;">பஞ்சாங்கம்</P></CENTER>
+						<CENTER><P style="color:#660000;font-weight:bold; font-size:16px; background-color:white;width:200px;">
+EOL;
+						echo __('panchangam');
+echo <<<EOL
+</P></CENTER>
 						<TR>
 							<TD>
 								Date: <input type='date' id='nDate' name='nDate' onChange='onDateChange();' style="background-color:#FDE966;color:#000000;font-size:14px;font-weight:bold;width:110px;text-align:center;" value=$chart_date> 
@@ -2178,26 +2482,32 @@ echo <<<EOL
 								<center>
 									<div class='nav-button-container'>
 										<!-- Desktop buttons -->
-										<input type='button' class='actionBtnSmall btn-desktop-nav' id='prevDay' onClick='movePanchang(-1);' value='◀நா' />	
-										<button class='actionBtnSmall btn-desktop-nav' id='prevMonth' onClick='movePanchang(-30);'>◀மா</button> 
-										<button class='actionBtnSmall btn-desktop-nav' id='prevYear' onClick='movePanchang(-365);'>◀வரு</button> 
-										<button class='actionBtnSmall btn-desktop-nav' id='nextYear' onClick='movePanchang(365);'>வரு▶</button>
-										<button class='actionBtnSmall btn-desktop-nav' id='nextMonth' onClick='movePanchang(30);'>மா▶</button>
-										<button class='actionBtnSmall btn-desktop-nav' id='nextDay' onClick='movePanchang(1);'>நா▶</button>
-										<button class='actionBtn btn-desktop-nav' id='now' onClick='updateNow();window.reload();'>தற்போது</button>
-										<button class='actionBtn btn-desktop-nav' id='now' onClick='updateToday();'>இன்று</button>
+EOL;
+										echo "<input type='button' class='actionBtnSmall btn-desktop-nav' id='prevDay' onClick='movePanchang(-1);' value='" . __("prev_day") . "' />";
+										echo "<button class='actionBtnSmall btn-desktop-nav' id='prevMonth' onClick='movePanchang(-30);'>" . __('prev_month') . "</button>";
+										echo "<button class='actionBtnSmall btn-desktop-nav' id='prevYear' onClick='movePanchang(-365);'>" . __('prev_year') . "</button>";
+										echo "<button class='actionBtnSmall btn-desktop-nav' id='nextYear' onClick='movePanchang(365);'>" . __('next_year') . "</button>";
+										echo "<button class='actionBtnSmall btn-desktop-nav' id='nextMonth' onClick='movePanchang(30);'>" . __('next_month') . "</button>";
+										echo "<button class='actionBtnSmall btn-desktop-nav' id='nextDay' onClick='movePanchang(1);'>" . __('next_day') . "</button>";
+										echo "<button class='actionBtn btn-desktop-nav' id='now' onClick='updateNow();window.reload();'>" . __('now') . "</button>";
+										echo "<button class='actionBtn btn-desktop-nav' id='todayBtn' onClick='updateToday();'>" . __('today') . "</button>";
+echo <<<EOL
 
 										<!-- Mobile controls -->
-										<button class='actionBtn btn-mobile' id='mobileNowBtn' onClick='updateNow();window.reload();'>தற்போது</button>
-										<button class='actionBtn btn-mobile' id='mobileTodayBtn' onClick='updateToday();'>இன்று</button>
+EOL;
+										echo "<button class='actionBtn btn-mobile' id='mobileNowBtn' onClick='updateNow();window.reload();'>" . __('now') . "</button>";
+										echo "<button class='actionBtn btn-mobile' id='mobileTodayBtn' onClick='updateToday();'>" . __('today') . "</button>";
+echo <<<EOL
 										<select class='actionBtnSmall mobile-nav-dropdown' onchange="handleNavigation(this)">
-											<option value=''>மற்றவை</option>
-											<option value='-365'>◀ முந்தைய ஆண்டு</option>
-											<option value='-30'>◀ முந்தைய மாதம்</option>
-											<option value='-1'>◀ முந்தைய நாள்</option>
-											<option value='1'>அடுத்த நாள் ▶</option>
-											<option value='30'>அடுத்த மாதம் ▶</option>
-											<option value='365'>அடுத்த ஆண்டு ▶</option>
+EOL;
+											echo "<option value=''>" . __('others') . "</option>";
+											echo "<option value='-365'>" . __('previous_year') . "</option>";
+											echo "<option value='-30'>" . __('previous_month') . "</option>";
+											echo "<option value='-1'>" . __('previous_day') . "</option>";
+											echo "<option value='1'>" . __('next_day_full') . "</option>";
+											echo "<option value='30'>" . __('next_month_full') . "</option>";
+											echo "<option value='365'>" . __('next_year_full') . "</option>";
+echo <<<EOL
 										</select>
 									</div>
 								</center>
@@ -2211,20 +2521,24 @@ echo <<<EOL
 						</TABLE>
 					</H4>
 				<div class='button-container'>
-					<input type='button' id='downloadPanchang' class='actionBtn btn-desktop' value='Monthly' onClick="genPanchang('$place');" /> 
-					<input type='button' class='actionBtn btn-desktop' id='onePageBtn' onclick="displayOnePagePanchang()" value="Download" />
-					<input type='button' class="actionBtn btn-desktop" id="showNakshatraBtn" value='நட்.பகிர்வு' />
-					<input type='button' class="actionBtn btn-desktop" id="showPushkaraBtn" value='புஷ்கர' onclick="showPushkaraTimes()" />
-					<input type='button' class="actionBtn btn-desktop" id="showMuhurtamBtn" value='முகூர்த்தம்' onclick="generateMuhurtam_default()" />
+EOL;
+					echo "<input type='button' id='downloadPanchang' class='actionBtn btn-desktop' value='" . __("monthly") . "' onClick=\"genPanchang('$place');\" />";
+					echo "<input type='button' class='actionBtn btn-desktop' id='onePageBtn' onclick=\"displayOnePagePanchang()\" value=\"" . __('download') . "\" />";
+					echo "<input type='button' class=\"actionBtn btn-desktop\" id=\"showNakshatraBtn\" value='" . __("nakshatra_division") . "' />";
+					echo "<input type='button' class=\"actionBtn btn-desktop\" id=\"showPushkaraBtn\" value='" . __("pushkara") . "' onclick=\"showPushkaraTimes()\" />";
+					echo "<input type='button' class=\"actionBtn btn-desktop\" id=\"showMuhurtamBtn\" value='" . __("muhurtham") . "' onclick=\"generateMuhurtam_default()\" />";
+echo <<<EOL
 					
 					<!-- Mobile dropdown -->
 					<select id='mobileActionsMenu' class='actionBtn mobile-dropdown' onchange="handleMobileAction(this)">
-						<option value=''>மேலும்...</option>
-						<option value='monthly'>மாதாந்திரம்</option>
-						<option value='download'>பதிவிறக்கு</option>
-						<option value='nakshatra'>நட்.பகிர்வு</option>
-						<option value='pushkara'>புஷ்கர</option>
-						<option value='muhurtam'>முகூர்த்தம்</option>
+EOL;
+						echo "<option value=''>" . __('more') . "</option>";
+						echo "<option value='monthly'>" . __('monthly') . "</option>";
+						echo "<option value='download'>" . __('download') . "</option>";
+						echo "<option value='nakshatra'>" . __('nakshatra_division') . "</option>";
+						echo "<option value='pushkara'>" . __('pushkara') . "</option>";
+						echo "<option value='muhurtam'>" . __('muhurtham') . "</option>";
+echo <<<EOL
 					</select>
 				</div>
 				<BR>
@@ -2273,7 +2587,7 @@ echo <<<EOL
 						<td style='vertical-align: bottom;'><img src='images/periyanayaki_astro_solutions.png' height="35px" style='display:inline;'></div></td>
 					</tr>
 					<tr>
-						<td colspan=5>
+						<td colspan=5 style='text-align: center;'>
 							<div class="onepage_panchang_date" id="date">date</div>
 							<div class="onepage_panchang_day" id="day_local">day</div>
 							<div class="onepage_panchang_place" id="localPlace">place</div>
@@ -2282,60 +2596,60 @@ echo <<<EOL
 						
 					</tr>
 					<tr>
-						<td style='padding:unset' colspan='5'>
+						<td style='padding:unset; text-align: center;' colspan='5'>
 							<div class="image-with-caption">
-								<div class="imgcaption_small">திதி</div>
+								<div class="imgcaption_small" id="cap_thithi"></div>
 								<img id="thithi_local" src="" alt="Captured Image" width='150px' style='filter: grayscale(100%); display:inline; border:1px solid black'>
 							</div>
 							<div class="image-with-caption">
-								<div class="imgcaption_small">நட்சத்திரம்</div>
+								<div class="imgcaption_small" id="cap_nak"></div>
 								<img id="nak_local" src="" alt="Captured Image" width='150px' style='filter: grayscale(100%);display:inline; border:1px solid black'>
 							</div>
 							<div class="image-with-caption">
-								<div class="imgcaption_small">யோகம்</div>
+								<div class="imgcaption_small" id="cap_yogam"></div>
 								<img id="yogam_local" src="" alt="Captured Image" width='150px' style='filter: grayscale(100%);display:inline; border:1px solid black'>
 							</div>
 							<div class="image-with-caption">
-								<div class="imgcaption_small">கரணம்</div>
+								<div class="imgcaption_small" id="cap_karanam"></div>
 								<img id="kara_local" src="" alt="Captured Image" width='150px' style='filter: grayscale(100%);display:inline; border:1px solid black'>
 							</div>
 						</td>
 					</tr>
 					<tr>
-						<td colspan="4">
-							<div class="panchangTextInline" id="lHorai"><div class="panchangTextInlineBold">ஹோரை</div></div>,
-							<div class="panchangTextInline" id="lPakshi"><div class="panchangTextInlineBold">பஞ்ச பக்ஷி	</div></div>,
-							<div class="panchangTextInline" id="lAmirYogam"><div class="panchangTextInlineBold">அமிர்தாதி யோகம்</div></div>,
+						<td colspan="4" style='text-align: center;'>
+							<div class="panchangTextInline" id="lHorai" data-label="<?php echo __('horai'); ?>"><div class="panchangTextInlineBold"><?php echo __('horai'); ?></div></div>,
+							<div class="panchangTextInline" id="lPakshi" data-label="<?php echo __('pancha_pakshi'); ?>"><div class="panchangTextInlineBold"><?php echo __('pancha_pakshi'); ?>	</div></div>,
+							<div class="panchangTextInline" id="lAmirYogam" data-label="<?php echo __('amirthathi'); ?> <?php echo __('yogam'); ?>"><div class="panchangTextInlineBold"><?php echo __('amirthathi'); ?> <?php echo __('yogam'); ?></div></div>,
 							
-							<div class="panchangTextInline" id="lNethram"><div class="panchangTextInlineBold">நேத்திரம்</div></div>,
-							<div class="panchangTextInline" id="lJeevan"><div class="panchangTextInlineBold">ஜீவன்</div></div>,
-							<div class="panchangTextInline" id="lNokku"><div class="panchangTextInlineBold">நாள் நோக்கு</div></div>,
+							<div class="panchangTextInline" id="lNethram" data-label="<?php echo __('nethram'); ?>"><div class="panchangTextInlineBold"><?php echo __('nethram'); ?></div></div>,
+							<div class="panchangTextInline" id="lJeevan" data-label="<?php echo __('jeevan'); ?>"><div class="panchangTextInlineBold"><?php echo __('jeevan'); ?></div></div>,
+							<div class="panchangTextInline" id="lNokku" data-label="<?php echo __('day_aspect'); ?>"><div class="panchangTextInlineBold"><?php echo __('day_aspect'); ?></div></div>,
 							
-							<div class="panchangTextInline" id="lLagnam"><div class="panchangTextInlineBold">லக்கினம்</div></div>,
-							<div class="panchangTextInline" id="lRaasi"><div class="panchangTextInlineBold">ராசி</div></div>,
-							<div class="panchangTextInline" id="lAbhijith"><div class="panchangTextInlineBold">அபிஜித்</div></div>,
+							<div class="panchangTextInline" id="lLagnam" data-label="<?php echo __('lagna'); ?>"><div class="panchangTextInlineBold"><?php echo __('lagna'); ?></div></div>,
+							<div class="panchangTextInline" id="lRaasi" data-label="<?php echo __('rasi'); ?>"><div class="panchangTextInlineBold"><?php echo __('rasi'); ?></div></div>,
+							<div class="panchangTextInline" id="lAbhijith" data-label="<?php echo __('abhijith'); ?>"><div class="panchangTextInlineBold"><?php echo __('abhijith'); ?></div></div>,
 							
-							<div class="panchangTextInline" id="lAvayogi"><div class="panchangTextInlineBold">அவயோகி</div></div>,
-							<div class="panchangTextInline" id="lThithi_soonyam"><div class="panchangTextInlineBold">திதி சூ.</div></div>,
-							<div class="panchangTextInline" id="lRahu_kaalam"><div class="panchangTextInlineBold">ரா.கா.</div></div>,
+							<div class="panchangTextInline" id="lAvayogi" data-label="<?php echo __('avayogi'); ?>"><div class="panchangTextInlineBold"><?php echo __('avayogi'); ?></div></div>,
+							<div class="panchangTextInline" id="lThithi_soonyam" data-label="<?php echo __('thithi_soonyam'); ?>"><div class="panchangTextInlineBold"><?php echo __('thithi_soonyam'); ?></div></div>,
+							<div class="panchangTextInline" id="lRahu_kaalam" data-label="<?php echo __('rahu_kaalam'); ?>"><div class="panchangTextInlineBold"><?php echo __('rahu_kaalam'); ?></div></div>,
 							
-							<div class="panchangTextInline" id="lEma_kantam"><div class="panchangTextInlineBold">எ.க.</div></div>,
-							<div class="panchangTextInline" id="lKuligai"><div class="panchangTextInlineBold">குளி.</div></div>,
-							<div class="panchangTextInline" id="lSoolai"><div class="panchangTextInlineBold">வா.சூ.</div></div>,
+							<div class="panchangTextInline" id="lEma_kantam" data-label="<?php echo __('ema_kantam'); ?>"><div class="panchangTextInlineBold"><?php echo __('ema_kantam'); ?></div></div>,
+							<div class="panchangTextInline" id="lKuligai" data-label="<?php echo __('kulika'); ?>"><div class="panchangTextInlineBold"><?php echo __('kulika'); ?></div></div>,
+							<div class="panchangTextInline" id="lSoolai" data-label="<?php echo __('vaara_soolai'); ?>"><div class="panchangTextInlineBold"><?php echo __('vaara_soolai'); ?></div></div>,
 							
-							<div class="panchangTextInline" id="lChandraashtamam"><div class="panchangTextInlineBold">சந்திராஷ்டமம்</div></div>,
-							<div class="panchangTextInline" id="lSunrise"><div class="panchangTextInlineBold">சூரிய உதயம்</div></div>,
-							<div class="panchangTextInline" id="lSunset"><div class="panchangTextInlineBold">சூரிய அஸ்தமனம்</div></div>
+							<div class="panchangTextInline" id="lChandraashtamam" data-label="<?php echo __('chandraashtamam'); ?>"><div class="panchangTextInlineBold"><?php echo __('chandraashtamam'); ?></div></div>,
+							<div class="panchangTextInline" id="lSunrise" data-label="<?php echo __('sunrise'); ?>"><div class="panchangTextInlineBold"><?php echo __('sunrise'); ?></div></div>,
+							<div class="panchangTextInline" id="lSunset" data-label="<?php echo __('sunset'); ?>"><div class="panchangTextInlineBold"><?php echo __('sunset'); ?></div></div>
 							<BR>
-							<div class="panchangTextInline" id="lviv_chakram"><div class="panchangTextInlineBold">விவாஹ சக்ரம்:</div></div>
+							<div class="panchangTextInline" id="lviv_chakram"><div class="panchangTextInlineBold" id="cap_vivaha"></div></div>
 						</td>
 					</tr>
 					<tr>
 						<td style='padding:unset' colspan=1>
-							<div class="imgcaption">கோட்சாரம்</div><img id="chart" src="" alt="Captured Image" width='280px'>
+							<div class="imgcaption" id="cap_current_transit"></div><img id="chart" src="" alt="Captured Image" width='280px'>
 						</td>
 						<td style='padding:unset;align-content:center'><img id="ganesha" src="images/panchang_ganesha.png" alt="Image" width='180px'>
-						<td style='padding:unset;align-content:center'><div class="imgcaption">கிரக சாரம்</div><img id="starlord" src="" alt="Captured Image" width='220px'></td>
+						<td style='padding:unset;align-content:center'><div class="imgcaption" id="cap_graha_saaram"></div><img id="starlord" src="" alt="Captured Image" width='220px'></td>
 						
 						 <!-- <td style='padding:unset;align-content:center'><div class="imgcaption">விவாஹ சக்ரம்</div><img id="vivaha" src="" alt="Captured Image" width='220px'></td> -->
 						<!-- <td style='padding:unset;align-content:center'><div class="imgcaption">கிரக சாரம்</div><img id="starlord" src="" alt="Captured Image" width='250px'></td> -->
@@ -2613,6 +2927,83 @@ var pushkaraDataLoaded = false;
 </script>
 
 <!-- <button class='actionBtn' id='Translate' onClick='transliterateTamilToEnglish()'>English</button> -->
+
+<script>
+// ---- Panchang value capture utilities (added for reliable post-load data collection) ----
+// IDs we want to snapshot (static + dynamically populated)
+const PANCHANG_IDS = [
+	'date','day_local','localPlace','thithi','nak','yogam','karanam','hora','pakshi','amirtha_yogam','nethram','jeevan','nokku',
+	'lagnam','raasi','abhijith','avayogi','thithi_soonyam','rahu_kaalam','ema_kantam','kuligai','soolai',
+	'chandraashtamam','sunrise','sunset'
+];
+
+// Wait for element text to become non-empty (handles async loads)
+function waitForText(id,{timeout=5000,interval=150}={}) {
+	return new Promise(resolve => {
+		const el = document.getElementById(id);
+		if(!el){ return resolve(''); }
+		const immediate = el.textContent.trim();
+		if(immediate){ return resolve(immediate); }
+		const obs = new MutationObserver(() => {
+			const txt = el.textContent.trim();
+			if(txt){ obs.disconnect(); resolve(txt); }
+		});
+		obs.observe(el,{childList:true,subtree:true,characterData:true});
+		let elapsed = 0;
+		const poll = setInterval(()=>{
+			elapsed += interval;
+			const txt = el.textContent.trim();
+			if(txt){ clearInterval(poll); obs.disconnect(); resolve(txt); }
+			else if(elapsed >= timeout){ clearInterval(poll); obs.disconnect(); resolve(txt); }
+		},interval);
+	});
+}
+
+// Capture all current values (returns Promise resolving to object)
+async function capturePanchangValues(){
+	const out = {};
+	for(const id of PANCHANG_IDS){
+		out[id] = document.getElementById(id)?.textContent.trim() || '';
+	}
+	// Ensure key dynamic ones fully loaded
+	out.hora   = await waitForText('hora');
+	out.thithi = await waitForText('thithi');
+	out.nak    = await waitForText('nak');
+	out.karanam= await waitForText('karanam');
+	out.yogam  = await waitForText('yogam');
+	out.pakshi = await waitForText('pakshi');
+	window.panchangSnapshot = out; // expose globally
+	return out;
+}
+
+// Update Horai inline label once value available
+function updateHoraiInline(){
+	const horaTxt = document.getElementById('hora')?.textContent.trim();
+	if(!horaTxt) return; // wait until loaded
+	const lHorai = document.getElementById('lHorai');
+	if(!lHorai || lHorai.dataset.done) return;
+	const labelEl = lHorai.querySelector('.panchangTextInlineBold');
+	const labelHTML = labelEl ? labelEl.outerHTML : lHorai.innerHTML;
+	lHorai.innerHTML = labelHTML + ' - ' + horaTxt;
+	lHorai.dataset.done = '1';
+}
+
+// Public helper to obtain latest snapshot
+function getPanchangSnapshot(){
+	return window.panchangSnapshot || {};
+}
+
+// On full window load: capture and attempt horai append; retry if still missing
+window.addEventListener('load', () => {
+	capturePanchangValues().then(()=>{
+		updateHoraiInline();
+		if(!document.getElementById('lHorai')?.dataset.done){
+			setTimeout(updateHoraiInline,250);
+		}
+	});
+});
+// ---- End Panchang value capture utilities ----
+</script>
 
 </body>
 </html>

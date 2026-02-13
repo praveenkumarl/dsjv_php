@@ -2462,7 +2462,7 @@ function updateThithiSoonyam($thithi,$inner=true) //$inner - true for girl in ma
 	
 	foreach($thithi_soonya_rasi_arr as $idx => $soonya_house){
 		//$g_thithi_soonyam_arr[$soonya_house-1] = '&#x2718;';
-		$g_thithi_soonyam_arr[$soonya_house-1] = ' தி.சூ';
+		$g_thithi_soonyam_arr[$soonya_house-1] = " <span class='thithi_soonyam'>" . __('thrisoolam_abbr') . "</span>";
 	}
 }
 

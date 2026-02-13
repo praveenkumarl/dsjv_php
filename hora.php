@@ -1,6 +1,11 @@
 <?php 
 
 require_once "lib.php";
+include_once "lang/lang.php";
+
+// Initialize language from cookie or default to Tamil
+$language = isset($_COOKIE['language']) ? strtolower($_COOKIE['language']) : 'tamil';
+init_language($language);
 
 $DEBUG= (int) isset($_GET['debug']) ? $_GET['debug'] : 0;
 $flag = (int)isset($_GET['flag']) ? $_GET['flag'] : 0;
@@ -464,7 +469,7 @@ function displayHoraTable($hora_data)
 			if(strpos($current_hora[3],"குரு")===0 or strpos($current_hora[3],"சுக்")===0 or strpos($current_hora[3],"புத")===0 or strpos($current_hora[3],"சந்")===0){  //== will not differenciate between 0 and false, so should use ===
 				echo "<div class='divThaaraPalanGreen'>".date("h:i A",strtotime($current_hora[1]))."</div>";
 				echo "<div class='divThaaraPalanGreen'>".date("h:i A",strtotime($current_hora[2]))."</div>";	
-				echo "<div class='divThaaraPalanGreen' id='horaLord'><div id='horaLordTxt'>".$current_hora[3]."</div></div>";
+				echo "<div class='divThaaraPalanGreen' id='horaLord'><div id='horaLordTxt'>".translate_tamil_text($current_hora[3])."</div></div>";
 				if(strpos($current_hora[3],"குரு")===0 or strpos($current_hora[3],"சுக்")===0 or strpos($current_hora[3],"புத")===0 or strpos($current_hora[3],"சந்")===0){  //== will not differenciate between 0 and false, so should use ===
 					echo "<div class='divThaaraPalanGreen' id='horaSubLord'>".$current_hora[5]."</div>";
 				}
@@ -476,7 +481,7 @@ function displayHoraTable($hora_data)
 				
 				echo "<div class='divThaaraPalanRed'>".date("h:i A",strtotime($current_hora[1]))."</div>";
 				echo "<div class='divThaaraPalanRed'>".date("h:i A",strtotime($current_hora[2]))."</div>";	
-				echo "<div class='divThaaraPalanRed' id='horaLord'><div id='horaLordTxt'>".$current_hora[3]."</div></div>";
+				echo "<div class='divThaaraPalanRed' id='horaLord'><div id='horaLordTxt'>".translate_tamil_text($current_hora[3])."</div></div>";
 				if(strpos($current_hora[3],"குரு")===0 or strpos($current_hora[3],"சுக்")===0 or strpos($current_hora[3],"புத")===0 or strpos($current_hora[3],"சந்")===0){  //== will not differenciate between 0 and false, so should use ===
 					echo "<div class='divThaaraPalanGreen' id='horaSubLord'>".$current_hora[5]."</div>";
 				}
