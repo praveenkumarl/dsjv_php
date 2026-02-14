@@ -253,26 +253,27 @@ function generatePDF() {
 				<div class="divTablePanchangHeading">யோகம்</div>
 			</div>`;
 
-		const total_days = daysInMonth(month, year);
-		const t = getFirstDayOfMonth(month, year);
+	const total_days = daysInMonth(month, year);
+	const t = getFirstDayOfMonth(month, year);
 
-		for (let i = 0; i < total_days; i++) {
-			let newdate = new Date(t.getFullYear(), t.getMonth(), t.getDate() + i, t.getHours() + 6);
-			newdate = changeTimezone(newdate, timezone);
 
-			panchang.calculate(newdate, function () {
-				html += `
-					<div class="divTableRow">
-						<div class="divTablePanchangMedium" style="width:80px">${formatDate(newdate)}</div>
-						<div class="divTablePanchangMedium" style="width:50px">${panchang.Day.name}</div>
-						<div class="divTablePanchangMedium" style="width:160px">${panchang.Nakshatra.name} ${formatDateTime(panchang.Nakshatra.end)} வரை ${displayNextNak(newdate, panchang.Nakshatra)}</div>
-						<div class="divTablePanchangMedium" style="width:160px">${panchang.Tithi.name} ${formatDateTime(panchang.Tithi.end)} வரை ${displayNextThithi(newdate, panchang.Tithi)}</div>
-						<div class="divTablePanchangMedium" style="width:160px">${panchang.Karna.name} ${formatDateTime(panchang.Karna.start)} முதல் ${formatDateTime(panchang.Karna.end)} வரை ${displayNextKar(newdate, panchang.Karna, panchang.Tithi.name)}</div>
-						<div class="divTablePanchangMedium" style="width:160px">${panchang.Yoga.name} ${formatDateTime(panchang.Yoga.start)} முதல் ${formatDateTime(panchang.Yoga.end)} வரை ${displayNextYoga(newdate, panchang.Yoga)}</div>
-					</div>`;
-			});
-		}
+	for (let i = 0; i < total_days; i++) {
+		let newdate = new Date(t.getFullYear(), t.getMonth(), t.getDate() + i, t.getHours() + 6);
+		newdate = changeTimezone(newdate, timezone);
 
-		html += `</div></center>`;
-		container.innerHTML = html; // Insert the generated HTML into the container
+		panchang.calculate(newdate, function () {
+			html += `
+				<div class="divTableRow">
+					<div class="divTablePanchangMedium" style="width:80px">${formatDate(newdate)}</div>
+					<div class="divTablePanchangMedium" style="width:50px">${panchang.Day.name}</div>
+					<div class="divTablePanchangMedium" style="width:160px">${panchang.Nakshatra.name} ${formatDateTime(panchang.Nakshatra.end)} வரை ${displayNextNak(newdate, panchang.Nakshatra)}</div>
+					<div class="divTablePanchangMedium" style="width:160px">${panchang.Tithi.name} ${formatDateTime(panchang.Tithi.end)} வரை ${displayNextThithi(newdate, panchang.Tithi)}</div>
+					<div class="divTablePanchangMedium" style="width:160px">${panchang.Karna.name} ${formatDateTime(panchang.Karna.start)} முதல் ${formatDateTime(panchang.Karna.end)} வரை ${displayNextKar(newdate, panchang.Karna, panchang.Tithi.name)}</div>
+			<div class="divTablePanchangMedium" style="width:160px">${panchang.Yoga.name} ${formatDateTime(panchang.Yoga.start)} முதல் ${formatDateTime(panchang.Yoga.end)} வரை ${displayNextYoga(newdate, panchang.Yoga)}</div>
+				</div>`;
+		});
 	}
+
+	html += `</div></center>`;
+	container.innerHTML = html; // Insert the generated HTML into the container
+}

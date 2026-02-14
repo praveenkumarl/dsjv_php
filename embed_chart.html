@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<title>Embedded Birth Chart (API JSON)</title>
+<style>
+/* Styles copied to closely match the API HTML output */
+body { font-family: "Arial Unicode MS", "Noto Sans Tamil", sans-serif; background-color: #f7f7f7; margin: 0; padding: 10px; color: #0f172a; }
+.page-container{max-width:794px;margin:0 auto;background:#fff;padding:12px;box-sizing:border-box;box-shadow:0 2px 6px rgba(0,0,0,0.04)}
+.header-box { background-color: #ffffff; border: 2px solid #a00000; border-radius: 8px; overflow: hidden; margin-bottom: 12px; }
+.table-heading { font-weight:bold; color:#ffffff; font-size:20px; background: linear-gradient(140deg,#d61818,#a00000); padding:8px 12px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; }
+.info-grid { width: 100%; border-spacing: 10px; border-collapse: separate; margin: 10px 0; display:flex; gap:8px; flex-wrap:wrap; }
+.info-box { background-color: #ffffff; border-left: 4px solid #a00000; border-radius: 6px; padding: 8px; border: 1px solid #f0dede; flex:1 1 150px; min-width:140px; box-sizing:border-box;}
+.info-title { font-size: 11px; font-weight: bold; color: #a00000; margin-bottom: 6px; text-transform: uppercase; }
+.info-value { font-size: 14px; font-weight:bold; color:#1f1f1f; }
+.chart-row { display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap; }
+.chart-box { flex:1 1 380px; background:transparent; }
+.chart-table { width:100%; border-collapse: collapse; table-layout: fixed; background-color: transparent; }
+.chart-cell { background-color: #ffffff; height: 70px; vertical-align: middle; text-align: center; padding: 4px 3px; position: relative; border: 2.5px solid #a00000; border-radius: 0; }
+.chart-center { background-color: #ffffff; text-align: center; vertical-align: middle; border: 1px solid #000000; }
+.chart-center-text { font-size: 18px; font-weight: bold; color: #1f1f1f; font-style: italic; font-family: serif; opacity: 1; }
+.chart-cell .planet { font-size:12px; font-weight:bold; color:#1f1f1f; display:block; line-height:1.2 }
+.tables-row { display:flex; align-items:flex-start; gap:12px; margin-top:12px; flex-wrap:wrap; }
+.table-card { background:#fff; border:1px solid #f0dede; border-radius:8px; padding:8px; box-sizing:border-box; }
+.table-card .table-heading { font-weight:bold; color:#ffffff; font-size:14px; margin-bottom:8px; background: linear-gradient(140deg,#d61818,#a00000); padding:6px 8px; border-radius:6px; }
+.starlord-table, .bukthi-table { width:100%; border-collapse:collapse; font-size:12px; }
+.starlord-table td, .bukthi-table td { padding:6px 8px; border-bottom:1px solid #f5eeee; color:#4a1f1f; font-weight:bold; }
+.footer { text-align:center; color:#8a2a2a; font-size:10px; margin-top:10px; }
+@media print { .page-container{width:210mm;max-width:100%;margin:0 auto;padding:0;box-shadow:none} .footer{position:fixed;bottom:10mm;} }
+</style>
+</head>
+<body>
+<div id="chart-root" class="page-container">Loading chart…</div>
+
+<script>
+/*
+  Finalized embed_chart.html
+  API URL (filled): points to local dev server. Change `apiUrl` to your deployed API domain if needed.
+*/
+(async function(){
+  // <-- EDIT HERE if your API is deployed elsewhere -->
+  const apiUrl = 'http://127.0.0.1/dsjv_home/Birth_Chart_API.php?name=Srividya&date=1979-06-13&time=02:47:00&place=Trichy|Asia/Kolkata&type=json&lang=ta';
+
+  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  const shortMap = {'Sun':'சூரி','Moon':'சந்','Mercury':'புத','Venus':'சுக்','Mars':'செ','Jupiter':'குரு','Saturn':'சனி','mean Node':'ரா','Ascendant':'லக்னம்'};
+
+  try {
+    const res = await fetch(apiUrl);
+    if(!res.ok) throw new Error('API returned ' + res.status);
+    const data = await res.json();
+
+    const meta = data.meta || {};
+    const panchang = data.panchang || {};
+    const sw_planet = data.sw_planet || [];
+    const navamsam = data.navamsam || [];
+    const starlord = data.starlord || [];
+    const bukthi = data.bukthi || [];
+    const planets = data.planets || [];
+
+    const headerHtml = '<div class="header-box"><div class="table-heading"><span>' + esc(meta.name||'') + '</span><span style="font-size:13px">தேதி: ' + esc(meta.date||'') + ' &nbsp; நேரம்: ' + esc(meta.time||'') + ' &nbsp; இடம்: ' + esc(meta.place||'') + '</span></div></div>';
+
+    const infoHtml = '<div class="info-grid">' +
+      '<div class="info-box"><div class="info-title">ராசி</div><div class="info-value">' + esc(meta.rasi||'') + '</div></div>' +
+      '<div class="info-box"><div class="info-title">லக்னம்</div><div class="info-value">' + esc(meta.lagnam||'') + '</div></div>' +
+      '<div class="info-box"><div class="info-title">நட்சத்திரம்</div><div class="info-value">' + esc(panchang.nakshatra||'') + '</div></div>' +
+      '<div class="info-box"><div class="info-title">வாரம்</div><div class="info-value">' + esc(meta.weekday||'') + '</div></div>' +
+      '<div class="info-box"><div class="info-title">திதி</div><div class="info-value">' + esc(panchang.thithi||'') + '</div></div>' +
+      '<div class="info-box"><div class="info-title">யோகம்</div><div class="info-value">' + esc(panchang.yoga||'') + '</div></div>' +
+      '</div>';
+
+    function cellContentFromSw(i){
+      const val = sw_planet[i];
+      if(val !== undefined && val !== null && String(val).trim() !== '') { return String(val); }
+      const parts = planets.filter(p => Number(p.rasi_index) === i).map(p=>{
+        const short = shortMap[p.eng] || p.short || p.key || p.eng || '';
+        const deg = (typeof p.deg === 'number') ? (' ' + Number(p.deg).toFixed(2) + '°') : '';
+        return '<span class="planet">' + esc(short + deg) + '</span>';
+      });
+      return parts.join('');
+    }
+
+    function buildChartTable(arrMap, centerLabel){
+      const t = [];
+      t.push('<table class="chart-table"><tr>');
+      t.push('<td class="chart-cell">' + arrMap(11) + '</td>');
+      t.push('<td class="chart-cell">' + arrMap(0) + '</td>');
+      t.push('<td class="chart-cell">' + arrMap(1) + '</td>');
+      t.push('<td class="chart-cell">' + arrMap(2) + '</td>');
+      t.push('</tr><tr>');
+      t.push('<td class="chart-cell">' + arrMap(10) + '</td>');
+      t.push('<td colspan="2" rowspan="2" class="chart-center"><span class="chart-center-text">' + esc(centerLabel) + '</span></td>');
+      t.push('<td class="chart-cell">' + arrMap(3) + '</td>');
+      t.push('</tr><tr>');
+      t.push('<td class="chart-cell">' + arrMap(9) + '</td>');
+      t.push('<td class="chart-cell">' + arrMap(4) + '</td>');
+      t.push('</tr><tr>');
+      t.push('<td class="chart-cell">' + arrMap(8) + '</td>');
+      t.push('<td class="chart-cell">' + arrMap(7) + '</td>');
+      t.push('<td class="chart-cell">' + arrMap(6) + '</td>');
+      t.push('<td class="chart-cell">' + arrMap(5) + '</td>');
+      t.push('</tr></table>');
+      return t.join('');
+    }
+
+    const leftChart = buildChartTable(i => cellContentFromSw(i), 'ராசி');
+    function cellContentFromNav(i){ const val = navamsam[i]; if(val !== undefined && val !== null && String(val).trim() !== '') return String(val); return ''; }
+    const rightChart = (Array.isArray(navamsam) && navamsam.length>0) ? buildChartTable(i => cellContentFromNav(i), 'நவாம்சம்') : '';
+    const chartsHtml = '<div class="chart-row"><div class="chart-box">' + leftChart + '</div>' + (rightChart?'<div class="chart-box">' + rightChart + '</div>':'') + '</div>';
+
+    const starlordHtml = (starlord.length>0) ? starlord.map(s=>{
+      const key = esc(s.key||''); const raw = s.raw; const val = Array.isArray(raw) ? esc(raw.join(' / ')) : esc(String(raw||''));
+      return '<tr><td>' + key + '</td><td>' + val + '</td></tr>';
+    }).join('') : '<tr><td>—</td><td>—</td></tr>';
+
+    const bukthiHtml = (bukthi.length>0) ? bukthi.map(b=>{
+      const lbl = esc(b.label||''); const d = Array.isArray(b.data) ? esc(b.data.join(' | ')) : esc(String(b.data||''));
+      return '<tr><td>' + lbl + '</td><td>' + d + '</td></tr>';
+    }).join('') : '<tr><td>—</td><td>—</td></tr>';
+
+    const tablesHtml = '<div class="tables-row">' +
+      '<div class="table-card" style="min-width:220px;max-width:320px"><div class="table-heading">நட்சத்திர சாரம்</div><table class="starlord-table"><tbody>' + starlordHtml + '</tbody></table></div>' +
+      '<div class="table-card" style="min-width:220px;max-width:320px"><div class="table-heading">தசா / புக்தி</div><table class="bukthi-table"><tbody>' + bukthiHtml + '</tbody></table></div>' +
+      '</div>';
+
+    const footerHtml = '<div class="footer">Generated by DSJV Matrimony @ ' + new Date().toLocaleString() + '</div>';
+
+    document.getElementById('chart-root').innerHTML = headerHtml + infoHtml + chartsHtml + tablesHtml + footerHtml;
+
+  } catch (err) {
+    document.getElementById('chart-root').textContent = 'Failed to load chart: ' + err.message;
+    console.error(err);
+  }
+})();
+</script>
+</body>
+</html>

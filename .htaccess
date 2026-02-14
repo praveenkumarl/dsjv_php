@@ -1,0 +1,13 @@
+# .htaccess for chart proxy environment
+# Adds CHART_ALLOWED_DOMAINS for PHP and forwards Authorization header to PHP-FPM
+
+# Allowed origins (space- or comma-separated)
+SetEnv CHART_ALLOWED_DOMAINS "http://localhost http://127.0.0.1 https://dsjvmatrimony.pkastro.com"
+
+# Forward Authorization header to PHP (useful when running PHP-FPM)
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
+
+<IfModule mod_php5.c>
+  php_flag session.auto_start on
+</IfModule>

@@ -18,7 +18,7 @@ $caste=$_POST['caste'];
 $office_name=$_POST['office_name'];
 $office_phone=$_POST['office_phone'];
 
-$DEBUG= (int) isset($_SESSION['debug']) ? $_SESSION['debug'] : 0;
+$DEBUG = (isset($_SESSION['debug']) ? (int)$_SESSION['debug'] : 0);
 $conn="";
 $lat="";
 $lon="";
@@ -1802,11 +1802,13 @@ else{
 <div id="loader" class="center"></div>
 
 <div id='onepage' style="width: min-content">
-	<div class="header-parent">
-	  <!-- <div class="header-left"><img src='images/dsjv_title.png' height="35px"></div> -->
-	  <div class="header-center"><div class='divTableTextOfficeName'>&#3059; &#2384; &#21328; &#10017;<BR><?php echo $office_name.'<BR>&#128241;'.$office_phone; ?></div></div>
-	  <!-- <div class="header-right"><img src='images/periyanayaki_astro_solutions.png' height="35px"></div> -->
-	</div>
+	<table class="header-parent" style="width: 100%; border: none;">
+	  <tr>
+	    <td class="header-left" style="width: 20%; text-align: left; border: none;"><img src='images/dsjv_title.png' height="35px"></td>
+	    <td class="header-center" style="width: 60%; text-align: center; border: none;"><div class='divTableTextOfficeName'>&#3059; &#2384; &#21328; &#10017;<BR><?php echo $office_name.'<BR>&#128241;'.$office_phone; ?></div></td>
+	    <td class="header-right" style="width: 20%; text-align: right; border: none;"><img src='images/periyanayaki_astro_solutions.png' height="35px"></td>
+	  </tr>
+	</table>
 	<div class="header-image"></div>
 <center><div class='divTableTextSloka' style='font-family: Verdana, Raavi, sans-serif;font-size:8px;width:100%;line-height:10px'>&#2384; ஜனனி ஜன்ம சௌக்யானாம் வர்தநீ குலஸம்பதாம்
  பதவி பூர்வ  புண்யாணாம் லிக்ய தே ஜன்ம பத்திரிகா !</div></center>
@@ -1821,7 +1823,7 @@ else{
 			</div>
 		</div>	
 			
-		<div class="divTable blueTable" id="onepage">
+		<div class="divTable blueTable" id="chart-container">
 				<div class="divTableRow">
 					<div class="divHoroDetailCell" style="border:none; padding:5px"><?php displayChart1(); ?></div>
 					<div class="divHoroDetailCell" style="border:none; padding:5px"><?php displayNavamsam(); ?></div>
@@ -1840,7 +1842,7 @@ else{
 </div>
 
 <div class="PageFooter" style="width:-webkit-fill-available">தர்ம சாஸ்தா ஜோதிட வித்யாலயா & Periyanayaki Astro Solutions
-	<span id="currentDateTime"></span>
+	<span id="currentDateTime"><?php echo date('d-m-Y H:i:s'); ?></span>
 </div>
 					
 <?php
