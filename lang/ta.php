@@ -30,7 +30,7 @@ return [
     'next_month_full' => 'அடுத்த மாதம் ▶',
     'next_year_full' => 'அடுத்த ஆண்டு ▶',
     'others' => 'மற்றவை',
-    'more' => 'மேலும்...',
+    'more' => 'இதர வசதிகள்...',
     
     // Panchang Elements
     'thithi' => 'திதி',
@@ -47,15 +47,36 @@ return [
     'end' => 'வரை',
     'from' => 'முதல்',
     'to' => 'வரை',
+    // Generic
+    'result' => 'பலன்',
+    // Alerts / Messages
+    'place_not_given' => 'பிறந்த இடம் கொடுக்கப்படவில்லை',
+    'place_not_selected' => 'நீங்கள் இடத்தை கீழே வரும் பட்டியலில் தேர்ந்தெடுக்கவில்லை',
+    'please_load_panchang' => 'பஞ்சாங்க் தரவை முதலில் ஏற்றவும்.',
+    'pushkara_loading' => 'புஷ்கரா தரவு இன்னும் ஏற்றப்படுகிறது. காத்துக்கொள்ளவும்...',
     
     // Buttons
-    'monthly' => 'மாதாந்திரம்',
-    'download' => 'பதிவிறக்கு',
-    'nakshatra_division' => 'நட்.பகிர்வு',
-    'pushkara' => 'புஷ்கர',
-    'muhurtham' => 'முகூர்த்தம்',
+    'monthly' => 'மாத வாரியாக',
+    'download' => 'பதிவிறக்கம்',
+    'nakshatra_division' => 'நட். பகிர்வு',
+    'pushkara' => 'புஷ்கர அட்டவணை',
+    'muhurtham' => 'முகூர்த்த நேரங்கள்',
     'muhurthams' => 'முகூர்த்தங்கள்',
-    
+    'panchang_input' => 'பஞ்சாங்கம் உள்ளீடு',
+    'month' => 'மாதம்',
+    'year' => 'வருடம்',
+    'place' => 'இடம்',
+    'search_place_placeholder' => 'Search place...',
+    'please_fill_all_fields' => 'தயவுசெய்து எல்லா புலங்களையும் நிரப்பவும்',
+    'generating' => 'உருவாக்கப்படுகிறது...',
+    'submit' => 'சமர்ப்பி',
+    'back' => 'மீண்டும் செல்ல',
+    'after' => 'பிறகு',
+    'paksha_suk' => 'சுக்',
+    'paksha_kri' => 'கிரு',
+    'paksha_suk_abbr' => 'சுக்',
+    'paksha_kri_abbr' => 'கிரு',
+
     // Planets
     'sun' => 'சூரியன்',
     'moon' => 'சந்திரன்',
@@ -283,6 +304,19 @@ return [
     'thai' => 'தை',
     'maasi' => 'மாசி',
     'panguni' => 'பங்குனி',
+    // Gregorian month names for forms
+    'greg_month_1' => 'ஜனவரி',
+    'greg_month_2' => 'பிப்ரவரி',
+    'greg_month_3' => 'மார்ச்',
+    'greg_month_4' => 'ஏப்ரல்',
+    'greg_month_5' => 'மே',
+    'greg_month_6' => 'ஜூன்',
+    'greg_month_7' => 'ஜூலை',
+    'greg_month_8' => 'ஆகஸ்ட்',
+    'greg_month_9' => 'செப்டம்பர்',
+    'greg_month_10' => 'அக்டோபர்',
+    'greg_month_11' => 'நவம்பர்',
+    'greg_month_12' => 'டிசம்பர்',
     
     // Tamil Years (60 year cycle)
     'prabhava' => 'பிரபவ',
@@ -527,4 +561,8 @@ return [
     // Graha Saaram
     'graha_saaram' => 'கிரக சாரம்',
     'rasi_chart' => 'ராசி',
+    'legend' => 'குறிப்பு',
+    'mandhi' => 'மாந்தி',
+    'indhu' => 'இந்து',
+    'thrisoolam' => 'த்ரிசூலம்',
 ];

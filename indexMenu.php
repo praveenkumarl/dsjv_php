@@ -113,5 +113,13 @@ else{
 	echo "Error: Missing menu";
 }
 
+// Modern language selector (right-end of menu)
+$currentLang = isset($_COOKIE['language']) ? strtolower($_COOKIE['language']) : 'tamil';
+$label = ($currentLang === 'english') ? 'EN' : 'தமிழ்';
+echo "<div class='lang-selector' style='float:right;margin-right:10px;'>";
+echo "  <div class='lang-btn' onclick=\"toggleLanguage()\" title='Language' style='display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:20px;border:1px solid transparent;background:transparent;cursor:pointer;color:#fff;'>";
+echo "    <i class='fa fa-globe' aria-hidden='true' style='color:inherit'></i> <span id='currentLangLabel'>" . htmlspecialchars($label, ENT_QUOTES) . "</span>";
+echo "  </div>";
+echo "</div>";
 
 ?>

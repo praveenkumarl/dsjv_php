@@ -361,6 +361,62 @@ input, select, textarea {
 
 		}
 
+/* Floating FAB language control (mobile) - moved from style.css */
+.fab-lang{position:fixed;right:16px;bottom:18px;z-index:99999;font-family:Arial,Helvetica,sans-serif}
+.fab-lang .fab-btn{width:52px;height:52px;border-radius:50%;background:#1e88e5;color:#fff;border:none;box-shadow:0 6px 18px rgba(30,136,229,0.25);font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.fab-lang .fab-btn:active{transform:scale(0.98)}
+.fab-lang .fab-popover{position:absolute;right:0;bottom:66px;background:rgba(255,255,255,0.98);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.18);padding:8px;display:flex;flex-direction:column;gap:6px;min-width:100px;opacity:0;transform:translateY(6px);pointer-events:none;transition:all 180ms ease}
+.fab-lang .fab-popover.open{opacity:1;transform:translateY(0);pointer-events:auto}
+.fab-lang .fab-option{background:transparent;border:0;padding:3px 6px;border-radius:6px;cursor:pointer;font-weight:700;color:#1b1b1b;font-size:14px}
+.fab-lang .fab-option:hover{background:#f2f6fb}
+
+/* Inline variant for menu bar placement (no overlay) */
+.fab-lang.fab-inline{position:absolute;right:30px;top:10px;bottom:auto;display:inline-flex;align-items:center;margin:0;z-index:120}
+.fab-lang.fab-inline .fab-btn{width:38px;height:38px;border-radius:50%;background:transparent;border:1px solid rgba(255,255,255,0.12);color:#fff;font-size:18px;box-shadow:none}
+.fab-lang.fab-inline .fab-popover{position:absolute;right:30;top:44px;bottom:auto;background:#fff;color:#111;box-shadow:0 8px 24px rgba(0,0,0,0.12);padding:6px;min-width:140px}
+.fab-lang.fab-inline .fab-option{color:#111;font-size:13px;padding:1px 1px}
+
+/* Selected language option */
+.fab-lang .fab-option.selected{
+	background: #004a99; /* deep blue */
+	color: #ffffff; /* white text for contrast */
+	font-weight: 800;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.25), inset 0 0 0 1px rgba(255,255,255,0.06);
+	border-radius: 6px;
+}
+.fab-lang .fab-option.selected:focus{
+	outline: none;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.3), 0 0 0 3px rgba(0,74,153,0.22);
+}
+.fab-lang.fab-inline .fab-option.selected{
+	background: #004a99; /* same deep blue for inline */
+	color: #ffffff;
+	font-weight: 800;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+/* Toast styling */
+.site-toast{
+	position: fixed;
+	right: 20px;
+	bottom: 24px;
+	background: #2e7d32; /* high-contrast green */
+	color: #ffffff;
+	padding: 10px 14px;
+	border-radius: 6px;
+	font-weight: 800;
+	font-size: 14px;
+	z-index: 12000;
+	transform: translateY(12px) scale(0.98);
+	opacity: 0;
+	transition: opacity 220ms ease, transform 220ms ease;
+	box-shadow: 0 6px 18px rgba(46,125,50,0.24), inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.site-toast.visible{
+	transform: translateY(0) scale(1);
+	opacity: 1;
+}
+
 /* Row */
 
 	.row {
@@ -4217,6 +4273,7 @@ div.error {
 		display:block;
 		text-align:center;
 		width:100%;
+		position: relative;
 	}
 	
 	.title{
@@ -4788,7 +4845,7 @@ textarea {
     position: fixed;
     display: none;
     width: 100%;
-    #height: 100vh;           /* full screen height */
+    /*height: 100vh;           /* full screen height */
 	height: 100%;
     background-color: white;
     z-index: 20;
@@ -4933,7 +4990,7 @@ parigaraDiv{
 }
 
 .menuHeading{
-	#display: inline-block;
+	/*display: inline-block;*/
 	display: none;
 	padding: 5px;
 	width: auto;
@@ -4952,7 +5009,6 @@ parigaraDiv{
 	display: table-cell;
 	text-align:left;
 	vertical-align:middle;
-	#border:solid 1px black;
 
 	background-color: var(--details-background);
 	font-size: 12px;
@@ -4967,7 +5023,6 @@ parigaraDiv{
 { 
 	display: table-cell;
 	vertical-align:middle;
-	#border:solid 1px black;
 
 	background-color: var(--details-background);
 	font-size: 12px;
@@ -5321,10 +5376,6 @@ parigaraDiv{
 
 /* Active state: Slightly lift the button */
 .home-button.active {
-     #transform: scale(1.1) rotate(2deg);
-	 #transform: scale(5);
-	 #z-index: 2;
-	 
     transform: none; /* Remove the animation */
     transform: scale(1); /* Reset the scale to normal size */
     z-index: 2; /* Ensure it's above other content */
@@ -5456,6 +5507,7 @@ parigaraDiv{
     height: 100%;
     overflow-y: auto;
     padding-right: 5px; /* Hide scrollbar */
+	padding-bottom: 60px; /* to show last row fully */
 }
 
 .close-btn {
@@ -5742,7 +5794,7 @@ parigaraDiv{
     border: 1px solid rgb(0, 0, 0);
     padding: 5px;
     z-index: 10000;
-    max-height: 90vh;
+    max-height: 95vh;
     overflow-y: auto;
     box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 10px;
     font-family: Arial, sans-serif;

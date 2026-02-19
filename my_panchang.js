@@ -69,6 +69,24 @@ function generatePDF() {
 							document.writeln('<div class="divTablePanchangMedium" style="width:50px">'+panchang.Day.name+'</div>');
 							document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Nakshatra.name+" "+formatDateTime(panchang.Nakshatra.end)+' வரை'+displayNextNak(newdate,panchang.Nakshatra)+'</div>');
 							document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Tithi.name+' '+formatDateTime(panchang.Tithi.end)+' வரை'+displayNextThithi(newdate,panchang.Tithi)+'</div>');
+							// Prepare tithi display name and map paksha to abbreviation when present
+							var tithiRaw = panchang.Tithi.name || '';
+							var tithiBase = tithiRaw;
+							var tithiPaksha = '';
+							if (tithiRaw.indexOf('(') !== -1) {
+								tithiBase = tithiRaw.split('(')[0];
+								tithiPaksha = tithiRaw.split('(')[1].replace(')','');
+							}
+							var pakAbbr = '';
+							if (tithiPaksha.indexOf('சுக்') !== -1 && typeof L_PAKSHA_SUK_ABBR !== 'undefined') pakAbbr = L_PAKSHA_SUK_ABBR;
+							if (tithiPaksha.indexOf('கிரு') !== -1 && typeof L_PAKSHA_KRI_ABBR !== 'undefined') pakAbbr = L_PAKSHA_KRI_ABBR;
+							var tithiDisplayName = tithiBase + (pakAbbr ? '(' + pakAbbr + ')' : (tithiPaksha ? '(' + tithiPaksha + ')' : ''));
+
+							if (typeof IS_ENGLISH !== 'undefined' && IS_ENGLISH) {
+								row += '<div class="divTablePanchangMedium" style="width:160px">' + tithiDisplayName + ' ' + vTO + ' ' + formatDateTime(panchang.Tithi.end) + (displayNextThithi(newdate,panchang.Tithi) ? ' ' + vAFTER + ' ' + displayNextThithi(newdate,panchang.Tithi) : '') + '</div>';
+							} else {
+								row += '<div class="divTablePanchangMedium" style="width:160px">' + tithiDisplayName + ' ' + formatDateTime(panchang.Tithi.end) + ' ' + vTO + (displayNextThithi(newdate,panchang.Tithi) ? ' ' + vAFTER + ' ' + displayNextThithi(newdate,panchang.Tithi) : '') + '</div>';
+							}
 							//document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Karna.name+' '+formatDateTime(panchang.Karna.end)+' வரை'+(newdate,panchang.Karna)+'</div>');
 							document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Karna.name+' '+formatDateTime(panchang.Karna.start)+" முதல் "+formatDateTime(panchang.Karna.end)+' வரை'+displayNextKar(newdate,panchang.Karna,panchang.Tithi.name)+'</div>');
 							//document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Yoga.name+' '+formatDateTime(panchang.Yoga.end)+' வரை'+displayNextYoga(newdate,panchang.Yoga)+'</div>');
@@ -100,32 +118,38 @@ function generatePDF() {
 	}
 	
 	function displayNextNak(today,nak){
-	var naks = ["அசுவினி","பரணி","கிருத்திகை","ரோகிணி","மிருகசிரீஷம்","திருவாதிரை","புனர்பூசம்","பூசம்","ஆயில்யம்","மகம்","பூரம்","உத்திரம்","ஹஸ்தம்","சித்திரை","சுவாதி","விசாகம்","அனுஷம்","கேட்டை","மூலம்","பூராடம்","உத்திராடம்","திருவோணம்","அவிட்டம்","சதயம்","பூரட்டாதி","உத்திரட்டாதி","ரேவதி","அசுவினி"];
-		if(nak.end.getDate() == today.getDate()){
-			return " பிறகு "+naks[naks.indexOf(nak.name)+1];
+		// Use global `naks` array if available (overridden for English mode), otherwise fall back to local Tamil list
+		var localNaks = (typeof naks !== 'undefined' && Array.isArray(naks)) ? naks.slice() : ["அசுவினி","பரணி","கிருத்திகை","ரோகிணி","மிருகசிரீஷம்","திருவாதிரை","புனர்பூசம்","பூசம்","ஆயில்யம்","மகம்","பூரம்","உத்திரம்","ஹஸ்தம்","சித்திரை","சுவாதி","விசாகம்","அனுஷம்","கேட்டை","மூலம்","பூராடம்","உத்திராடம்","திருவோணம்","அவிட்டம்","சதயம்","பூரட்டாதி","உத்திரட்டாதி","ரேவதி"];
+		// ensure wrap-around
+		if (localNaks.length && localNaks[localNaks.length-1] !== localNaks[0]) localNaks.push(localNaks[0]);
+		var idx = localNaks.indexOf(nak.name);
+		if (nak.end.getDate() == today.getDate() && idx !== -1) {
+			return localNaks[idx+1];
 		}
-		else{
-			return "";
-		}
+		return "";
 	}
 	
 	function displayNextKar(today,kar,thithi){
-		var thithis_suk = ["பிரதமை" , "துவிதியை" , "திருதியை" , "சதுர்த்தி" , "பஞ்சமி" , "சஷ்டி" , "சப்தமி" , "அஷ்டமி" , "நவமி" , "தசமி" , "ஏகாதசி" , "துவாதசி" , "திரயோதசி" , "சதுர்த்தசி", "பௌர்ணமி"];
-		var kars = [ "பவ", "பாலவ", "கௌலவ", "தைதுலை", "கரசை", "வணிசை", "பத்தரை", "பவ"];
-		var kars1 = [ "பவ", "பாலவ", "கௌலவ", "தைதுலை", "கரசை", "வணிசை", "பத்தரை", "சகுனி", "சதுஷ்பாத", "நாகவ", "கிம்ஸ்துக்கினம்", "பவ"];
-		
+		// Use global arrays if available
+		var localKars = (typeof kar !== 'undefined' && Array.isArray(kar)) ? kar : null; // note: parameter name 'kar' conflicts with global 'kar'
+		var globalKarArr = (typeof kar !== 'undefined' && Array.isArray(kar)) ? kar : null;
+		// try to use global 'kar' array defined in panchang.js; fallback to small list
+		var kars = (typeof karArr !== 'undefined' && Array.isArray(karArr)) ? karArr : (globalKarArr ? globalKarArr : ["பவ", "பாலவ", "கௌலவ", "தைதுலை", "கரசை", "வணிசை", "பத்தரை", "பவ"]);
+		if (kars.length && kars[kars.length-1] !== kars[0]) kars.push(kars[0]);
+
 		if(kar.end.getDate() == today.getDate() && !thithi.includes("அமாவாசை") && !thithi.includes("பிரதமை")){
-			return " பிறகு "+kars[kars.indexOf(kar.name)+1];
-		}
-		else{
-			return "";
-		}
+				var idx = kars.indexOf(kar.name);
+				if (idx !== -1) return kars[idx+1];
+			}
+		return "";
 	}
 	
 	function displayNextThithi(today,thithi){
-		var thithis_suk = ["பிரதமை" , "துவிதியை" , "திருதியை" , "சதுர்த்தி" , "பஞ்சமி" , "சஷ்டி" , "சப்தமி" , "அஷ்டமி" , "நவமி" , "தசமி" , "ஏகாதசி" , "துவாதசி" , "திரயோதசி" , "சதுர்த்தசி", "பௌர்ணமி"];
-		var thithis_kri = ["பிரதமை" , "துவிதியை" , "திருதியை" , "சதுர்த்தி" , "பஞ்சமி" , "சஷ்டி" , "சப்தமி" , "அஷ்டமி" , "நவமி" , "தசமி" , "ஏகாதசி" , "துவாதசி" , "திரயோதசி" , "சதுர்த்தசி", "அமாவாசை"];
-		
+		// use global tith array if available
+		var localTith = (typeof tith !== 'undefined' && Array.isArray(tith)) ? tith : ["பிரதமை" , "துவிதியை" , "திருதியை" , "சதுர்த்தி" , "பஞ்சமி" , "சஷ்டி" , "சப்தமி" , "அஷ்டமி" , "நவமி" , "தசமி" , "ஏகாதசி" , "துவாதசி" , "திரயோதசி" , "சதுர்த்தசி", "பௌர்ணமி"];
+		var thithis_suk = localTith.slice(0,15);
+		var thithis_kri = localTith.slice(0,14).concat(["அமாவாசை"]);
+
 		temp = (thithi.name).split('(');
 		
 		if(temp.length<2){
@@ -133,20 +157,33 @@ function generatePDF() {
 		}
 
 		if(temp[1].includes('சுக்') && thithi.end.getDate() == today.getDate()){
-			out = " பிறகு "+thithis_suk[thithis_suk.indexOf(temp[0])+1];
+			var idx = thithis_suk.indexOf(temp[0]);
+			if (idx !== -1) out = thithis_suk[idx+1];
 		}
 		else if(temp[1].includes('கிரு') && thithi.end.getDate() == today.getDate()){
-			out = " பிறகு "+thithis_kri[thithis_kri.indexOf(temp[0])+1];
+			var idx2 = thithis_kri.indexOf(temp[0]);
+			if (idx2 !== -1) out = thithis_kri[idx2+1];
 		}
 		else{
 			out = "";
 		}
-		
+
+		// map paksha abbreviations to translated abbreviations when available
+		var pakshaLabel = temp[1] || "";
+		if (pakshaLabel.indexOf('சுக்') !== -1) {
+			if (typeof L_PAKSHA_SUK_ABBR !== 'undefined') pakshaLabel = L_PAKSHA_SUK_ABBR;
+			else if (typeof L_PAKSHA_SUK !== 'undefined') pakshaLabel = L_PAKSHA_SUK;
+		}
+		if (pakshaLabel.indexOf('கிரு') !== -1) {
+			if (typeof L_PAKSHA_KRI_ABBR !== 'undefined') pakshaLabel = L_PAKSHA_KRI_ABBR;
+			else if (typeof L_PAKSHA_KRI !== 'undefined') pakshaLabel = L_PAKSHA_KRI;
+		}
+
 		if(out.includes("பௌர்ணமி") || out.includes("அமாவாசை") || thithi.end.getDate() != today.getDate()){
 			return out;
 		}
 		else if(out.length>0){
-			return out + "("+temp[1];
+			return out + "("+pakshaLabel+")";
 		}
 		else{
 			return out;
@@ -154,14 +191,14 @@ function generatePDF() {
 	}
 	
 	function displayNextYoga(today,yoga){
-	var yogas = ["விஷ்கம்பம்","ப்ரீதி","ஆயுஷ்மான்", "செளபாக்யம்", "சோபனம்", "அதி கண்டம்", "சுகர்மம்", "திருதி", "சூலம்", "கண்டம்", "விருத்தி", "துருவம்","வ்யாகதம்",
-                            "ஹர்ஷணம்", "வஜ்ரம்","சித்தி","வியதீபாதம்","வரீயான்", "பரிகம்","சிவம்", "சித்தம்", "சாத்தியம்","சுபம்","சுப்பிரம்","பிராம்மியம்","ஐந்திரம்","வைதிருதி","விஷ்கம்பம்"];
-		if(yoga.end.getDate() == today.getDate()){
-			return " பிறகு "+yogas[yogas.indexOf(yoga.name)+1];
+		// use global yog array if available
+		var localYogs = (typeof yog !== 'undefined' && Array.isArray(yog)) ? yog.slice() : ["விஷ்கம்பம்","ப்ரீதி","ஆயுஷ்மான்", "செளபாக்யம்", "சோபனம்", "அதி கண்டம்", "சுகர்மம்", "திருதி", "சூலம்", "கண்டம்", "விருத்தி", "துருவம்","வ்யாகதம்","ஹர்ஷணம்", "வஜ்ரம்","சித்தி","வியதீபாதம்","வரீயான்", "பரிகம்","சிவம்", "சித்தம்", "சாத்தியம்","சுபம்","சுப்பிரம்","பிராம்மியம்","ஐந்திரம்","வைதிருதி"];
+		if (localYogs.length && localYogs[localYogs.length-1] !== localYogs[0]) localYogs.push(localYogs[0]);
+		var yi = localYogs.indexOf(yoga.name);
+		if(yoga.end.getDate() == today.getDate() && yi !== -1){
+			return localYogs[yi+1];
 		}
-		else{
-			return "";
-		}
+		return "";
 	}
 	
 	function formatDate(date) {
@@ -243,14 +280,25 @@ function generatePDF() {
 
 		let html = `<br><center><div class="divTable blueTable" style="height:100%;width:95%">`;
 
+		// localized heading fallbacks
+		const vDATE = (typeof L_DATE !== 'undefined') ? L_DATE : 'தேதி';
+		const vWEEKDAY = (typeof L_WEEKDAY !== 'undefined') ? L_WEEKDAY : 'வாரம்';
+		const vNAK = (typeof L_NAKSHATRA !== 'undefined') ? L_NAKSHATRA : 'நட்சத்திரம்';
+		const vTITH = (typeof L_TITHI !== 'undefined') ? L_TITHI : 'திதி';
+		const vKAR = (typeof L_KARANAM !== 'undefined') ? L_KARANAM : 'கரணம்';
+		const vYOG = (typeof L_YOGA !== 'undefined') ? L_YOGA : 'யோகம்';
+		const vFROM = (typeof L_FROM !== 'undefined') ? L_FROM : 'முதல்';
+		const vTO = (typeof L_TO !== 'undefined') ? L_TO : 'வரை';
+		const vAFTER = (typeof L_AFTER !== 'undefined') ? L_AFTER : 'பிறகு';
+
 		html += `
 			<div class="divTableRow">
-				<div class="divTablePanchangHeading">தேதி</div>
-				<div class="divTablePanchangHeading">வாரம்</div>
-				<div class="divTablePanchangHeading">நட்சத்திரம்</div>
-				<div class="divTablePanchangHeading">திதி</div>
-				<div class="divTablePanchangHeading">கரணம்</div>
-				<div class="divTablePanchangHeading">யோகம்</div>
+				<div class="divTablePanchangHeading">${vDATE}</div>
+				<div class="divTablePanchangHeading">${vWEEKDAY}</div>
+				<div class="divTablePanchangHeading">${vNAK}</div>
+				<div class="divTablePanchangHeading">${vTITH}</div>
+				<div class="divTablePanchangHeading">${vKAR}</div>
+				<div class="divTablePanchangHeading">${vYOG}</div>
 			</div>`;
 
 	const total_days = daysInMonth(month, year);
@@ -262,14 +310,49 @@ function generatePDF() {
 		newdate = changeTimezone(newdate, timezone);
 
 		panchang.calculate(newdate, function () {
+			// prepare tithi display: replace paksha text with localized/english abbreviation when needed
+			var rawTithi = (panchang.Tithi && panchang.Tithi.name) ? panchang.Tithi.name : '';
+			var tithiBase = rawTithi.split('(')[0];
+			var tithiPak = '';
+			if (rawTithi.indexOf('(') !== -1) {
+				tithiPak = rawTithi.split('(')[1].replace(')','');
+			}
+			var pakshaLabel = tithiPak || '';
+			if (pakshaLabel.indexOf('சுக்') !== -1) {
+				if (typeof IS_ENGLISH !== 'undefined' && IS_ENGLISH) {
+					if (typeof L_PAKSHA_SUK_ABBR !== 'undefined') pakshaLabel = L_PAKSHA_SUK_ABBR;
+					else if (typeof L_PAKSHA_SUK !== 'undefined') pakshaLabel = L_PAKSHA_SUK;
+					else pakshaLabel = 'Shu';
+				} else {
+					if (typeof L_PAKSHA_SUK !== 'undefined') pakshaLabel = L_PAKSHA_SUK;
+				}
+			}
+			if (pakshaLabel.indexOf('கிரு') !== -1) {
+				if (typeof IS_ENGLISH !== 'undefined' && IS_ENGLISH) {
+					if (typeof L_PAKSHA_KRI_ABBR !== 'undefined') pakshaLabel = L_PAKSHA_KRI_ABBR;
+					else if (typeof L_PAKSHA_KRI !== 'undefined') pakshaLabel = L_PAKSHA_KRI;
+					else pakshaLabel = 'Kri';
+				} else {
+					if (typeof L_PAKSHA_KRI !== 'undefined') pakshaLabel = L_PAKSHA_KRI;
+				}
+			}
+			var tithiDisplay = tithiBase + (pakshaLabel ? '(' + pakshaLabel + ')' : '');
 			html += `
 				<div class="divTableRow">
 					<div class="divTablePanchangMedium" style="width:80px">${formatDate(newdate)}</div>
 					<div class="divTablePanchangMedium" style="width:50px">${panchang.Day.name}</div>
-					<div class="divTablePanchangMedium" style="width:160px">${panchang.Nakshatra.name} ${formatDateTime(panchang.Nakshatra.end)} வரை ${displayNextNak(newdate, panchang.Nakshatra)}</div>
-					<div class="divTablePanchangMedium" style="width:160px">${panchang.Tithi.name} ${formatDateTime(panchang.Tithi.end)} வரை ${displayNextThithi(newdate, panchang.Tithi)}</div>
-					<div class="divTablePanchangMedium" style="width:160px">${panchang.Karna.name} ${formatDateTime(panchang.Karna.start)} முதல் ${formatDateTime(panchang.Karna.end)} வரை ${displayNextKar(newdate, panchang.Karna, panchang.Tithi.name)}</div>
-			<div class="divTablePanchangMedium" style="width:160px">${panchang.Yoga.name} ${formatDateTime(panchang.Yoga.start)} முதல் ${formatDateTime(panchang.Yoga.end)} வரை ${displayNextYoga(newdate, panchang.Yoga)}</div>
+						    <div class="divTablePanchangMedium" style="width:160px">
+								${(typeof IS_ENGLISH !== 'undefined' && IS_ENGLISH) ? (panchang.Nakshatra.name + ' ' + vTO + ' ' + formatDateTime(panchang.Nakshatra.end) + (displayNextNak(newdate, panchang.Nakshatra) ? ' ' + vAFTER + ' ' + displayNextNak(newdate, panchang.Nakshatra) : '')) : (panchang.Nakshatra.name + ' ' + formatDateTime(panchang.Nakshatra.end) + ' ' + vTO + (displayNextNak(newdate, panchang.Nakshatra) ? ' ' + vAFTER + ' ' + displayNextNak(newdate, panchang.Nakshatra) : ''))}
+						    </div>
+						    <div class="divTablePanchangMedium" style="width:160px">
+						${(typeof IS_ENGLISH !== 'undefined' && IS_ENGLISH) ? (tithiDisplay + ' ' + vTO + ' ' + formatDateTime(panchang.Tithi.end) + (displayNextThithi(newdate, panchang.Tithi) ? ' ' + vAFTER + ' ' + displayNextThithi(newdate, panchang.Tithi) : '')) : (tithiDisplay + ' ' + formatDateTime(panchang.Tithi.end) + ' ' + vTO + (displayNextThithi(newdate, panchang.Tithi) ? ' ' + vAFTER + ' ' + displayNextThithi(newdate, panchang.Tithi) : ''))}
+						    </div>
+						    <div class="divTablePanchangMedium" style="width:160px">
+								${(typeof IS_ENGLISH !== 'undefined' && IS_ENGLISH) ? (panchang.Karna.name + ' ' + vFROM + ' ' + formatDateTime(panchang.Karna.start) + ' ' + vTO + ' ' + formatDateTime(panchang.Karna.end) + (displayNextKar(newdate, panchang.Karna, panchang.Tithi.name) ? ' ' + vAFTER + ' ' + displayNextKar(newdate, panchang.Karna, panchang.Tithi.name) : '')) : (panchang.Karna.name + ' ' + formatDateTime(panchang.Karna.start) + ' ' + vFROM + ' ' + formatDateTime(panchang.Karna.end) + ' ' + vTO + (displayNextKar(newdate, panchang.Karna, panchang.Tithi.name) ? ' ' + vAFTER + ' ' + displayNextKar(newdate, panchang.Karna, panchang.Tithi.name) : ''))}
+						    </div>
+						    <div class="divTablePanchangMedium" style="width:160px">
+								${(typeof IS_ENGLISH !== 'undefined' && IS_ENGLISH) ? (panchang.Yoga.name + ' ' + vFROM + ' ' + formatDateTime(panchang.Yoga.start) + ' ' + vTO + ' ' + formatDateTime(panchang.Yoga.end) + (displayNextYoga(newdate, panchang.Yoga) ? ' ' + vAFTER + ' ' + displayNextYoga(newdate, panchang.Yoga) : '')) : (panchang.Yoga.name + ' ' + formatDateTime(panchang.Yoga.start) + ' ' + vFROM + ' ' + formatDateTime(panchang.Yoga.end) + ' ' + vTO + (displayNextYoga(newdate, panchang.Yoga) ? ' ' + vAFTER + ' ' + displayNextYoga(newdate, panchang.Yoga) : ''))}
+						    </div>
 				</div>`;
 		});
 	}

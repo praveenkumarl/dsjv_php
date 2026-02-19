@@ -735,9 +735,9 @@ EOL;
 		
 		document.addEventListener("readystatechange", function(event){
 			
-			if(event.target.readyState == "interactive"){
-				$('#hora').load('hora.php div#currentHoraTable');
-			}
+				if(event.target.readyState == "interactive"){
+					$('#hora').load('hora.php?place=<?php echo urlencode($place); ?>&tz=<?php echo urlencode($TZ); ?> div#currentHoraTable');
+				}
 			
 			if(event.target.readyState == "complete"){
 				//setTimeout(updateUdhayaLagna(<?php echo $type; ?>),2000);
@@ -875,15 +875,34 @@ EOL;
 				
 				break;
 			case 5: //horai prasannam
-				
-				horaLord = document.getElementById('horaLord').textContent;
-				for (i = 1; i <= 12; i++) {
-					var text = document.getElementById(i).innerHTML;
-					if(text.includes(horaLord)){
-						document.getElementById(i).style.backgroundColor = "Orange";
-						document.getElementById(i).innerHTML = document.getElementById(i).innerHTML + " <span style='color:black;background-color:white;'>உத</span>";
-					}
-				}
+				// Wait until `horaLord` appears in the DOM (polling), then mark the Udhaya Lagna
+				(function(){
+					var maxWait = 5000; // ms
+					var interval = 200; // ms
+					var waited = 0;
+					var timer = setInterval(function(){
+						var horaLordEl = document.getElementById('horaLord');
+						if (horaLordEl) {
+							clearInterval(timer);
+							var horaLord = horaLordEl.textContent.trim();
+							for (var i = 1; i <= 12; i++) {
+								var el = document.getElementById(String(i));
+								if (!el) continue;
+								var text = el.innerHTML || '';
+								if (text.includes(horaLord)) {
+									el.style.backgroundColor = 'Orange';
+									el.innerHTML = el.innerHTML + " <span style='color:black;background-color:white;'>உத</span>";
+								}
+							}
+						} else {
+							waited += interval;
+							if (waited >= maxWait) {
+								clearInterval(timer);
+								console.warn('horaLord element not found after ' + maxWait + 'ms — skipping Udhaya Lagna marking');
+							}
+						}
+					}, interval);
+				})();
 				break;
 			default:
 				break;
@@ -917,12 +936,12 @@ EOL;
 	function displayHora(){
 		//this is to display hora details
 		
-		$.ajax({
-		   url: "hora.php?flag=1",
-		   success: function(data){
-			 $(".hora").html(data);
-		   }
-		 });
+				$.ajax({
+					 url: "hora.php?flag=1&place=<?php echo urlencode($place); ?>&tz=<?php echo urlencode($TZ); ?>",
+					 success: function(data){
+						 $(".hora").html(data);
+					 }
+				 });
 	}
 	
 	function getSubHora(){
@@ -936,7 +955,7 @@ EOL;
 				document.getElementById('hora').innerHTML = doc.getElementById('currentHoraTable').innerHTML;
 				g_horalord = doc.getElementById('horaLord').innerHTML;
 			}*/
-			$('#hora').load('hora.php div#currentHoraTable');
+			$('#hora').load('hora.php?place=<?php echo urlencode($place); ?>&tz=<?php echo urlencode($TZ); ?> div#currentHoraTable');
 	}
 	
 	function newPrasannam(type){

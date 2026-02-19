@@ -25,7 +25,7 @@ function athenticate_web()
 	startSqlTxn($conn);
 
 	try {
-		$sql = "SELECT name,phone,pass,user_type from user where phone='$phone'"; 
+		$sql = "SELECT name,phone,pass,user_type,lang from user where phone='$phone'"; 
 	
 		if(($result = mysqli_query($conn, $sql))){
 				$count = mysqli_num_rows($result);
@@ -35,6 +35,7 @@ function athenticate_web()
 						$db_password = $row["pass"];
 						$name = $row["name"];
 						$user_type = $row["user_type"];
+						$user_lang = isset($row["lang"]) ? $row["lang"] : '';
 					}
 					
 					if(password_verify($loginpass,$db_password))
@@ -46,7 +47,12 @@ function athenticate_web()
 						$_SESSION['logged']=true;
 						$_SESSION['Name']=$name;
 						$_SESSION['phone'] = $phone;
-						
+						// Set language into session/cookie
+						if(!empty($user_lang)){
+							$_SESSION['language'] = $user_lang;
+							setcookie('language', $user_lang, time() + (86400 * 365), "/");
+						}
+                        
 						setcookie('Name', $name, time() + (86400 * 30), "/"); // 86400 = 1 day
 						setcookie('phone', $phone, time() + (86400 * 30), "/"); // 86400 = 1 day
 						

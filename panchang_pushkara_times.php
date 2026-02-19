@@ -7,6 +7,10 @@ $baseLat = 13.0878;
 $baseLon = 80.2785;
 // Desired display timezone, overridable by query param 'tz'
 $timezone = isset($_GET['tz']) ? $_GET['tz'] : 'Asia/Kolkata';
+// Detect language via GET or cookie
+$language = 'tamil';
+if (isset($_GET['lang'])) $language = strtolower(trim($_GET['lang']));
+elseif (isset($_COOKIE['language'])) $language = strtolower(trim($_COOKIE['language']));
 // Swiss Ephemeris CLI (auto-detect based on OS)
 // On Linux, swetest is in sweph folder; on Windows it's in current directory
 $swetest_path = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ? 'swetest64' : './sweph/swetest';
@@ -439,19 +443,23 @@ if ($inPush) {
 <div class='divTable blueTable' style='height:40px;'>
     <div class='divTableRow' style='background-color:rgba(0,0,0,0)'>
         <div class='divPanchangHeading' colspan='3'>
-            <H6 style='font-weight:bold;color:black'>புஷ்கர நவாம்சம்</H6>
+            <H6 style='font-weight:bold;color:black'><?php echo ($language === 'english') ? 'Pushkara Navamsha' : 'புஷ்கர நவாம்சம்'; ?></H6>
         </div>
     </div>
 </div>
 
 <?php if (empty($results)): ?>
+<?php if ($language === 'english'): ?>
+<p>No Pushkara Navamsha periods today.</p>
+<?php else: ?>
 <p>இன்றைய தினத்தில் புஷ்கர நவாம்சம் இல்லை.</p>
+<?php endif; ?>
 <?php else: ?>
 <div class='divTable blueTable' id='pushkaraDetails'>
 <div class='divTableRow'>
-    <div class='divPanchangHeading'>தொடக்கம்</div>
-    <div class='divPanchangHeading'>முடிவு</div>
-    <div class='divPanchangHeading'>நட்சத்திர பாதம்</div>
+    <div class='divPanchangHeading'><?php echo ($language === 'english') ? 'Start' : 'தொடக்கம்'; ?></div>
+    <div class='divPanchangHeading'><?php echo ($language === 'english') ? 'End' : 'முடிவு'; ?></div>
+    <div class='divPanchangHeading'><?php echo ($language === 'english') ? 'Nakshatra Pada' : 'நட்சத்திர பாதம்'; ?></div>
 </div>
 <?php
 foreach ($results as $row) {
@@ -465,8 +473,24 @@ foreach ($results as $row) {
     $startStr = $dtStartLocal ? $dtStartLocal->format('Y-m-d H:i') : (isset($row['start']) ? $row['start'] : '-');
     $endStr = $dtEndLocal ? $dtEndLocal->format('Y-m-d H:i') : (isset($row['end']) ? $row['end'] : '-');
 
+    // Determine display name for nakshatra based on language and total_pada
+    $displayNak = '';
+    if (isset($row['total_pada'])) {
+        $total = intval($row['total_pada']);
+        $nak_index = (int) floor(($total - 1) / 4);
+        $nakshatras_ta = ["அசுவினி","பரணி","கிருத்திகை","ரோகிணி","மிருகசிரீஷம்","திருவாதிரை","புனர்பூசம்","பூசம்","ஆயில்யம்","மகம்","பூரம்","உத்திரம்","ஹஸ்தம்","சித்திரை","சுவாதி","விசாகம்","அனுஷம்","கேட்டை","மூலம்","பூராடம்","உத்திராடம்","திருவோணம்","அவிட்டம்","சதயம்","பூரட்டாதி","உத்திரட்டாதி","ரேவதி"]; 
+        $nakshatras_en = ["Ashwini","Bharani","Krittika","Rohini","Mrigashirsha","Ardra","Punarvasu","Pushya","Ashlesha","Magha","Purva Phalguni","Uttara Phalguni","Hasta","Chitra","Swati","Vishakha","Anuradha","Jyeshta","Mula","Purva Ashadha","Uttara Ashadha","Shravana","Dhanishta","Shatabhisha","Purva Bhadrapada","Uttara Bhadrapada","Revati"];
+        if ($language === 'english') {
+            $displayNak = $nakshatras_en[$nak_index] ?? $row['nakshatra'];
+        } else {
+            $displayNak = $nakshatras_ta[$nak_index] ?? $row['nakshatra'];
+        }
+    } else {
+        $displayNak = $row['nakshatra'];
+    }
+
     // Combine Nakshatra and Pada with a space
-    $nakshatraPada = htmlspecialchars($row['nakshatra']) . ' ' . htmlspecialchars($row['pada']);
+    $nakshatraPada = htmlspecialchars($displayNak) . ' ' . htmlspecialchars($row['pada']);
 
     echo '<div class="divTableRow">';
     echo '<div class="divPanchang">' . htmlspecialchars($startStr) . '</div>';

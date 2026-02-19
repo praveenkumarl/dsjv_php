@@ -20,6 +20,25 @@ function translate_tamil_text($tamil_text) {
 	if (!isset($language) || $language === 'tamil' || empty($tamil_text)) {
 		return $tamil_text;
 	}
+
+	// Normalize legacy English spellings to canonical names
+	$legacy_english_normalizations = [
+		'Poorva bhadrapada' => 'Purva Bhadrapada',
+		'Poorva Bhadrapada' => 'Purva Bhadrapada',
+		'Uthra bhadrapada' => 'Uttara Bhadrapada',
+		'Uthra Bhadrapada' => 'Uttara Bhadrapada',
+		'Poorva ashaada' => 'Purva Ashada',
+		'Poorva Ashaada' => 'Purva Ashada',
+		'Uthra ashaada' => 'Uttara Ashada',
+		'Uthra Ashaada' => 'Uttara Ashada',
+		'Poorva phalguni' => 'Purva Phalguni',
+		'Poorva Phalguni' => 'Purva Phalguni',
+		'Uthra phalguni' => 'Uttara Phalguni',
+		'Uthra Phalguni' => 'Uttara Phalguni'
+	];
+	if (isset($legacy_english_normalizations[$tamil_text])) {
+		return $legacy_english_normalizations[$tamil_text];
+	}
 	
 	// Get the translation arrays
 	$ta_translations = include(__DIR__ . '/lang/ta.php');
@@ -7559,6 +7578,21 @@ function updateBhavaArray($deg, $planet, $house, $reverse = false) {
     if ($targetHouse == 12) {
         $targetHouse = 0;
     }
+
+	// Defensive: ensure the global bhava array has an array for the target house
+	if (!isset($g_bhava_arr) || !is_array($g_bhava_arr)) {
+		$g_bhava_arr = array_fill(0, 12, array());
+	}
+	if (!isset($g_bhava_arr[$targetHouse]) || !is_array($g_bhava_arr[$targetHouse])) {
+		$g_bhava_arr[$targetHouse] = array();
+	}
+	// ensure the 0 index exists and is numeric (house start degree)
+	if (!isset($g_bhava_arr[$targetHouse][0]) || !is_numeric($g_bhava_arr[$targetHouse][0])) {
+		$g_bhava_arr[$targetHouse][0] = 0;
+	}
+	if (!isset($g_bhava_arr[$house]) || !is_array($g_bhava_arr[$house])) {
+		$g_bhava_arr[$house] = array();
+	}
     
 //   $tempdeg = DECtoDMS_jamakol($deg);
 //   [$pl, $de] = explode('-', $planet);

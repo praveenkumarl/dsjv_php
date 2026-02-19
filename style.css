@@ -258,6 +258,28 @@ fieldset,img {
 }
 address,caption,cite,code,dfn,em,strong,th,var {
     font-weight: normal;
+}
+
+/* Language selector (header) */
+.lang-selector{display:inline-block;position:relative}
+.lang-selector .lang-btn{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:20px;border:0;background:transparent;cursor:pointer;font-size:14px;color:#fff}
+.lang-selector .lang-btn i{color:inherit}
+.lang-selector .lang-dropdown{position:absolute;right:0;top:calc(100% + 8px);min-width:120px;background:#fff;border:1px solid #e6e6e6;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,0.12);z-index:9999;overflow:hidden}
+.lang-selector .lang-dropdown a{display:block;padding:8px 10px;color:#333;text-decoration:none}
+.lang-selector .lang-dropdown a:hover{background:#f5f5f5}
+
+/* hide old per-page language select (keeps markup for forms intact) */
+#languageSelector, select.langDropdown { display: none !important; }
+
+/* compact mobile language links */
+.lang-mobile{display:inline-block;font-size:14px}
+.lang-mobile a{color:#fff;text-decoration:none;padding:2px 6px;border-radius:4px}
+.lang-mobile a:hover{background:rgba(255,255,255,0.08)}
+
+@media (max-width:768px){
+	/* on small screens, hide desktop-style lang selector if present */
+	.lang-selector{display:none}
+}
     font-style: normal;
 }
 strong{

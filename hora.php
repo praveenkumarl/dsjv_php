@@ -23,7 +23,35 @@ $day_hora_data=array();
 $night_hora_data=array();
 $current_hora=array();
 
-$place = isset($_POST['place']) ? $_POST['place'] : (isset($_SESSION['horaplace']) ? $_SESSION['horaplace'] : "Chennai|Asia/Kolkata");
+// Determine place: prefer GET -> POST -> session -> default
+$place = null;
+$place_from_get = false;
+$place_from_post = false;
+if (isset($_GET['place']) && strlen($_GET['place'])) {
+	$place = $_GET['place'];
+	$place_from_get = true;
+} elseif (isset($_POST['place']) && strlen($_POST['place'])) {
+	$place = $_POST['place'];
+	$place_from_post = true;
+} elseif (isset($_SESSION['horaplace']) && strlen($_SESSION['horaplace'])) {
+	$place = $_SESSION['horaplace'];
+} else {
+	$place = "Chennai|Asia/Kolkata";
+}
+
+// Optional separate tz parameter can override the TZ part of place
+if (isset($_GET['tz']) && strlen($_GET['tz'])) {
+	$cityOnly = strtok($place, "|");
+	$place = $cityOnly . '|' . $_GET['tz'];
+	// treat tz override from GET as GET-sourced change — do not persist to session
+	$place_from_get = true;
+}
+
+// Persist the chosen place to session only if it was posted (explicit user selection).
+if ($place_from_post) {
+	$_SESSION['horaplace'] = $place;
+}
+
 $sub_type = isset($_POST['sub_type']) ? $_POST['sub_type'] : "2"; //to identify form submission button
 
 if(isset($_GET["phone"])) {
@@ -581,7 +609,10 @@ if(isset($_COOKIE["phone"])) {
 
 dbDisconnect($conn);
 
-$_SESSION['horaplace'] = $place;
+// Persist session place only when the place was explicitly provided via POST (user selection).
+if (isset($place_from_post) && $place_from_post) {
+	$_SESSION['horaplace'] = $place;
+}
 
 ?>
 

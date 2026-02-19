@@ -30,7 +30,7 @@ return [
     'next_month_full' => 'Next Month ▶',
     'next_year_full' => 'Next Year ▶',
     'others' => 'Others',
-    'more' => 'More...',
+    'more' => 'Tools...',
     
     // Panchang Elements
     'thithi' => 'Thithi',
@@ -46,15 +46,36 @@ return [
     'start' => 'Start',
     'end' => 'End',
     'from' => 'From',
-    'to' => 'To',
+    'to' => 'till',
+    // Generic
+    'result' => 'Result',
+    // Alerts / Messages
+    'place_not_given' => 'Birth place not provided',
+    'place_not_selected' => 'You did not select the place from the list below',
+    'please_load_panchang' => 'Please load Panchang data first.',
+    'pushkara_loading' => 'Pushkara data is still loading. Please wait...',
     
     // Buttons
     'monthly' => 'Monthly',
     'download' => 'Download',
-    'nakshatra_division' => 'Nak.Division',
-    'pushkara' => 'Pushkara',
+    'nakshatra_division' => 'Nakshatra Division',
+    'pushkara' => 'Pushkara Table',
     'muhurtham' => 'Muhurtham',
     'muhurthams' => 'Muhurthas',
+    'panchang_input' => 'Panchang Input',
+    'month' => 'Month',
+    'year' => 'Year',
+    'place' => 'Place',
+    'search_place_placeholder' => 'Search place...',
+    'please_fill_all_fields' => 'Please fill all fields',
+    'generating' => 'Generating...',
+    'submit' => 'Submit',
+    'back' => 'Back',
+    'after' => 'Then',
+    'paksha_suk' => 'Sukla',
+    'paksha_kri' => 'Krishna',
+    'paksha_suk_abbr' => 'Shu',
+    'paksha_kri_abbr' => 'Kri',
     
     // Planets
     'sun' => 'Sun',
@@ -84,8 +105,8 @@ return [
     'pushkara_abbr' => 'Pus',
     
     // Moon Phase (Paksha)
-    'waxing' => 'Wax',
-    'waning' => 'Wan',
+    'waxing' => 'wax',
+    'waning' => 'wan',
     
     // Planet Retrograde
     'venus_r' => 'Ve (R)',
@@ -197,21 +218,37 @@ return [
     
     // Thithis
     'prathame' => 'Prathame',
+    'Prathame' => 'Prathame',
     'thwithiya' => 'Thwithiya',
+    'Thwithiya' => 'Thwithiya',
     'thrithiya' => 'Thrithiya',
+    'Thrithiya' => 'Thrithiya',
     'chathurthi' => 'Chathurthi',
+    'Chathurthi' => 'Chathurthi',
     'panchami' => 'Panchami',
+    'Panchami' => 'Panchami',
     'sashti' => 'Sashti',
+    'Sashti' => 'Sashti',
     'saptami' => 'Saptami',
+    'Saptami' => 'Saptami',
     'ashtami' => 'Ashtami',
+    'Ashtami' => 'Ashtami',
     'navami' => 'Navami',
+    'Navami' => 'Navami',
     'dashami' => 'Dashami',
+    'Dashami' => 'Dashami',
     'ekadashi' => 'Ekadashi',
+    'Ekadashi' => 'Ekadashi',
     'dwadashi' => 'Dwadashi',
+    'Dwadashi' => 'Dwadashi',
     'thrayodashi' => 'Thrayodashi',
+    'Thrayodashi' => 'Thrayodashi',
     'chaturdashi' => 'Chaturdashi',
+    'Chaturdashi' => 'Chaturdashi',
     'poornima' => 'Poornima',
+    'Poornima' => 'Poornima',
     'amavasya' => 'Amavasya',
+    'Amavasya' => 'Amavasya',
     
     // Karanas
     'bava' => 'Bava',
@@ -281,6 +318,19 @@ return [
     'aippasi' => 'Aippasi',
     'karthigai' => 'Karthigai',
     'margazhi' => 'Margazhi',
+    // Gregorian month names for forms
+    'greg_month_1' => 'January',
+    'greg_month_2' => 'February',
+    'greg_month_3' => 'March',
+    'greg_month_4' => 'April',
+    'greg_month_5' => 'May',
+    'greg_month_6' => 'June',
+    'greg_month_7' => 'July',
+    'greg_month_8' => 'August',
+    'greg_month_9' => 'September',
+    'greg_month_10' => 'October',
+    'greg_month_11' => 'November',
+    'greg_month_12' => 'December',
     'thai' => 'Thai',
     'maasi' => 'Maasi',
     'panguni' => 'Panguni',
@@ -433,10 +483,10 @@ return [
     'planet' => 'Planet',
     'graha_saaram' => 'Planet Essence',
     'graha' => 'Planet',
-    'naksh_pad' => 'Nak.Pad',
+    'naksh_pad' => 'Nakshatra Pad',
     'tharai' => 'Tharai',
     'sookshma_tharai' => 'Subtle Tharai',
-    'bhagai' => 'Degree',
+    'bhagai' => 'Part',
     'naksh_tharai' => 'Star Tharai',
     
     // Calculation Methods
@@ -501,7 +551,8 @@ return [
     'compatibility' => 'Compatibility',
     'from_mesha' => 'From Mesha',
     'nethram' => 'Nethram',
-    'wax' => '(Wax)',
+    'wax' => 'wax',
+    'wan' => 'wan',
     've_r_abbr' => 'Ve(R)',
     'ma_r_abbr' => 'Ma (R)',
     'ju_r_abbr' => 'Ju (R)',
@@ -625,6 +676,12 @@ return [
     'வியா' => 'Thu',
     'வெள்' => 'Fri',
     'சனி' => 'Sat',
+
+    // Legend labels
+    'legend' => 'Legend',
+    'mandhi' => 'Mandhi',
+    'indhu' => 'Indhu',
+    'thrisoolam' => 'Thrisoolam',
     
     // Indicators
     '(வ)' => '(R)',

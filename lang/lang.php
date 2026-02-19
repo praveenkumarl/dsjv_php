@@ -41,14 +41,6 @@ function __($key, $default = null) {
     // Keys that should ALWAYS be in Tamil (never translated to English)
     // These are used in pages that don't have language support yet
     $tamil_only_keys = [
-        'thrisoolam_abbr',
-        'indhu_abbr',
-        'graha_saaram',
-        'graha',
-        'naksh_pad',
-        'tharai',
-        'sookshma_tharai',
-        'bhagai',
         'naksh_tharai',
         'rasi_degree',
         // Nakshatra abbreviations - always Tamil
@@ -202,6 +194,10 @@ function get_translation_mapping_json() {
             $mapping[$tamil_value] = $english_translations[$key];
         }
     }
+
+    // Keep paksha labels bracketed in dynamic strings like Thithi
+    $mapping['(சுக்)'] = '(wax)';
+    $mapping['(கிரு)'] = '(wan)';
     
     return json_encode($mapping, JSON_UNESCAPED_UNICODE);
 }

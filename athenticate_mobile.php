@@ -26,7 +26,7 @@ function athenticate_mobile()
 	startSqlTxn($conn);
 
 	try {
-		$sql = "SELECT name,phone,user_type from user where imei='$key'";
+		$sql = "SELECT name,phone,user_type,lang from user where imei='$key'";
 
 		//$sql = "SELECT name,phone,imei,paid,user_type from user where concat(imei,encryption)='$key'";
 	
@@ -38,6 +38,7 @@ function athenticate_mobile()
 						$name = $row["name"];
 						$phone = $row["phone"];
 						$user_type = $row["user_type"];
+						$user_lang = isset($row["lang"]) ? $row["lang"] : '';
 					}
 					
 					$sql = "UPDATE user SET last_login=CONVERT_TZ(LOCALTIMESTAMP(),'+00:00','+05:30') where phone=$phone";
@@ -47,6 +48,10 @@ function athenticate_mobile()
 					$_SESSION['name']=$name;
 					$_SESSION['phone']=$phone;
 					$_SESSION['user_type']=$user_type;
+					if(!empty($user_lang)){
+						$_SESSION['language'] = $user_lang;
+						setcookie('language', $user_lang, time() + (86400 * 365), "/");
+					}
 					
 					if(strcmp($user_type,"FREE")==0){  //________FREE user
 						echo $name . "|" . $phone  . "|" . $user_type;
