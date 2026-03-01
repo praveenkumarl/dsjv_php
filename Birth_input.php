@@ -1,6 +1,15 @@
 <!doctype html>
-<?php 
+<?php
 require_once "lib.php";
+require_once "lang/lang.php";
+
+// Determine if language is set via session, cookie, or default to english
+if(!isset($language)){
+	$language = isset($_SESSION['language']) ? $_SESSION['language'] : (isset($_COOKIE['language']) ? $_COOKIE['language'] : 'english');
+}
+
+// Initialize the language system
+init_language($language);
 
 $place="";
 $name="";
@@ -154,22 +163,20 @@ function validateForm() {
   
   p = document.getElementById("place").value;
   if (p == "") {
-	alert('பிறந்த இடம் கொடுல்லவில்லை');
-	//document.getElementById("error").innerHTML = "பிறந்த இடம் கொடுல்லவில்லை";
+	alert('<?php echo addslashes(__("place_not_given")); ?>');
 	document.getElementById('place').style.borderColor = "red";
     return false;
   }
   
   if (p.includes("|")==false || p.includes("/")==false || p.length<10){
-	  alert('நீங்கள் இடத்தை கீழ் வரும் பட்டியலில் தேர்ந்தெடுக்கவில்லை');
+	  alert('<?php echo addslashes(__("place_not_selected")); ?>');
 	  document.getElementById('place').style.borderColor = "red";
 	  return false;
   }
   
   n = document.getElementById("name").value;
   if (n == "") {
-    //document.getElementById("error").innerHTML = "பெயர் கொடுக்கவில்லை";
-	alert('பெயர் கொடுக்கவில்லை');
+	alert('<?php echo addslashes(__("place_not_given")); ?>');
 	document.getElementById('name').style.borderColor = "red";
     return false;
   }
@@ -252,8 +259,8 @@ function updateNow() {
 <div class='column-menu'>
 <?php displayUserInfo($_SESSION['userinfo']);?>
 	<div class='desktop'>
-		<button type="button" class="menu" onClick="window.open('index.php','_self')">Home</button>
-		<button type="button" class='menu' onClick='openBirthHistory();'>Birth Chart history</button>
+		<button type="button" class="menu" onClick="window.open('index.php','_self')"><?php _e('back'); ?></button>
+		<button type="button" class='menu' onClick='openBirthHistory();'><?php _e('history'); ?></button>
 	</div>
 	<div class='mobile'>
 		<?php include "birthInputMenu_mobile.php"; ?>
@@ -266,35 +273,35 @@ function updateNow() {
 				<input type="hidden" name="num" id="num" value="0" />
 				<table style="width:100%; text-align: left">
 					<tr>
-						<td colspan=2><P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">பிறப்பு ஜாதகம்</P></td>
+						<td colspan=2><P style="color:#660000;font-weight:bold; font-size:20px; text-align:center"><?php _e('birth_horoscope'); ?></P></td>
 					</tr>
 					<tr style="background-color: #FFFFFF">
-						<td><div class="divBirthInputLable">*பெயர்</div></td>
-						<td><input type="text" name="name" id="name" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Enter name..." onfocus=this.value='' onBlur="nameOnBlur();" />
-							<div id='nameNumerologyWarning' class='error' style='display:none;background-color:white;color:red;font-size:12px'>பெயரில் புள்ளி பயன்படுத்த வேண்டாம்</div>
+						<td><div class="divBirthInputLable"><?php echo "*" . __('name'); ?></div></td>
+						<td><input type="text" name="name" id="name" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="<?php _e('name'); ?>" onfocus=this.value='' onBlur="nameOnBlur();" />
+							<div id='nameNumerologyWarning' class='error' style='display:none;background-color:white;color:red;font-size:12px'><?php _e('name_warning'); ?></div>
 						</td>
 					</tr>
 					<tr style="background-color: #FFFFFF">
-						<td><div class="divBirthInputLable">*பாலினம்</div></td>
+						<td><div class="divBirthInputLable"><?php echo "*" . __('gender'); ?></div></td>
 						<td>
 							<select name="sex" id="sex" style="width:auto;font-size:16px;">
-								<option value="ஆண்" selected>&#128104;ஆண்</option>
-								  <option value="பெண்">&#128105;பெண்</option>
-								  <option value="மூன்றாம்">மூன்றாம்</option>
+								<option value="<?php _e('male'); ?>" selected>&#128104;<?php _e('male'); ?></option>
+								  <option value="<?php _e('female'); ?>">&#128105;<?php _e('female'); ?></option>
+								  <option value="<?php _e('other'); ?>"><?php _e('other'); ?></option>
 							</select>
 						</td>
 					</tr>
 					<tr style="background-color: #FFFFFF">
-						<td><div class="divBirthInputLable">*பி.இடம்</div></td>
-						<td><div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" /><div class="result"></div>
+						<td><div class="divBirthInputLable"><?php echo "*" . __('birth_place'); ?></div></td>
+						<td><div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="<?php _e('search_place_placeholder'); ?>" onfocus=this.value='' onBlur="placeOnBlur();" /><div class="result"></div>
 						</td>
 					</tr>
 					<tr style="background-color: #FFFFFF">
-						<td><div class="divBirthInputLable">*பி.தேதி</div></td>
+						<td><div class="divBirthInputLable"><?php echo "*" . __('birth_date'); ?></div></td>
 						<td><input type="date" id="in_date" name="in_date" style="border:1px solid lightgray;font-weight:bold"></td>
 					</tr>
 					<tr style="background-color: #FFFFFF">
-						<td><div class="divBirthInputLable">*பி.நேரம்</div></td>
+						<td><div class="divBirthInputLable"><?php echo "*" . __('birth_time'); ?></div></td>
 						<td><input type="time" id="in_time" name="in_time" step="1" style="border:1px solid lightgray;font-weight:bold"></td>
 					</tr>
 					<!-- <tr>
@@ -317,10 +324,10 @@ function updateNow() {
 					</tr>
 					<tr  style="background-color: #FFFFFF">
 						<td align="center">
-							<button type="button" id="historyBtn" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="openBirthHistory()">History</button>
+							<button type="button" id="historyBtn" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="openBirthHistory()"><?php _e('history'); ?></button>
 						</td>
 						<td align="center">
-							<input type="button" value="Submit" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
+							<input type="button" value="<?php _e('submit'); ?>" class="primary wide" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
 						</td>
 					</tr>
 					

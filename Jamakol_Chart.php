@@ -1074,7 +1074,7 @@ function displayStarLard_jama()
 	echo "<div class='divTableRow'>";
 				echo "<div class='divPanchangHeadingSmall'>கிரகம்</div>";
 				echo "<div class='divPanchangHeadingSmall'>நக்ஷ் பா</div>";
-				echo "<div class='divPanchangHeadingSmall'>நக்ஷ் அதி</div>";
+				echo "<div class='divPanchangHeadingSmall'>" . __('col_nakshatra_athi') . "</div>";
 				echo "<div class='divPanchangHeadingSmall'>பாகை</div>";
 		echo "</div>";
 	

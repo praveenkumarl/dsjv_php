@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 //ini_set("session.gc_maxlifetime", "86400");
 
 if(!session_id()){
@@ -19,25 +19,6 @@ function translate_tamil_text($tamil_text) {
 	// If language is Tamil or text is empty, return as-is
 	if (!isset($language) || $language === 'tamil' || empty($tamil_text)) {
 		return $tamil_text;
-	}
-
-	// Normalize legacy English spellings to canonical names
-	$legacy_english_normalizations = [
-		'Poorva bhadrapada' => 'Purva Bhadrapada',
-		'Poorva Bhadrapada' => 'Purva Bhadrapada',
-		'Uthra bhadrapada' => 'Uttara Bhadrapada',
-		'Uthra Bhadrapada' => 'Uttara Bhadrapada',
-		'Poorva ashaada' => 'Purva Ashada',
-		'Poorva Ashaada' => 'Purva Ashada',
-		'Uthra ashaada' => 'Uttara Ashada',
-		'Uthra Ashaada' => 'Uttara Ashada',
-		'Poorva phalguni' => 'Purva Phalguni',
-		'Poorva Phalguni' => 'Purva Phalguni',
-		'Uthra phalguni' => 'Uttara Phalguni',
-		'Uthra Phalguni' => 'Uttara Phalguni'
-	];
-	if (isset($legacy_english_normalizations[$tamil_text])) {
-		return $legacy_english_normalizations[$tamil_text];
 	}
 	
 	// Get the translation arrays
@@ -719,6 +700,11 @@ function createAutoAnalysisSection()
 							<div class="header">Auto Analysis</div>
 							</div>
 						</div>
+						<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
+							<div class="divTableOuterCell" colspan=3 style="border:none;">
+							<div class="header">Auto Analysis</div>
+							</div>
+						</div>
 					</div>
 			
 					<div class="divTable blueTable">
@@ -1009,7 +995,7 @@ function sortDegree($inArray) // new function
 						updateBhavaArray($planetDeg[$planet],"$planet",$house);
 					}
 					elseif(strpos($planet,'மா')>0 || strpos($planet,"மா")===0){
-						$outArray[$house] = $outArray[$house] . " " . "<span class='mandhi'>" . translate_tamil_text($planet) . "</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+						$outArray[$house] = $outArray[$house] . " " . "<span class='mandhi'>" . $planet . "</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
 						
 						//updateBhavaArray($planetDeg[$planet],"$planet" . "-". $planetDeg[$planet],$house);
 						updateBhavaArray($planetDeg[$planet],"$planet",$house);
@@ -2733,18 +2719,18 @@ function displayStarLord()
 		echo "<center><div class='divTable blueTable' id='thithiYogamKaranamHeadMutable' style='height:32px;display:none;margin-top:20px'>"; 
 			echo "<div class='divTableRow'>";
 				echo "<div class='divTableCell' colspan=3>";
-					echo "<H6 style='font-weight:bold;color:black'>கிரக திதி/யோக/கரணம்</H6>";
+					echo "<H6 style='font-weight:bold;color:black'>" . __('planet_thithi_yogam_karanam') . "</H6>";
 				echo "</div>";
 			echo "</div>";
 		echo "</div></center>";
 
 		echo "<center><div class='divTable blueTable' id='thithiYogamKaranamBodyMutable' style='height:auto;display:none'>"; 
 		echo "<div class='divTableRow'>";
-					echo "<div class='divTableCell'>கிர</div>";
-					echo "<div class='divTableCell'>திதி</div>";
-					echo "<div class='divTableCell'>யோ</div>";
-					echo "<div class='divTableCell'>கர</div>";
-			echo "</div>";
+			    echo "<div class='divTableCell'>" . __('col_graha') . "</div>";
+			    echo "<div class='divTableCell'>" . __('col_thithi') . "</div>";
+			    echo "<div class='divTableCell'>" . __('col_yogam') . "</div>";
+			    echo "<div class='divTableCell'>" . __('col_karanam') . "</div>";
+		    echo "</div>";
 		
 		foreach($planet_starlord as $planet => $data)
 		{
@@ -2768,17 +2754,17 @@ function displayStarLord()
 		echo "<center><div class='divTable blueTable' id='abhijitHeadMutable' style='height:32px;display:none;margin-top:20px'>"; 
 			echo "<div class='divTableRow'>";
 				echo "<div class='divTableCell' colspan=3>";
-					echo "<H6 style='font-weight:bold;color:black'>கிரக வைநாசிகம்/அபிஜித்</H6>";
+					echo "<H6 style='font-weight:bold;color:black'>" . __('planet_vainasika_abijith') . "</H6>";
 				echo "</div>";
 			echo "</div>";
 		echo "</div></center>";
 
 		echo "<center><div class='divTable blueTable' id='abhijitBodyMutable' style='height:auto;display:none'>"; 
 			echo "<div class='divTableRow'>";
-					echo "<div class='divTableCell'>கிர</div>";
-					echo "<div class='divTableCell'>வைநா</div>";
-					echo "<div class='divTableCell'>வைநா நிவர்தி</div>";
-					echo "<div class='divTableCell'>அபிஜித்</div>";
+					echo "<div class='divTableCell'>" . __('col_graha') . "</div>";
+					echo "<div class='divTableCell'>" . __('col_vaina') . "</div>";
+					echo "<div class='divTableCell'>" . __('col_vaina_nivarthi') . "</div>";
+					echo "<div class='divTableCell'>" . __('col_abijit') . "</div>";
 			echo "</div>";
 		
 		foreach($planet_starlord as $planet => $data)
@@ -2810,11 +2796,11 @@ function displayStarLord()
 
 		echo "<center><div class='divTable blueTable' id='kpBodyMutable' style='height:auto;display:none'>"; 
 		echo "<div class='divTableRow'>";
-				echo "<div class='divTableCell'>கிர</div>";
-				echo "<div class='divTableCell'>பாகை</div>";
-				echo "<div class='divTableCell'>நக்ஷ் பா</div>";
-				echo "<div class='divTableCell'>ந.அ.</div>";
-				echo "<div class='divTableCell'>உ.அ.</div>";
+				echo "<div class='divTableCell'>" . __('col_graha') . "</div>";
+				echo "<div class='divTableCell'>" . __('col_pagai') . "</div>";
+				echo "<div class='divTableCell'>" . __('col_naksha_pa') . "</div>";
+				echo "<div class='divTableCell'>" . __('col_na') . "</div>";
+				echo "<div class='divTableCell'>" . __('col_ua') . "</div>";
 			echo "</div>";
 		
 		foreach($planet_starlord as $planet => $data)
@@ -3004,7 +2990,7 @@ function displayStarLord_jamakol()
 	echo "<div class='divTableRow'>";
 				echo "<div class='divTableCell'>" . __('graha') . "</div>";
 				echo "<div class='divTableCell'>" . __('naksh_pad') . "</div>";
-				echo "<div class='divTableCell'>நக்ஷ் அதி</div>";
+				echo "<div class='divTableCell'>" . __('col_nakshatra_athi') . "</div>";
 				echo "<div class='divTableCell'>" . __('bhagai') . "</div>";
 				echo "<div class='divTableCell'>" . __('rasi_degree') . "</div>";
 		echo "</div>";
@@ -3050,11 +3036,11 @@ function displayStarLord_jamakol()
 
 		echo "<center><div class='divTable blueTable' id='thithiYogamKaranamBodyMutable' style='height:auto;display:none'>"; 
 		echo "<div class='divTableRow'>";
-					echo "<div class='divTableCell'>கிர</div>";
-					echo "<div class='divTableCell'>திதி</div>";
-					echo "<div class='divTableCell'>யோ</div>";
-					echo "<div class='divTableCell'>கர</div>";
-			echo "</div>";
+			    echo "<div class='divTableCell'>" . __('col_graha') . "</div>";
+			    echo "<div class='divTableCell'>" . __('col_thithi') . "</div>";
+			    echo "<div class='divTableCell'>" . __('col_yogam') . "</div>";
+			    echo "<div class='divTableCell'>" . __('col_karanam') . "</div>";
+		    echo "</div>";
 		
 		foreach($planet_starlord as $planet => $data)
 		{
@@ -3078,17 +3064,17 @@ function displayStarLord_jamakol()
 		echo "<center><div class='divTable blueTable' id='abhijitHeadMutable' style='height:32px;display:none;margin-top:20px'>"; 
 			echo "<div class='divTableRow'>";
 				echo "<div class='divTableCell' colspan=3>";
-					echo "<H6 style='font-weight:bold;color:black'>கிரக வைநாசிகம்/அபிஜித்</H6>";
+					echo "<H6 style='font-weight:bold;color:black'>" . __('planet_vainasika_abijith') . "</H6>";
 				echo "</div>";
 			echo "</div>";
 		echo "</div></center>";
 
 		echo "<center><div class='divTable blueTable' id='abhijitBodyMutable' style='height:auto;display:none'>"; 
 			echo "<div class='divTableRow'>";
-					echo "<div class='divTableCell'>கிர</div>";
-					echo "<div class='divTableCell'>வைநா</div>";
-					echo "<div class='divTableCell'>வைநா நிவர்தி</div>";
-					echo "<div class='divTableCell'>அபிஜித்</div>";
+					echo "<div class='divTableCell'>" . __('col_graha') . "</div>";
+					echo "<div class='divTableCell'>" . __('col_vaina') . "</div>";
+					echo "<div class='divTableCell'>" . __('col_vaina_nivarthi') . "</div>";
+					echo "<div class='divTableCell'>" . __('col_abijit') . "</div>";
 			echo "</div>";
 		
 		foreach($planet_starlord as $planet => $data)
@@ -3208,18 +3194,18 @@ function displayStarLord_transit()
 	echo "<center><div class='divTable blueTable' id='starlordHeadMutable_transit' style='height:32px;display:none;margin-top:20px'>"; 
 		echo "<div class='divTableRow'>";
 			echo "<div class='divTableCell' colspan=3>";
-					echo "<H6 style='font-weight:bold;color:black'>கோட் கிரக சாரம்</H6>";
+					echo "<H6 style='font-weight:bold;color:black'>" . __('kot_planet_essence') . "</H6>";
 					echo "</div>";
 		echo "</div>";
 	echo "</div></center>";
 
 	echo "<center><div class='divTable blueTable' id='starlordBodyMutable_transit' style='height:auto;display:none'>"; 
 	echo "<div class='divTableRow'>";
-				echo "<div class='divTableCell'>கிர</div>";
-				echo "<div class='divTableCell'>நக்ஷ்</div>";
-				echo "<div class='divTableCell'>நக்ஷ் அதி</div>";
-				echo "<div class='divTableCell'>பா</div>";
-				echo "<div class='divTableCell'>ராசி பா</div>";
+				echo "<div class='divTableCell'>" . __('col_graha') . "</div>";
+				echo "<div class='divTableCell'>" . __('col_nakshatra') . "</div>";
+				echo "<div class='divTableCell'>" . __('col_nakshatra_athi') . "</div>";
+				echo "<div class='divTableCell'>" . __('col_pa') . "</div>";
+				echo "<div class='divTableCell'>" . __('col_rasi_pa') . "</div>";
 		echo "</div>";
 	
 	foreach($planet_starlord_transit as $planet => $data)
@@ -3507,7 +3493,7 @@ function displayStarLord_boy()
 	echo "<div class='divTableRow'>";
 				echo "<div class='divTableOuterCell'>" . __('graha') . "</div>";
 				echo "<div class='divTableOuterCell'>நக்ஷ் பாதம்</div>";
-				echo "<div class='divTableOuterCell'>நக்ஷ் அதி</div>";
+				echo "<div class='divTableOuterCell'>" . __('col_nakshatra_athi') . "</div>";
 				echo "<div class='divTableOuterCell'>" . __('bhagai') . "</div>";
 				echo "<div class='divTableOuterCell'>" . __('rasi_degree') . "</div>";
 				//echo "<div class='divTableOuterCell'>Karanam</div>";
@@ -7578,21 +7564,6 @@ function updateBhavaArray($deg, $planet, $house, $reverse = false) {
     if ($targetHouse == 12) {
         $targetHouse = 0;
     }
-
-	// Defensive: ensure the global bhava array has an array for the target house
-	if (!isset($g_bhava_arr) || !is_array($g_bhava_arr)) {
-		$g_bhava_arr = array_fill(0, 12, array());
-	}
-	if (!isset($g_bhava_arr[$targetHouse]) || !is_array($g_bhava_arr[$targetHouse])) {
-		$g_bhava_arr[$targetHouse] = array();
-	}
-	// ensure the 0 index exists and is numeric (house start degree)
-	if (!isset($g_bhava_arr[$targetHouse][0]) || !is_numeric($g_bhava_arr[$targetHouse][0])) {
-		$g_bhava_arr[$targetHouse][0] = 0;
-	}
-	if (!isset($g_bhava_arr[$house]) || !is_array($g_bhava_arr[$house])) {
-		$g_bhava_arr[$house] = array();
-	}
     
 //   $tempdeg = DECtoDMS_jamakol($deg);
 //   [$pl, $de] = explode('-', $planet);
@@ -7980,7 +7951,7 @@ echo <<<EOL
 		
 		<div class="divTableBody">
 			<div class="divTableRow">
-					<div class="divTableOuterCell">$out[11]</div>
+					<div class="divTableOuterCell"><?php echo translate_text($out[11]); ?></div>
 					<div class="divTableDummyCell"></div>
 					<div class="divTableOuterCell">$out[0]</div>
 					<div class="divTableDummyCell"></div>

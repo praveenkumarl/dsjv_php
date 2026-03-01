@@ -1,6 +1,67 @@
 <!DOCTYPE html>
 <?php
 include_once "lib.php";
+include_once "lang/lang.php";
+
+// Handle language selection (default to Tamil)
+if(isset($_COOKIE['language'])){
+	$_COOKIE['language'] = strtolower($_COOKIE['language']);
+}
+
+// Debug display mapping when English selected
+if (get_current_language() === 'english') {
+	echo "<!-- DISPLAY MAPPING DEBUG:\n";
+	for ($i = 0; $i < 12; $i++) {
+		$orig = isset($sw_planet[$i]) ? $sw_planet[$i] : '';
+		$mapped = isset($sw_planet_disp[$i]) ? $sw_planet_disp[$i] : '';
+		echo "IDX[$i] ORIG:" . htmlspecialchars($orig, ENT_QUOTES) . " => MAPPED:" . htmlspecialchars($mapped, ENT_QUOTES) . "\n";
+	}
+	echo "-->\n";
+}
+
+if(isset($_POST['language'])){
+	$language = strtolower($_POST['language']);
+	setcookie('language', $language, time() + (86400 * 365), "/");
+}
+elseif(isset($_COOKIE['language'])){
+	$language = $_COOKIE['language'];
+}
+else{
+	$language = 'tamil';
+}
+
+// Initialize language translations
+init_language($language);
+
+// Common translated labels used in many places
+$lbl_req_gender = __('req_gender');
+$opt_male = __('male','ஆண்');
+$opt_female = __('female','பெண்');
+$opt_other = __('other','மூன்றாம்');
+$lbl_req_birth_date = __('req_birth_date');
+$lbl_req_birth_time = __('req_birth_time');
+$lbl_req_birth_place = __('req_birth_place');
+$placeholder_search_place = __('search_place','Search place...');
+$lbl_req_transit_date = __('req_transit_date');
+$lbl_req_transit_time = __('req_transit_time');
+$lbl_req_name = __('req_name','*பெயர்');
+
+// Menu and page title translations (define early so they are always available)
+$menu_top = __('menu_top');
+$menu_birth_details = __('menu_birth_details');
+$menu_d9_chart = __('menu_d9_chart');
+$menu_bhava_chart = __('menu_bhava_chart');
+$menu_planet_essence = __('menu_planet_essence');
+$menu_thithi_yogam = __('menu_thithi_yogam');
+$menu_vainasika = __('menu_vainasika');
+$menu_kp_details = __('menu_kp_details');
+$menu_dasa = __('menu_dasa');
+$menu_transit = __('menu_transit');
+$menu_varga = __('menu_varga');
+$menu_ashtavarga = __('menu_ashtavarga');
+$menu_wallpaper = __('menu_wallpaper');
+$menu_remedies = __('menu_remedies');
+$birth_horoscope = __('birth_horoscope');
 
 $num = isset($_POST["num"]) ? $_POST["num"] : 0;
 
@@ -180,8 +241,73 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 	<script src="panchang.js?<?php echo date('ymdhis'); ?>"></script>
 	<script src="my_panchang.js?<?php echo date('ymdhis'); ?>"></script>
 	<script src="send_pdf_data.js?<?php echo date('ymdhis'); ?>"></script>
-    <script type="text/javascript">
+	<script type="text/javascript">
 	var timezone = '<?php echo $TZ; ?>';
+	var currentLanguage = '<?php echo $language; ?>';
+	// Provide translation mapping (Tamil -> English) to client-side
+	var translationMapping = <?php echo get_translation_mapping_json(); ?>;
+
+	function mapIfEnglish(text) {
+		if (currentLanguage === 'english' && translationMapping && translationMapping[text]) {
+			return translationMapping[text];
+		}
+		return text;
+	}
+
+	function translateDynamic(text) {
+		if (!text) return text;
+		if (currentLanguage === 'tamil') return text;
+		if (!translationMapping) return text;
+		
+		// Skip translation for special abbreviations marked with '#'
+		// These are protected markers like #உகே, #வியா, #இந்ர, etc.
+		if (typeof text === 'string' && text.charAt(0) === '#') return text;
+
+		if (translationMapping[text]) return translationMapping[text];
+
+		var keys = Object.keys(translationMapping).sort(function(a,b){return b.length - a.length;});
+		var out = text;
+		for (var i=0;i<keys.length;i++){
+			var k = keys[i];
+			if (out.indexOf(k) !== -1) {
+				out = out.split(k).join(translationMapping[k]);
+			}
+		}
+
+		var m = out.match(/^(.+?)\s*\((.+)\)$/);
+		if (m) {
+			return m[1].trim() + ' (' + m[2].trim() + ')';
+		}
+
+		return out;
+	}
+
+// Auto-translate static Tamil headings/labels when page loads (client-side fallback)
+document.addEventListener('DOMContentLoaded', function() {
+	if (currentLanguage === 'english' && translationMapping) {
+		var classes = ['divPanchangHeading','divPanchangHeadingRed','divTableHeading','divMenu','divAnthraHeading','divSookshmaHeading','divPranaHeading'];
+		classes.forEach(function(cls){
+			document.querySelectorAll('.' + cls).forEach(function(el){
+				if (el && el.innerHTML && el.innerHTML.trim().length>0) {
+					// Skip translation if element contains protected spans (indhu, mandhi, ketu, retro, lagna, moon, etc.)
+					if (!el.querySelector('span.indhu, span.mandhi, span.ketu, span.retro, span.lagna, span.moon, span.ubagraha')) {
+						el.innerHTML = translateDynamic(el.innerHTML);
+					}
+				}
+			});
+		});
+
+		// Translate common interactive elements (but skip if they contain protected spans)
+		document.querySelectorAll('button, a, h6, h4, label, option').forEach(function(el){
+			if (el && el.innerHTML && el.innerHTML.trim().length>0) {
+				// Skip translation if element contains protected spans
+				if (!el.querySelector('span.indhu, span.mandhi, span.ketu, span.retro, span.lagna, span.moon, span.ubagraha')) {
+					el.innerHTML = translateDynamic(el.innerHTML);
+				}
+			}
+		});
+	}
+});
 	
 /******** this code is to take screenshot of the chart **************	
 		var dataURL = {};  
@@ -2111,7 +2237,7 @@ function displayHoroDetails()
 	echo "<div id='birthdetails'><div class='divTable blueTable' style='height:40px;' id='birthHead'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
 				echo "<div class='divTableCell' colspan='3'>";
-					echo "<H6 style='font-weight:bold;color:black'>விவரங்கள்</H6>";
+					echo "<H6 style='font-weight:bold;color:black'>" . __('details') . "</H6>";
 				echo "</div>";
 			echo "</div>";
 	echo "</div>";
@@ -2119,11 +2245,11 @@ function displayHoroDetails()
 	//display panchang table 
 	echo "<div class='divTable blueTable' style='height:40px;' id='birthDetail'>"; 
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>பெயர்</div>";
+			echo "<div class='divPanchangHeading'>" . __('name') . "</div>";
 			echo "<div class='divPanchang' style='font-weight:bold'>".$in_name."(id=$g_rowid)</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>பாலினம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('gender') . "</div>";
 			echo "<div class='divPanchang' style='font-weight:bold'>".$in_sex."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
@@ -2134,7 +2260,7 @@ function displayHoroDetails()
 				$vayadhotta_rasi = 12;
 			}
 			
-			echo "<div class='divPanchangHeading'>பிறந்த தேதி</div>";
+			echo "<div class='divPanchangHeading'>" . __('birth_date') . "</div>";
 			echo "<div class='divPanchang' style='font-weight:bold'>".date('d-M-Y',strtotime($chart_date))."<BR>($g_age வயது)</div>";
 		echo "</div>";
 		
@@ -2148,21 +2274,21 @@ function displayHoroDetails()
 		*/
 		
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>பிறந்த நேரம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('birth_time') . "</div>";
 			echo "<div class='divPanchang'>".date('h:i:s a',strtotime($chart_time))."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>பிறந்த இடம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('birth_place') . "</div>";
 			echo "<div class='divPanchang' id='placename'>".$place."<BR>(".$lat."°, ".$lon."°)</div>";
 		echo "</div>";
 		
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>வாரம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('weekday') . "</div>";
 			echo "<div class='divPanchang'>".explode('/',$panchang['vaaram'])[1]."</div>";
 		echo "</div>";
 		
 		echo "<div class='divTableRow'>";
-		echo "<div class='divPanchangHeading'>திதி</div>";
+		echo "<div class='divPanchangHeading'>" . __('thithi') . "</div>";
 		$g_thithi = explode('/',explode('[',$panchang['thithi'])[0])[1];
 		
 		if(strpos($panchang['thithi'],"Amavasya/அமாவாசை")===0 || strpos($panchang['thithi'],"Poornima/பௌர்ணமி")===0){
@@ -2179,7 +2305,7 @@ function displayHoroDetails()
 		
 		
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('nakshatra') . "</div>";
 			//echo "<div class='divPanchang'  id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'>".explode('/',$panchang['nak'])[1]."</div>";
 			//echo "<div class='divPanchang'  id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer'>(".(ceil($g_nak_idx/4/12)).")</div>";
 			//$g_padham = explode(' ',explode('/',$panchang['nak'])[1])[1];
@@ -2189,13 +2315,13 @@ function displayHoroDetails()
 		
 		$yogi_arr = getYogi($panchang['yoga']);
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>யோகம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('yogam') . "</div>";
 			echo "<div class='divPanchang' id='yogam' OnClick='showDetailsDiv(event, 3)' style='color:blue;cursor:pointer'>".$panchang['yoga']."</div>";
 		echo "</div>";
 		displayDetailsDiv('yogi',$g_yoga_idx);
 		
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>கரணம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('karanam') . "</div>";
 			$karan = explode('/',$panchang['karan'])[1];
 			//echo "<div class='divPanchang' OnClick='showKaranamDiv(event)' style='color:blue;cursor:pointer'>".$karan."(".getKaranaPlanet($karan).")</div>";
 			echo "<div class='divPanchang' id='karanam' OnClick='showDetailsDiv(event,2)' style='color:blue;cursor:pointer'>".$karan."(".getKaranaPlanet($karan).")</div>";
@@ -2203,11 +2329,11 @@ function displayHoroDetails()
 		displayDetailsDiv('kar',$karan);
 		
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>நக்ஷத்ர நாம எழுத்து </div>";
+			echo "<div class='divPanchangHeading'>" . __('star_letters') . "</div>";
 			echo "<div class='divPanchang'>".getStarLetters($g_nak)[0][0]."<BR>".getStarLetters($g_nak)[1][0]."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>லக்னம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('lagna') . "</div>";
 			$g_lagnam = getRasi($lagna_house-1);
 			echo "<div class='divPanchang'>".$g_lagnam."</div>";
 		echo "</div>";
@@ -2219,23 +2345,22 @@ function displayHoroDetails()
 			else{
 				$g_vayadhotta_lagna = "சாத்தியம் இல்லை";
 			}
-			echo "<div class='divPanchangHeading'>வயதோட்ட லக்னம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('vayadhotta_lagna') . "</div>";
 			echo "<div class='divPanchang'>".$g_vayadhotta_lagna."</div>";
 		echo "</div>";
 		
 		echo "<div class='divTableRow'>";
 			$g_rasi = getRasi($moon_house-1);
-			echo "<div class='divPanchangHeading'>ராசி</div>";
-			//echo "<div class='divPanchang'>".$g_rasi."</div>";
+			echo "<div class='divPanchangHeading'>" . __('rasi') . "</div>";
 			echo "<div class='divPanchang' id='raasi'   OnClick='showDetailsDiv(event, 7)' style='color:blue;cursor:pointer'>" . $g_rasi . "</div>";
 		echo "</div>";
 		displayDetailsDiv('rasi',"");
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>உச்சம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('ucha') . "</div>";
 			echo "<div class='divPanchang'>".$g_ucha_details."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>நீசம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('neecham') . "</div>";
 			echo "<div class='divPanchang'>".$g_neecha_details."</div>";
 		echo "</div>";
 		$yogi_arr = getYogi($panchang['yoga']);
@@ -2261,19 +2386,17 @@ function displayHoroDetails()
 		
 		[$destiny_star, $star_idx] = calculateThalaivithiPulli($planet_starlord['சந்'][2],$planet_starlord['ரா'][2]);
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>தலைவிதி புள்ளி</div>";
+			echo "<div class='divPanchangHeading'>" . __('destiny_point') . "</div>";
 			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 8)' style='color:blue;cursor:pointer'>" .$destiny_star . "</div>";
-			//echo "<div class='divPanchang'>" . $destiny_star . "</div>";
-		echo "</div>";
-		displayDetailsDiv('destinyPoint',$star_idx);
+			echo "</div>";
+			displayDetailsDiv('destinyPoint',$star_idx);
 		
 		[$athrishta_star, $star_idx] = calculateAthrishtaPulli();
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>அதிர்ஷ்ட புள்ளி</div>";
+			echo "<div class='divPanchangHeading'>" . __('athrishta_point') . "</div>";
 			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 9)' style='color:blue;cursor:pointer'>" .$athrishta_star . "</div>";
-			//echo "<div class='divPanchang'>" . $athrishta_star . "</div>";
-		echo "</div>";
-		displayDetailsDiv('AthrishtaPoint',$star_idx);
+			echo "</div>";
+			displayDetailsDiv('AthrishtaPoint',$star_idx);
 		
 		$sunPada = ceil($planet_starlord['சூரி'][2] / 3.333333);
 		$moonPada = ceil($planet_starlord['சந்'][2] / 3.333333); 
@@ -2281,49 +2404,47 @@ function displayHoroDetails()
 		
 		[$star_idx,$sugaPaadham] = getSugaPaadham($sunPada, $moonPada, $lagnaPada);
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>சுக பாதம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('suga_paadham') . "</div>";
 			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 11)' style='color:blue;cursor:pointer'>" .$sugaPaadham . "</div>";
-			//echo "<div class='divPanchang'>" . $athrishta_star . "</div>";
-		echo "</div>";
-		displayDetailsDiv('SugaPoint',$star_idx);
+			echo "</div>";
+			displayDetailsDiv('SugaPoint',$star_idx);
 		
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>சூரிய உதயம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('sunrise') . "</div>";
 			echo "<div class='divPanchang'>".explode(' ',$today_sunrise)[1]."</div>";
-		echo "</div>";
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>சூரிய அஸ்தமனம்</div>";
+			echo "</div>";
+			echo "<div class='divTableRow'>";
+			echo "<div class='divPanchangHeading'>" . __('sunset') . "</div>";
 			echo "<div class='divPanchang'>".explode(' ',$today_sunset)[1]."</div>";
-		echo "</div>";
+			echo "</div>";
 		
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeadingRed'>அவயோகி</div>";
-			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 4)' style='color:blue;cursor:pointer'>".$yogi_arr[3]." (".$yogi_arr[2].")</div>";
-		echo "</div>";
-		displayDetailsDiv('ayogi',$g_yoga_idx);
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeadingRed'>திதி சூன்யம்</div>";
-			echo "<div class='divPanchang'>".$g_thithi_soonyam_matching_arr[0]."</div>";
-		echo "</div>";
+			echo "<div class='divTableRow'>";
+				echo "<div class='divPanchangHeadingRed'>" . __('ayogi') . "</div>";
+				echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 4)' style='color:blue;cursor:pointer'>".$yogi_arr[3]." (".$yogi_arr[2].")</div>";
+				echo "</div>";
+			displayDetailsDiv('ayogi',$g_yoga_idx);
+			echo "<div class='divTableRow'>";
+				echo "<div class='divPanchangHeadingRed'>" . __('thithi_soonyam') . "</div>";
+				echo "<div class='divPanchang'>".$g_thithi_soonyam_matching_arr[0]."</div>";
+				echo "</div>";
 		    $mudakku_star = getMudakku(1);
 			$mudakku_rasi = getMudakku(2);
 			$mudakku_star_idx = getMudakku(3);
 						
 			$mudakku_baavam = getBavam($mudakku_rasi);
 			
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeadingRed'>முடக்கு</div>";
-			$g_mudakku_detail = $mudakku_star." (".$mudakku_rasi.")<BR>".$mudakku_baavam."ஆம் வீடு";
-			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 6)' style='color:blue;cursor:pointer'>".$g_mudakku_detail."</div>";
-		echo "</div>";
+			echo "<div class='divTableRow'>";
+				echo "<div class='divPanchangHeadingRed'>" . __('mudakku') . "</div>";
+				$g_mudakku_detail = $mudakku_star." (".$mudakku_rasi.")<BR>".$mudakku_baavam."";
+				echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 6)' style='color:blue;cursor:pointer'>".$g_mudakku_detail."</div>";
+				echo "</div>";
 		displayDetailsDiv('mudakku',$mudakku_rasi.$mudakku_baavam);
 		
 		$g_asthangam_arr = getAsthangam();
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeadingRed'>அஸ்தங்கம்</div>";
-			//echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 6)' style='color:blue;cursor:pointer'>".join(',',$g_asthangam_arr)."</div>";
-			echo "<div class='divPanchang'>".join(',',$g_asthangam_arr)."</div>";
-		echo "</div>";
+			echo "<div class='divTableRow'>";
+				echo "<div class='divPanchangHeadingRed'>" . __('asthangam') . "</div>";
+				echo "<div class='divPanchang'>".join(',',$g_asthangam_arr)."</div>";
+				echo "</div>";
 		/*echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>ராகு காலம்</div>";
 			echo "<div class='divPanchang'>".$otherPanchangDetails[0]."</div>";
@@ -2344,18 +2465,17 @@ function displayHoroDetails()
 			echo "<div class='divPanchangHeading'>பரிகாரம்</div>";
 			echo "<div class='divPanchang'>".$otherPanchangDetails[4]."</div>";
 		echo "</div>";*/
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeadingRed'>உங்கள் சந்திராஷ்டம ராசி</div>";
-			//echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house,6)-1)."</div>";
-			echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house-1,8))."</div>";
-		echo "</div>";
+			echo "<div class='divTableRow'>";
+				echo "<div class='divPanchangHeadingRed'>" . __('chandra_ashtama_rasi') . "</div>";
+				//echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house,6)-1)."</div>";
+				echo "<div class='divPanchang'>".getRasi(targetHouse($moon_house-1,8))."</div>";
+				echo "</div>";
 		
 		[$bad_star, $remedy_star, $remedy_star_idx] = calculateDhurathrishtaPulli();
-		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeadingRed'>துரதிர்ஷ்ட புள்ளி</div>";
-			echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 10)' style='color:blue;cursor:pointer'>". $bad_star . "<BR>பரிகாரம் - " . $remedy_star . "</div>";
-			//echo "<div class='divPanchang'>" . $bad_star . "<BR>பரிகாரம் - " . $remedy_star . "</div>";
-		echo "</div>";
+			echo "<div class='divTableRow'>";
+				echo "<div class='divPanchangHeadingRed'>" . __('durathrishta_point') . "</div>";
+				echo "<div class='divPanchang' OnClick='showDetailsDiv(event, 10)' style='color:blue;cursor:pointer'>". $bad_star . "<BR>" . __('remedy') . " - " . $remedy_star . "</div>";
+				echo "</div>";
 		displayDetailsDiv('DhurathrishtaPoint',$remedy_star_idx);
 		
 		echo "<div class='divTableRow'>";
@@ -2379,6 +2499,35 @@ function displayHoroDetails()
 		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பிறப்பு ஜாமக்கோள்</div>";
+// prepare translated labels for heredoc interpolation
+$lbl_req_gender = __('req_gender');
+$opt_male = __('male','ஆண்');
+$opt_female = __('female','பெண்');
+$opt_other = __('other','மூன்றாம்');
+$lbl_req_birth_date = __('req_birth_date');
+$lbl_req_birth_time = __('req_birth_time');
+$lbl_req_birth_place = __('req_birth_place');
+$placeholder_search_place = __('search_place','Search place...');
+$lbl_req_transit_date = __('req_transit_date');
+$lbl_req_transit_time = __('req_transit_time');
+
+// prepare translated menu labels and title for interpolation
+$menu_top = __('menu_top');
+$menu_birth_details = __('menu_birth_details');
+$menu_d9_chart = __('menu_d9_chart');
+$menu_bhava_chart = __('menu_bhava_chart');
+$menu_planet_essence = __('menu_planet_essence');
+$menu_thithi_yogam = __('menu_thithi_yogam');
+$menu_vainasika = __('menu_vainasika');
+$menu_kp_details = __('menu_kp_details');
+$menu_dasa = __('menu_dasa');
+$menu_transit = __('menu_transit');
+$menu_varga = __('menu_varga');
+$menu_ashtavarga = __('menu_ashtavarga');
+$menu_wallpaper = __('menu_wallpaper');
+$menu_remedies = __('menu_remedies');
+$birth_horoscope = __('birth_horoscope');
+
 echo <<<EOL
 <form id="hiddenViewJamaChart" action="Jamakol_Chart.php" method="post" style="display:none;">
 		  <input type="hidden" id="place" name="place" value="$in_place" required/>
@@ -3211,6 +3360,26 @@ calculatePanchang();
 //calculateBirthPanchang();
 $thithi_soonyam_arr = updateThithiSoonyam($panchang["thithi"]);
 
+// Prepare translated display arrays for dynamic chart text (uses lang/translate_text)
+$tr_sw_planet_disp = $tr_sw_planet;
+$sw_planet_disp = $sw_planet;
+$g_thithi_soonyam_arr_disp = $g_thithi_soonyam_arr;
+// For display only: map Tamil tokens (from en.php) to short English abbreviations
+if (function_exists('map_display_text')) {
+	for ($i = 0; $i < 12; $i++) {
+		if (isset($tr_sw_planet[$i])) $tr_sw_planet_disp[$i] = map_display_text($tr_sw_planet[$i]);
+		if (isset($sw_planet[$i])) $sw_planet_disp[$i] = map_display_text($sw_planet[$i]);
+		if (isset($g_thithi_soonyam_arr[$i])) $g_thithi_soonyam_arr_disp[$i] = map_display_text($g_thithi_soonyam_arr[$i]);
+	}
+} elseif (function_exists('translate_text')) {
+	// Fallback to translate_text if map_display_text not available
+	for ($i = 0; $i < 12; $i++) {
+		if (isset($tr_sw_planet[$i])) $tr_sw_planet_disp[$i] = translate_text($tr_sw_planet[$i]);
+		if (isset($sw_planet[$i])) $sw_planet_disp[$i] = translate_text($sw_planet[$i]);
+		if (isset($g_thithi_soonyam_arr[$i])) $g_thithi_soonyam_arr_disp[$i] = translate_text($g_thithi_soonyam_arr[$i]);
+	}
+}
+
 echo <<<EOL
 	<div class="title"></div>
 		<div class='column-menu' id='column-menu'>
@@ -3226,6 +3395,7 @@ echo <<<EOL
 EOL;
 			//displayUserInfoMobile($_SESSION['userinfo']);
 			include "birthChartMenu_mobile.php";
+
 			
 			if(strcmp($in_sex,"ஆண்")==0){
 				$m_selection="selected";
@@ -3254,21 +3424,21 @@ echo <<<EOL
 						<div class="nav-container" id='jumpDropdown'>
 							<div class="select-container">
 								<select class="birthSectionNav" id="birthSectionNav" onchange="scrollToSection(this.value)">
-									<option value="top">Top</option>
-									<option value="birthHead">பிறப்பு விவரங்கள்</option>
-									<option value="d9_chart">நவாம்சம்</option>
-									<option value="bhava_chart">பாவம்</option>
-									<option value="starlordHeadMutable">கிரக சாரம்</option>
-									<option value="thithiYogamKaranamHeadMutable">திதி/யோகம்</option>
-									<option value="abhijitHeadMutable">வைநாசிகம்</option>
-									<option value="kpHeadMutable">KP details</option>
-									<option value="divCurrentBukthi">தசாபுக்தி</option>
-									<option value="starlordHeadMutable_transit">கோட்சாரம்</option>
-									<option value="vargaDropdown">வர்க சக்ரம்</option>
-									<option value="ashtaDropdown">அஷ்டவர்கம்</option>
-									<option value="wallpaper">Wallpaper</option>
-									<option value="parigaaram">பரிகாரங்கள்</option>
-									
+									<option value="top">$menu_top</option>
+									<option value="birthHead">$menu_birth_details</option>
+									<option value="d9_chart">$menu_d9_chart</option>
+									<option value="bhava_chart">$menu_bhava_chart</option>
+									<option value="starlordHeadMutable">$menu_planet_essence</option>
+									<option value="thithiYogamKaranamHeadMutable">$menu_thithi_yogam</option>
+									<option value="abhijitHeadMutable">$menu_vainasika</option>
+									<option value="kpHeadMutable">$menu_kp_details</option>
+									<option value="divCurrentBukthi">$menu_dasa</option>
+									<option value="starlordHeadMutable_transit">$menu_transit</option>
+									<option value="vargaDropdown">$menu_varga</option>
+									<option value="ashtaDropdown">$menu_ashtavarga</option>
+									<option value="wallpaper">$menu_wallpaper</option>
+									<option value="parigaaram">$menu_remedies</option>
+
 								</select>
 							</div>
 						</div>
@@ -3282,7 +3452,7 @@ echo "<div id='tabsContainer' style='text-align: -webkit-left;'>";
 echo "</div>";
 			
 echo <<<EOL
-			<center><P style="color:#660000;font-weight:bold; font-size:16px; text-align:center; background-color:white;width:200px;margin-top: 50px;">பிறப்பு ஜாதகம்</P></center>
+			<center><P style="color:#660000;font-weight:bold; font-size:16px; text-align:center; background-color:white;width:200px;margin-top: 50px;">$birth_horoscope</P></center>
 			<div id="detailsTab" class="tabContent">
 			<div class="tableWrapper">		
 					<center id="pdf"><div class="divTable blueTable" style="height:70px;">
@@ -3299,45 +3469,45 @@ echo <<<EOL
 											
 											<div class='divTable blueTable' style='height:30px;'>
 												<div class='divTableRow'>
-													<div class='divBirthInputLable'>*பெயர்</div>
+													<div class='divBirthInputLable'>$lbl_req_name</div>
 													<div class='divBirthInput' style='font-weight:bold'><input type="text" name="name" id="name" autocomplete="off" style="background-color:var(--chart-background);font-size:14px;font-weight:bold;height:fill_parent;width:fill_parent;display:inline" placeholder="Enter name..." onfocus=this.value='$in_name' onBlur="nameOnBlur();" value='$in_name' /></div>
 												</div>
 												<div class='divTableRow'>
-													<div class='divBirthInputLable'>*பாலினம்</div>
+													<div class='divBirthInputLable'>$lbl_req_gender</div>
 													<div class='divBirthInput'>
 														<select name="sex" id="sex" class='divBirthInput' style="background-color:var(--chart-background);font-size:14px;font-weight:bold;width:100%;">
-															<option value="ஆண்" $m_selection>&#128104;ஆண்</option>
-															<option value="பெண்" $f_selection>&#128105;பெண்</option>
-															<option value="மூன்றாம்" $o_selection>மூன்றாம்</option>
+															<option value="ஆண்" $m_selection>&#128104;$opt_male</option>
+															<option value="பெண்" $f_selection>&#128105;$opt_female</option>
+															<option value="மூன்றாம்" $o_selection>$opt_other</option>
 														</select>
 													</div>
 												</div>
 												<div class='divTableRow'>
-													<div class='divBirthInputLable'>*பி.தேதி</div>
+													<div class='divBirthInputLable'>$lbl_req_birth_date</div>
 													<div class='divBirthInput'>
 														<input type='date' id='nDate' class='divBirthInput' name='nDate' style="background-color:var(--chart-background);font-size:14px;font-weight:bold;width:100%" value=$chart_date>
 													</div>
 												</div>
 												<div class='divTableRow'>
-													<div class='divBirthInputLable'>*பி.நேரம்</div>
+													<div class='divBirthInputLable'>$lbl_req_birth_time</div>
 													<div class='divBirthInput'>
 														<input type='time' id='nTime' name='nTime' class='divBirthInput' style="background-color:var(--chart-background);font-size:14px;font-weight:bold;width:100%;" step='1' value=$chart_time>
 													</div>
 												</div>
 												<div class='divTableRow'>
-													<div class='divBirthInputLable'>*பி.இடம்</div>
+													<div class='divBirthInputLable'>$lbl_req_birth_place</div>
 													<div class='divBirthInput'>
-														<div class="search-box"><input type="text" name="place" class='divBirthInput' id="place" autocomplete="off" style="background-color:var(--chart-background);font-size:14px;font-weight:bold" placeholder="Search place..." onfocus=this.value='' value='$in_place' onBlur="placeOnBlur();" /><div class="result"></div></div>
+														<div class="search-box"><input type="text" name="place" class='divBirthInput' id="place" autocomplete="off" style="background-color:var(--chart-background);font-size:14px;font-weight:bold" placeholder="$placeholder_search_place" onfocus=this.value='' value='$in_place' onBlur="placeOnBlur();" /><div class="result"></div></div>
 													</div>
 												</div>
 												<div class='divTableRow'>
-													<div class='divBirthInputLable'>*கோ.தேதி</div>
+													<div class='divBirthInputLable'>$lbl_req_transit_date</div>
 													<div class='divBirthInput' style='font-weight:bold'>
 														<input type='date' id='nTrDate' name='nTrDate' style="background-color:#FFFFFF;font-size:14px;font-weight:bold;width:100%;" value=$transit_date OnChange='validateTransitDate();'>
 													</div>
 												</div>
 												<div class='divTableRow'>
-													<div class='divBirthInputLable'>*கோ.நேரம்</div>
+													<div class='divBirthInputLable'>$lbl_req_transit_time</div>
 													<div class='divBirthInput' style='font-weight:bold'>
 														<input type='time' id='nTrTime' name='nTrTime' style="background-color:#FFFFFF;font-size:14px;font-weight:bold;width:100%;" step='1' value=$transit_time>
 													</div>
@@ -3371,54 +3541,54 @@ echo <<<EOL
 						
 						<div class="divTableBody">
 							<div class="divTableRow">
-									<div class="divTableOuterCellLeftTop">$tr_sw_planet[11]</div>
+							    <div class="divTableOuterCellLeftTop">$tr_sw_planet_disp[11]</div>
 									<div class="divTableOuterCell" style='border-left:none'></div>
-									<div class="divTableOuterCell">$tr_sw_planet[0]</div>
-									<div class="divTableOuterCell">$tr_sw_planet[1]</div>
-									<div class="divTableOuterCell"  style='border-right:none'></div>
-									<div class="divTableOuterCellRightTop">$tr_sw_planet[2]</div>
+							    <div class="divTableOuterCell">$tr_sw_planet_disp[0]</div>
+							    <div class="divTableOuterCell">$tr_sw_planet_disp[1]</div>
+							    <div class="divTableOuterCell"  style='border-right:none'></div>
+							    <div class="divTableOuterCellRightTop">$tr_sw_planet_disp[2]</div>
 							</div>
 							<div class="divTableRow">
 									<div class="divTableOuterCell" style='border-top:none'></div>
-									<div class="divTableCell">$sw_planet[11]<span class='symbol'>&#9795;</span>$g_thithi_soonyam_arr[11]</div>
-									<div class="divTableCell">$sw_planet[0]<span class='symbol'>&#9794;</span>$g_thithi_soonyam_arr[0]</div>
-									<div class="divTableCell">$sw_planet[1]<span class='symbol'>&#9792;</span>$g_thithi_soonyam_arr[1]</div>
-									<div class="divTableCell">$sw_planet[2]<span class='symbol'>&#9791;</span>$g_thithi_soonyam_arr[2]</div>
+							    <div class="divTableCell">$sw_planet_disp[11]<span class='symbol'>&#9795;</span>$g_thithi_soonyam_arr_disp[11]</div>
+							    <div class="divTableCell">$sw_planet_disp[0]<span class='symbol'>&#9794;</span>$g_thithi_soonyam_arr_disp[0]</div>
+							    <div class="divTableCell">$sw_planet_disp[1]<span class='symbol'>&#9792;</span>$g_thithi_soonyam_arr_disp[1]</div>
+							    <div class="divTableCell">$sw_planet_disp[2]<span class='symbol'>&#9791;</span>$g_thithi_soonyam_arr_disp[2]</div>
 									<div class="divTableOuterCell"  style='border-top:none'></div>
 							</div>
 							<div class="divTableRow">
-									<div class="divTableOuterCell">$tr_sw_planet[10]</div>
-									<div class="divTableCell">$sw_planet[10]<span class='symbol'>&#9796;</span>$g_thithi_soonyam_arr[10]</div>
+							    <div class="divTableOuterCell">$tr_sw_planet_disp[10]</div>
+							    <div class="divTableCell">$sw_planet_disp[10]<span class='symbol'>&#9796;</span>$g_thithi_soonyam_arr_disp[10]</div>
 									<div class="divTableCenterCell1"><img class='centerImg' id='1' src='#'></div>
 									<div class="divTableCenterCell2"><img class='centerImg' id='2' src='#'></div>
-									<div class="divTableCell">$sw_planet[3]<span class='symbol'>&#9790;</span>$g_thithi_soonyam_arr[3]</div>
-									<div class="divTableOuterCell">$tr_sw_planet[3]</div>
+							    <div class="divTableCell">$sw_planet_disp[3]<span class='symbol'>&#9790;</span>$g_thithi_soonyam_arr_disp[3]</div>
+							    <div class="divTableOuterCell">$tr_sw_planet_disp[3]</div>
 							</div>
 							<div class="divTableRow">
-									<div class="divTableOuterCell">$tr_sw_planet[9]</div>
-									<div class="divTableCell">$sw_planet[9]<span class='symbol'>&#9796;</span>$g_thithi_soonyam_arr[9]</div>
+							    <div class="divTableOuterCell">$tr_sw_planet_disp[9]</div>
+							    <div class="divTableCell">$sw_planet_disp[9]<span class='symbol'>&#9796;</span>$g_thithi_soonyam_arr_disp[9]</div>
 									<div class="divTableCenterCell3"><img class='centerImg' id='3' src='#'></div>
 									<div class="divTableCenterCell4"><img class='centerImg' id='4' src='#'></div>
-									<div class="divTableCell">$sw_planet[4]<span class='symbol'>&#9737;</span>$g_thithi_soonyam_arr[4]</div>
-									<div class="divTableOuterCell">$tr_sw_planet[4]</div>
+							    <div class="divTableCell">$sw_planet_disp[4]<span class='symbol'>&#9737;</span>$g_thithi_soonyam_arr_disp[4]</div>
+							    <div class="divTableOuterCell">$tr_sw_planet_disp[4]</div>
 							</div>
 							<div class="divTableRow">
 									<div class="divTableOuterCell" style='border-bottom:none'></div>
-									<div class="divTableCell">$sw_planet[8]<span class='symbol'>&#9795;</span>$g_thithi_soonyam_arr[8]</div>
-									<div class="divTableCell">$sw_planet[7]<span class='symbol'>&#9794;</span>$g_thithi_soonyam_arr[7]</div>
-									<div class="divTableCell">$sw_planet[6]<span class='symbol'>&#9792;</span>$g_thithi_soonyam_arr[6]</div>
-									<div class="divTableCell">$sw_planet[5]<span class='symbol'>&#9791;</span>$g_thithi_soonyam_arr[5]</div>
+							    <div class="divTableCell">$sw_planet_disp[8]<span class='symbol'>&#9795;</span>$g_thithi_soonyam_arr_disp[8]</div>
+							    <div class="divTableCell">$sw_planet_disp[7]<span class='symbol'>&#9794;</span>$g_thithi_soonyam_arr_disp[7]</div>
+							    <div class="divTableCell">$sw_planet_disp[6]<span class='symbol'>&#9792;</span>$g_thithi_soonyam_arr_disp[6]</div>
+							    <div class="divTableCell">$sw_planet_disp[5]<span class='symbol'>&#9791;</span>$g_thithi_soonyam_arr_disp[5]</div>
 									<div class="divTableOuterCell"  style='border-bottom:none'></div>
 							</div>
 							<div class="divTableRow">
-									<div class="divTableOuterCellLeftBottom">$tr_sw_planet[8]</div>
-									<div class="divTableOuterCell" style='border-left:none'></div>
-									<div class="divTableOuterCell">$tr_sw_planet[7]</div>
-									<div class="divTableOuterCell">$tr_sw_planet[6]</div>
-									<div class="divTableOuterCell"  style='border-right:none'></div>
-									<div class="divTableOuterCellRightBottom">$tr_sw_planet[5]</div>
+							    <div class="divTableOuterCellLeftBottom">$tr_sw_planet_disp[8]</div>
+							    <div class="divTableOuterCell" style='border-left:none'></div>
+							    <div class="divTableOuterCell">$tr_sw_planet_disp[7]</div>
+							    <div class="divTableOuterCell">$tr_sw_planet_disp[6]</div>
+							    <div class="divTableOuterCell"  style='border-right:none'></div>
+							    <div class="divTableOuterCellRightBottom">$tr_sw_planet_disp[5]</div>
 							</div>
-						</div>	
+						</div>    
 					</div>
 EOL;
 	
@@ -3591,16 +3761,20 @@ $charts = [
 
  <!-- Dropdown list -->
     <select id="vargaDropdown" onchange="showChart()">
-		<option value="D2" selected>D2 - <?php echo $divisional_chartname_arr[2][0]; ?></option>
-		<?php
-		foreach ($charts as $key => $data) {
-			if ($key != 2) { // Skip D2 since it's already displayed
-				$dropdown_string = 'D' . $key . ' - ' . $divisional_chartname_arr[$key][0];
-				echo "<option value='D$key'>$dropdown_string</option>";
-			}
-		}
-		?>
-	</select>
+ 		<?php
+ 		// Use translation keys for varga labels; fall back to the Tamil name from array
+ 		$selected_label = __('varga_D2', $divisional_chartname_arr[2][0]);
+ 		echo "<option value=\"D2\" selected>D2 - $selected_label</option>";
+ 		foreach ($charts as $key => $data) {
+ 			if ($key != 2) { // Skip D2 since it's already displayed
+ 				$varga_key = 'varga_D' . $key;
+ 				$label = __($varga_key, $divisional_chartname_arr[$key][0]);
+ 				$dropdown_string = 'D' . $key . ' - ' . $label;
+ 				echo "<option value='D$key'>$dropdown_string</option>";
+ 			}
+ 		}
+ 		?>
+ 	</select>
 
     <!-- Div containers for each chart -->
     <?php
@@ -3612,22 +3786,26 @@ $charts = [
 	?>
 
  <!-- Dropdown list -->
-    <select id="ashtaDropdown" onchange="showAshtaChart()">
-		<?php
-		foreach (array("dummy","சூரி","சந்","செ","புத","குரு","சுக்","சனி","லக்","சர்வாஷ்டக வர்கம்") as $key => $data) {
-			if($key==0) continue;
-			$dropdown_string = $data . ' - ' . "பின்னாஷ்டக வர்கம்";
-			
-			if($key==1){
-				echo "<option value='a$key' selected>சூரி - பின்னாஷ்டக வர்கம்</option>";
-			}
-			else{
-				if($key==9) $dropdown_string = "சர்வாஷ்டக வர்கம்";
-				echo "<option value='a$key'>$dropdown_string</option>";
-			}
-		}
-		?>
-	</select>
+     <select id="ashtaDropdown" onchange="showAshtaChart()">
+ 		<?php
+ 		// Ashtavarga labels - use translation keys with Tamil defaults
+ 		$ashta_suffix = __('ashta_suffix', 'பின்னாஷ்டக வர்கம்');
+ 		$ashta_defaults = array(1=>'சூரி',2=>'சந்',3=>'செ',4=>'புத',5=>'குரு',6=>'சுக்',7=>'சனி',8=>'லக்',9=>'சர்வாஷ்டக வர்கம்');
+ 		foreach ($ashta_defaults as $key => $data) {
+ 			if ($key == 1) {
+ 				$label = __('ashta_1', $data) . ' - ' . $ashta_suffix;
+ 				echo "<option value='a$key' selected>$label</option>";
+ 				continue;
+ 			}
+ 			if ($key == 9) {
+ 				$label = __('ashta_9', $data);
+ 			} else {
+ 				$label = __('ashta_' . $key, $data) . ' - ' . $ashta_suffix;
+ 			}
+ 			echo "<option value='a$key'>$label</option>";
+ 		}
+ 		?>
+ 	</select>
 
     <!-- Div containers for each chart -->
     <?php

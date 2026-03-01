@@ -140,31 +140,44 @@ function is_tamil() {
  * @return string The translated text
  */
 function translate_text($text, $mapping = null) {
-    if ($mapping === null) {
-        $mapping = $GLOBALS['translations'];
-    }
-    
     // If current language is Tamil, return as is
     if (is_tamil()) {
         return $text;
     }
-    
-    // Try to find exact match
-    $key = array_search($text, $mapping);
-    if ($key !== false) {
-        return __($key);
+
+    // Load Tamil and English translation arrays
+    $tamil_translations = include __DIR__ . '/ta.php';
+    $english_translations = include __DIR__ . '/en.php';
+
+    // If English translations contain the exact Tamil string as a key, use it (handles short abbreviations)
+    if (isset($english_translations[$text])) {
+        return $english_translations[$text];
     }
-    
-    // Try partial match for complex strings
-    foreach ($mapping as $tamil_text) {
-        if (strpos($text, $tamil_text) !== false) {
-            $key = array_search($tamil_text, $mapping);
-            if ($key !== false) {
-                $text = str_replace($tamil_text, __($key), $text);
-            }
+
+    // Try exact match in Tamil translations and return corresponding English
+    $key = array_search($text, $tamil_translations, true);
+    if ($key !== false && isset($english_translations[$key])) {
+        return $english_translations[$key];
+    }
+
+    // Try partial replacements: replace Tamil substrings with their English equivalents
+    foreach ($tamil_translations as $k => $tamil_value) {
+        if ($tamil_value === null || $tamil_value === '') continue;
+        if (strpos(strip_tags($text), $tamil_value) !== false && isset($english_translations[$k])) {
+            $eng = $english_translations[$k];
+            // Preserve common HTML wrappers (retro/lagna) by replacing inner text only
+            $text = str_replace('<span class="retro">'.$tamil_value.'</span>', '<span class="retro">'.$eng.'</span>', $text);
+            $text = str_replace('<span class="lagna">'.$tamil_value.'</span>', '<span class="lagna">'.$eng.'</span>', $text);
+            // Also handle cases with extra spaces
+            $text = str_replace(' '.$tamil_value.' ', ' '.$eng.' ', $text);
+            $text = str_replace(' '.$tamil_value, ' '.$eng, $text);
+            $text = str_replace($tamil_value.' ', $eng.' ', $text);
+            // Final fallback: plain replacement (may remove wrappers)
+            $text = str_replace($tamil_value, $eng, $text);
         }
     }
-    
+
+    // Fallback: return original text if no replacements were made
     return $text;
 }
 
@@ -200,4 +213,62 @@ function get_translation_mapping_json() {
     $mapping['(கிரு)'] = '(wan)';
     
     return json_encode($mapping, JSON_UNESCAPED_UNICODE);
+}
+
+/**
+ * Map Tamil UI tokens to English display-only values (e.g., short planet abbreviations)
+ * This does not modify stored values; it's only meant for preparing strings for rendering
+ */
+function map_display_text($text) {
+    // Only map when UI language is English
+    if (!is_english()) return $text;
+
+    $english_translations = include __DIR__ . '/en.php';
+
+    // Iterate keys in en.php — keys may be Tamil tokens like 'சூரி' => 'Su'
+    foreach ($english_translations as $tamil_key => $eng_val) {
+        if (empty($tamil_key) || $tamil_key === $eng_val) continue;
+
+        // 1) Handle sub-planet tokens prefixed with '#': replace '#KEY' with '#Eng'
+        if ($eng_val !== '') {
+            // Replace inside span inner text
+            $text = preg_replace_callback('/<span\b([^>]*)>(.*?)<\/span>/u', function($m) use ($tamil_key, $eng_val) {
+                $attrs = $m[1];
+                $inner = $m[2];
+                if (strpos($inner, '#'.$tamil_key) !== false) {
+                    $inner = str_replace('#'.$tamil_key, '#'.$eng_val, $inner);
+                }
+                return '<span'.$attrs.'>'.$inner.'</span>';
+            }, $text);
+
+            // Replace outside spans: look for '#KEY' preceded by boundary
+            $text = preg_replace('/(?<=^|[\s>])#'.preg_quote($tamil_key, '/').'(?=$|[\s<\)\.,;:\-])/u', '#'.$eng_val, $text);
+            // Fallback direct replace
+            $text = str_replace('#'.$tamil_key, '#'.$eng_val, $text);
+        }
+
+        // 2) Replace occurrences inside spans (non-#)
+        $text = preg_replace_callback('/<span\b([^>]*)>(.*?)<\/span>/u', function($m) use ($tamil_key, $eng_val) {
+            $attrs = $m[1];
+            $inner = $m[2];
+            // If inner contains '#', we've already handled those; replace remaining plain occurrences
+            if (strpos($inner, $tamil_key) !== false) {
+                // avoid changing already replaced '#KEY'
+                $inner = str_replace('#'.$tamil_key, '#'.$eng_val, $inner);
+                $inner = str_replace($tamil_key, $eng_val, $inner);
+            }
+            return '<span'.$attrs.'>'.$inner.'</span>';
+        }, $text);
+
+        // 3) Replace standalone occurrences outside spans (not prefixed by '#')
+        if ($eng_val !== '') {
+            // Match pattern with a preceding boundary (start or whitespace or >) and trailing boundary
+            $pattern = '/(^|[\s>])'.preg_quote($tamil_key, '/').'(?=$|[\s<\)\.,;:\-])/u';
+            $text = preg_replace_callback($pattern, function($m) use ($eng_val) {
+                return $m[1].$eng_val;
+            }, $text);
+        }
+    }
+
+    return $text;
 }

@@ -73,9 +73,9 @@ echo "</div></center>";
 
 echo "<center><div class='divTable blueTable' id='starlordBodyMutable_transit' style='height:auto'>";
 echo "<div class='divTableRow'>";
-echo "<div class='divTableCell'>கிர</div>";
-echo "<div class='divTableCell'>நக்ஷ்</div>";
-echo "<div class='divTableCell'>நக்ஷ் அதி</div>";
+echo "<div class='divTableCell'>" . __('col_graha') . "</div>";
+echo "<div class='divTableCell'>" . __('col_naksha_pa') . "</div>";
+echo "<div class='divTableCell'>" . __('col_nakshatra_athi') . "</div>";
 echo "</div>";
 
 $planet_starlord_transit = [
@@ -108,9 +108,9 @@ echo "</div></center>";
 
 echo "<center><div class='divTable blueTable' style='height:auto'>";
 echo "<div class='divTableRow'>";
-echo "<div class='divTableCell'>கிர</div>";
-echo "<div class='divTableCell'>நக்ஷ்</div>";
-echo "<div class='divTableCell'>நக்ஷ் அதி</div>";
+echo "<div class='divTableCell'>" . __('col_graha') . "</div>";
+echo "<div class='divTableCell'>" . __('col_naksha_pa') . "</div>";
+echo "<div class='divTableCell'>" . __('col_nakshatra_athi') . "</div>";
 echo "</div>";
 
 $planet_padilord_transit = [

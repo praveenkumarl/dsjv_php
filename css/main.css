@@ -398,22 +398,22 @@ input, select, textarea {
 /* Toast styling */
 .site-toast{
 	position: fixed;
-	right: 20px;
-	bottom: 24px;
+	left: 50%;
+	top: 50%;
 	background: #2e7d32; /* high-contrast green */
 	color: #ffffff;
-	padding: 10px 14px;
+	padding: 12px 20px;
 	border-radius: 6px;
 	font-weight: 800;
 	font-size: 14px;
 	z-index: 12000;
-	transform: translateY(12px) scale(0.98);
+	transform: translate(-50%, -50%) scale(0.98);
 	opacity: 0;
 	transition: opacity 220ms ease, transform 220ms ease;
 	box-shadow: 0 6px 18px rgba(46,125,50,0.24), inset 0 1px 0 rgba(255,255,255,0.04);
 }
 .site-toast.visible{
-	transform: translateY(0) scale(1);
+	transform: translate(-50%, -50%) scale(1);
 	opacity: 1;
 }
 
