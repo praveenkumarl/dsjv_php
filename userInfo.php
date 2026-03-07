@@ -30,8 +30,6 @@ elseif(isset($_GET['rowid'])){
         WHERE user.imei = '$imei'";*/
 }
 
-echo $sql;
-
 $usertype=isset($_SESSION['usertype']) ? $_SESSION['usertype'] : "";
 
 $userInfo=array();

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 //ini_set("session.gc_maxlifetime", "86400");
 
 if(!session_id()){
@@ -161,6 +161,7 @@ const BIRTHPANCHMATCH = "BIRTHPANCHMATCH";
 const PANCHANG = "PANCHANG";
 const JAMAKOL = "JAMAKOL";
 const JAMA_MATCH = "JAMAMATCH";
+const JAMA_BIRTH = "JAMABIRTH";
 const SUPER = "SUPER";
 const ADMIN = "ADMIN";
 const PRASANNAM = "PRASANNAM";
@@ -172,7 +173,7 @@ const ABHIJIT_PAD_COUNT = 84;
 $g_nak="";
 
 //usertype array used in drop down
-$usertype_arr = [PAID, MATCHING, BIRTH, BIRTHMATCH, BIRTHPANCH, BIRTHPANCHMATCH, JAMAKOL, JAMA_MATCH, PANCHANG, PRASANNAM, NUMEROLOGY, SUPER, ADMIN, FREE];
+$usertype_arr = [PAID, MATCHING, BIRTH, BIRTHMATCH, BIRTHPANCH, BIRTHPANCHMATCH, JAMAKOL, JAMA_MATCH, JAMA_BIRTH, PANCHANG, PRASANNAM, NUMEROLOGY, SUPER, ADMIN, FREE];
 
 $timestamp = date('ymdhis');
 
@@ -1180,9 +1181,9 @@ function sortDegree_transit($inArray) // new function
 						//$outArray[$house] = $outArray[$house] . " " . "<span class='lagna'>$planet</span>" . "-". DECtoDMS($planetDeg_transit[$planet]);
 						$outArray[$house] = $outArray[$house] . " " . "<span class='lagna'>$planet</span>";
 					}
-					elseif(strpos($planet,'??')>0 || strpos($planet,'??')===0){
+					elseif(strpos($planet,'மா')>0 || strpos($planet,"மா")===0){
 						//$outArray[$house] = $outArray[$house] . " " . "<span class='mandhi'>" . translate_tamil_text($planet) . "</span>" . "-". DECtoDMS($planetDeg_transit[$planet]);
-						$outArray[$house] = $outArray[$house] . " " . "<span class='mandhi'>" . translate_tamil_text($planet) . "</span>";
+						$outArray[$house] = $outArray[$house] . " " . "<span class='mandhi'>" . $planet . "</span>";
 					}
 					elseif(strpos($planet,'சந்')>0 || strpos($planet,"சந்")===0){
 						//$outArray[$house] = $outArray[$house] . " " . "<span class='moon'>$planet</span>" . "-". DECtoDMS($planetDeg_transit[$planet]);
@@ -2054,7 +2055,7 @@ function calculateVimBukthi($curr_dasa_lord, $bukthi_lord, $bukthi_start_date, $
 		   
 			if(strtotime($current_date) >= strtotime($curr_bukthi_start_date) and strtotime($current_date) <= strtotime($curr_bukthi_end_date)){
 				echo "<div class='divTableRow' onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
-					echo "<div class='divBukthiHeading' id='divCurrentBukthi'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
+					echo "<div class='divBukthiHeading' id='divCurrentBukthi'>" . map_display_text($bukthi_lord_order_tamil[$curr_dasa_lord]) . " / " . map_display_text($bukthi_lord_order_tamil[$i]) . "</div>";
 					echo "<div class='divCurrentBukthi'>$curr_bukthi_start_date</div>";
 					echo "<div class='divCurrentBukthi'>$curr_bukthi_end_date</div>";
 				echo "</div>";
@@ -2066,14 +2067,14 @@ function calculateVimBukthi($curr_dasa_lord, $bukthi_lord, $bukthi_start_date, $
 			}
 			elseif(strtotime($chart_date) >= strtotime($curr_bukthi_start_date) and strtotime($chart_date) <= strtotime($curr_bukthi_end_date)){
 				echo "<div class='divTableRow' onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
-					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
+					echo "<div class='divBukthiHeading'>" . map_display_text($bukthi_lord_order_tamil[$curr_dasa_lord]) . " / " . map_display_text($bukthi_lord_order_tamil[$i]) . "</div>";
 					echo "<div class='divBirthBukthi'>$curr_bukthi_start_date</div>";
 					echo "<div class='divBirthBukthi'>$curr_bukthi_end_date</div>";
 				echo "</div>";
 			}
 			else{
 				echo "<div class='divTableRow'   onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
-					echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
+					echo "<div class='divBukthiHeading'>" . map_display_text($bukthi_lord_order_tamil[$curr_dasa_lord]) . " / " . map_display_text($bukthi_lord_order_tamil[$i]) . "</div>";
 					echo "<div class='divBukthi'>$curr_bukthi_start_date</div>";
 					echo "<div class='divBukthi'>$curr_bukthi_end_date</div>";
 				echo "</div>";
@@ -2107,7 +2108,7 @@ function calculateVimBukthi($curr_dasa_lord, $bukthi_lord, $bukthi_start_date, $
 		
 		if(strtotime($current_date) >= strtotime($curr_bukthi_start_date) and strtotime($current_date) <= strtotime($curr_bukthi_end_date)){
 			echo "<div class='divTableRow'   onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
-				echo "<div class='divBukthiHeading' id='divCurrentBukthi'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
+				echo "<div class='divBukthiHeading' id='divCurrentBukthi'>" . map_display_text($bukthi_lord_order_tamil[$curr_dasa_lord]) . " / " . map_display_text($bukthi_lord_order_tamil[$i]) . "</div>";
 				echo "<div class='divCurrentBukthi'>$curr_bukthi_start_date</div>";
 				if($i==$curr_dasa_lord-1){
 					echo "<div class='divCurrentBukthi'>$dasa_end_date</div>";
@@ -2124,7 +2125,7 @@ function calculateVimBukthi($curr_dasa_lord, $bukthi_lord, $bukthi_start_date, $
 		}
 		elseif(strtotime($chart_date) >= strtotime($curr_bukthi_start_date) and strtotime($chart_date) <= strtotime($curr_bukthi_end_date)){
 			echo "<div class='divTableRow'   onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
-				echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
+				echo "<div class='divBukthiHeading'>" . map_display_text($bukthi_lord_order_tamil[$curr_dasa_lord]) . " / " . map_display_text($bukthi_lord_order_tamil[$i]) . "</div>";
 				echo "<div class='divBirthBukthi'>$curr_bukthi_start_date</div>";
 				if($i==$curr_dasa_lord-1){
 					echo "<div class='divBirthBukthi'>$dasa_end_date</div>";
@@ -2136,7 +2137,7 @@ function calculateVimBukthi($curr_dasa_lord, $bukthi_lord, $bukthi_start_date, $
 		}
 		else{
 			echo "<div class='divTableRow'   onClick='generateAnthram(\"$start\", \"$end\",\"$bukthi_lord_order_tamil[$curr_dasa_lord]\",\"$bukthi_lord_order_tamil[$i]\");'>";
-				echo "<div class='divBukthiHeading'>".$bukthi_lord_order_tamil[$curr_dasa_lord]." / ".$bukthi_lord_order_tamil[$i]."</div>";
+				echo "<div class='divBukthiHeading'>" . map_display_text($bukthi_lord_order_tamil[$curr_dasa_lord]) . " / " . map_display_text($bukthi_lord_order_tamil[$i]) . "</div>";
 				echo "<div class='divBukthi'>$curr_bukthi_start_date</div>";
 				if($i==$curr_dasa_lord-1){
 					echo "<div class='divBukthi'>$dasa_end_date</div>";
@@ -2322,16 +2323,16 @@ function calculateVimDasa()
 	echo "<center><div class='divTable blueTable' style='height:32px;display:none;margin-top:20px' id='DasaMatable'>"; 
 		echo "<div class='divTableRow'>";
 			echo "<div class='divTableCell' colspan=3>";
-				echo "<H6 style='font-weight:bold'>தசாபுக்தி</H6>";
+				echo "<H6 style='font-weight:bold'>" . __('menu_dasa') . "</H6>";
 				echo "</div>";
 		echo "</div>";
 	echo "</div></center>";
 
 	echo "<center><div class='divTable blueTable' style='height:auto;display:none;' id='BukthiMatable'>"; 
 		echo "<div class='divTableRow'>";
-			echo "<div class='divDasaHeading'>தசா/புக்தி அதிபதி</div>";
-			echo "<div class='divDasaHeading'>Start</div>";
-			echo "<div class='divDasaHeading'>End</div>";
+			echo "<div class='divDasaHeading'>" . __('dasa_bukthi_adhipati') . "</div>";
+			echo "<div class='divDasaHeading'>" . __('start') . "</div>";
+			echo "<div class='divDasaHeading'>" . __('end') . "</div>";
 		echo "</div>";
 
 	for($i=0; $i<9; $i++)
@@ -2346,7 +2347,7 @@ function calculateVimDasa()
 			$dasa_start_date = $curr_dasa_start_date;
 			
 			echo "<div class='divTableRow'>";
-				echo "<div class='divDasaHeading'>".$dasa_lord_order_tamil[$i]."</div>";
+				echo "<div class='divDasaHeading'>" . map_display_text($dasa_lord_order_tamil[$i]) . "</div>";
 				echo "<div class='divDasa'>$curr_dasa_start_date</div>";
 				echo "<div class='divDasa'>$curr_dasa_end_date</div>";
 			echo "</div>";
@@ -2369,7 +2370,7 @@ function calculateVimDasa()
 		$curr_dasa_end_date = date('d-m-Y',strtotime($curr_dasa_start_date. '+ '.$dasa_lord_arr[$dasa_lord].' years'));
 		
 		echo "<div class='divTableRow'>";
-			echo "<div class='divDasaHeading'>".$dasa_lord_order_tamil[$i]."</div>";
+			echo "<div class='divDasaHeading'>" . map_display_text($dasa_lord_order_tamil[$i]) . "</div>";
 			echo "<div class='divDasa'>$curr_dasa_start_date</div>";
 			echo "<div class='divDasa'>$curr_dasa_end_date</div>";
 		echo "</div>";
@@ -2679,7 +2680,7 @@ function displayStarLord()
 	foreach($planet_starlord as $planet => $data)
 	{	
 		echo "<div class='divTableRow'>";
-			$planet_translated = translate_planet_abbr($planet);
+			$planet_translated = __($planet);
 			if((strcmp("சனி",$planet)==0 or strcmp("குரு",$planet)==0 or strcmp("செ",$planet)==0 or strcmp("சுக்",$planet)==0 or
 				strcmp("புத",$planet)==0) and $planetDeg_default[$planet] < 0.0){
 					//strcmp("புத",$planet)==0) and $planetDeg[$planet] < 0.0){
@@ -2737,15 +2738,15 @@ function displayStarLord()
 			echo "<div class='divTableRow'>";
 				if((strcmp("சனி",$planet)==0 or strcmp("குரு",$planet)==0 or strcmp("செ",$planet)==0 or strcmp("சுக்",$planet)==0 or
 					strcmp("புத",$planet)==0) and $planetDeg_default[$planet] < 0.0){
-					echo "<div class='divPanchangHeadingSmall'>$planet (வ)</div>";
+					echo "<div class='divPanchangHeadingSmall'>".__($planet)." ".__("(வ)")."</div>";
 				}
 				else{
-					echo "<div class='divPanchangHeadingSmall'>$planet</div>";
+					echo "<div class='divPanchangHeadingSmall'>".__($planet)."</div>";
 				}
 					
-				echo "<div class='divPanchangSmall'>" . $g_planetThithiLord[$planet] . "</div>";
-				echo "<div class='divPanchangSmall'>" . $g_planetYogamLord[$planet] . "</div>";
-				echo "<div class='divPanchangSmall'>" . $g_planetKaranaLord[$planet] . "</div>";
+				echo "<div class='divPanchangSmall'>" . map_display_text($g_planetThithiLord[$planet]) . "</div>";
+				echo "<div class='divPanchangSmall'>" . map_display_text($g_planetYogamLord[$planet]) . "</div>";
+				echo "<div class='divPanchangSmall'>" . map_display_text($g_planetKaranaLord[$planet]) . "</div>";
 			echo "</div>";
 		}
 
@@ -2772,15 +2773,17 @@ function displayStarLord()
 			echo "<div class='divTableRow'>";
 				if((strcmp("சனி",$planet)==0 or strcmp("குரு",$planet)==0 or strcmp("செ",$planet)==0 or strcmp("சுக்",$planet)==0 or
 					strcmp("புத",$planet)==0) and $planetDeg_default[$planet] < 0.0){
-					echo "<div class='divPanchangHeadingSmall'>$planet (வ)</div>";
+					echo "<div class='divPanchangHeadingSmall'>" . __($planet) . " " . __("(வ)") . "</div>";
 				}
 				else{
-					echo "<div class='divPanchangHeadingSmall'>$planet</div>";
+					echo "<div class='divPanchangHeadingSmall'>" . __($planet) . "</div>";
 				}
 				
-				echo "<div class='divPanchangSmall'>" . $g_planetVainasigamNak[$planet][0] . "</div>";
-				echo "<div class='divPanchangSmall'>" . $g_planetVainasigamNak[$planet][1] . "</div>";
-				echo "<div class='divPanchangSmall'>" . join("<BR>",$g_planetAbhijitNak[$planet]) . "</div>";
+				echo "<div class='divPanchangSmall'>" . map_display_text($g_planetVainasigamNak[$planet][0]) . "</div>";
+				echo "<div class='divPanchangSmall'>" . map_display_text($g_planetVainasigamNak[$planet][1]) . "</div>";
+				// Map each Abhijit nak entry using map_display_text
+				$abh_items = array_map(function($it){ return map_display_text($it); }, $g_planetAbhijitNak[$planet]);
+				echo "<div class='divPanchangSmall'>" . join("<BR>", $abh_items) . "</div>";
 			echo "</div>";
 		}
 		
@@ -2789,7 +2792,7 @@ function displayStarLord()
 		echo "<center><div class='divTable blueTable' id='kpHeadMutable' style='height:32px;display:none;margin-top:20px'>"; 
 			echo "<div class='divTableRow'>";
 				echo "<div class='divTableCell' colspan=3>";
-					echo "<H6 style='font-weight:bold;color:black'>KP details</H6>";
+					echo "<H6 style='font-weight:bold;color:black'>" . __('menu_kp_details') . "</H6>";
 				echo "</div>";
 			echo "</div>";
 		echo "</div></center>";
@@ -2810,26 +2813,26 @@ function displayStarLord()
 					strcmp("புத",$planet)==0) and $planetDeg_default[$planet] < 0.0){
 						//strcmp("புத",$planet)==0) and $planetDeg[$planet] < 0.0){
 							
-					echo "<div class='divPanchangHeadingSmall'>$planet (வ)</div>";
+					echo "<div class='divPanchangHeadingSmall'>" . __($planet) . " " . __("(வ)") . "</div>";
 				}
 				else{
-					echo "<div class='divPanchangHeadingSmall'>$planet</div>";
+						echo "<div class='divPanchangHeadingSmall'>" . __($planet) . "</div>";
 				}
 				
-				echo "<div class='divPanchangSmall'>" . DECtoDMS($data[2]) . " (" . DECtoDMS($data[3]) . ")" . "</div>";
-				
-				$star_padham = getShortStar($data[0]);
-				
-				if(strstr($data[6],"புஷ்") !== false){
-					echo "<div class='divPanchangSmallGreen'>$star_padham<BR>(புஷ்)</div>";
-				}
-				else{
-					echo "<div class='divPanchangSmall'>" . $star_padham ."</div>";
-				}
-				
-				echo "<div class='divPanchangSmall'>" . $data[1] . "</div>";
-				
-				echo "<div class='divPanchangSmall'>" . findSubLord($data[1],$data[2]) . "</div>";
+					echo "<div class='divPanchangSmall'>" . map_display_text(DECtoDMS($data[2]) . ' (' . DECtoDMS($data[3]) . ')') . "</div>";
+					
+					$star_padham = getShortStar($data[0]);
+					
+					if(strstr($data[6],"புஷ்") !== false){
+						echo "<div class='divPanchangSmallGreen'>" . map_display_text($star_padham) . "<BR>" . __("(புஷ்)") . "</div>";
+					}
+					else{
+						echo "<div class='divPanchangSmall'>" . map_display_text($star_padham) ."</div>";
+					}
+					
+					echo "<div class='divPanchangSmall'>" . map_display_text($data[1]) . "</div>";
+					
+					echo "<div class='divPanchangSmall'>" . map_display_text(findSubLord($data[1],$data[2])) . "</div>";
 				
 			echo "</div>";
 		}
@@ -3047,10 +3050,10 @@ function displayStarLord_jamakol()
 			echo "<div class='divTableRow'>";
 				if((strcmp("சனி",$planet)==0 or strcmp("குரு",$planet)==0 or strcmp("செ",$planet)==0 or strcmp("சுக்",$planet)==0 or
 					strcmp("புத",$planet)==0) and $planetDeg_default[$planet] < 0.0){
-					echo "<div class='divPanchangHeadingSmall'>$planet (வ)</div>";
+					echo "<div class='divPanchangHeadingSmall'>".__($planet)." ".__("(வ)")."</div>";
 				}
 				else{
-					echo "<div class='divPanchangHeadingSmall'>$planet</div>";
+					echo "<div class='divPanchangHeadingSmall'>".__($planet)."</div>";
 				}
 					
 				echo "<div class='divPanchangSmall'>" . $g_planetThithiLord[$planet] . "</div>";
@@ -3213,15 +3216,15 @@ function displayStarLord_transit()
 		echo "<div class='divTableRow'>";
 			if((strcmp("சனி",$planet)==0 or strcmp("குரு",$planet)==0 or strcmp("செ",$planet)==0 or strcmp("சுக்",$planet)==0 or
 				strcmp("புத",$planet)==0) and $planetDeg_default_transit[$planet] < 0.0){
-				echo "<div class='divPanchangHeadingSmall'>$planet (வ)</div>";
+					echo "<div class='divPanchangHeadingSmall'>" . __($planet) . " " . __("(வ)") . "</div>";
 			}
 			else{
-				echo "<div class='divPanchangHeadingSmall'>$planet</div>";
+					echo "<div class='divPanchangHeadingSmall'>" . __($planet) . "</div>";
 			}
-			echo "<div class='divPanchangSmall'>$data[0]</div>";
-			echo "<div class='divPanchangSmall'>$data[1]</div>";
-			echo "<div class='divPanchangSmall'>" . DECtoDMS($data[2]) . "</div>";
-			echo "<div class='divPanchangSmall'>" . DECtoDMS($data[3]) . "</div>";
+				echo "<div class='divPanchangSmall'>" . map_display_text($data[0]) . "</div>";
+				echo "<div class='divPanchangSmall'>" . map_display_text($data[1]) . "</div>";
+				echo "<div class='divPanchangSmall'>" . map_display_text(DECtoDMS($data[2])) . "</div>";
+				echo "<div class='divPanchangSmall'>" . map_display_text(DECtoDMS($data[3])) . "</div>";
 		echo "</div>";
 	}
 	
@@ -4032,14 +4035,18 @@ function displayButtons($inner)
 		$button_id = "buttons_outer";
 	}
 
+	// prepare translated labels for buttons
+	$btn_star_label = __('btn_star_lord');
+	$btn_dasa_label = __('btn_dasa_bukthi');
+
 	echo "<center><div class='divTable blueTable' style='height:auto;display:none' id='$button_id'>"; 
 		echo "<div class='divTableRow'>";
 			echo <<<EOL
 				<div class="divMenu" style="width:50%">
-					<button type="button" class='$class_name' id="starlord" name="starlord" onclick="$starlord_function">நட் சாரம்</button>
+					<button type="button" class='$class_name' id="starlord" name="starlord" onclick="$starlord_function">$btn_star_label</button>
 				</div>
 				<div class="divMenu" style="width:50%">
-					<button type="button" class='$class_name' id="dasa" name="dasa" onclick="$dasa_function">தசா புக்தி</button>
+					<button type="button" class='$class_name' id="dasa" name="dasa" onclick="$dasa_function">$btn_dasa_label</button>
 				</div>
 EOL;
 		echo "</div>";
@@ -5759,12 +5766,17 @@ function calculateThithiAllPlanets($inner=true)
 			$temp_paksham = "தேய்";
 		}
 		
+		$thithi_label = getValue($thithi_arr[$temp_thithi_idx]);
 		if(isset($temp_paksham)){
-			$planetThithiLord[$planet] = getValue($thithi_arr[$temp_thithi_idx]) . " ($temp_paksham)"; //2nd argument is lang, which is defaulted to 1 (tamil)
-		}
-		else{
-			$temp_paksham="";
-			$planetThithiLord[$planet] = getValue($thithi_arr[$temp_thithi_idx]); //2nd argument is lang, which is defaulted to 1 (tamil)
+			// Do not append paksham for Ama/Po (अமா/பௌ) thithis
+			if (mb_strpos($thithi_label, 'அமா') !== false || mb_strpos($thithi_label, 'பௌ') !== false) {
+				$planetThithiLord[$planet] = $thithi_label;
+			} else {
+				$planetThithiLord[$planet] = $thithi_label . " ($temp_paksham)"; //2nd argument is lang, which is defaulted to 1 (tamil)
+			}
+		} else {
+			$temp_paksham = "";
+			$planetThithiLord[$planet] = $thithi_label; //2nd argument is lang, which is defaulted to 1 (tamil)
 		}
 		
 		debug("planet=$planet---thithi-deg=$thithi_deg---temp_paksham----$temp_paksham---".ceil($thithi_deg/12)."-----".$planetThithiLord[$planet]."<BR>");
@@ -5915,19 +5927,19 @@ function getThithiParigaaram($thithi_idx)
 	
 	//$details = "<DIV class='parigaraDiv'><div id='labelParigaraDiv'>திதி பரிகாரம்</div>$temple_arr[$thithi_idx]</DIV>";
 	$details = "<DIV class='parigaaram-grid-container'>";
-	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>திதி விவரங்கள்</DIV>";
+	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>".translate_text('திதி விவரங்கள்')."</DIV>";
 
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>திதி</DIV>";
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('திதி')."</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['thithi_name']."</DIV>";
-		
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>திதி கோவில்</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['thithi_temple']."</DIV>";
-		
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>திதி கோவில் இருப்பிடம்</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><A style='color:blue;cursor:pointer' href='".$data['thithi_temple_link']."' target='_blank'>google Map</A></DIV>";
-		
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>திதி தெய்வம்</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right' id='photo'><image style='width:150px' src='images\\thithi_god\\" . $data['thithi_name'] . "_" . $g_paksham . ".jpg?$timestamp'></DIV>";
+        
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('திதி கோவில்')."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".translate_text($data['thithi_temple'])."</DIV>";
+        
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('திதி கோவில் இருப்பிடம்')."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><A style='color:blue;cursor:pointer' href='".$data['thithi_temple_link']."' target='_blank'>".translate_text('google Map')."</A></DIV>";
+        
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('திதி தெய்வம்')."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right' id='photo'><image style='width:150px' src='images\\thithi_god\\" . $data['thithi_name'] . "_" . $g_paksham . ".jpg?".$timestamp."'></DIV>";
 		
 		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
 
@@ -7124,6 +7136,11 @@ function displayHomePageButtons($in_usertype){
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'Matching_input.php\',\'_self\')">புதிய திருமண பொருத்தம்</button>';
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'matchingChartDisplay.php\',\'_self\')">சேமித்த திருமண பொருத்தங்கள்</button>';
 			break;
+		case JAMA_BIRTH:
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'index.php\',\'_self\')">முகப்பு</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'Birth_input.php\',\'_self\')">புதிய ஜாமக்கோள்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'birthChartDisplay.php\',\'_self\')">சேமித்த ஜாமக்கோள்</button>';
+			break;
 		default:  //PAID
 			//program will not reach this case at all
 			echo "Some server error occured..";
@@ -7141,6 +7158,7 @@ function checkUserType($in_usertype){
 		case PANCHANG:
 		case JAMAKOL:
 		case JAMA_MATCH:
+		case JAMA_BIRTH:
 			header('Location: homepage.php');
 		default:  //PAID
 			//it will just open the index.php
@@ -7504,56 +7522,56 @@ function displayBhavaChart()
 		
 		echo '<div class="divTableBody">';
 			echo '<div class="divTableRow">';
-					echo '<div class="divTableOuterCellLeftTop">'.$tr_sw_planet[11].'</div>';
+					echo '<div class="divTableOuterCellLeftTop">'.map_display_text($tr_sw_planet[11]).'</div>'; 
 					echo '<div class="divTableOuterCell" style="border-left:none"></div>';
-					echo '<div class="divTableOuterCell">'.$tr_sw_planet[0].'</div>';
-					echo '<div class="divTableOuterCell">'.$tr_sw_planet[1].'</div>';
+					echo '<div class="divTableOuterCell">'.map_display_text($tr_sw_planet[0]).'</div>'; 
+					echo '<div class="divTableOuterCell">'.map_display_text($tr_sw_planet[1]).'</div>'; 
 					echo '<div class="divTableOuterCell" style="border-right:none"></div>';
-					echo '<div class="divTableOuterCellRightTop">'.$tr_sw_planet[2].'</div>';
+					echo '<div class="divTableOuterCellRightTop">'.map_display_text($tr_sw_planet[2]).'</div>'; 
 			echo '</div>';
 			echo '<div class="divTableRow">';
 					echo '<div class="divTableOuterCell" style="border-top:none"></div>';
-					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[11],2)).'</div>';
-					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[0],2)).'</div>';
-					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[1],2)).'</div>';
-					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[2],2)).'</div>';
+					echo '<div class="divTableCell">'.map_display_text(join(' ',array_slice($g_bhava_arr[11],2))).'</div>'; 
+					echo '<div class="divTableCell">'.map_display_text(join(' ',array_slice($g_bhava_arr[0],2))).'</div>'; 
+					echo '<div class="divTableCell">'.map_display_text(join(' ',array_slice($g_bhava_arr[1],2))).'</div>'; 
+					echo '<div class="divTableCell">'.map_display_text(join(' ',array_slice($g_bhava_arr[2],2))).'</div>'; 
 					echo '<div class="divTableOuterCell"  style="border-top:none"></div>';
 			echo '</div>';
 			echo '<div class="divTableRow">';
-					echo '<div class="divTableOuterCell">'.$tr_sw_planet[10].'</div>';
-					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[10],2)).'</div>';
-					echo '<div class="divTableCenterCell1" style="font-size:10px">பாவம்</div>';
+					echo '<div class="divTableOuterCell">'.map_display_text($tr_sw_planet[10]).'</div>'; 
+					echo '<div class="divTableCell">'.map_display_text(join(' ',array_slice($g_bhava_arr[10],2))).'</div>'; 
+					echo '<div class="divTableCenterCell1" style="font-size:10px">'.__('menu_bhava_chart').'</div>';
 					echo '<div class="divTableCenterCell1"></div>';
-					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[3],2)).'</div>';
-					echo '<div class="divTableOuterCell">'.$tr_sw_planet[3].'</div>';
+					echo '<div class="divTableCell">'.map_display_text(join(' ',array_slice($g_bhava_arr[3],2))).'</div>'; 
+					echo '<div class="divTableOuterCell">'.map_display_text($tr_sw_planet[3]).'</div>'; 
 			echo '</div>';
 			echo '<div class="divTableRow">';
-					echo '<div class="divTableOuterCell">'.$tr_sw_planet[9].'</div>';
-					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[9],2)).'</div>';
+					echo '<div class="divTableOuterCell">'.map_display_text($tr_sw_planet[9]).'</div>'; 
+					echo '<div class="divTableCell">'.map_display_text(join(' ',array_slice($g_bhava_arr[9],2))).'</div>'; 
 					echo '<div class="divTableCenterCell1"></div>';
 					echo '<div class="divTableCenterCell1" style="font-size:10px"></div>';
-					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[4],2)).'</div>';
-					echo '<div class="divTableOuterCell">'.$tr_sw_planet[4].'</div>';
+					echo '<div class="divTableCell">'.map_display_text(join(' ',array_slice($g_bhava_arr[4],2))).'</div>'; 
+					echo '<div class="divTableOuterCell">'.map_display_text($tr_sw_planet[4]).'</div>'; 
 			echo '</div>';
 			echo '<div class="divTableRow">';
 					echo '<div class="divTableOuterCell" style="border-bottom:none"></div>';
-					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[8],2)).'</div>';
-					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[7],2)).'</div>';
-					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[6],2)).'</div>';
-					echo '<div class="divTableCell">'.join(' ',array_slice($g_bhava_arr[5],2)).'</div>';
+					echo '<div class="divTableCell">'.map_display_text(join(' ',array_slice($g_bhava_arr[8],2))).'</div>'; 
+					echo '<div class="divTableCell">'.map_display_text(join(' ',array_slice($g_bhava_arr[7],2))).'</div>'; 
+					echo '<div class="divTableCell">'.map_display_text(join(' ',array_slice($g_bhava_arr[6],2))).'</div>'; 
+					echo '<div class="divTableCell">'.map_display_text(join(' ',array_slice($g_bhava_arr[5],2))).'</div>'; 
 					echo '<div class="divTableOuterCell"  style="border-bottom:none"></div>';
 			echo '</div>';
 			echo '<div class="divTableRow">';
-					echo '<div class="divTableOuterCellLeftBottom">'.$tr_sw_planet[8].'</div>';
+					echo '<div class="divTableOuterCellLeftBottom">'.map_display_text($tr_sw_planet[8]).'</div>'; 
 					echo '<div class="divTableOuterCell" style="border-left:none"></div>';
-					echo '<div class="divTableOuterCell">'.$tr_sw_planet[7].'</div>';
-					echo '<div class="divTableOuterCell">'.$tr_sw_planet[6].'</div>';
+					echo '<div class="divTableOuterCell">'.map_display_text($tr_sw_planet[7]).'</div>'; 
+					echo '<div class="divTableOuterCell">'.map_display_text($tr_sw_planet[6]).'</div>'; 
 					echo '<div class="divTableOuterCell" style="border-right:none"></div>';
-					echo '<div class="divTableOuterCellRightBottom">'.$tr_sw_planet[5].'</div>';
+					echo '<div class="divTableOuterCellRightBottom">'.map_display_text($tr_sw_planet[5]).'</div>'; 
 			echo '</div>';
 		echo '</div>';
 	echo '</div></center>';
-	echo '<center>*பாவக மாற்றம்</center>';
+	echo '<center>'.__('bhava_change').'</center>';
 }
 
 function updateBhavaArray($deg, $planet, $house, $reverse = false) {
@@ -10182,8 +10200,23 @@ function displayVarga($data,$division)
 	
 	
 	echo "<center>";
-	echo "<P><B>$chartdetail</B></p>";
-	
+	echo "<P><B>".translate_text($chartdetail)."</B></p>";
+
+	// prepare translated cell values so they can be interpolated inside the heredoc
+	$cell11 = map_display_text($data[11]);
+	$cell0  = map_display_text($data[0]);
+	$cell1  = map_display_text($data[1]);
+	$cell2  = map_display_text($data[2]);
+	$cell10 = map_display_text($data[10]);
+	$cell3  = map_display_text($data[3]);
+	$cell9  = map_display_text($data[9]);
+	$cell4  = map_display_text($data[4]);
+	$cell8  = map_display_text($data[8]);
+	$cell7  = map_display_text($data[7]);
+	$cell6  = map_display_text($data[6]);
+	$cell5  = map_display_text($data[5]);
+	$chartname_trans = map_display_text($chartname);
+
 	echo <<<EOL
 		<div class="divTable blueTable" id="D$division" style='display:table'>
 				
@@ -10198,34 +10231,34 @@ function displayVarga($data,$division)
 				</div>
 				<div class="divTableRow">
 						<div class="divTableDummyCell"></div>
-						<div class="divTableCell">$data[11]</div>
-						<div class="divTableCell">$data[0]</div>
-						<div class="divTableCell">$data[1]</div>
-						<div class="divTableCell">$data[2]</div>
+						<div class="divTableCell">$cell11</div>
+						<div class="divTableCell">$cell0</div>
+						<div class="divTableCell">$cell1</div>
+						<div class="divTableCell">$cell2</div>
 						<div class="divTableDummyCell"></div>
 				</div>
 				<div class="divTableRow">
 						<div class="divTableDummyCell"></div>
-						<div class="divTableCell">$data[10]</div>
+						<div class="divTableCell">$cell10</div>
 						<div class="divTableCenterCell" style='font-size:10px'>D$division</div>
 						<div class="divTableCenterCell"></div>
-						<div class="divTableCell">$data[3]</div>
+						<div class="divTableCell">$cell3</div>
 						<div class="divTableDummyCell"></div>
 				</div>
 				<div class="divTableRow">
 						<div class="divTableDummyCell"></div>
-						<div class="divTableCell">$data[9]</div>
+						<div class="divTableCell">$cell9</div>
 						<div class="divTableCenterCell"></div>
-						<div class="divTableCenterCell" style='font-size:2.5vw'>$chartname</div>
-						<div class="divTableCell">$data[4]</div>
+						<div class="divTableCenterCell" style='font-size:1.7vw'>$chartname_trans</div>
+						<div class="divTableCell">$cell4</div>
 						<div class="divTableDummyCell"></div>
 				</div>
 				<div class="divTableRow">
 						<div class="divTableDummyCell"></div>
-						<div class="divTableCell">$data[8]</div>
-						<div class="divTableCell">$data[7]</div>
-						<div class="divTableCell">$data[6]</div>
-						<div class="divTableCell">$data[5]</div>
+						<div class="divTableCell">$cell8</div>
+						<div class="divTableCell">$cell7</div>
+						<div class="divTableCell">$cell6</div>
+						<div class="divTableCell">$cell5</div>
 						<div class="divTableDummyCell"></div>
 				</div>
 				<div class="divTableRow">
@@ -10522,8 +10555,24 @@ function displayAshtavargam($id,$planet,$data,$type=1)
 	
 	// Add "Asc" to the appropriate house based on $lagna_house
 	${'h' . ($lagna_house - 1)} .= ' <span class="lagna">லக்</span>';
-	
-	echo "<P><B>$chartdetail</B></p>";
+
+	// prepare translated display values for heredoc interpolation
+	$th11 = map_display_text($h11);
+	$th0  = map_display_text($h0);
+	$th1  = map_display_text($h1);
+	$th2  = map_display_text($h2);
+	$th10 = map_display_text($h10);
+	$th3  = map_display_text($h3);
+	$th9  = map_display_text($h9);
+	$th4  = map_display_text($h4);
+	$th8  = map_display_text($h8);
+	$th7  = map_display_text($h7);
+	$th6  = map_display_text($h6);
+	$th5  = map_display_text($h5);
+	$chartname_trans = translate_text($chartname);
+	$chartdetail_trans = translate_text($chartdetail);
+
+	echo "<P><B>".$chartdetail_trans."</B></p>";
 	
 	echo <<<EOL
 		<div class="divTable blueTable" id="$planet" style='display:table'>
@@ -10538,36 +10587,36 @@ function displayAshtavargam($id,$planet,$data,$type=1)
 						<div class="divTableDummyCell"></div>
 				</div>
 				<div class="divTableRow">
-						<div class="divTableDummyCell"></div>
-						<div class="divTableCell">$h11</div>
-						<div class="divTableCell">$h0</div>
-						<div class="divTableCell">$h1</div>
-						<div class="divTableCell">$h2</div>
-						<div class="divTableDummyCell"></div>
+					<div class="divTableDummyCell"></div>
+					<div class="divTableCell">$th11</div>
+					<div class="divTableCell">$th0</div>
+					<div class="divTableCell">$th1</div>
+					<div class="divTableCell">$th2</div>
+					<div class="divTableDummyCell"></div>
 				</div>
 				<div class="divTableRow">
-						<div class="divTableDummyCell"></div>
-						<div class="divTableCell">$h10</div>
-						<div class="divTableCenterCell" style='font-size:10px'>$chartname</div>
-						<div class="divTableCenterCell"></div>
-						<div class="divTableCell">$h3</div>
-						<div class="divTableDummyCell"></div>
+					<div class="divTableDummyCell"></div>
+					<div class="divTableCell">$th10</div>
+					<div class="divTableCenterCell" style='font-size:10px'>$chartname_trans</div>
+					<div class="divTableCenterCell"></div>
+					<div class="divTableCell">$th3</div>
+					<div class="divTableDummyCell"></div>
 				</div>
 				<div class="divTableRow">
-						<div class="divTableDummyCell"></div>
-						<div class="divTableCell">$h9</div>
-						<div class="divTableCenterCell"></div>
-						<div class="divTableCenterCell" style='font-size:10px'>$total</div>
-						<div class="divTableCell">$h4</div>
-						<div class="divTableDummyCell"></div>
+					<div class="divTableDummyCell"></div>
+					<div class="divTableCell">$th9</div>
+					<div class="divTableCenterCell"></div>
+					<div class="divTableCenterCell" style='font-size:10px'>$total</div>
+					<div class="divTableCell">$th4</div>
+					<div class="divTableDummyCell"></div>
 				</div>
 				<div class="divTableRow">
-						<div class="divTableDummyCell"></div>
-						<div class="divTableCell">$h8</div>
-						<div class="divTableCell">$h7</div>
-						<div class="divTableCell">$h6</div>
-						<div class="divTableCell">$h5</div>
-						<div class="divTableDummyCell"></div>
+					<div class="divTableDummyCell"></div>
+					<div class="divTableCell">$th8</div>
+					<div class="divTableCell">$th7</div>
+					<div class="divTableCell">$th6</div>
+					<div class="divTableCell">$th5</div>
+					<div class="divTableDummyCell"></div>
 				</div>
 				<div class="divTableRow">
 						<div class="divTableDummyCell"></div>
@@ -11955,10 +12004,11 @@ function displayBriguCombination() {
 				if (strpos($part, '°') !== false) continue;
 				$has_retro = (mb_substr(trim($part), -3) === '(வ)');
 				if ($firstSet && empty($firstElement)) {
+					$part = __($part);
 					$firstElement = "<div style='display:inline-block;text-align:center;'>" .
 						($has_retro
 							? "<span style='font-size:10px;display:block;color:red;'>&#8592;</span><span style='color:red;'>$part</span>"
-							: "<span style='font-size:10px;display:block;'>&#8594;</span><span>$part</span>"
+							: "<span style='font-size:10px;display:block;'>&#8594;</span><span style='font-size:10px;'>$part</span>"
 						) .
 						"</div>";
 				}
@@ -11966,15 +12016,24 @@ function displayBriguCombination() {
 					$arrow = "<span style='color:red;'>&#8592;</span>";
 					// Remove (வ) from the part before displaying
 					$clean_part = str_replace('(வ)', '', $part);
+					// translate/map tokens when UI is English
+					$display_clean = $clean_part;
+					if (is_english()) {
+						$display_clean = __($display_clean);
+					}
 					$output .= "<div style='display:inline-block;text-align:center;'>
 						<span style='font-size:10px;display:block;color:red;'>$arrow</span>
-						<span style='color:red;font-size:10px'>$clean_part</span>
+						<span style='color:red;font-size:10px'>" . $display_clean . "</span>
 					  </div>";
 				} else {
 					$arrow = '&#8594;';
+					$display_part = $part;
+					if (is_english()) {
+						$display_part = __($display_part);
+					}
 					$output .= "<div style='display:inline-block;text-align:center;'>
 						<span style='font-size:10px;display:block;'>$arrow</span>
-						<span style='font-size:10px'>$part</span>
+						<span style='font-size:10px'>" . $display_part . "</span>
 					  </div>";
 				}
 			}
@@ -11986,7 +12045,7 @@ function displayBriguCombination() {
 	$output .= str_replace('(வ)', '', $firstElement);
 
 	echo "<div class='divBNN'>";
-	echo "<div class='bnn-title'>பிருகு நந்தி நாடி தொடர்பு</div>";
+	echo "<div class='bnn-title'>" . __('bnn_title') . "</div>";
 	echo "<div style='display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;'>";
 	echo $output;
 	echo "</div>";

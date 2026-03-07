@@ -42,6 +42,15 @@ elseif(strcmp($usertype,BIRTHMATCH)==0){
 
 EOL;
 }
+elseif(strcmp($usertype,JAMA_BIRTH)==0){
+	echo <<<EOL
+	 <div class="MENU-container">
+		<div class="navbar">
+			<div class='menuHeading'>HELP</div>
+		</div>
+	</div>
+EOL;
+}
 elseif(strcmp($usertype,PAID)==0){
     
 	echo <<<EOL

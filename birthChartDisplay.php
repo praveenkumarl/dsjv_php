@@ -93,7 +93,7 @@ echo <<<EOL
 EOL;
 
 		// Show match button only for allowed user types
-		if($usertype == PAID || $usertype == MATCHING || $usertype == BIRTHMATCH || $usertype == BIRTHPANCHMATCH || $usertype == SUPER || $usertype == ADMIN){
+		if($usertype == PAID || $usertype == MATCHING || $usertype == BIRTHMATCH || $usertype == BIRTHPANCHMATCH  || $usertype == SUPER || $usertype == ADMIN){
 			echo "<button class='actionBtn' onClick=\"window.open('matchBirthChart.php')\">பொருத்தம்</button><br><br>";
 		}
 		

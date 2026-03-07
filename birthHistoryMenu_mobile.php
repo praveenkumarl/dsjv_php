@@ -47,6 +47,24 @@ elseif(strcmp($usertype,BIRTHMATCH)==0){
 
 EOL;
 }
+elseif(strcmp($usertype,JAMA_BIRTH)==0){
+	echo <<<EOL
+	<div class="MENU-container">
+		<div class="navbar">
+			<div class="dropdown1">
+				<button class="dropbtn" style="padding:10px; width:auto">
+				  <i class="fa fa-caret-square-o-down fa-2x"></i>
+				</button>
+				<div class="dropdown1-content">
+				  <a class='glow-button' href="Birth_input.php">பிறப்பு ஜாதகம்</a>
+				</div>
+			</div> 
+			<a href="index.php"><i class="fa fa-home fa-2x"></i></a>
+			<a href="Birth_input.php"><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></a>
+		</div>
+	</div>
+EOL;
+}
 elseif(strcmp($usertype,BIRTHPANCH)==0){
     echo <<<EOL
     <div class="MENU-container">

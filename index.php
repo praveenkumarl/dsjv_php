@@ -83,6 +83,9 @@ elseif(strcmp($_SESSION['user_type'],JAMAKOL)==0){
 elseif(strcmp($_SESSION['user_type'],JAMA_MATCH)==0){
 	header("Location: Jamakol_input.php");
 }
+elseif(strcmp($_SESSION['user_type'],JAMA_BIRTH)==0){
+	header("Location: Jamakol_input.php");
+}
 elseif(strcmp($_SESSION['user_type'],PRASANNAM)==0){
 	header("Location: prasannam_home.php");
 }

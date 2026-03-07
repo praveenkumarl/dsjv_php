@@ -209,8 +209,8 @@ function get_translation_mapping_json() {
     }
 
     // Keep paksha labels bracketed in dynamic strings like Thithi
-    $mapping['(சுக்)'] = '(wax)';
-    $mapping['(கிரு)'] = '(wan)';
+    //$mapping['(சுக்)'] = '(wax)';
+    //$mapping['(கிரு)'] = '(wan)';
     
     return json_encode($mapping, JSON_UNESCAPED_UNICODE);
 }
