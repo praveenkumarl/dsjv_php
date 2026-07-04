@@ -70,7 +70,8 @@ function __($key, $default = null) {
         'shatabhisha_abbr',
         'purva_bhadrapada_abbr',
         'uttara_bhadrapada_abbr',
-        'revati_abbr'
+        'revati_abbr',
+        
     ];
     
     // If this is a Tamil-only key, always return the Tamil translation

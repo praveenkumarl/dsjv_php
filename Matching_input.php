@@ -1,5 +1,14 @@
 <?php 
-require "lib.php";
+require_once "lib.php";
+require_once "lang/lang.php";
+
+// Determine if language is set via session, cookie, or default to english
+if(!isset($language)){
+	$language = isset($_SESSION['language']) ? $_SESSION['language'] : (isset($_COOKIE['language']) ? $_COOKIE['language'] : 'english');
+}
+
+// Initialize the language system
+init_language($language);
 
 $place_boy="";
 $place_girl="";
@@ -102,14 +111,13 @@ function validateForm() {
   pb = document.getElementById("place_boy").value;
   
   if (pb == "") {
-    //document.getElementById("error").innerHTML = "Place must be filled out";
-	alert("ஆண் பி.இடம் கொடுக்கவில்லை");
+	alert('<?php echo addslashes(__('boy_birth_place_required')); ?>');
 	document.getElementById('place_boy').style.borderColor = "red";
     return false;
   }
   
    if (pb.includes("|")==false || pb.includes("/")==false || pb.length<10){
-	  alert('நீங்கள் ஆண் இடத்தை கீழ் வரும் பட்டியலில் தேர்ந்தெடுக்கவில்லை');
+	  alert('<?php echo addslashes(__('boy_birth_place_select_from_list')); ?>');
 	  document.getElementById('place_boy').style.borderColor = "red";
 	  return false;
   }
@@ -117,56 +125,52 @@ function validateForm() {
   pg = document.getElementById("place_girl").value;
   
   if (pg == "") {
-    //document.getElementById("error").innerHTML = "Place must be filled out";
-	alert("பெண் பி.இடம் கொடுக்கவில்லை");
+    alert('<?php echo addslashes(__('girl_birth_place_required')); ?>');
 	document.getElementById('place_girl').style.borderColor = "red";
     return false;
   }
   
   if (pg.includes("|")==false || pg.includes("/")==false || pg.length<10){
-	  alert('நீங்கள் பெண் இடத்தை கீழ் வரும் பட்டியலில் தேர்ந்தெடுக்கவில்லை');
+	  alert('<?php echo addslashes(__('girl_birth_place_select_from_list')); ?>');
 	  document.getElementById('place_girl').style.borderColor = "red";
 	  return false;
   }
   
    if (gn == "") {
-    //document.getElementById("error").innerHTML = "Girl name must be filled out";
-	alert("பெண் பெயர் கொடுக்கவில்லை");
+    alert('<?php echo addslashes(__('girl_name_required')); ?>');
 	document.getElementById('girlname').style.borderColor = "red";
     return false;
   }
 
   if (gd == "") {
-    //document.getElementById("error").innerHTML = "Date must be filled out";
-	alert("பெண் பி.தேதி கொடுக்கவில்லை");
+    alert('<?php echo addslashes(__('girl_birth_date_required')); ?>');
 	document.getElementById('in_date_girl').style.borderColor = "red";
     return false;
   }
   
    if (gt == "") {
-    //document.getElementById("error").innerHTML = "Time must be filled out";
-	alert("பெண் பி.நேரம் கொடுக்கவில்லை");
+    alert('<?php echo addslashes(__('girl_birth_time_required')); ?>');
 	document.getElementById('in_time_girl').style.borderColor = "red";
     return false;
   }
   
   if (bn == "") {
     //document.getElementById("error").innerHTML = "Boy name must be filled out";
-	alert("ஆண் பெயர் கொடுக்கவில்லை");
+	alert('<?php echo addslashes(__('boy_name_required')); ?>');
 	document.getElementById('boyname').style.borderColor = "red";
     return false;
   }
   
   if (bd == "") {
     //document.getElementById("error").innerHTML = "Date must be filled out";
-	alert("ஆண் பி.தேதி கொடுக்கவில்லை");
+	alert('<?php echo addslashes(__('boy_birth_date_required')); ?>');
 	document.getElementById('in_date_boy').style.borderColor = "red";
     return false;
   }
   
   if (bt == "") {
     //document.getElementById("error").innerHTML = "Time must be filled out";
-	alert("ஆண் பி.நேரம் கொடுக்கவில்லை");
+	alert('<?php echo addslashes(__('boy_birth_time_required')); ?>');
 	document.getElementById('in_time_boy').style.borderColor = "red";
     return false;
   } 
@@ -243,7 +247,7 @@ function updateNow() {
     </script>
 </head>
 
-<body onLoad="init();">
+	<body onLoad="init();">
 <div id="loader" class="center" style="display: none;"></div>
 
 <div class="title"></div>
@@ -251,11 +255,19 @@ function updateNow() {
 		<div class='column-menu'>
 			<div class='desktop'>
 				<?php displayUserInfo($_SESSION['userinfo']); ?>
-				<button class="menu" onClick="window.open('index.php','_self')">Home</button>
-				<button class='menu' onClick='window.open("matchingChartDisplay.php","_self")'>Matching Chart history</button>
+				<button class="menu" onClick="window.open('index.php','_self')"><?php _e('back'); ?></button>
+				<button class='menu' onClick='window.open("matchingChartDisplay.php","_self")'><?php _e('history'); ?></button>
+				<button class='menu' onclick="toggleLanguage()" style="background:transparent;border:1px solid #fff;color:#fff;min-width:80px;padding:8px;margin-left:6px;">
+					<?php echo ($language === 'english' ? 'EN' : 'தமிழ்'); ?>
+				</button>
 			</div>
 			<div class='mobile'>
 				<?php include "matchingInputMenu_mobile.php"; ?>
+				<div style="text-align:right;padding:8px 10px;">
+					<button class='menu' onclick="toggleLanguage()" style="background:transparent;border:1px solid #fff;color:#fff;min-width:72px;padding:8px;font-size:12px;">
+						<?php echo ($language === 'english' ? 'EN' : 'தமிழ்'); ?>
+					</button>
+				</div>
 			</div>
 		</div>
 		<div class='column-body'>
@@ -265,64 +277,54 @@ function updateNow() {
 							<form name="chartInput" action="Matching_Chart.php" method="post" onsubmit="openLoader()">
 								<table style="width: max-content;text-align: left">
 									<tr>
-										<td colspan=2><P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">திருமண பொருத்தம்</P></td>
-									</tr>
-									<tr style="background-color: #FFFFFF">
-										<td><div class="divBirthInputLable">*பெ.பெயர்:</div></td>
-										<td><input type="text" name="girlname" id="girlname" autocomplete="off" placeholder="Enter girl name..." onfocus=this.value='' onBlur="girlnameOnBlur();" style="color:#000000;font-size:12px;font-weight:bold;" />
-										</td>
-									</tr>
-									<tr style="background-color: #FFFFFF">
-										<td><div class="divBirthInputLable">*பெ.பி.இடம்:</div></td>
-										<td><div class="search-box"><input type="text" name="place_girl" id="place_girl" autocomplete="off" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" style="color:#000000;font-size:12px;font-weight:bold;width:175px;" /><div class="result"></div>
-										</td>
-									</tr>
-									<tr style="background-color: #FFFFFF">
-										<td><div class="divBirthInputLable">*பெ.பி.தேதி:</div></td>
-										<td><input type="date" id="in_date_girl" name="in_date_girl" style="color:#000000;font-size:12px;font-weight:bold;width:100px;" /></td>
-									</tr>
-									<tr style="background-color: #FFFFFF">
-										<td><div class="divBirthInputLable">*பெ.பி.நேரம்:</div></td>
-										<td><input type="time" id="in_time_girl" name="in_time_girl" step="1" style="color:#000000;font-size:12px;font-weight:bold;width:100px;" /></td>
-									</tr>
-									<tr style="background-color: #FFFFFF">
-										<td><div class="divBirthInputLable">*ஆ.பெயர்:</div></td>
-										<td><input type="text" name="boyname" id="boyname" autocomplete="off" style="color:#000000;font-size:12px;font-weight:bold;width:175px;" placeholder="Enter boy name..." onfocus=this.value='' onBlur="boynameOnBlur();" />
-										</td>
-									</tr>
-									<tr style="background-color: #FFFFFF">
-										<td><div class="divBirthInputLable">*ஆ.பி.இடம்:</div></td>
-										<td><div class="search-box"><input type="text" name="place_boy" id="place_boy" autocomplete="off" style="color:#000000;font-size:12px;font-weight:bold;width:175px;" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" /><div class="result"></div>
-										</td>
-									</tr>
-									<tr style="background-color: #FFFFFF">
-										<td><div class="divBirthInputLable">*ஆ.பி.தேதி:</div></td>
-										<td><input type="date" id="in_date_boy" name="in_date_boy" style="color:#000000;font-size:12px;font-weight:bold;width:100px;" /></td>
-									</tr>
-									<tr style="background-color: #FFFFFF">
-										<td><div class="divBirthInputLable">*ஆ.பி.நேரம்:</div></td>
-										<td><input type="time" id="in_time_boy" name="in_time_boy" step="1" style="color:#000000;font-size:12px;font-weight:bold;width:100px;" /></td>
-									</tr>
+									<td colspan=2><P style="color:#660000;font-weight:bold; font-size:20px; text-align:center"><?php _e('matching_horoscope'); ?></P></td>
+								</tr>
+								<tr style="background-color: #FFFFFF">
+									<td><div class="divBirthInputLable"><?php echo "*" . __('girl_name'); ?></div></td>
+									<td><input type="text" name="girlname" id="girlname" autocomplete="off" placeholder="<?php _e('enter_girl_name'); ?>" onfocus=this.value='' onBlur="girlnameOnBlur();" style="color:#000000;font-size:12px;font-weight:bold;" />
+									</td>
+								</tr>
+								<tr style="background-color: #FFFFFF">
+									<td><div class="divBirthInputLable"><?php echo "*" . __('girl_birth_place'); ?></div></td>
+									<td><div class="search-box"><input type="text" name="place_girl" id="place_girl" autocomplete="off" placeholder="<?php _e('search_place_placeholder'); ?>" onfocus=this.value='' onBlur="placeOnBlur();" style="color:#000000;font-size:12px;font-weight:bold;width:175px;" /><div class="result"></div>
+									</td>
+								</tr>
+								<tr style="background-color: #FFFFFF">
+									<td><div class="divBirthInputLable"><?php echo "*" . __('girl_birth_date'); ?></div></td>
+									<td><input type="date" id="in_date_girl" name="in_date_girl" style="color:#000000;font-size:12px;font-weight:bold;width:100px;" /></td>
+								</tr>
+								<tr style="background-color: #FFFFFF">
+									<td><div class="divBirthInputLable"><?php echo "*" . __('girl_birth_time'); ?></div></td>
+									<td><input type="time" id="in_time_girl" name="in_time_girl" step="1" style="color:#000000;font-size:12px;font-weight:bold;width:100px;" /></td>
+								</tr>
+								<tr style="background-color: #FFFFFF">
+									<td><div class="divBirthInputLable"><?php echo "*" . __('boy_name'); ?></div></td>
+									<td><input type="text" name="boyname" id="boyname" autocomplete="off" style="color:#000000;font-size:12px;font-weight:bold;width:175px;" placeholder="<?php _e('enter_boy_name'); ?>" onfocus=this.value='' onBlur="boynameOnBlur();" />
+									</td>
+								</tr>
+								<tr style="background-color: #FFFFFF">
+									<td><div class="divBirthInputLable"><?php echo "*" . __('boy_birth_place'); ?></div></td>
+									<td><div class="search-box"><input type="text" name="place_boy" id="place_boy" autocomplete="off" style="color:#000000;font-size:12px;font-weight:bold;width:175px;" placeholder="<?php _e('search_place_placeholder'); ?>" onfocus=this.value='' onBlur="placeOnBlur();" /><div class="result"></div>
+									</td>
+								</tr>
+								<tr style="background-color: #FFFFFF">
+									<td><div class="divBirthInputLable"><?php echo "*" . __('boy_birth_date'); ?></div></td>
+									<td><input type="date" id="in_date_boy" name="in_date_boy" style="color:#000000;font-size:12px;font-weight:bold;width:100px;" /></td>
+								</tr>
+								<tr style="background-color: #FFFFFF">
+									<td><div class="divBirthInputLable"><?php echo "*" . __('boy_birth_time'); ?></div></td>
+									<td><input type="time" id="in_time_boy" name="in_time_boy" step="1" style="color:#000000;font-size:12px;font-weight:bold;width:100px;" /></td>
+								</tr>
+								
+								<tr  style="background-color: #FFFFFF">
+									<td align="center"><button type="button" value="MatchBirth" class="primary wide" style="width:100%; text-align:center; font-weight:bold; background:#660000; font-size:11px; border:none; color:white; cursor:pointer;" onclick="window.open('matchBirthChart.php','_self')">பொருத்தம்</button></td>
+									<td align="center"><input type="submit" value="சமர்ப்பிக்க" class="primary wide" style="width:100%; text-align:center; font-weight:bold; background:#660000; font-size:11px; border:none; color:white; cursor:pointer;" onclick="return validateForm();"></td>
+								</tr>
+								<tr style="background-color: #FFFFFF">
+									<td colspan="2" align="center"><div id="error" style="color:red;"></div></td>
+								</tr>
 									
-									<tr  style="background-color: #FFFFFF">
-										<td align="center"><button type="button" value="MatchBirth" class="primary wide" style="text-align:center; font-weight:bold; background:#660000" onclick="window.open('matchBirthChart.php','_self')">MatchBirth</button></td>
-										<td align="center"><input type="submit" value="Submit" class="primary wide" style="text-align:center; font-weight:bold; background:#660000" onclick="return validateForm();"></td>
-									</tr>
-									
-									<tr style="background-color: #FFFFFF">
-										<td colspan="2" align="center"><div id="error" style="color:red;"></div></td>
-									</tr>
-									<!-- <tr style="background-color: #FFFFFF">
-										<td>
-											<label for="lang" style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:20px">Choose Language:</label>
-										</td>
-										<td>
-											<select name="lang" id="lang" style="width:auto;font-size:20px;">
-												<option value="Tamil" selected>Tamil</option>
-												  <option value="English">English</option>
-											</select>
-										</td>
-									</tr> -->
+									<!-- Language selector removed - integrated into header above -->
 									
 			
 									

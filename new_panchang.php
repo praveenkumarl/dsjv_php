@@ -727,7 +727,8 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		});
 
 		//To add next thithi
-		newdate = new Date(thithi_end.getFullYear(),thithi_end.getMonth(),thithi_end.getDate(),thithi_end.getHours(),thithi_end.getMinutes()+1); //adding 1 min to get next thithi
+		//newdate = new Date(thithi_end.getFullYear(),thithi_end.getMonth(),thithi_end.getDate(),thithi_end.getHours(),thithi_end.getMinutes()+1); //adding 1 min to get next thithi
+		newdate = new Date(thithi_end.getFullYear(),thithi_end.getMonth(),thithi_end.getDate(),thithi_end.getHours()+1,thithi_end.getMinutes()); //adding 1 hour to get next thithi, above 1 min sometimes display same thithi for next too
 		//newdate = changeTimezone(newdate,timezone);
 	
 		panchang.calculate(newdate, function() {

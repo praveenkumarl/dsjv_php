@@ -1,5 +1,13 @@
-<!DOCTYPE html>
 <?php
+if (!ob_get_level() && extension_loaded('zlib') && !ini_get('zlib.output_compression')) {
+	ob_start('ob_gzhandler');
+}
+
+function asset_version($path) {
+	$full_path = __DIR__ . DIRECTORY_SEPARATOR . str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $path);
+	return file_exists($full_path) ? filemtime($full_path) : time();
+}
+
 include_once "lib.php";
 include_once "lang/lang.php";
 
@@ -218,7 +226,7 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 	$saveBtnTxt='Update';
 }
 ?>
-
+<!DOCTYPE html>
 <html lang="en" class="no-js">
 <head>
     <meta charset="utf-8">
@@ -228,24 +236,60 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
     <title>PK Astro</title>
     <meta name="description" content="One stop website for astrology">
 	
-	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
-	<link rel="stylesheet" href="css/birth_chart_style.css?<?php echo date('ymdhis'); ?>">
-	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/main.css?v=<?php echo asset_version('css/main.css'); ?>">
+	<link rel="stylesheet" href="css/birth_chart_style.css?v=<?php echo asset_version('css/birth_chart_style.css'); ?>">
+	<link rel="stylesheet" href="style.css?v=<?php echo asset_version('style.css'); ?>">
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    <script src="script.js"></script>
-	<script src="panchang.js?<?php echo date('ymdhis'); ?>"></script>
-	<script src="my_panchang.js?<?php echo date('ymdhis'); ?>"></script>
-	<script src="send_pdf_data.js?<?php echo date('ymdhis'); ?>"></script>
+    <script src="script.js?v=<?php echo asset_version('script.js'); ?>"></script>
+	<script src="panchang.js?v=<?php echo asset_version('panchang.js'); ?>"></script>
+	<script src="my_panchang.js?v=<?php echo asset_version('my_panchang.js'); ?>"></script>
+	<script src="send_pdf_data.js?v=<?php echo asset_version('send_pdf_data.js'); ?>"></script>
 	<script type="text/javascript">
 	var timezone = '<?php echo $TZ; ?>';
 	var currentLanguage = '<?php echo $language; ?>';
 	// Provide translation mapping (Tamil -> English) to client-side
 	var translationMapping = <?php echo get_translation_mapping_json(); ?>;
+	var pdfLibraryLoadPromise = null;
+
+	function loadScriptOnce(src) {
+		return new Promise(function(resolve, reject) {
+			var existing = document.querySelector('script[src="' + src + '"]');
+			if (existing) {
+				existing.addEventListener('load', resolve, { once: true });
+				existing.addEventListener('error', reject, { once: true });
+				if (existing.dataset.loaded === 'true') resolve();
+				return;
+			}
+
+			var script = document.createElement('script');
+			script.src = src;
+			script.async = true;
+			script.onload = function() {
+				script.dataset.loaded = 'true';
+				resolve();
+			};
+			script.onerror = reject;
+			document.head.appendChild(script);
+		});
+	}
+
+	function ensurePdfLibraries() {
+		if (typeof html2canvas !== 'undefined' && typeof html2pdf !== 'undefined') {
+			return Promise.resolve();
+		}
+
+		if (!pdfLibraryLoadPromise) {
+			pdfLibraryLoadPromise = loadScriptOnce('html2canvas.min.js?v=<?php echo asset_version('html2canvas.min.js'); ?>')
+				.then(function() {
+					return loadScriptOnce('html2pdf.bundle.min.js?v=<?php echo asset_version('html2pdf.bundle.min.js'); ?>');
+				});
+		}
+
+		return pdfLibraryLoadPromise;
+	}
 
 	function mapIfEnglish(text) {
 		if (currentLanguage === 'english' && translationMapping && translationMapping[text]) {
@@ -721,7 +765,9 @@ document.addEventListener('DOMContentLoaded', function() {
 				btns.style.display='table';
 		}
 		
-		function generatePDF() {
+		async function generatePDF() {
+			await ensurePdfLibraries();
+
 			// hide unncessary elements
 			var ele = document.getElementById('column-menu');
 			ele.style.display = 'none';
@@ -1216,7 +1262,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		x.style.display='none';
 	}
 	
-	function downloadWallpaper(name) {
+	async function downloadWallpaper(name) {
+		await ensurePdfLibraries();
+
 		/*var container = document.getElementById("image-wrap");*/ /*specific element on page*/
 		var container = document.getElementById("wallpaper_container"); /* full page */
 		html2canvas(container, { allowTaint: true }).then(function (canvas) {
@@ -1512,10 +1560,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 	
 async function generateOptimizedPDF() {
-    // Check if html2canvas is available.
-    if (typeof html2canvas === 'undefined' || typeof html2pdf === 'undefined') {
-        console.error("The PDF generation libraries are not loaded.");
-        alert("The PDF generation library is not loaded. Please try refreshing the page.");
+    try {
+        await ensurePdfLibraries();
+    } catch (error) {
+        console.error("The PDF generation libraries failed to load.", error);
+        alert("The PDF generation library could not be loaded. Please try again.");
         return;
     }
 
@@ -2261,7 +2310,7 @@ function displayHoroDetails()
 			}
 			
 			echo "<div class='divPanchangHeading'>" . __('birth_date') . "</div>";
-			echo "<div class='divPanchang' style='font-weight:bold'>".date('d-M-Y',strtotime($chart_date))."<BR>($g_age வயது)</div>";
+			echo "<div class='divPanchang' style='font-weight:bold'>".date('d-M-Y',strtotime($chart_date))."<BR>($g_age " . __('age', 'வயது') . ")</div>";
 		echo "</div>";
 		
 		//$g_tamil_date_arr = getTamilMonthDay($sun_house,$sun_degree);

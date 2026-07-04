@@ -89,7 +89,8 @@ function generateLagnaData($swetest_path, $sweph_path, $date, $lon, $lat, $timez
         $batch_time = $batch_dt->format('H:i:s');
         $batch_date = $batch_dt->format('d.m.Y');
         
-        $cmd = "$swetest_path -edir$sweph_path -b$batch_date -ut$batch_time -n$remaining -s1m -sid1 -eswe -fPl -head -house$lon,$lat,P";
+        // swetest command to get Ascendant for each minute in this batch, linux is not taking -s1m as 1 minute rather takes as 1 day, so we should use fraction of day
+        $cmd = "$swetest_path -edir$sweph_path -b$batch_date -ut$batch_time -n$remaining -s0.000694444444444444 -sid1 -eswe -fPl -head -house$lon,$lat,P";
         
         $output = [];
         $ret = 0;
@@ -253,7 +254,9 @@ function shiftResultsForLongitude(array $results, $date, $baseLon, $targetLon, $
         if ($minutes <= 0) return [];
         $bDate = $startUtc->format('d.m.Y');
         $ut = $startUtc->format('H:i');
-        $cmd = $swetest_path . ' -edir' . $sweph_path . ' -b' . $bDate . ' -ut' . $ut . ' -n' . $minutes . ' -s1 -sid1 -eswe -fPl -head -house=' . $lon . ',' . $lat;
+
+        // swetest command to get Ascendant for each minute in this batch, linux is not taking -s1m as 1 minute rather takes as 1 day, so we should use fraction of day
+        $cmd = $swetest_path . ' -edir' . $sweph_path . ' -b' . $bDate . ' -ut' . $ut . ' -n' . $minutes . ' -s0.000694444444444444 -sid1 -eswe -fPl -head -house=' . $lon . ',' . $lat;
         $lines = [];
         $ret = 0;
         @exec($cmd, $lines, $ret);

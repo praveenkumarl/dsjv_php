@@ -1,6 +1,28 @@
 <!DOCTYPE html>
 <?php
 require "lib.php";
+require_once "lang/lang.php";
+
+if(isset($_COOKIE['language'])){
+	$_COOKIE['language'] = strtolower($_COOKIE['language']);
+}
+
+if(isset($_POST['language'])){
+	$language = strtolower($_POST['language']);
+	setcookie('language', $language, time() + (86400 * 365), "/");
+}
+elseif(isset($_SESSION['language'])){
+	$language = strtolower($_SESSION['language']);
+}
+elseif(isset($_COOKIE['language'])){
+	$language = $_COOKIE['language'];
+}
+else{
+	$language = 'english';
+}
+
+$_SESSION['language'] = $language;
+init_language($language);
 
 $in_place_girl = isset($_POST["place_girl"]) ? $_POST["place_girl"] : $_POST["nPlace_girl"];
 $place_girl=strtok($in_place_girl,"|");
@@ -150,6 +172,144 @@ $dayofweek = date('w', strtotime($chart_date));
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="script.js"></script>
     <script type="text/javascript">
+		var currentLanguage = '<?php echo $language; ?>';
+		var translations = <?php echo get_translations_json(); ?>;
+		var translationMapping = <?php echo get_translation_mapping_json(); ?>;
+		var matchingDisplayMap = {
+			'புதன்கிழமை': 'Wednesday',
+			'திங்கட்கிழமை': 'Monday',
+			'செவ்வாய்க்கிழமை': 'Tuesday',
+			'வியாழக்கிழமை': 'Thursday',
+			'வெள்ளிக்கிழமை': 'Friday',
+			'சனிக்கிழமை': 'Saturday',
+			'ஞாயிற்றுக்கிழமை': 'Sunday',
+			'(வளர்)': '(Waxing)',
+			'(தேய்)': '(Waning)',
+			'வளர்': 'Waxing',
+			'தேய்': 'Waning',
+			'சந்திர தசை': 'Moon Dasa',
+			'சூரிய தசை': 'Sun Dasa',
+			'செவ்வாய் தசை': 'Mars Dasa',
+			'புதன் தசை': 'Mercury Dasa',
+			'குரு தசை': 'Jupiter Dasa',
+			'சுக்கிர தசை': 'Venus Dasa',
+			'சனி தசை': 'Saturn Dasa',
+			'ராகு தசை': 'Rahu Dasa',
+			'கேது தசை': 'Ketu Dasa',
+			'பொருத்த மதிப்பு': 'Matching Score',
+			'மதிப்பு விவரம்': 'Score Details',
+			'தினம் பொருத்தம்': 'Dina Match',
+			'கண பொருத்தம்': 'Gana Match',
+			'மகேந்திர பொருத்தம்': 'Mahendra Match',
+			'ஸ்திரீ தீர்க்கம்': 'Sthree Dheerga',
+			'யோனி பொருத்தம்': 'Yoni Match',
+			'ராசி பொருத்தம்': 'Rasi Match',
+			'ராசி அதிபதி பொருத்தம்': 'Rasi Lord Match',
+			'வசிய பொருத்தம்': 'Vasiya Match',
+			'ரஜ்ஜு பொருத்தம்': 'Rajju Match',
+			'வேதை பொருத்தம்': 'Vedhai Match',
+			'நாடி பொருத்தம்': 'Naadi Match',
+			'நட்சத்திர பொருத்தம்': 'Star Match',
+			'ராசி/சந்திரன்': 'Rasi/Moon',
+			'செ/சனி பார்வை': 'Ma/Sa Aspect',
+			'இருண்ட வீடுகள்': 'Dark Houses',
+			'பாதிக்கப்பட்ட வீடுகள்': 'Affected Houses',
+			'தசா பொருத்தம்': 'Dasa Match',
+			'சூரி/சந் நிலை': 'Su/Mo Position',
+			'தசா/புக்தி': 'Dasa/Bukthi',
+			'திதி சூனியம்': 'Thithi Soonyam',
+			'தோஷங்கள்': 'Doshas',
+			'பாதிப்பு': 'Affected',
+			'லக்கினாதிபதி': 'Lagna lord',
+			'கழுத்து': 'Neck',
+			'தலை': 'Head',
+			'வயிறு': 'Stomach',
+			'தொடை': 'Thigh',
+			'கால்': 'Leg',
+			'புத்திர': 'Putra',
+			'களத்திர': 'Kalathra',
+			'தவிர்க்க (0-40)': 'Avoid (0-40)',
+			'சராசரி (40-60)': 'Average (40-60)',
+			'உத்தமம் (60-100)': 'Excellent (60-100)',
+			'தவிர்க்க': 'Avoid',
+			'சராசரி': 'Average',
+			'உத்தமம்': 'Excellent',
+			'தசா/புக்தி அதிபதி': 'Dasa/Bukthi Lord',
+			'தசா புக்தி அதிபதி': 'Dasa/Bukthi Lord',
+			'அதிபதி': 'Lord',
+			'ஒரே ரஜ்ஜு': 'Same Rajju',
+			'வேறு ரஜ்ஜு': 'Different Rajju',
+			'வேதை நட்': 'Vedhai Star',
+			'லக்/செவ்/சுக்/2/7': 'Asc/Ma/Ven/2/7',
+			'ஆண்/பெண்': 'Male/Female',
+			'பெண்': 'Female',
+			'ஆண்': 'Male',
+			'இல்லை': 'No'
+		};
+		var shortTamilTokens = {
+			'சந்திர': 'Moon',
+			'சூரிய': 'Sun',
+			'சூரியன்': 'Sun',
+			'சந்திரன்': 'Moon',
+			'சூரி': 'Su',
+			'சந்': 'Mo',
+			'செ': 'Ma',
+			'புத': 'Me',
+			'குரு': 'Ju',
+			'சுக்': 'Ven',
+			'சுக்+': 'Ve',
+			'சூரி+': 'Su+',
+			'சனி': 'Sa',
+			'ரா': 'Ra',
+			'கே': 'Ke',
+			'லக்': 'Asc'
+		};
+		var unsafeGenericKeys = Object.keys(shortTamilTokens).concat(['வ்', 'தி', 'மா']);
+
+		function replaceTamilToken(text, tamil, english) {
+			var escaped = tamil.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+			var pattern = new RegExp('(^|[^\\u0B80-\\u0BFF])' + escaped + '(?=$|[^\\u0B80-\\u0BFF])', 'gu');
+			return text.replace(pattern, function(match, prefix) {
+				return prefix + english;
+			});
+		}
+
+		function translateDynamic(text) {
+			if (currentLanguage !== 'english' || text === null || text === undefined) {
+				return text;
+			}
+
+			var translated = String(text);
+
+			Object.keys(matchingDisplayMap)
+				.sort(function(a, b) { return b.length - a.length; })
+				.forEach(function(key) {
+					translated = translated.split(key).join(matchingDisplayMap[key]);
+				});
+
+			Object.keys(translationMapping)
+				.sort(function(a, b) { return b.length - a.length; })
+				.forEach(function(key) {
+					if (unsafeGenericKeys.indexOf(key) !== -1) return;
+					if (key) translated = translated.split(key).join(translationMapping[key]);
+				});
+
+			Object.keys(shortTamilTokens).sort(function(a, b) { return b.length - a.length; }).forEach(function(key) {
+				translated = replaceTamilToken(translated, key, shortTamilTokens[key]);
+			});
+
+			return translations[translated] || translated;
+		}
+
+		function translateMatchingPage() {
+			if (currentLanguage !== 'english') return;
+			document.querySelectorAll('p, h4, h6, button, .divPanchangHeading, .divGirlPanchangHeading, .divBoyPanchangHeading, .divPanchang, .divGirlPanchang, .divBoyPanchang, .divStarMatch, .divMatchingResultText, .divMatchingResultGreen, .divMatchingResultOrange, .divMatchingResultRed, .divTableCell, .divTableOuterCell, .divTableOuterCellLeftTop, .divTableOuterCellRightTop, .divTableOuterCellLeftBottom, .divTableOuterCellRightBottom, .divAnthraHeading, .divAnthra, .divCurrAnthra, .divTableHeading, .divTableHead').forEach(function(el) {
+				el.innerHTML = translateDynamic(el.innerHTML);
+			});
+		}
+
+		document.addEventListener('DOMContentLoaded', translateMatchingPage);
+
 /******** this code is to take screenshot of the chart **************	
 		var dataURL = {};  
 		 $(document).ready(function(){
@@ -444,6 +604,7 @@ $dayofweek = date('w', strtotime($chart_date));
 
 <?php
 
+// Check whether a variable is set and return 1 if it exists, otherwise return 0.
 function isFilled($str)
 {
 	if(isset($str)) {
@@ -455,6 +616,7 @@ function isFilled($str)
 	}
 }
 
+// Convert transit planet labels to Tamil symbols and mark retrograde planets, then sort planet degrees.
 function updatePlanet_transit(array $planets,array $retro, $in_ragu_house)
 {
 	global $DEBUG,$planetDeg_transit;
@@ -525,6 +687,8 @@ function updatePlanet_transit(array $planets,array $retro, $in_ragu_house)
 	return $out;
 }
 
+// Add Mandhi planet notation to transit houses and update its degree tracking arrays.
+// Attach Mandhi planet notation to the correct transit house and maintain the transit degree mapping.
 function updateMandhi_transit(array $out, array $in, $in_sun_degree, $in_day, $in_dayofweek,$in_sun_house)
 {	
 	global $transit_datetime,$transit_today_sunrise,$planetDeg_transit,$mandhi_degree_transit, $planetDeg_default_transit;
@@ -556,6 +720,8 @@ function updateMandhi_transit(array $out, array $in, $in_sun_degree, $in_day, $i
 	return $out;
 }
 
+// Determine the transit Mandhi house from weekday, sunrise/sunset and sun degree.
+// Calculate the transit Mandhi house index based on weekday, sun degree and daytime/nighttime.
 function findMandhiHouse_transit($in_dayofweek,$in_sun_degree,$in_day)
 {
 	global $mandhi_degree_transit;
@@ -770,6 +936,8 @@ EOL;
 	$planetDeg = $out_planet_degree;
 }
 
+// Parse transit planet position data to build a sorted degree map for transit chart planets.
+// Sort transit planet positions by degree and convert each planet name to Tamil symbols.
 function planetSort_transit($inArray)
 {
 	global $planetDeg_transit, $DEBUG;
@@ -841,6 +1009,8 @@ function planetSort_transit($inArray)
 }
 */
 
+// Annotate each house with planet degrees from the sorted degree array, including Kethu and Mandhi.
+// Annotate each house string with the sorted degree values for planets, including Kethu and Mandhi.
 function old_sortDegree($inArray) // new function
 {
 	global $planetDeg,$mandhi_degree;
@@ -890,6 +1060,8 @@ function old_sortDegree($inArray) // new function
 }
 
 //find house
+// Return the index of the house that contains the specified planet string.
+// Return the house index in an array where the specified planet string appears.
 function findHouse($inArray,$inStr)
 {
 	foreach($inArray as $house => $planets){
@@ -900,6 +1072,8 @@ function findHouse($inArray,$inStr)
 }
 
 // Lagna matching by position/raasi
+// Evaluate lagna compatibility between girl and boy charts and update the matching score.
+// Check whether the girl and boy lagna positions are astrologically compatible and update the match score.
 function matchingRule1()
 {
 	global $sw_planet, $tr_sw_planet, $g_matching_mark;
@@ -976,6 +1150,7 @@ function matchingRule1()
 }
 
 //traditional star matching (11 points)
+// Evaluate traditional nakshatra compatibility across 11 classical matching criteria and update the match score.
 function matchingRule12()
 {
 	global $g_matching_mark, $g_girl_nak_pad_idx, $g_boy_nak_pad_idx;
@@ -3588,13 +3763,13 @@ function displayGirlBoyDetails()
 		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பிறப்பு தசா இருப்பு</div>";
-			echo "<div class='divGirlPanchang'>".$g_dasaBalance[0]."</div>";
-			echo "<div class='divBoyPanchang'>".$g_dasaBalance[1]."</div>";
+			echo "<div class='divGirlPanchang'>".map_display_text($g_dasaBalance[0])."</div>";
+			echo "<div class='divBoyPanchang'>".map_display_text($g_dasaBalance[1])."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>தற்போதைய தசா புக்தி</div>";
-			echo "<div class='divGirlPanchang'>".$g_dasaCurrent[0]."</div>";
-			echo "<div class='divBoyPanchang'>".$g_dasaCurrent[1]."</div>";
+			echo "<div class='divGirlPanchang'>".map_display_text($g_dasaCurrent[0])."</div>";
+			echo "<div class='divBoyPanchang'>".map_display_text($g_dasaCurrent[1])."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>யோகி</div>";
@@ -4092,6 +4267,28 @@ $Transit_Planet_degree=displayDegree($tr_sw_degree,false); //false for outer/tra
 //$sw_degree = sortDegree($sw_degree);
 $sw_planet = sortDegree($sw_planet);
 
+$sw_planet_disp = $sw_planet;
+$tr_sw_planet_disp = $tr_sw_planet;
+if (function_exists('map_display_text')) {
+	for ($i = 0; $i < 12; $i++) {
+		if (isset($sw_planet_disp[$i])) $sw_planet_disp[$i] = map_display_text($sw_planet_disp[$i]);
+		if (isset($tr_sw_planet_disp[$i])) $tr_sw_planet_disp[$i] = map_display_text($tr_sw_planet_disp[$i]);
+	}
+}
+
+$lbl_home = __('home', 'Home');
+$lbl_new_matching_chart = __('new_matching_chart', 'New Matching Chart');
+$lbl_matching_chart_history = __('matching_chart_history', 'Matching Chart history');
+$lbl_matching_title = __('matching_horoscope', 'Marriage Matching');
+$lbl_girl_bd = __('girl_birth_date', 'Girl Birth Date');
+$lbl_girl_bt = __('girl_birth_time', 'Girl Birth Time');
+$lbl_boy_bd = __('boy_birth_date', 'Boy Birth Date');
+$lbl_boy_bt = __('boy_birth_time', 'Boy Birth Time');
+$lbl_submit = __('submit', 'Submit');
+$lbl_save = __('save', 'Save');
+$lbl_download = __('download', 'Download');
+$lbl_matching_title_required = $lbl_matching_title . '*';
+
 updateIndhuLagna();
 
 /* panchang data creation 
@@ -4126,9 +4323,9 @@ echo <<<EOL
 EOL;
 				displayUserInfo($_SESSION['userinfo']);
 echo <<<EOL
-				<button class="menu" onClick="window.open('index.php','_self')">Home</button>
-				<button class='menu' onClick='window.open("Matching_input.php","_self")'>New Matching Chart</button>
-				<button class='menu' onClick='window.open("matchingChartDisplay.php","_self")'>Matching Chart history</button>
+				<button class="menu" onClick="window.open('index.php','_self')">$lbl_home</button>
+				<button class='menu' onClick='window.open("Matching_input.php","_self")'>$lbl_new_matching_chart</button>
+				<button class='menu' onClick='window.open("matchingChartDisplay.php","_self")'>$lbl_matching_chart_history</button>
 			</div>
 			<div class='mobile'>
 EOL;
@@ -4141,7 +4338,7 @@ echo <<<EOL
 
 					<center>
 					<div class="divTable blueTable" style="height:70px;">
-					<P style="color:#660000;font-weight:bold; font-size:12px; text-align:center; background-color:white;line-height: 20px;">திருமண பொருத்தம்</P>
+					<P style="color:#660000;font-weight:bold; font-size:12px; text-align:center; background-color:white;line-height: 20px;">$lbl_matching_title</P>
 					<BR>
 					
 								<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
@@ -4158,15 +4355,16 @@ echo <<<EOL
 											<input type='hidden' id='nBoyTime' name='nBoyTime' value='$transit_time'>
 											<input type='hidden' id='nMark' name='nMark' value='$in_mark'>
 											<input type='hidden' id='nRowid' name='nMark' value='$in_rowid'>
-											<div><H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">&#128105;Girl BD: <input type='date' id='nDate' name='nDate' style="background-color:var(--girl-chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$chart_date ></div>
-											<div>&#128105;Girl BT: <input type='time' id='nTime' name='nTime' style="background-color:var(--girl-chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$chart_time></H4></div>
+											<input type='hidden' id='language' name='language' value='$language'>
+											<div><H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center">&#128105;$lbl_girl_bd: <input type='date' id='nDate' name='nDate' style="background-color:var(--girl-chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$chart_date ></div>
+											<div>&#128105;$lbl_girl_bt: <input type='time' id='nTime' name='nTime' style="background-color:var(--girl-chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$chart_time></H4></div>
 											<div><H4 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; text-align:center"></div>
-											<div>&#128104;Boy BD: <input type='date' id='in_date_boy' name='in_date_boy' style="background-color:var(--boy-chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$transit_date></div>
-											<div>&#128104;Boy BT: <input type='time' id='in_time_boy' name='in_time_boy' style="background-color:var(--boy-chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$transit_time></H4></div>
+											<div>&#128104;$lbl_boy_bd: <input type='date' id='in_date_boy' name='in_date_boy' style="background-color:var(--boy-chart-background);color:#660000;font-size:12px;font-weight:bold;width:90px;" value=$transit_date></div>
+											<div>&#128104;$lbl_boy_bt: <input type='time' id='in_time_boy' name='in_time_boy' style="background-color:var(--boy-chart-background);color:#660000;font-size:12px;font-weight:bold;width:100px" step='1' value=$transit_time></H4></div>
 											<BR>
-											<input type='submit' class='actionBtnDefault' id='btnSubmit' value='Submit'>
-											<input type='button' class='actionBtnDefault' id='save' value='Save' onClick='saveChart();'>
-											<input type='button' class='actionBtnDefault' value='Download' onClick='generatePdf();'>
+											<input type='submit' class='actionBtnDefault' id='btnSubmit' value='$lbl_submit'>
+											<input type='button' class='actionBtnDefault' id='save' value='$lbl_save' onClick='saveChart();'>
+											<input type='button' class='actionBtnDefault' value='$lbl_download' onClick='generatePdf();'>
 
 										</form>
 									</div>
@@ -4177,52 +4375,52 @@ echo <<<EOL
 						
 						<div class="divTableBody">
 							<div class="divTableRow">
-									<div class="divTableOuterCellLeftTop">$tr_sw_planet[11]</div>
+									<div class="divTableOuterCellLeftTop">$tr_sw_planet_disp[11]</div>
 									<div class="divTableOuterCell" style='border-left:none'></div>
-									<div class="divTableOuterCell">$tr_sw_planet[0]</div>
-									<div class="divTableOuterCell">$tr_sw_planet[1]</div>
+									<div class="divTableOuterCell">$tr_sw_planet_disp[0]</div>
+									<div class="divTableOuterCell">$tr_sw_planet_disp[1]</div>
 									<div class="divTableOuterCell" style='border-right:none'></div>
-									<div class="divTableOuterCellRightTop">$tr_sw_planet[2]</div>
+									<div class="divTableOuterCellRightTop">$tr_sw_planet_disp[2]</div>
 							</div>
 							<div class="divTableRow">
 									<div class="divTableOuterCell" style='border-top:none'></div>
-									<div class="divTableCell">$sw_planet[11]<span class='symbol'>&#9795;<span></div>
-									<div class="divTableCell">$sw_planet[0]<span class='symbol'>&#9794;<span></div>
-									<div class="divTableCell">$sw_planet[1]<span class='symbol'>&#9792;<span></div>
-									<div class="divTableCell">$sw_planet[2]<span class='symbol'>&#9791;<span></div>
+									<div class="divTableCell">$sw_planet_disp[11]<span class='symbol'>&#9795;<span></div>
+									<div class="divTableCell">$sw_planet_disp[0]<span class='symbol'>&#9794;<span></div>
+									<div class="divTableCell">$sw_planet_disp[1]<span class='symbol'>&#9792;<span></div>
+									<div class="divTableCell">$sw_planet_disp[2]<span class='symbol'>&#9791;<span></div>
 									<div class="divTableOuterCell" style='border-top:none'></div>
 							</div>
 							<div class="divTableRow">
-									<div class="divTableOuterCell">$tr_sw_planet[10]</div>
-									<div class="divTableCell">$sw_planet[10]<span class='symbol'>&#9796;<span></div>
+									<div class="divTableOuterCell">$tr_sw_planet_disp[10]</div>
+									<div class="divTableCell">$sw_planet_disp[10]<span class='symbol'>&#9796;<span></div>
 									<div class="divTableCenterCell1"></div>
 									<div class="divTableCenterCell2"></div>
-									<div class="divTableCell">$sw_planet[3]<span class='symbol'>&#9790;<span></div>
-									<div class="divTableOuterCell">$tr_sw_planet[3]</div>
+									<div class="divTableCell">$sw_planet_disp[3]<span class='symbol'>&#9790;<span></div>
+									<div class="divTableOuterCell">$tr_sw_planet_disp[3]</div>
 							</div>
 							<div class="divTableRow">
-									<div class="divTableOuterCell">$tr_sw_planet[9]</div>
-									<div class="divTableCell">$sw_planet[9]<span class='symbol'>&#9796;<span></div>
+									<div class="divTableOuterCell">$tr_sw_planet_disp[9]</div>
+									<div class="divTableCell">$sw_planet_disp[9]<span class='symbol'>&#9796;<span></div>
 									<div class="divTableCenterCell3"></div>
 									<div class="divTableCenterCell4"></div>
-									<div class="divTableCell">$sw_planet[4]<span class='symbol'>&#9737;<span></div>
-									<div class="divTableOuterCell">$tr_sw_planet[4]</div>
+									<div class="divTableCell">$sw_planet_disp[4]<span class='symbol'>&#9737;<span></div>
+									<div class="divTableOuterCell">$tr_sw_planet_disp[4]</div>
 							</div>
 							<div class="divTableRow">
 									<div class="divTableOuterCell" style='border-bottom:none'></div>
-									<div class="divTableCell">$sw_planet[8]<span class='symbol'>&#9795;<span></div>
-									<div class="divTableCell">$sw_planet[7]<span class='symbol'>&#9794;<span></div>
-									<div class="divTableCell">$sw_planet[6]<span class='symbol'>&#9792;<span></div>
-									<div class="divTableCell">$sw_planet[5]<span class='symbol'>&#9791;<span></div>
+									<div class="divTableCell">$sw_planet_disp[8]<span class='symbol'>&#9795;<span></div>
+									<div class="divTableCell">$sw_planet_disp[7]<span class='symbol'>&#9794;<span></div>
+									<div class="divTableCell">$sw_planet_disp[6]<span class='symbol'>&#9792;<span></div>
+									<div class="divTableCell">$sw_planet_disp[5]<span class='symbol'>&#9791;<span></div>
 									<div class="divTableOuterCell" style='border-bottom:none'></div>
 							</div>
 							<div class="divTableRow">
-									<div class="divTableOuterCellLeftBottom">$tr_sw_planet[8]</div>
+									<div class="divTableOuterCellLeftBottom">$tr_sw_planet_disp[8]</div>
 									<div class="divTableOuterCell" style='border-left:none'></div>
-									<div class="divTableOuterCell">$tr_sw_planet[7]</div>
-									<div class="divTableOuterCell">$tr_sw_planet[6]</div>
+									<div class="divTableOuterCell">$tr_sw_planet_disp[7]</div>
+									<div class="divTableOuterCell">$tr_sw_planet_disp[6]</div>
 									<div class="divTableOuterCell" style='border-right:none'></div>
-									<div class="divTableOuterCellRightBottom">$tr_sw_planet[5]</div>
+									<div class="divTableOuterCellRightBottom">$tr_sw_planet_disp[5]</div>
 							</div>
 						</div>	
 					</div>
@@ -4280,7 +4478,7 @@ EOL;
 					<div class="divTable blueTable" style="height:40px;">
 						<div class="divTableRow">
 							<div class="divPanchangHeading" colspan=3>
-								<H6 style='font-weight:bold;color:black'>திருமணம் பொருத்தம்*</H6>
+								<H6 style='font-weight:bold;color:black'>$lbl_matching_title_required</H6>
 							</div>
 						</div>
 					</div>

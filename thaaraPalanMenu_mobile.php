@@ -3,6 +3,8 @@ include_once "lib.php";
 $usertype = $_SESSION['user_type'];
 $_SESSION['menu_clicked'] = true;
 
+ob_start();
+
 if(strcmp($usertype,FREE)==0){
     echo <<<EOL
     <div class="menu-container">
@@ -169,7 +171,6 @@ else{
 	echo "Error: Missing menu";
 }
 
-
-
-
+$menu_html = ob_get_clean();
+echo (function_exists('is_english') && is_english()) ? translate_text($menu_html) : $menu_html;
 ?>
