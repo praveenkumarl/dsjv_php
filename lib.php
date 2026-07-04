@@ -1006,28 +1006,28 @@ function sortDegree($inArray) // new function
 						$outArray[$house] = $outArray[$house] . " " . "<span class='moon'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);							//updateBhavaArray($planetDeg[$planet],"$planet" . "-". $planetDeg[$planet],$house);
 							updateBhavaArray($planetDeg[$planet],"$planet",$house);
 						}
-						elseif(strpos($planet,'உத')>0 || strpos($planet,"உத")===0){
+						elseif(strpos($planet,'உத')>0 || strpos($planet,"உத")===0 || strpos($planet,'UDH')>0 || strpos($planet,"UDH")===0){
 							if($planetDeg[$planet]>=0.0){
-								$outArray[$house] = $outArray[$house] . " " . "<span class='udh'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+								$outArray[$house] = $outArray[$house] . " " . "<span class='udh' style='background-color:#7cfc00;color:black;'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
 							}
 							else{
-								$outArray[$house] = $outArray[$house] . " " . "<span class='udh'>$planet</span>";
+								$outArray[$house] = $outArray[$house] . " " . "<span class='udh' style='background-color:#7cfc00;color:black;'>$planet</span>";
 							}
 						}
-						elseif(strpos($planet,'ஆரு')>0 || strpos($planet,"ஆரு")===0){
+						elseif(strpos($planet,'ஆரு')>0 || strpos($planet,"ஆரு")===0 || strpos($planet,'ARU')>0 || strpos($planet,"ARU")===0){
 							if($planetDeg[$planet]>=0.0){
-								$outArray[$house] = $outArray[$house] . " " . "<span class='aar'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+								$outArray[$house] = $outArray[$house] . " " . "<span class='aar' style='background-color:#7cfc00;color:black;'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
 							}
 							else{
-								$outArray[$house] = $outArray[$house] . " " . "<span class='aar'>$planet</span>";
+								$outArray[$house] = $outArray[$house] . " " . "<span class='aar' style='background-color:#7cfc00;color:black;'>$planet</span>";
 							}
 						}
-						elseif(strpos($planet,'கவி')>0 || strpos($planet,"கவி")===0){
+						elseif(strpos($planet,'கவி')>0 || strpos($planet,"கவி")===0 || strpos($planet,'KAV')>0 || strpos($planet,"KAV")===0){
 							if($planetDeg[$planet]>=0.0){
-								$outArray[$house] = $outArray[$house] . " " . "<span class='kav'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+								$outArray[$house] = $outArray[$house] . " " . "<span class='kav' style='background-color:red;color:white;'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
 							}
 							else{
-								$outArray[$house] = $outArray[$house] . " " . "<span class='kav'>$planet</span>";
+								$outArray[$house] = $outArray[$house] . " " . "<span class='kav' style='background-color:red;color:white;'>$planet</span>";
 							}
 						}
 						elseif(strpos($planet,'R.K')>0 || strpos($planet,"R.K")===0){
@@ -1093,28 +1093,28 @@ function sortDegree($inArray) // new function
 							//updateBhavaArray($planetDeg[$planet],"$planet" . "-". $planetDeg[$planet],$house);
 							updateBhavaArray($planetDeg[$planet],"$planet",$house);
 						}
-						elseif(strpos($planet,'உத')>0 || strpos($planet,"உத")===0){
+						elseif(strpos($planet,'உத')>0 || strpos($planet,"உத")===0 || strpos($planet,'UDH')>0 || strpos($planet,"UDH")===0){
 							if($planetDeg[$planet]>=0.0){
-								$outArray[$house] = "<span class='udh'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house];
+								$outArray[$house] = "<span class='udh' style='background-color:#7cfc00;color:black;'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house];
 							}
 							else{
-								$outArray[$house] = "<span class='udh'>$planet</span>" . " " . $outArray[$house];
+								$outArray[$house] = "<span class='udh' style='background-color:#7cfc00;color:black;'>$planet</span>" . " " . $outArray[$house];
 							}
 						}
-						elseif(strpos($planet,'ஆரு')>0 || strpos($planet,"ஆரு")===0){
+						elseif(strpos($planet,'ஆரு')>0 || strpos($planet,"ஆரு")===0 || strpos($planet,'ARU')>0 || strpos($planet,"ARU")===0){
 							if($planetDeg[$planet]>=0.0){
-								$outArray[$house] = "<span class='aar'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house] ;
+								$outArray[$house] = "<span class='aar' style='background-color:#7cfc00;color:black;'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house] ;
 							}
 							else{
-								$outArray[$house] = "<span class='aar'>$planet</span>" . " " . $outArray[$house] ;
+								$outArray[$house] = "<span class='aar' style='background-color:#7cfc00;color:black;'>$planet</span>" . " " . $outArray[$house] ;
 							}
 						}
-						elseif(strpos($planet,'கவி')>0 || strpos($planet,"கவி")===0){
+						elseif(strpos($planet,'கவி')>0 || strpos($planet,"கவி")===0 || strpos($planet,'KAV')>0 || strpos($planet,"KAV")===0){
 							if($planetDeg[$planet]>=0.0){
-								$outArray[$house] = "<span class='kav'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house] ;
+								$outArray[$house] = "<span class='kav' style='background-color:red;color:white;'>$planet</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house] ;
 							}
 							else{
-								$outArray[$house] = "<span class='kav'>$planet</span>" . " " . $outArray[$house] ;
+								$outArray[$house] = "<span class='kav' style='background-color:red;color:white;'>$planet</span>" . " " . $outArray[$house] ;
 							}
 						}
 						elseif(strpos($planet,'R.K')>0 || strpos($planet,"R.K")===0){
@@ -1150,7 +1150,7 @@ function sortDegree($inArray) // new function
 		}
 	}
 	
-	if(isset($outArray[$RK_house])){
+	if(isset($outArray[$RK_house]) && (!function_exists('is_english') || !is_english())){
 		$outArray[$RK_house] = str_replace("R.K","ரா.கா",$outArray[$RK_house]);
 	}
 	
@@ -1403,7 +1403,7 @@ function updateRahuEmma(array $inside, $weekday, $sun_degree, $lang)
 	}
 	
 	//updating Ema kantam
-	if(strcmp($lang,"Tamil")===0){
+	if(strcmp($lang,"Tamil")===0 || strcmp($lang,"English")===0){
 		switch($weekday)
 		{
 			case 0: //sun
@@ -2744,6 +2744,7 @@ function displayStarLord()
 					echo "<div class='divPanchangHeadingSmall'>".__($planet)."</div>";
 				}
 					
+				
 				echo "<div class='divPanchangSmall'>" . map_display_text($g_planetThithiLord[$planet]) . "</div>";
 				echo "<div class='divPanchangSmall'>" . map_display_text($g_planetYogamLord[$planet]) . "</div>";
 				echo "<div class='divPanchangSmall'>" . map_display_text($g_planetKaranaLord[$planet]) . "</div>";
@@ -3001,14 +3002,15 @@ function displayStarLord_jamakol()
 	foreach($planet_starlord as $planet => $data)
 	{	
 		echo "<div class='divTableRow'>";
-			if((strcmp("சனி",$planet)==0 or strcmp("குரு",$planet)==0 or strcmp("செ",$planet)==0 or strcmp("சுக்",$planet)==0 or
-				strcmp("புத",$planet)==0) and $planetDeg_default[$planet] < 0.0){
-					//strcmp("புத",$planet)==0) and $planetDeg[$planet] < 0.0){
-						
-				echo "<div class='divPanchangHeadingSmall'>$planet (வ)</div>";
-			}
-			else{
-				echo "<div class='divPanchangHeadingSmall'>$planet</div>";
+		$planet_translated = translate_planet_abbr($planet);
+		if((strcmp("சனி",$planet)==0 or strcmp("குரு",$planet)==0 or strcmp("செ",$planet)==0 or strcmp("சுக்",$planet)==0 or
+			strcmp("புத",$planet)==0) and $planetDeg_default[$planet] < 0.0){
+				//strcmp("புத",$planet)==0) and $planetDeg[$planet] < 0.0){
+					
+				echo "<div class='divPanchangHeadingSmall'>$planet_translated " . translate_tamil_text("(வ)") . "</div>";
+		}
+		else{
+			echo "<div class='divPanchangHeadingSmall'>$planet_translated</div>";
 		}
 		
 		echo "<div class='divPanchangSmall'>" . translate_tamil_text($data[0]) . "</div>";
@@ -3032,7 +3034,7 @@ function displayStarLord_jamakol()
 		echo "<center><div class='divTable blueTable' id='thithiYogamKaranamHeadMutable' style='height:32px;display:none;margin-top:20px'>"; 
 			echo "<div class='divTableRow'>";
 				echo "<div class='divTableCell' colspan=3>";
-					echo "<H6 style='font-weight:bold;color:black'>கிரக திதி/யோக/கரணம்</H6>";
+					echo "<H6 style='font-weight:bold;color:black'>" . __('planet_thithi_yogam_karanam') . "</H6>";
 				echo "</div>";
 			echo "</div>";
 		echo "</div></center>";
@@ -3056,9 +3058,9 @@ function displayStarLord_jamakol()
 					echo "<div class='divPanchangHeadingSmall'>".__($planet)."</div>";
 				}
 					
-				echo "<div class='divPanchangSmall'>" . $g_planetThithiLord[$planet] . "</div>";
-				echo "<div class='divPanchangSmall'>" . $g_planetYogamLord[$planet] . "</div>";
-				echo "<div class='divPanchangSmall'>" . $g_planetKaranaLord[$planet] . "</div>";
+				echo "<div class='divPanchangSmall'>" . map_display_text($g_planetThithiLord[$planet]) . "</div>";
+				echo "<div class='divPanchangSmall'>" . map_display_text($g_planetYogamLord[$planet]) . "</div>";
+				echo "<div class='divPanchangSmall'>" . map_display_text($g_planetKaranaLord[$planet]) . "</div>";
 			echo "</div>";
 		}
 
@@ -3495,7 +3497,7 @@ function displayStarLord_boy()
 	echo "<center><div class='divTable blueTable' id='starlordBodyMutable_boy' style='height:auto;display:none'>"; 
 	echo "<div class='divTableRow'>";
 				echo "<div class='divTableOuterCell'>" . __('graha') . "</div>";
-				echo "<div class='divTableOuterCell'>நக்ஷ் பாதம்</div>";
+				echo "<div class='divTableOuterCell'>" . __('naksh_pad') . "</div>";
 				echo "<div class='divTableOuterCell'>" . __('col_nakshatra_athi') . "</div>";
 				echo "<div class='divTableOuterCell'>" . __('bhagai') . "</div>";
 				echo "<div class='divTableOuterCell'>" . __('rasi_degree') . "</div>";
@@ -3709,6 +3711,16 @@ function displayPanchang($date=null,$time=null,$place=null){
 	global $moon_degree, $moon_house, $sun_house, $sun_degree, $dayofweek,$panchang,$nak_pad_idx,$today_sunrise, $today_sunset, $lagna_house;
 	
 	calculatePanchang();
+	$thithi_parts = explode('/', $panchang['thithi']);
+	if(strpos($panchang['thithi'],"Amavasya/அமாவாசை")===0 || strpos($panchang['thithi'],"Poornima/பௌர்ணமி")===0){
+		$thithi_display = panchang_display_part($panchang['thithi']);
+	}
+	elseif(function_exists('is_english') && is_english()){
+		$thithi_display = ($thithi_parts[0] ?? $panchang['thithi']) . (isset($thithi_parts[2]) ? '[' . map_display_text($thithi_parts[2]) : '');
+	}
+	else{
+		$thithi_display = explode('[',$thithi_parts[1] ?? $panchang['thithi'])[0] . (isset($thithi_parts[2]) ? '[' . $thithi_parts[2] : '');
+	}
 	
 	//display panchang table
 	echo "<div class='divTable blueTable' style='height:40px;width:320px;' id='panchangBody'>"; 
@@ -3727,95 +3739,106 @@ function displayPanchang($date=null,$time=null,$place=null){
 			echo "</div>";
 		}
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>வாரம்</div>";
-			echo "<div class='divPanchang'>".explode('/',$panchang['vaaram'])[1]."</div>";
+			echo "<div class='divPanchangHeading'>" . __('weekday') . "</div>";
+			echo "<div class='divPanchang'>".panchang_display_part($panchang['vaaram'])."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
-			echo "<div class='divPanchang'>".explode('/',$panchang['nak'])[1]."</div>";
+			echo "<div class='divPanchangHeading'>" . __('nakshatra') . "</div>";
+			echo "<div class='divPanchang'>".panchang_display_part($panchang['nak'])."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>திதி</div>";
-			$thithi_tamil = explode('[',explode('/',$panchang['thithi'])[1])[0] . '[' . explode('/',$panchang['thithi'])[2];
-			echo "<div class='divPanchang'>".$thithi_tamil."</div>";
+			echo "<div class='divPanchangHeading'>" . __('thithi') . "</div>";
+			echo "<div class='divPanchang'>".$thithi_display."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>கரணம்</div>";
-			echo "<div class='divPanchang' OnClick='showKaranamDiv()' style='color:blue;cursor:pointer'>".explode('/',$panchang['karan'])[1]." (Click)</div>";
+			echo "<div class='divPanchangHeading'>" . __('karanam') . "</div>";
+			echo "<div class='divPanchang' OnClick='showKaranamDiv()' style='color:blue;cursor:pointer'>".panchang_display_part($panchang['karan'])." (" . __('click_here') . ")</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>யோகம்</div>";
-			echo "<div class='divPanchang'>".$panchang['yoga']."</div>";
+			echo "<div class='divPanchangHeading'>" . __('yogam') . "</div>";
+			echo "<div class='divPanchang'>".map_display_text($panchang['yoga'])."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>லக்கினம்</div>";
-			echo "<div class='divPanchang'>".getRasi($lagna_house-1)."</div>";
+			echo "<div class='divPanchangHeading'>" . __('lagna') . "</div>";
+			echo "<div class='divPanchang'>".map_display_text(getRasi($lagna_house-1))."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>ராசி</div>";
-			echo "<div class='divPanchang'>".getRasi($moon_house-1)."</div>";
+			echo "<div class='divPanchangHeading'>" . __('rasi') . "</div>";
+			echo "<div class='divPanchang'>".map_display_text(getRasi($moon_house-1))."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>சூரிய உதயம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('sunrise') . "</div>";
 			echo "<div class='divPanchang'>".explode(' ',$today_sunrise)[1]."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>சூரிய அஸ்தமனம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('sunset') . "</div>";
 			echo "<div class='divPanchang'>".explode(' ',$today_sunset)[1]."</div>";
 		echo "</div>";
 	echo "</div>";
 }
 
+function panchang_display_part($value, $tamil_index = 1) {
+	$parts = explode('/', $value);
+	if (function_exists('is_english') && is_english()) {
+		return map_display_text($parts[0] ?? $value);
+	}
+	return $parts[$tamil_index] ?? end($parts);
+}
+
 function displayPanchang_jamakol(){
 	global $moon_degree, $moon_house, $sun_house, $sun_degree, $dayofweek,$panchang,$nak_pad_idx,$today_sunrise, $today_sunset, $lagna_house, $g_paksham;
+	
+	$thithi_parts = explode('/', $panchang['thithi']);
+	if(strpos($panchang['thithi'],"Amavasya/அமாவாசை")===0 || strpos($panchang['thithi'],"Poornima/பௌர்ணமி")===0){
+		$thithi_display = panchang_display_part($panchang['thithi']);
+	}
+	elseif(function_exists('is_english') && is_english()){
+		$thithi_display = ($thithi_parts[0] ?? $panchang['thithi']) . (isset($thithi_parts[2]) ? '[' . map_display_text($thithi_parts[2]) : '');
+	}
+	else{
+		$thithi_display = explode('[',$thithi_parts[1] ?? $panchang['thithi'])[0] . (isset($thithi_parts[2]) ? '[' . $thithi_parts[2] : '');
+	}
 	
 	//display panchang table
 	echo "<center><div class='divTable blueTable' style='height:40px;' id='panchangBody'>"; 
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>வாரம்</div>";
-			echo "<div class='divPanchang'>".explode('/',$panchang['vaaram'])[1]."</div>";
+			echo "<div class='divPanchangHeading'>" . __('weekday') . "</div>";
+			echo "<div class='divPanchang'>".panchang_display_part($panchang['vaaram'])."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>நட்சத்திரம்</div>";
-			echo "<div class='divPanchang'>".explode('/',$panchang['nak'])[1]."</div>";
+			echo "<div class='divPanchangHeading'>" . __('nakshatra') . "</div>";
+			echo "<div class='divPanchang'>".panchang_display_part($panchang['nak'])."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>திதி</div>";
-			if(strpos($panchang['thithi'],"Amavasya/அமாவாசை")===0 || strpos($panchang['thithi'],"Poornima/பௌர்ணமி")===0){
-				$thithi_tamil = explode('[',explode('/',$panchang['thithi'])[1])[0];
-			}
-			else{
-				$thithi_tamil = explode('[',explode('/',$panchang['thithi'])[1])[0] . '[' . explode('/',$panchang['thithi'])[2];
-			}
-			
-			echo "<div class='divPanchang'>".$thithi_tamil."</div>";
+			echo "<div class='divPanchangHeading'>" . __('thithi') . "</div>";
+			echo "<div class='divPanchang'>".$thithi_display."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>கரணம்</div>";
-			echo "<div class='divPanchang'>".explode('/',$panchang['karan'])[1]."</div>";
+			echo "<div class='divPanchangHeading'>" . __('karanam') . "</div>";
+			echo "<div class='divPanchang'>".panchang_display_part($panchang['karan'])."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>யோகம்</div>";
-			echo "<div class='divPanchang'>".$panchang['yoga']."</div>";
+			echo "<div class='divPanchangHeading'>" . __('yogam') . "</div>";
+			echo "<div class='divPanchang'>".map_display_text($panchang['yoga'])."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>லக்கினம்</div>";
-			echo "<div class='divPanchang'>".getRasi($lagna_house-1)."</div>";
+			echo "<div class='divPanchangHeading'>" . __('lagna') . "</div>";
+			echo "<div class='divPanchang'>".map_display_text(getRasi($lagna_house-1))."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>ராசி</div>";
-			echo "<div class='divPanchang'>".getRasi($moon_house-1)."</div>";
+			echo "<div class='divPanchangHeading'>" . __('rasi') . "</div>";
+			echo "<div class='divPanchang'>".map_display_text(getRasi($moon_house-1))."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>தற்போதய ஹோரை</div>";
+			echo "<div class='divPanchangHeading'>" . __('current_horai') . "</div>";
 			echo "<div class='divPanchang' id='hora'></div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>சூரிய உதயம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('sunrise') . "</div>";
 			echo "<div class='divPanchang'>".explode(' ',$today_sunrise)[1]."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchangHeading'>சூரிய அஸ்தமனம்</div>";
+			echo "<div class='divPanchangHeading'>" . __('sunset') . "</div>";
 			echo "<div class='divPanchang'>".explode(' ',$today_sunset)[1]."</div>";
 		echo "</div>";
 	echo "</div></center>";
@@ -4099,11 +4122,11 @@ function displayThithiSoonyam($thithi,$inner=true) //$inner - true for girl in m
 	echo "<center><div class='divTable blueTable' style='height:40px;'>"; 
 		echo "<div class='divTableRow'>";
 			echo "<div class='$class_name' colspan=3>";
-					echo "<H6 style='font-weight:bold'>திதி சூன்யம் </H6>";
+					echo "<H6 style='font-weight:bold'>" . __('thithi_soonyam') . "</H6>";
 					echo "</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divPanchang'>$thithi_arr[$thithi]</div>";
+			echo "<div class='divPanchang'>" . map_display_text($thithi_arr[$thithi]) . "</div>";
 		echo "</div>";
 	echo "</div></center>";
 }
@@ -5930,7 +5953,7 @@ function getThithiParigaaram($thithi_idx)
 	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>".translate_text('திதி விவரங்கள்')."</DIV>";
 
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('திதி')."</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['thithi_name']."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".translate_text($data['thithi_name'])."</DIV>";
         
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('திதி கோவில்')."</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".translate_text($data['thithi_temple'])."</DIV>";
@@ -5957,17 +5980,17 @@ function getKaranaParigaaram($karan)
 	//$details = "<DIV class='parigaraDiv'><div id='labelParigaraDiv'>கரண பரிகாரம்</div><img src='images/karanam_gods/$kar.jpg' /></DIV>";
 	
 	$details = "<DIV class='parigaaram-grid-container'>";
-	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>கரண விவரங்கள்</DIV>";
-		
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>கரணம்</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$kar."</DIV>";
-		
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>கரண பரிகாரம் கோவில்</DIV>";
+	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>".translate_text('கரண விவரங்கள்')."</DIV>";
+        
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('கரணம்')."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".map_display_text($kar)."</DIV>";
+        
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('கரண பரிகாரம் கோவில்')."</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><img style='width:150px' src='images/karanam_gods/$kar.jpg?$timestamp' /></DIV>";
-		
+        
 		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
-			
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>Close</button></center></DIV>";
+            
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'><center><button class='actionBtn'>".__('close')."</button></center></DIV>";
 		
 	$details = $details . "</DIV>";
 					
@@ -5986,18 +6009,18 @@ function getYogiParigaaram($yogi_idx)
 	$data = getDataFromYogiById($conn,$yogi_idx);
 	
 	$details = "<DIV class='parigaaram-grid-container'>";
-	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>யோகி விவரங்கள்</DIV>";
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>யோகம்</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['yogam']."</DIV>";
-		
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>நக்ஷ் (கிரகம்)</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_planet']."</DIV>";
-		
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>யோகி கோவில்</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['temple']."</DIV>";
-		
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>பரிகாரம்</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['remedy']."</DIV>";
+	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>".translate_text('யோகி விவரங்கள்')."</DIV>";
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('யோகம்')."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".translate_text($data['yogam'])."</DIV>";
+        
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('நக்ஷ் (கிரகம்)')."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".translate_text($data['star_planet'])."</DIV>";
+        
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('யோகி கோவில்')."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".translate_text($data['temple'])."</DIV>";
+        
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('பரிகாரம்')."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".translate_text($data['remedy'])."</DIV>";
 		
 		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
 		
@@ -6043,19 +6066,19 @@ function getNakParigaaram($nak_idx)
 	//$details = "<DIV class='parigaraDiv'><div id='labelParigaraDiv'>நட் பரிகாரம்</div><img src='images/nak_parigaaram/$nak_idx.png' /></DIV>";
 	
 	$details = "<DIV class='parigaaram-grid-container'>";
-	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>நக்ஷ் விவரங்கள்</DIV>";
+	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>".translate_text('நக்ஷ் விவரங்கள்')."</DIV>";
 
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>நக்ஷ்</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_name']."</DIV>";
-		
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>நக்ஷ் கோவில்</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_temple']."</DIV>";
-		
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>நக்ஷ் கோவில் இருப்பிடம்</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><A style='color:blue;cursor:pointer' href='".$data['star_temple_link']."' target='_blank'>google Map</A></DIV>";
-		
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>நக்ஷ் அதிபதி</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$data['star_lord']."</DIV>";
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('நக்ஷ்')."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".translate_text($data['star_name'])."</DIV>";
+        
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('நக்ஷ் கோவில்')."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".translate_text($data['star_temple'])."</DIV>";
+        
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('நக்ஷ் கோவில் இருப்பிடம்')."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><A style='color:blue;cursor:pointer' href='".$data['star_temple_link']."' target='_blank'>".translate_text('google Map')."</A></DIV>";
+        
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('நக்ஷ் அதிபதி')."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".translate_text($data['star_lord'])."</DIV>";
 		
 		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
 	
@@ -6250,12 +6273,12 @@ function getRasiParigaaram()
 			];
 	
 	$details = "<DIV class='parigaaram-grid-container'>";
-	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>ராசி பரிகாரம்</DIV>";
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>ராசி</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$g_rasi."</DIV>";
-		
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>ராசி கோவில்</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>" . $rasi_temples[$g_rasi] . "</DIV>";
+	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>".translate_text('ராசி பரிகாரம்')."</DIV>";
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('ராசி')."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".map_display_text($g_rasi)."</DIV>";
+        
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('ராசி கோவில்')."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>" . translate_text($rasi_temples[$g_rasi]) . "</DIV>";
 		
 		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
 			
@@ -11064,10 +11087,19 @@ function updateSookumaRasi($aar_house){
 	global $sw_planet, $outside, $udhayam_house;
 	
 	$aaruda_athipathi = findAthipathi($aar_house);
+	$aaruda_athipathi_search = $aaruda_athipathi;
+	if (function_exists('is_english') && is_english() && function_exists('translate_planet_abbr')) {
+		$aaruda_athipathi_search = translate_planet_abbr($aaruda_athipathi);
+	}
 		
-	$found_keys = array_keys(array_filter($outside, function ($value) use ($aaruda_athipathi) {
-		return strpos($value, $aaruda_athipathi) !== false;
+	$found_keys = array_keys(array_filter($outside, function ($value) use ($aaruda_athipathi_search, $aaruda_athipathi) {
+		return strpos($value, $aaruda_athipathi_search) !== false || strpos($value, $aaruda_athipathi) !== false;
 	}));
+
+	if (empty($found_keys)) {
+		debug("updateSookumaRasi: aaruda athipathi not found in outside planets: $aaruda_athipathi_search");
+		return;
+	}
 	
 	$aaruda_athipathi_house = $found_keys[0];
 	

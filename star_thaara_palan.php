@@ -2,6 +2,23 @@
 require "lib.php";
 require "plib.php";
 
+if(isset($_COOKIE['language'])){
+	$_COOKIE['language'] = strtolower($_COOKIE['language']);
+}
+
+if(isset($_POST['language'])){
+	$language = strtolower($_POST['language']);
+	setcookie('language', $language, time() + (86400 * 365), "/");
+}
+elseif(isset($_COOKIE['language'])){
+	$language = $_COOKIE['language'];
+}
+else{
+	$language = 'tamil';
+}
+
+init_language($language);
+
 date_default_timezone_set("Asia/Kolkata");
 $TZ = date_default_timezone_get();
 
@@ -59,11 +76,67 @@ function getStar($date,$time)
 	return $temp_arr[0];
 }
 
+function thaara_star_options($selected_star) {
+	$stars = [
+		['Aswini', 'அசுவினி'],
+		['Bharani', 'பரணி'],
+		['Krithika', 'கிருத்திகை'],
+		['Rohini', 'ரோகிணி'],
+		['Mrigashirsha', 'மிருகசிரீஷம்'],
+		['Arudra', 'திருவாதிரை'],
+		['Punarvasu', 'புனர்பூசம்'],
+		['Pushyami', 'பூசம்'],
+		['Ashlesha', 'ஆயில்யம்'],
+		['Magha', 'மகம்'],
+		['Poorva Phalguni', 'பூரம்'],
+		['Uthra phalguni', 'உத்திரம்'],
+		['Hastha', 'ஹஸ்தம்'],
+		['Chitra', 'சித்திரை'],
+		['Swaathi', 'சுவாதி'],
+		['Vishaakha', 'விசாகம்'],
+		['Anuraadha', 'அனுஷம்'],
+		['Jyeshta', 'கேட்டை'],
+		['Moola', 'மூலம்'],
+		['Poorva Ashaada', 'பூராடம்'],
+		['Uthra Ashaada', 'உத்திராடம்'],
+		['Shraavan', 'திருவோணம்'],
+		['Dhanishta', 'அவிட்டம்'],
+		['Shathabhisha', 'சதயம்'],
+		['Poorva bhadrapada', 'பூரட்டாதி'],
+		['Uthra bhadrapada', 'உத்திரட்டாதி'],
+		['Revathi', 'ரேவதி'],
+	];
+
+	foreach ($stars as $star_data) {
+		[$value, $tamil] = $star_data;
+		$selected = strcmp($selected_star, $value) == 0 ? ' selected' : '';
+		$label = is_english() ? $value : $tamil;
+		echo "<option value=\"" . htmlspecialchars($value, ENT_QUOTES) . "\"$selected>" . htmlspecialchars($label, ENT_QUOTES) . "</option>";
+	}
+}
+
 function displayThaaraPalan(){
 	global $star;
 	
-	$palan = array("dummy","ஜென்ம தாரை","சம்பத் தாரை","விபத் தாரை","ஷேம தாரை","பிரத்யக் தாரை","சாதக தாரை","வதை தாரை","மைத்ர தாரை","பரம மைத்ர தாரை");
-	$palan_detail = array("dummy","மனக்குழப்பம், பதற்றம் , தொழில் துவங்க நல்லது இல்லை","தனவரவு, பொருள் வரவு, கரிய சித்தி, சுபகாரியம் செய்யலாம்","தவிர்க்க வேண்டிய நாள்..பயணங்கள் தவிர்ப்பது நல்லது,கோபத்தால் காரிய  இழப்பு, வாய்ப்புகள் தவறுதல் ","ஆரோக்கியம், மகிழ்ச்சி, நன்மை தரக்கூடியது என்று அறியவும்","வீண் அலைச்சல், சிக்கல், மன குழப்பம், கவன சிதறல் தரும்","எண்ணம் ஈடேறும், புதிய முயற்சி பலிதம், செயல்களுக்கு சாதகமானது","கடுமையான தீமை தரக்கூடியது,உடலில் சோர்வு, மனதில் இனம் புரியாத கவலை,  பணிகளில் நாட்டமில்லாமை","தெய்வ காரியங்கள் செய்தல், புதிய முயற்சி, புதிய செயல்கள் செய்யலாம்","அனைத்து சுப செயல்களுக்கு உகந்த நாள்");
+	if (is_english()) {
+		$palan = array("dummy","Janma Tharai","Sampat Tharai","Vipat Tharai","Kshema Tharai","Pratyak Tharai","Sadhaka Tharai","Vadha Tharai","Mitra Tharai","Parama Mitra Tharai");
+		$palan_detail = array(
+			"dummy",
+			"Mental confusion and tension; not good for starting work.",
+			"Income, material gain, success in efforts; auspicious work can be done.",
+			"Avoidable day. Better to avoid travel; anger may cause loss of work or missed chances.",
+			"Good for health, happiness and beneficial outcomes.",
+			"May bring unnecessary wandering, obstacles, mental confusion and distraction.",
+			"Intentions may succeed; new efforts and actions are favorable.",
+			"May bring severe difficulty, physical tiredness, unclear worry and lack of interest in work.",
+			"Good for spiritual work, new attempts and new activities.",
+			"Suitable for all auspicious activities."
+		);
+	}
+	else {
+		$palan = array("dummy","ஜென்ம தாரை","சம்பத் தாரை","விபத் தாரை","ஷேம தாரை","பிரத்யக் தாரை","சாதக தாரை","வதை தாரை","மைத்ர தாரை","பரம மைத்ர தாரை");
+		$palan_detail = array("dummy","மனக்குழப்பம், பதற்றம் , தொழில் துவங்க நல்லது இல்லை","தனவரவு, பொருள் வரவு, கரிய சித்தி, சுபகாரியம் செய்யலாம்","தவிர்க்க வேண்டிய நாள்..பயணங்கள் தவிர்ப்பது நல்லது,கோபத்தால் காரிய  இழப்பு, வாய்ப்புகள் தவறுதல் ","ஆரோக்கியம், மகிழ்ச்சி, நன்மை தரக்கூடியது என்று அறியவும்","வீண் அலைச்சல், சிக்கல், மன குழப்பம், கவன சிதறல் தரும்","எண்ணம் ஈடேறும், புதிய முயற்சி பலிதம், செயல்களுக்கு சாதகமானது","கடுமையான தீமை தரக்கூடியது,உடலில் சோர்வு, மனதில் இனம் புரியாத கவலை,  பணிகளில் நாட்டமில்லாமை","தெய்வ காரியங்கள் செய்தல், புதிய முயற்சி, புதிய செயல்கள் செய்யலாம்","அனைத்து சுப செயல்களுக்கு உகந்த நாள்");
+	}
 	
 	$thaarapalan_arr = calculateThaaraPalan($star);
 	
@@ -71,10 +144,10 @@ function displayThaaraPalan(){
 
 	echo "<div class='divTable blueTable'>";
 	echo "<div class='divTableRow'>";
-			echo "<div class='divThaaraPalanHeading'>நக்ஷ்</div>";
-			echo "<div class='divThaaraPalanHeading'>தாரை#</div>";
-			echo "<div class='divThaaraPalanHeading'>தாரை</div>";
-			echo "<div class='divThaaraPalanHeading'>விளக்கம்</div>";
+			echo "<div class='divThaaraPalanHeading'>" . __('naksh_label', 'நக்ஷ்') . "</div>";
+			echo "<div class='divThaaraPalanHeading'>" . __('thaara_no', 'தாரை#') . "</div>";
+			echo "<div class='divThaaraPalanHeading'>" . __('thaarai', 'தாரை') . "</div>";
+			echo "<div class='divThaaraPalanHeading'>" . __('description', 'விளக்கம்') . "</div>";
 	echo "</div>";
 	
 	foreach($thaarapalan_arr as $key => $value)
@@ -86,14 +159,14 @@ function displayThaaraPalan(){
 		$reminder = $value % 9;
 
 		echo "<div class='divTableRow'>";
-			echo "<div class='divThaaraPalanWhite'>".$key."</div>";
+			echo "<div class='divThaaraPalanWhite'>".(is_english() ? translate_tamil_text($key) : $key)."</div>";
 			
 			if($reminder == 0){
 				if($value == 18){
 					//echo "<div class='divThaaraPalanRedBright'>".($value % 9)."</div>";
 					echo "<div class='divThaaraPalanRedBright'>$value</div>";
-					echo "<div class='divThaaraPalanRedBright'>பணப்பகை நட்சத்திரம்</div>";
-					echo "<div class='divThaaraPalanRedBright'>நல்லதல்ல</div>";
+					echo "<div class='divThaaraPalanRedBright'>" . __('money_enemy_star', 'பணப்பகை நட்சத்திரம்') . "</div>";
+					echo "<div class='divThaaraPalanRedBright'>" . __('not_good', 'நல்லதல்ல') . "</div>";
 				}
 				else{
 					//echo "<div class='divThaaraPalanGreenBright'>"."9"."</div>";
@@ -108,14 +181,14 @@ function displayThaaraPalan(){
 					if($value == 22){
 						//echo "<div class='divThaaraPalanRedBright'>".($value % 9)."</div>";
 						echo "<div class='divThaaraPalanRedBright'>$value</div>";
-						echo "<div class='divThaaraPalanRedBright'>வைநாசிக நட்சத்திரம்</div>";
-						echo "<div class='divThaaraPalanRedBright'>நல்லதல்ல</div>";
+						echo "<div class='divThaaraPalanRedBright'>" . __('vainasika_star', 'வைநாசிக நட்சத்திரம்') . "</div>";
+						echo "<div class='divThaaraPalanRedBright'>" . __('not_good', 'நல்லதல்ல') . "</div>";
 					}
 					else if($value == 11){
 						//echo "<div class='divThaaraPalanRedBright'>".($value % 9)."</div>";
 						echo "<div class='divThaaraPalanRedBright'>$value</div>";
-						echo "<div class='divThaaraPalanRedBright'>சமுதாய பகை நட்சத்திரம்</div>";
-						echo "<div class='divThaaraPalanRedBright'>நல்லதல்ல</div>";
+						echo "<div class='divThaaraPalanRedBright'>" . __('community_enemy_star', 'சமுதாய பகை நட்சத்திரம்') . "</div>";
+						echo "<div class='divThaaraPalanRedBright'>" . __('not_good', 'நல்லதல்ல') . "</div>";
 					}
 					else{
 						//echo "<div class='divThaaraPalanGreen'>".($value % 9)."</div>";
@@ -232,7 +305,7 @@ dbDisconnect($conn);
 	<div class='column-menu'>
 	<?php displayUserInfo($_SESSION['userinfo']);?>
 		<div class='desktop'>
-		<button class="menu" onClick="window.open('index.php','_self')">Home</button>
+		<button class="menu" onClick="window.open('index.php','_self')"><?php echo __('home', 'Home'); ?></button>
 	</div>
 	<div class='mobile'>
 		<?php include "thaaraPalanMenu_mobile.php"; ?>
@@ -240,7 +313,7 @@ dbDisconnect($conn);
 	</div>
 	<div class='column-body'>
 				<BR>
-				<div class="heading">*தாரா பலன்</div>
+				<div class="heading">*<?php echo __('star_result', 'தாரா பலன்'); ?></div>
 				<BR>
 				<form name="thaaraForm" action="star_thaara_palan.php" method="post">
 				<table width="95%">
@@ -262,7 +335,7 @@ dbDisconnect($conn);
 					
 					<tr style="background:none;">
 						<td  style="vertical-align:middle">
-							<DIV class='divPanchangHeading' style='border:none'>*உங்கள் நட்சத்திரம்</div>
+							<DIV class='divPanchangHeading' style='border:none'>*<?php echo __('your_star', 'உங்கள் நட்சத்திரம்'); ?></div>
 						</td>
 						<td style="vertical-align:middle">
 								<!-- <select name="star" id="star" style="width:fit;font-size:12px;background:#FDE966;font-weight:bold" onChange="formSubmitDropdown()">
@@ -296,33 +369,7 @@ dbDisconnect($conn);
 									</select> -->
 									
 							<select name="star" id="star" style="width:fit;font-size:12px;background:#FDE966;font-weight:bold" onChange="formSubmitDropdown()">
-										<option value="Aswini" <?php if(strcmp($star,'Aswini')==0){echo 'selected';} ?> >அசுவினி</option>
-										<option value="Bharani" <?php if(strcmp($star,'Bharani')==0){echo 'selected';} ?> >பரணி</option>
-										<option value="Krithika" <?php if(strcmp($star,'Krithika')==0){echo 'selected';} ?> >கிருத்திகை</option>
-										<option value="Rohini" <?php if(strcmp($star,'Rohini')==0){echo 'selected';} ?> >ரோகிணி</option>
-										<option value="Mrigashirsha" <?php if(strcmp($star,'Mrigashirsha')==0){echo 'selected';} ?> >மிருகசிரீஷம்</option>
-										<option value="Arudra" <?php if(strcmp($star,'Arudra')==0){echo 'selected';} ?> >திருவாதிரை</option>
-										<option value="Punarvasu" <?php if(strcmp($star,'Punarvasu')==0){echo 'selected';} ?> >புனர்பூசம்</option>
-										<option value="Pushyami" <?php if(strcmp($star,'Pushyami')==0){echo 'selected';} ?> >பூசம்</option>
-										<option value="Ashlesha" <?php if(strcmp($star,'Ashlesha')==0){echo 'selected';} ?> >ஆயில்யம்</option>
-										<option value="Magha" <?php if(strcmp($star,'Magha')==0){echo 'selected';} ?> >மகம்</option>
-										<option value="Poorva Phalguni" <?php if(strcmp($star,'Poorva Phalguni')==0){echo 'selected';} ?> >பூரம்</option>
-										<option value="Uthra phalguni" <?php if(strcmp($star,'Uthra phalguni')==0){echo 'selected';} ?> >உத்திரம்</option>
-										<option value="Hastha" <?php if(strcmp($star,'Hastha')==0){echo 'selected';} ?> >ஹஸ்தம்</option>
-										<option value="Chitra" <?php if(strcmp($star,'Chitra')==0){echo 'selected';} ?> >சித்திரை</option>
-										<option value="Swaathi" <?php if(strcmp($star,'Swaathi')==0){echo 'selected';} ?> >சுவாதி</option>
-										<option value="Vishaakha" <?php if(strcmp($star,'Vishaakha')==0){echo 'selected';} ?> >விசாகம்</option>
-										<option value="Anuraadha" <?php if(strcmp($star,'Anuraadha')==0){echo 'selected';} ?> >அனுஷம்</option>
-										<option value="Jyeshta" <?php if(strcmp($star,'Jyeshta')==0){echo 'selected';} ?> >கேட்டை</option>
-										<option value="Moola" <?php if(strcmp($star,'Moola')==0){echo 'selected';} ?> >மூலம்</option>
-										<option value="Poorva Ashaada" <?php if(strcmp($star,'Poorva Ashaada')==0){echo 'selected';} ?> >பூராடம்</option>
-										<option value="Uthra Ashaada" <?php if(strcmp($star,'Uthra Ashaada')==0){echo 'selected';} ?> >உத்திராடம்</option>
-										<option value="Shraavan" <?php if(strcmp($star,'Shraavan')==0){echo 'selected';} ?> >திருவோணம்</option>
-										<option value="Dhanishta" <?php if(strcmp($star,'Dhanishta')==0){echo 'selected';} ?> >அவிட்டம்</option>
-										<option value="Shathabhisha" <?php if(strcmp($star,'Shathabhisha')==0){echo 'selected';} ?> >சதயம்</option>
-										<option value="Poorva bhadrapada" <?php if(strcmp($star,'Poorva bhadrapada')==0){echo 'selected';} ?> >பூரட்டாதி</option>
-										<option value="Uthra bhadrapada" <?php if(strcmp($star,'Uthra bhadrapada')==0){echo 'selected';} ?> >உத்திரட்டாதி</option>
-										<option value="Revathi" <?php if(strcmp($star,'Revathi')==0){echo 'selected';} ?> >ரேவதி</option>
+										<?php thaara_star_options($star); ?>
 									</select>
 									
 						</td>

@@ -1,5 +1,26 @@
 <?php
 include_once "lib.php";
+include_once "lang/lang.php";
+
+if(isset($_COOKIE['language'])){
+	$_COOKIE['language'] = strtolower($_COOKIE['language']);
+}
+
+if(isset($_POST['language'])){
+	$language = strtolower($_POST['language']);
+	setcookie('language', $language, time() + (86400 * 365), "/");
+}
+elseif(isset($_COOKIE['language'])){
+	$language = $_COOKIE['language'];
+}
+elseif(isset($_POST["lang"])){
+	$language = strtolower($_POST["lang"]) === 'english' ? 'english' : 'tamil';
+}
+else{
+	$language = 'tamil';
+}
+
+init_language($language);
 
 /*
 echo $_POST['in_lat'];
@@ -67,7 +88,7 @@ if(strstr(strtolower($_SERVER['HTTP_REFERER']),"jamakol_input.php") or (strstr(s
 $place=strtok($in_place,"|");
 $TZ=strtok("|");
 
-$lang = isset($_POST["lang"]) ? $_POST["lang"] : "Tamil";
+$lang = is_english() ? "English" : "Tamil";
 $rowid = isset($_POST["rowid"]) ? $_POST["rowid"] : -1; //rowid will be posted in case it's called from jamaChartDisplay
 
 $_SESSION["place"]=$place;
@@ -471,6 +492,10 @@ function addRasiDegJamaPlanet(array $planets)
 		$jama_planet = $jama_planet_deg[0];
 		mb_internal_encoding("UTF-8");
 		$rasi = getRasi_short(ceil($jama_planet_deg[1]/30)-1);
+		if (function_exists('is_english') && is_english()) {
+			$english_rasi_short = ["Ar", "Ta", "Ge", "Ca", "Le", "Vi", "Li", "Sc", "Sg", "Cp", "Aq", "Pi"];
+			$rasi = $english_rasi_short[ceil($jama_planet_deg[1]/30)-1];
+		}
 		$rasi_deg = $jama_planet_deg[1] % 30 + $jama_planet_deg[1]-floor($jama_planet_deg[1]);
 		
 		$out_planets[$idx] = "$planets[$idx] <span class='jama_info'>($rasi-$rasi_deg)</span>";
@@ -707,7 +732,7 @@ function updateUAK_Mandhi(array $in, $sun_degree, $day)
 			//udhayam color update
 			$pos = strpos($in[$key], 'உத');
 			if($pos===0 || $pos >0){
-				$sw_planet[$key] = $sw_planet[$key] . ' <span style="color:white;background-color:green;">UDH</span>';
+				$sw_planet[$key] = $sw_planet[$key] . ' <span class="udh" style="background-color:#7cfc00;color:black;">UDH</span>';
 				$udhayam_house = $key;
 				
 				$planetDeg["UDH"]=explode('-',$in[$key])[1];
@@ -716,7 +741,7 @@ function updateUAK_Mandhi(array $in, $sun_degree, $day)
 			//aarudam color update
 			$pos = strpos($in[$key], 'ஆரு');
 			if($pos===0 || $pos >0){
-				$sw_planet[$key] = $sw_planet[$key] . ' <span style="color:white;background-color:green;">ARU</span>';
+				$sw_planet[$key] = $sw_planet[$key] . ' <span class="aar" style="background-color:#7cfc00;color:black;">ARU</span>';
 				$aarudam_house = $key;
 				
 				$planetDeg["ARU"]=explode('-',$in[$key])[1];
@@ -725,7 +750,7 @@ function updateUAK_Mandhi(array $in, $sun_degree, $day)
 			//kavippu color update
 			$pos = strpos($in[$key], 'கவி');
 			if($pos===0 || $pos >0){
-				$sw_planet[$key] = $sw_planet[$key] . ' <span style="color:white;background-color:red;">KAV</span>';
+				$sw_planet[$key] = $sw_planet[$key] . ' <span class="kav" style="background-color:red;color:white;">KAV</span>';
 				$kavippu_house = $key;
 				
 				$planetDeg["KAV"]=explode('-',$in[$key])[1];
@@ -1065,26 +1090,26 @@ function displayStarLard_jama()
 	echo "<center><div class='divTable blueTable' id='starlordHeadMutable_jama' style='height:auto;display:none'>"; 
 		echo "<div class='divTableRow'>";
 			echo "<div class='divTableCell' colspan=3>";
-					echo "<H6 style='font-weight:bold'>ஜாம கிரக நட் சாரம்</H6>";
+					echo "<H6 style='font-weight:bold'>" . __('jamakol_graha_saaram', 'ஜாம கிரக நட் சாரம்') . "</H6>";
 					echo "</div>";
 		echo "</div>";
 	echo "</div></center>";
 
 	echo "<center><div class='divTable blueTable' id='starlordBodyMutable_jama' style='height:auto;max-width: fit-content;display:none'>"; 
 	echo "<div class='divTableRow'>";
-				echo "<div class='divPanchangHeadingSmall'>கிரகம்</div>";
-				echo "<div class='divPanchangHeadingSmall'>நக்ஷ் பா</div>";
+				echo "<div class='divPanchangHeadingSmall'>" . __('graha') . "</div>";
+				echo "<div class='divPanchangHeadingSmall'>" . __('naksh_pad') . "</div>";
 				echo "<div class='divPanchangHeadingSmall'>" . __('col_nakshatra_athi') . "</div>";
-				echo "<div class='divPanchangHeadingSmall'>பாகை</div>";
+				echo "<div class='divPanchangHeadingSmall'>" . __('bhagai') . "</div>";
 		echo "</div>";
 	
 	foreach($planet_starlord as $planet => $data)
 	{
 		echo "<div class='divTableRow'>";
-				echo "<div class='divPanchangHeadingSmall'>$planet</div>";
-				echo "<div class='divPanchangSmall'>".getValue($data[0],1)."</div>";
-				echo "<div class='divPanchangSmall'>$data[1]</div>";
-				echo "<div class='divPanchangSmall'>" . DECtoDMS($data[2]) . "</div>";
+				echo "<div class='divPanchangHeadingSmall'>" . map_display_text($planet) . "</div>";
+				echo "<div class='divPanchangSmall'>".map_display_text(getValue($data[0],1))."</div>";
+				echo "<div class='divPanchangSmall'>" . map_display_text($data[1]) . "</div>";
+				echo "<div class='divPanchangSmall'>" . map_display_text(DECtoDMS($data[2])) . "</div>";
 		echo "</div>";
 	}
 	
@@ -1503,6 +1528,27 @@ $thithi_soonyam_arr = updateThithiSoonyam($panchang["thithi"],true,true);
 //Add additional rasi/deg data for jama planets (outside)
 $outside = addRasiDegJamaPlanet($outside);
 
+$map_display_value = function($value) {
+	return map_display_text((string)$value);
+};
+$outside_disp = array_map($map_display_value, $outside);
+$sw_planet_disp = array_map($map_display_value, $sw_planet);
+$g_thithi_soonyam_arr_disp = array_map($map_display_value, $g_thithi_soonyam_arr);
+$g_kathir_data_disp = array_map($map_display_value, $g_kathir_data);
+
+$lbl_home = __('home', 'Home');
+$lbl_new_chart = __('new_chart', 'New Chart');
+$lbl_jama_history = __('jama_chart_history', 'Jama Chart history');
+$lbl_jamakol_heading = __('jamakol_heading', 'ஜாமக்கோள் Chart');
+$lbl_question = rtrim(__('jamakol_question', 'Question:'), ':');
+$lbl_question_placeholder = __('jamakol_question_placeholder', 'Enter question here...');
+$lbl_analysis_placeholder = __('jamakol_analysis_placeholder', 'Enter analysis here...');
+$lbl_question_time = __('jamakol_question_time', 'கே.நேரம்');
+$lbl_now = __('now', 'தற்போது');
+$lbl_star_lord_inside = __('star_lord_inside', 'சாரம் (உள்)');
+$lbl_star_lord_outside = __('star_lord_outside', 'சாரம் (வெளி)');
+$saveBtnTxt = $saveMode == 1 ? __('update', 'Update') : __('save', 'Save');
+
 /******************** Current chart generation *****************************************/
 //for returning the chart data alone for quick display (home page, widget display, etc., or sending the chart data to 3rd party)
 if($chartNow==1 and isLogged()){
@@ -1536,9 +1582,9 @@ echo <<<EOL
 EOL;
 		displayUserInfo($_SESSION['userinfo']);
 echo <<<EOL
-				<button class="menu" onClick="window.open('index.php','_self')">Home</button>
-				<button class='menu' onClick='window.open("Jamakol_input.php","_self")'>New Chart</button>
-				<button class='menu' onClick='window.open("jamaChartDisplay.php","_self")'>Jama Chart history</button>
+				<button class="menu" onClick="window.open('index.php','_self')">$lbl_home</button>
+				<button class='menu' onClick='window.open("Jamakol_input.php","_self")'>$lbl_new_chart</button>
+				<button class='menu' onClick='window.open("jamaChartDisplay.php","_self")'>$lbl_jama_history</button>
 			</div>
 			<div class='mobile'>
 EOL;
@@ -1552,13 +1598,13 @@ echo <<<EOL
 		</div>
 		<div class='column-body' id="pdf">
 					<center>
-					<P style="color:#660000;font-weight:bold; font-size:16px; text-align:center; background-color:white;width:200px;">ஜாமக்கோள் (DSJV)</P>
+					<P style="color:#660000;font-weight:bold; font-size:16px; text-align:center; background-color:white;width:200px;">$lbl_jamakol_heading</P>
 					<center><div class="divTable blueTable" style="height:70px;">
 								<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
 									<div class="divTableDummyCell" colspan=3 style="border-radius: 20px 20px 0 0;">
-										<DIV class='body'>Question</div>
+										<DIV class='body'>$lbl_question</div>
 										<!-- <input type="text" name="question" id="question" autocomplete="off" style="background:#ffffff; font-size:12px" value="$in_question" /> -->
-										<textarea rows = "2" cols = "60" name="question" id="question" autocomplete="off" style="background:#ffffff; font-size:10px;" placeholder="Enter analysis here..." />$in_question</textarea>
+										<textarea rows = "2" cols = "60" name="question" id="question" autocomplete="off" style="background:#ffffff; font-size:10px;" placeholder="$lbl_question_placeholder" />$in_question</textarea>
 										<form name='updateChart' id='updateChart' action='Jamakol_Chart.php' method='post'>
 											<input type='hidden' id='nPlace' name='nPlace' value='$in_place'>
 											<input type='hidden' id='nQuestion' name='nQuestion' value='$orig_question'>
@@ -1571,8 +1617,8 @@ echo <<<EOL
 											<input type='date' id='nDate' name='nDate' style="color:#660000;font-size:12px;font-weight:bold;width:110px;" value=$chart_date onChange='dateChange(this.form);'>
 											<input type='time' id='nTime' name='nTime' style="color:#660000;font-size:12px;font-weight:bold;width:110px" step='1' value=$chart_time onChange='timeChange(this.form);'>
 											<BR>
-											<input type='button' class='actionBtn' value='கே.நேரம்' Onclick="return questionChart(this.form);">
-											<input type='button' class='actionBtn' value='தற்போது' Onclick="return updateNow(this.form);">
+											<input type='button' class='actionBtn' value='$lbl_question_time' Onclick="return questionChart(this.form);">
+											<input type='button' class='actionBtn' value='$lbl_now' Onclick="return updateNow(this.form);">
 	
 											<BR><BR>
 										</form>
@@ -1586,58 +1632,58 @@ echo <<<EOL
 						
 						<div class="divTableBody">
 							<div class="divTableRow">
-									<div class="divTableOuterCell">$outside[11]</div>
+									<div class="divTableOuterCell">$outside_disp[11]</div>
 									<div class="divTableDummyCell"></div>
-									<div class="divTableOuterCell">$outside[0]</div>
+									<div class="divTableOuterCell">$outside_disp[0]</div>
 									<div class="divTableDummyCell"></div>
 									<div class="divTableDummyCell"></div>
-									<div class="divTableOuterCell">$outside[2]</div>
+									<div class="divTableOuterCell">$outside_disp[2]</div>
 							</div>
 							<div class="divTableRow">
 									<div class="divTableDummyCell"></div>
-									<div class="divTableCell">$sw_planet[11]<span class='kathir'>$g_kathir_data[11]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[11]</span></div>
-									<div class="divTableCell">$sw_planet[0]<span class='kathir'>$g_kathir_data[0]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[0]</span></div>
-									<div class="divTableCell">$sw_planet[1]<span class='kathir'>$g_kathir_data[1]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[1]</span></div>
-									<div class="divTableCell">$sw_planet[2]<span class='kathir'>$g_kathir_data[2]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[2]</span></div>
+									<div class="divTableCell">$sw_planet_disp[11]<span class='kathir'>$g_kathir_data_disp[11]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr_disp[11]</span></div>
+									<div class="divTableCell">$sw_planet_disp[0]<span class='kathir'>$g_kathir_data_disp[0]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr_disp[0]</span></div>
+									<div class="divTableCell">$sw_planet_disp[1]<span class='kathir'>$g_kathir_data_disp[1]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr_disp[1]</span></div>
+									<div class="divTableCell">$sw_planet_disp[2]<span class='kathir'>$g_kathir_data_disp[2]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr_disp[2]</span></div>
 									<div class="divTableDummyCell"></div>
 							</div>
 							<div class="divTableRow">
 									<div class="divTableDummyCell"></div>
-									<div class="divTableCell">$sw_planet[10]<span class='kathir'>$g_kathir_data[10]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[10]</span></div>
+									<div class="divTableCell">$sw_planet_disp[10]<span class='kathir'>$g_kathir_data_disp[10]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr_disp[10]</span></div>
 									<div class="divTableCenterCell1">$date</div>
 									<div class="divTableCenterCell2">$time</div>
-									<div class="divTableCell">$sw_planet[3]<span class='kathir'>$g_kathir_data[3]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[3]</span></div>
-									<div class="divTableOuterCell">$outside[3]</div>
+									<div class="divTableCell">$sw_planet_disp[3]<span class='kathir'>$g_kathir_data_disp[3]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr_disp[3]</span></div>
+									<div class="divTableOuterCell">$outside_disp[3]</div>
 							</div>
 							<div class="divTableRow">
-									<div class="divTableOuterCell">$outside[9]</div>
-									<div class="divTableCell">$sw_planet[9]<span class='kathir'>$g_kathir_data[9]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[9]</span></div>
+									<div class="divTableOuterCell">$outside_disp[9]</div>
+									<div class="divTableCell">$sw_planet_disp[9]<span class='kathir'>$g_kathir_data_disp[9]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr_disp[9]</span></div>
 									<div class="divTableCenterCell3">$place_left_part</div>
 									<div class="divTableCenterCell4">$place_right_part</div>
-									<div class="divTableCell">$sw_planet[4]<span class='kathir'>$g_kathir_data[4]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[4]</span></div>
+									<div class="divTableCell">$sw_planet_disp[4]<span class='kathir'>$g_kathir_data_disp[4]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr_disp[4]</span></div>
 									<div class="divTableDummyCell"></div>
 							</div>
 							<div class="divTableRow">
 									<div class="divTableDummyCell"></div>
-									<div class="divTableCell">$sw_planet[8]<span class='kathir'>$g_kathir_data[8]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[8]</span></div>
-									<div class="divTableCell">$sw_planet[7]<span class='kathir'>$g_kathir_data[7]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[7]</span></div>
-									<div class="divTableCell">$sw_planet[6]<span class='kathir'>$g_kathir_data[6]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[6]</span></div>
-									<div class="divTableCell">$sw_planet[5]<span class='kathir'>$g_kathir_data[5]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr[5]</span></div>
+									<div class="divTableCell">$sw_planet_disp[8]<span class='kathir'>$g_kathir_data_disp[8]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr_disp[8]</span></div>
+									<div class="divTableCell">$sw_planet_disp[7]<span class='kathir'>$g_kathir_data_disp[7]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr_disp[7]</span></div>
+									<div class="divTableCell">$sw_planet_disp[6]<span class='kathir'>$g_kathir_data_disp[6]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr_disp[6]</span></div>
+									<div class="divTableCell">$sw_planet_disp[5]<span class='kathir'>$g_kathir_data_disp[5]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr_disp[5]</span></div>
 									<div class="divTableDummyCell"></div>
 							</div>
 							<div class="divTableRow">
-									<div class="divTableOuterCell">$outside[8]</div>
+									<div class="divTableOuterCell">$outside_disp[8]</div>
 									<div class="divTableDummyCell"></div>
 									<div class="divTableDummyCell"></div>
-									<div class="divTableOuterCell">$outside[6]</div>
+									<div class="divTableOuterCell">$outside_disp[6]</div>
 									<div class="divTableDummyCell"></div>
-									<div class="divTableOuterCell">$outside[5]</div>
+									<div class="divTableOuterCell">$outside_disp[5]</div>
 							</div>
 						</div>	
 					</div>
 					<BR>
-					<input type='button' class='actionBtn' id='strdtl' value='சாரம் (உள்)' Onclick="showStarLordTable();">
-					<input type='button' class='actionBtn' id='strdtl_jama' value='சாரம் (வெளி)'  Onclick="showStarLordTable_jama();">
+					<input type='button' class='actionBtn' id='strdtl' value='$lbl_star_lord_inside' Onclick="showStarLordTable();">
+					<input type='button' class='actionBtn' id='strdtl_jama' value='$lbl_star_lord_outside'  Onclick="showStarLordTable_jama();">
 EOL;
 					displayStarLord_jamakol();
 					displayStarLard_jama();
@@ -1649,7 +1695,7 @@ echo <<<EOL
 						<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
 							<div class="divTableDummyCell" colspan=3 style="border-radius:  0 0 20px 20px;">
 							<form id='analysisData' method='post'>
-							<textarea rows = 5 cols = "60" name="analysis" id="analysis" autocomplete="off" style="background:#ffffff; font-size:10px;" placeholder="Enter analysis here..." />$in_analysis</textarea>
+							<textarea rows = 5 cols = "60" name="analysis" id="analysis" autocomplete="off" style="background:#ffffff; font-size:10px;" placeholder="$lbl_analysis_placeholder" />$in_analysis</textarea>
 							<input type='button' class='actionBtn' id='save' value='$saveBtnTxt' OnClick="return saveChart(this.form);" />
 							<!-- <input type='button' class='actionBtn' id='saveToPdf' value='Download' OnClick="GeneratePdf('$filename');" /> -->
 							</form>

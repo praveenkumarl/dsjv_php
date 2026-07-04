@@ -1,5 +1,32 @@
 <?php 
 require "lib.php";
+require_once "lang/lang.php";
+
+// Initialize language from cookie/session
+if(isset($_COOKIE['language'])){
+	$_COOKIE['language'] = strtolower($_COOKIE['language']);
+}
+if(isset($_POST['language'])){
+	$language = strtolower($_POST['language']);
+	setcookie('language', $language, time() + (86400 * 365), "/");
+}
+elseif(isset($_COOKIE['language'])){
+	$language = $_COOKIE['language'];
+}
+else{
+	$language = 'tamil';
+}
+init_language($language);
+
+// Pre-populate translated strings for use in HTML and JS
+$lbl_heading = __('jamakol_heading');
+$lbl_question = __('jamakol_question');
+$lbl_place = __('jamakol_place');
+$lbl_date = __('jamakol_date');
+$lbl_time = __('jamakol_time');
+$lbl_submit = __('form_submit');
+$err_place = __('jamakol_err_place');
+$err_select_place = __('jamakol_err_select_place');
 
 $TZlist=array("Asia/Kolkata");
 $conn="";
@@ -163,13 +190,13 @@ function validateForm() {
   
   p = document.getElementById("place").value;
   if (p == "") {
-    document.getElementById("error").innerHTML = "இடம் கொடுக்கவில்லை";
+    document.getElementById("error").innerHTML = <?php echo json_encode($err_place); ?>;
 	document.getElementById('place').style.borderColor = "red";
     return false;
   }
   
   if (p.includes("|")==false || p.includes("/")==false || p.length<10){
-	  alert('நீங்கள் இடத்தை கீழ் வரும் பட்டியலில் தேர்ந்தெடுக்கவில்லை');
+	  alert(<?php echo json_encode($err_select_place); ?>);
 	  document.getElementById('place').style.borderColor = "red";
 	  return false;
   }
@@ -284,18 +311,18 @@ function updateNow() {
 				<form name="chartInput" action="Jamakol_Chart.php" method="post">
 					<table style="width:100%; text-align: left">
 						<tr>
-							<td colspan=2><P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">ஜாமக்கோள் Chart</P></td>
+							<td colspan=2><P style="color:#660000;font-weight:bold; font-size:20px; text-align:center"><?php echo $lbl_heading; ?></P></td>
 						</tr>
 						
 						<tr style="background-color: #FFFFFF">
-							<td><div class="divBirthInputLable">கேள்வி:</div></td>
+							<td><div class="divBirthInputLable"><?php echo $lbl_question; ?></div></td>
 							<td>
 							<!-- <input type="text" name="question1" id="question1" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Enter question..." onfocus=this.value=''  /> -->
 							<textarea rows = "4" cols = "60" name="question" id="question" autocomplete="off" style="background:#ffffff;font-weight:bold" onBlur="questionOnBlur();" placeholder="Enter question here..." /></textarea>
 							</td>
 						</tr>			
 						<tr style="background-color: #FFFFFF">
-							<td><div class="divBirthInputLable">*இடம் :</div></td>
+							<td><div class="divBirthInputLable"><?php echo $lbl_place; ?></div></td>
 							<td><div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onblur="placeOnBlur();" /><div class="result"></div>
 							</td>
 						</tr>
@@ -321,11 +348,11 @@ function updateNow() {
 ?>
 						</tr>
 						<tr style="background-color: #FFFFFF">
-							<td><div class="divBirthInputLable">தேதி:</div></td>
+							<td><div class="divBirthInputLable"><?php echo $lbl_date; ?></div></td>
 							<td><input type="date" id="in_date" name="in_date" style="border:1px solid lightgray;font-weight:bold"></td>
 						</tr>
 						<tr style="background-color: #FFFFFF">
-							<td><div class="divBirthInputLable">நேரம்:</div></td>
+							<td><div class="divBirthInputLable"><?php echo $lbl_time; ?></div></td>
 							<td><input type="time" id="in_time" name="in_time" step="1" style="border:1px solid lightgray;font-weight:bold"></td>
 						</tr>
 						<input type="hidden" id="yes" name="in_degree" value="1" />
@@ -347,7 +374,7 @@ function updateNow() {
 							</td>
 						</tr> -->
 						<tr  style="background-color: #FFFFFF">
-							<td colspan="2" align="center"><input type="submit" value="Submit" class="primary wide" style="text-align:center; font-weight:bold; background:#660000" onclick="return validateForm();"></td>
+							<td colspan="2" align="center"><input type="submit" value="<?php echo $lbl_submit; ?>" class="primary wide" style="text-align:center; font-weight:bold; background:#660000" onclick="return validateForm();"></td>
 							
 						</tr>
 						

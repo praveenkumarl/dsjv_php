@@ -1,5 +1,24 @@
 <?php
 include_once "lib.php";
+include_once "lang/lang.php";
+
+// Initialize language from cookie/session
+if(isset($_COOKIE['language'])){
+	$_COOKIE['language'] = strtolower($_COOKIE['language']);
+}
+if(isset($_POST['language'])){
+	$language = strtolower($_POST['language']);
+	setcookie('language', $language, time() + (86400 * 365), "/");
+}
+elseif(isset($_COOKIE['language'])){
+	$language = $_COOKIE['language'];
+}
+else{
+	$language = 'tamil';
+}
+init_language($language);
+
+$LANG = ($language === 'english') ? 2 : 1; //1 tamil  2 english
 
 $phone = isset($_COOKIE["phone"]) ? $_COOKIE["phone"] : $_SESSION['phone'];
 
@@ -880,43 +899,58 @@ function displayDetailsCol1()
 	global $name, $birth_date, $birth_time, $sex, $g_lagnam, $g_rasi, $g_dasaBalance, $g_dasaCurrent, $place, $father_name,
 			$mother_name,$caste,$g_age, $g_vayadhotta_lagna, $g_rowid;
 	
+	$lbl_name = __('name');
+	$lbl_father = __('pdf_father_name');
+	$lbl_mother = __('pdf_mother_name');
+	$lbl_caste = __('pdf_caste');
+	$lbl_sex = __('pdf_sex');
+	$lbl_birth_date = __('pdf_birth_date');
+	$lbl_birth_time = __('pdf_birth_time');
+	$lbl_birth_place = __('pdf_birth_place');
+	$lbl_age = __('pdf_age');
+	$lbl_lagnam = __('pdf_lagnam');
+	$lbl_vayadhotta = __('pdf_vayadhotta_lagna');
+	$lbl_rasi = __('pdf_rasi');
+	
+		$tr_sex = translate_tamil_text($sex);
+
 	echo <<<EOL
 	
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>பெயர்</div><div class='divTableTextMedium'>$name ($g_rowid)</div>
+				<div class='divTableTextHeading'>$lbl_name</div><div class='divTableTextMedium'>$name ($g_rowid)</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>தந்தை பெயர்</div><div class='divTableTextMedium'>$father_name</div>
+				<div class='divTableTextHeading'>$lbl_father</div><div class='divTableTextMedium'>$father_name</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>தாய் பெயர்</div><div class='divTableTextMedium'>$mother_name</div>
+				<div class='divTableTextHeading'>$lbl_mother</div><div class='divTableTextMedium'>$mother_name</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>பிரிவு</div><div class='divTableTextMedium'>$caste</div>
+				<div class='divTableTextHeading'>$lbl_caste</div><div class='divTableTextMedium'>$caste</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>பாலினம்</div><div class='divTableTextMedium'>$sex</div>
+				<div class='divTableTextHeading'>$lbl_sex</div><div class='divTableTextMedium'>$tr_sex</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>பிறந்த தேதி</div><div class='divTableTextMedium'>$birth_date</div>
+				<div class='divTableTextHeading'>$lbl_birth_date</div><div class='divTableTextMedium'>$birth_date</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>பிறந்த நேரம்</div><div class='divTableTextMedium'>$birth_time</div>
+				<div class='divTableTextHeading'>$lbl_birth_time</div><div class='divTableTextMedium'>$birth_time</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>பிறந்த இடம்</div><div class='divTableTextMedium'>$place</div>
+				<div class='divTableTextHeading'>$lbl_birth_place</div><div class='divTableTextMedium'>$place</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>வயது</div><div class='divTableTextMedium'>$g_age</div>
+				<div class='divTableTextHeading'>$lbl_age</div><div class='divTableTextMedium'>$g_age</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>லக்னம்</div><div class='divTableTextMedium'>$g_lagnam </div>
+				<div class='divTableTextHeading'>$lbl_lagnam</div><div class='divTableTextMedium'>$g_lagnam </div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>வயதோட்ட லக்னம்</div><div class='divTableTextMedium'>$g_vayadhotta_lagna</div>
+				<div class='divTableTextHeading'>$lbl_vayadhotta</div><div class='divTableTextMedium'>$g_vayadhotta_lagna</div>
 			</div>
 			<div class="divTableRow">
-				<div class='divTableTextHeading'>ராசி</div><div class='divTableTextMedium'>$g_rasi</div>
+				<div class='divTableTextHeading'>$lbl_rasi</div><div class='divTableTextMedium'>$g_rasi</div>
 			</div>
 EOL;
 }
@@ -932,47 +966,67 @@ function displayDetailsCol3()
 	$yogam	= getStr($panchang['yoga'],$LANG);
 	$karan = getStr($karan,$LANG);
 	
-	$chadrashtamam = getRasi(targetHouse($moon_house-1,8));
+	$chadrashtamam = translate_tamil_text(getRasi(targetHouse($moon_house-1,8)));
 	
 	$g_asthangam_arr = getAsthangam();
-	$asthangam_detail = join(',',$g_asthangam_arr);
+	$asthangam_detail = translate_tamil_text(join(',',$g_asthangam_arr));
 	
+	$lbl_ucha = __('pdf_ucha');
+	$lbl_neecham = __('pdf_neecham');
+	$lbl_asthangam = __('pdf_asthangam');
+	$lbl_chandra = __('pdf_chandra_ashtama');
+	$lbl_avayogi = __('pdf_avayogi');
+	$lbl_thithi_soonyam = __('pdf_thithi_soonyam');
+	$lbl_mudakku = __('pdf_mudakku');
+	$lbl_sunrise = __('pdf_sunrise');
+	$lbl_sunset = __('pdf_sunset');
+	$lbl_lat_lon = __('pdf_lat_lon');
+	$lbl_tz = __('pdf_timezone');
+	$lbl_calc = __('pdf_calc_method');
+	
+	$tr_ucha = translate_tamil_text($g_ucha_details);
+	$tr_neecha = translate_tamil_text($g_neecha_details);
+	$tr_mudakku = translate_tamil_text($g_mudakku_detail);
+	$tr_thithi_soonyam = translate_tamil_text($g_thithi_soonyam);
+
+	$tr_calc_method = __('calculation_method');
+
 	echo <<<EOL
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>உச்சம்</div><div class='divTableTextMedium'>$g_ucha_details</div>
+			<div class='divTableTextHeading'>$lbl_ucha</div><div class='divTableTextMedium'>$tr_ucha</div>
 		</div>
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>நீசம்</div><div class='divTableTextMedium'>$g_neecha_details</div>
+			<div class='divTableTextHeading'>$lbl_neecham</div><div class='divTableTextMedium'>$tr_neecha</div>
 		</div>
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>அஸ்தங்கம்</div><div class='divTableTextMedium'>$asthangam_detail</div>
+			<div class='divTableTextHeading'>$lbl_asthangam</div><div class='divTableTextMedium'>$asthangam_detail</div>
 		</div>
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>உங்கள் சந்திராஷ்டம ராசி</div><div class='divTableTextMedium'>$chadrashtamam</div>
+			<div class='divTableTextHeading'>$lbl_chandra</div><div class='divTableTextMedium'>$chadrashtamam</div>
 		</div>
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>அவயோகி</div><div class='divTableTextMedium'>$ayogi</div>
+			<div class='divTableTextHeading'>$lbl_avayogi</div><div class='divTableTextMedium'>$ayogi</div>
 		</div>
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>திதி சூன்யம்</div><div class='divTableTextMedium'>$g_thithi_soonyam</div>
+			<div class='divTableTextHeading'>$lbl_thithi_soonyam</div><div class='divTableTextMedium'>$tr_thithi_soonyam</div>
 		</div>
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>முடக்கு</div><div class='divTableTextMedium'>$g_mudakku_detail</div>
+			<div class='divTableTextHeading'>$lbl_mudakku</div><div class='divTableTextMedium'>$tr_mudakku</div>
 		</div>
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>சூரிய உதயம்</div><div class='divTableTextMedium'>$g_sunrise</div>
+			<div class='divTableTextHeading'>$lbl_sunrise</div><div class='divTableTextMedium'>$g_sunrise</div>
 		</div>
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>சூரிய அஸ்தமனம்</div><div class='divTableTextMedium'>$g_sunset</div>
+			<div class='divTableTextHeading'>$lbl_sunset</div><div class='divTableTextMedium'>$g_sunset</div>
 		</div>
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>அட்சரேகை/தீர்க்கரேகை</div><div class='divTableTextMedium'>$lat/$lon</div>
+			<div class='divTableTextHeading'>$lbl_lat_lon</div><div class='divTableTextMedium'>$lat/$lon</div>
 		</div>
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>நேரம் மண்டலம்</div><div class='divTableTextMedium'>$gmt_offset ($TZ)</div>
+			<div class='divTableTextHeading'>$lbl_tz</div><div class='divTableTextMedium'>$gmt_offset ($TZ)</div>
 		</div>
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>கணக்கீட்டு முறை</div><div class='divTableTextMedium'>திருக்கணிதம்<BR>லஹரி அயனாம்சம்</div>
+			<div class='divTableTextHeading'>$lbl_calc</div><div class='divTableTextMedium'>$tr_calc_method</div>
 		</div>
 EOL;
 }
@@ -990,41 +1044,58 @@ function displayDetailsCol2()
 	
 	[$guberaStarPaadham,$guberaRasi,$guberaRasiHouse, $guberaStarIdx] = getKubera();  //$guberaRasiHouse not used as of now. It will be used if we need to show some symbold in chart
 	
+	$lbl_vaaram = __('pdf_vaaram');
+	$lbl_thithi = __('pdf_thithi');
+	$lbl_nak = __('pdf_nakshatram');
+	$lbl_yogam = __('pdf_yogam');
+	$lbl_karan = __('pdf_karanam');
+	$lbl_yogi = __('pdf_yogi');
+	$lbl_kubera = __('pdf_kubera_point');
+	$lbl_pancha_pakshi = __('pdf_pancha_pakshi');
+	$lbl_birth_dasa = __('pdf_birth_dasa');
+	$lbl_current_dasa = __('pdf_current_dasa_bukthi');
+	
+	$tr_gubera_star = translate_tamil_text($guberaStarPaadham);
+	$tr_gubera_rasi = translate_tamil_text($guberaRasi);
+	$tr_pancha_pakshi = translate_tamil_text($g_pancha_pakshi);
+	$tr_dasa_balance = map_display_text($g_dasaBalance);
+	$tr_dasa_current = map_display_text($g_dasaCurrent);
+
 	echo <<<EOL
 	
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>வாரம்</div><div class='divTableTextMedium'>$vaaram</div>
+			<div class='divTableTextHeading'>$lbl_vaaram</div><div class='divTableTextMedium'>$vaaram</div>
 		</div>
 		
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>திதி</div><div class='divTableTextMedium'>$thithi</div>
+			<div class='divTableTextHeading'>$lbl_thithi</div><div class='divTableTextMedium'>$thithi</div>
 		</div>
 		
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>நட்சத்திரம்</div><div class='divTableTextMedium'>$nak</div>
+			<div class='divTableTextHeading'>$lbl_nak</div><div class='divTableTextMedium'>$nak</div>
 		</div>
 		
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>யோகம்</div><div class='divTableTextMedium'>$yogam</div>
+			<div class='divTableTextHeading'>$lbl_yogam</div><div class='divTableTextMedium'>$yogam</div>
 		</div>
 		
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>கரணம்</div><div class='divTableTextMedium'>$karan</div>
+			<div class='divTableTextHeading'>$lbl_karan</div><div class='divTableTextMedium'>$karan</div>
 		</div>
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>யோகி</div><div class='divTableTextMedium'>$yogi</div>
+			<div class='divTableTextHeading'>$lbl_yogi</div><div class='divTableTextMedium'>$yogi</div>
 		</div>
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>குபேர புள்ளி</div><div class='divTableTextMedium'>$guberaStarPaadham<BR>$guberaRasi</div>
+			<div class='divTableTextHeading'>$lbl_kubera</div><div class='divTableTextMedium'>$tr_gubera_star<BR>$tr_gubera_rasi</div>
 		</div>
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>பஞ்ச பக்ஷி</div><div class='divTableTextMedium'>$g_pancha_pakshi</div>
+			<div class='divTableTextHeading'>$lbl_pancha_pakshi</div><div class='divTableTextMedium'>$tr_pancha_pakshi</div>
 		</div>
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>பிறப்பு தசா இருப்பு</div><div class='divTableTextMedium'>$g_dasaBalance</div>
+			<div class='divTableTextHeading'>$lbl_birth_dasa</div><div class='divTableTextMedium'>$tr_dasa_balance</div>
 		</div>
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>தற்போதைய தசா புக்தி</div><div class='divTableTextMedium'>$g_dasaCurrent</div>
+			<div class='divTableTextHeading'>$lbl_current_dasa</div><div class='divTableTextMedium'>$tr_dasa_current</div>
 		</div>
 EOL;
 }
@@ -1038,15 +1109,20 @@ function displayDasa()
 	$current_date = date('d-m-Y');
 	$first_dasa_updated=false;
 	
+	$lbl_title = __('pdf_dasa_table');
+	$lbl_planet = __('pdf_planet');
+	$lbl_start = __('pdf_start');
+	$lbl_end = __('pdf_end');
+
 echo <<<EOL
 	<div class="divTableRow">
-		<div class="divTableTextMainHeading" colspan=5>தசா அட்டவணை</div>
+		<div class="divTableTextMainHeading" colspan=5>$lbl_title</div>
 	</div>
 	<div class="divStarDetailCell">
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>கிரகம்</div>
-			<div class='divTableTextHeading'>ஆரம்பம்</div>
-			<div class='divTableTextHeading'>முடிவு</div>
+			<div class='divTableTextHeading'>$lbl_planet</div>
+			<div class='divTableTextHeading'>$lbl_start</div>
+			<div class='divTableTextHeading'>$lbl_end</div>
 		</div>
 EOL;
 	
@@ -1056,10 +1132,12 @@ EOL;
 			$first_dasa_updated=true;
 		}
 		
+		$tr_planet = map_display_text($planet);
+		
 		if(strtotime($current_date) >= strtotime($data[0]) and strtotime($current_date) <= strtotime($data[1])){
 			echo <<<EOL
 			<div class="divTableRow">
-				<div class="divTableTextHeading">$planet</div>
+				<div class="divTableTextHeading">$tr_planet</div>
 				<div class="divTableTextMediumBold">$data[0]</div>
 				<div class="divTableTextMediumBold">$data[1]</div>
 			</div>
@@ -1068,7 +1146,7 @@ EOL;
 		else{
 			echo <<<EOL
 			<div class="divTableRow">
-				<div class="divTableTextHeading">$planet</div>
+				<div class="divTableTextHeading">$tr_planet</div>
 				<div class="divTableTextMedium">$data[0]</div>
 				<div class="divTableTextMedium">$data[1]</div>
 			</div>
@@ -1087,23 +1165,29 @@ function displayBukthi()
 	
 	$current_bukthi_flag = false;
 	
+	$lbl_title = __('pdf_dasa_bukthi_table');
+	$lbl_dasa_bukthi = __('dasa_bukthi_adhipati');
+	$lbl_start = __('pdf_start');
+	$lbl_end = __('pdf_end');
+
 echo <<<EOL
 	<div class="divTableRow">
-		<div class="divTableTextMainHeading" colspan=5>தசா/புக்தி அட்டவணை</div>
+		<div class="divTableTextMainHeading" colspan=5>$lbl_title</div>
 	</div>
 	<div class="divStarDetailCell">
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>தசா/புக்தி</div>
-			<div class='divTableTextHeading'>ஆரம்பம்</div>
-			<div class='divTableTextHeading'>முடிவு</div>
+			<div class='divTableTextHeading'>$lbl_dasa_bukthi</div>
+			<div class='divTableTextHeading'>$lbl_start</div>
+			<div class='divTableTextHeading'>$lbl_end</div>
 		</div>
 EOL;
 	
 	foreach($bukthi_table as $key => $data){
+		$tr_key = map_display_text($key);
 		if(strtotime($current_date) >= strtotime($data[1]) and strtotime($current_date) <= strtotime($data[2])){
 			echo <<<EOL
 				<div class="divTableRow">
-					<div class="divTableTextHeading">$key</div>
+					<div class="divTableTextHeading">$tr_key</div>
 					<div class="divTableTextMediumBold">$data[1]</div>
 					<div class="divTableTextMediumBold">$data[2]</div>
 				</div>
@@ -1112,7 +1196,7 @@ EOL;
 		else{
 			echo <<<EOL
 				<div class="divTableRow">
-					<div class="divTableTextHeading">$key</div>
+					<div class="divTableTextHeading">$tr_key</div>
 					<div class="divTableTextMedium">$data[1]</div>
 					<div class="divTableTextMedium">$data[2]</div>
 				</div>
@@ -1127,17 +1211,24 @@ function displayStarLord_pdf()
 {
 	global $starlord_arr, $planetKaranaLord;
 	
+	$lbl_title = __('pdf_nut_saaram');
+	$lbl_planet = __('pdf_planet');
+	$lbl_padam = __('pdf_nut_padam');
+	$lbl_adhipathi = __('pdf_nut_adhipathi');
+	$lbl_bhaagai = __('pdf_bhaagai');
+	$lbl_karanam = __('pdf_karanam_col');
+
 echo <<<EOL
 	<div class="divTableRow">
-		<div class="divTableTextMainHeading" colspan=5>நட் சாரம்</div>
+		<div class="divTableTextMainHeading" colspan=5>$lbl_title</div>
 	</div>
 	<div class="divStarDetailCell">
 		<div class="divTableRow">
-			<div class='divTableTextHeading'>கிரகம்</div>
-			<div class='divTableTextHeading'>நட் பாதம்</div>
-			<div class='divTableTextHeading'>நட் அதிபதி</div>
-			<div class='divTableTextHeading'>பாகை</div>
-			<div class='divTableTextHeading'>கரணம்</div>
+			<div class='divTableTextHeading'>$lbl_planet</div>
+			<div class='divTableTextHeading'>$lbl_padam</div>
+			<div class='divTableTextHeading'>$lbl_adhipathi</div>
+			<div class='divTableTextHeading'>$lbl_bhaagai</div>
+			<div class='divTableTextHeading'>$lbl_karanam</div>
 		</div>
 	
 EOL;
@@ -1145,14 +1236,18 @@ EOL;
 	foreach($starlord_arr as $idx => $data){
 		
 	$deg = DECtoDMS($data[2]);
-		
+	$tr_idx = map_display_text($idx);
+	$tr_data0 = translate_tamil_text($data[0]);
+	$tr_data1 = translate_tamil_text($data[1]);
+	$tr_karana = translate_tamil_text($planetKaranaLord[$idx]);
+	
 echo <<<EOL
 		<div class="divTableRow">
-			<div class="divTableTextHeading">$idx</div>
-			<div class="divTableTextMedium">$data[0]</div>
-			<div class="divTableTextMedium">$data[1]</div>
+			<div class="divTableTextHeading">$tr_idx</div>
+			<div class="divTableTextMedium">$tr_data0</div>
+			<div class="divTableTextMedium">$tr_data1</div>
 			<div class="divTableTextMedium">$deg</div>
-			<div class="divTableTextMedium">$planetKaranaLord[$idx]</div>
+			<div class="divTableTextMedium">$tr_karana</div>
 		</div>
 EOL;
 	}
@@ -1225,33 +1320,45 @@ function displayChart1()
 {
 	global $sw_planet, $g_thithi_soonyam_arr;
 	
+	// Prepare display arrays for English mapping
+	$sw_planet_disp = $sw_planet;
+	$g_thithi_soonyam_disp = $g_thithi_soonyam_arr;
+	if (function_exists('map_display_text')) {
+		for ($i = 0; $i < 12; $i++) {
+			if (isset($sw_planet[$i])) $sw_planet_disp[$i] = map_display_text($sw_planet[$i]);
+			if (isset($g_thithi_soonyam_arr[$i])) $g_thithi_soonyam_disp[$i] = map_display_text($g_thithi_soonyam_arr[$i]);
+		}
+	}
+	
+	$rasi_label = __('pdf_rasi_chart');
+
 echo <<<EOL
 	<div class="divTable blueTable" id="chart">
-						
+				
 		<div class="divTableBody">
 			<div class="divTableRow">
-					<div class="divTableCell" style='border-right:0px; border-bottom:0px'>$sw_planet[11] $g_thithi_soonyam_arr[11]</div>
-					<div class="divTableCell"  style='border-right:0px;border-bottom:0px'>$sw_planet[0] $g_thithi_soonyam_arr[0]</div>
-					<div class="divTableCell"  style='border-right:0px;border-bottom:0px'>$sw_planet[1] $g_thithi_soonyam_arr[1]</div>
-					<div class="divTableCell" style='border-bottom:0px;'>$sw_planet[2] $g_thithi_soonyam_arr[2]</div>
+					<div class="divTableCell" style='border-right:0px; border-bottom:0px'>$sw_planet_disp[11] $g_thithi_soonyam_disp[11]</div>
+					<div class="divTableCell"  style='border-right:0px;border-bottom:0px'>$sw_planet_disp[0] $g_thithi_soonyam_disp[0]</div>
+					<div class="divTableCell"  style='border-right:0px;border-bottom:0px'>$sw_planet_disp[1] $g_thithi_soonyam_disp[1]</div>
+					<div class="divTableCell" style='border-bottom:0px;'>$sw_planet_disp[2] $g_thithi_soonyam_disp[2]</div>
 			</div>
 			<div class="divTableRow">
-					<div class="divTableCell" style='border-bottom:0px;border-right:0px'>$sw_planet[10] $g_thithi_soonyam_arr[10]</div>
-					<div class="divTableCenterCell" style='border-left:1px solid;border-top:1px solid'>ராசி</div>
+					<div class="divTableCell" style='border-bottom:0px;border-right:0px'>$sw_planet_disp[10] $g_thithi_soonyam_disp[10]</div>
+					<div class="divTableCenterCell" style='border-left:1px solid;border-top:1px solid'>$rasi_label</div>
 					<div class="divTableCenterCell" style='border-top:1px solid;border-right:0px'></div>
-					<div class="divTableCell" style='border-left:1px solid;border-bottom:0px'>$sw_planet[3] $g_thithi_soonyam_arr[3]</div>
+					<div class="divTableCell" style='border-left:1px solid;border-bottom:0px'>$sw_planet_disp[3] $g_thithi_soonyam_disp[3]</div>
 			</div>
 			<div class="divTableRow">
-					<div class="divTableCell" style='border-bottom:0px;border-right:0px'>$sw_planet[9] $g_thithi_soonyam_arr[9]</div>
+					<div class="divTableCell" style='border-bottom:0px;border-right:0px'>$sw_planet_disp[9] $g_thithi_soonyam_disp[9]</div>
 					<div class="divTableCenterCell" style='border-left:1px solid;border-bottom:0px'></div>
 					<div class="divTableCenterCell" style='border-right:0px;border-bottom:0px'>D1</div>
-					<div class="divTableCell" style='border-bottom:0px; border-left:1px solid'>$sw_planet[4] $g_thithi_soonyam_arr[4]</div>
+					<div class="divTableCell" style='border-bottom:0px; border-left:1px solid'>$sw_planet_disp[4] $g_thithi_soonyam_disp[4]</div>
 			</div>
 			<div class="divTableRow">
-					<div class="divTableCell" style='border-right:0px'>$sw_planet[8] $g_thithi_soonyam_arr[8]</div>
-					<div class="divTableCell" style='border-right:0px;border-top:1px solid'>$sw_planet[7] $g_thithi_soonyam_arr[7]</div>
-					<div class="divTableCell" style='border-right:0px;border-top:1px solid'>$sw_planet[6] $g_thithi_soonyam_arr[6]</div>
-					<div class="divTableCell" style='border-left:1px solid'>$sw_planet[5] $g_thithi_soonyam_arr[5]</div>
+					<div class="divTableCell" style='border-right:0px'>$sw_planet_disp[8] $g_thithi_soonyam_disp[8]</div>
+					<div class="divTableCell" style='border-right:0px;border-top:1px solid'>$sw_planet_disp[7] $g_thithi_soonyam_disp[7]</div>
+					<div class="divTableCell" style='border-right:0px;border-top:1px solid'>$sw_planet_disp[6] $g_thithi_soonyam_disp[6]</div>
+					<div class="divTableCell" style='border-left:1px solid'>$sw_planet_disp[5] $g_thithi_soonyam_disp[5]</div>
 			</div>
 		</div>	
 	</div>
@@ -1262,33 +1369,45 @@ function displayNavamsam()
 {
 	global $g_navamsam_arr;
 	
+	// Prepare display arrays for English mapping
+	$display_navamsam_arr = $g_navamsam_arr;
+	if (function_exists('map_display_text')) {
+		for ($i = 0; $i < count($display_navamsam_arr); $i++) {
+			if (!empty($display_navamsam_arr[$i])) {
+				$display_navamsam_arr[$i] = map_display_text($display_navamsam_arr[$i]);
+			}
+		}
+	}
+	
+	$navamsam_label = __('pdf_navamsam');
+
 echo <<<EOL
 	<div class="divTable blueTable" id="d9_chart">
 		
 		<div class="divTableBody">
 			<div class="divTableRow">
-					<div class="divTableCell" style='border-right:0px; border-bottom:0px'>$g_navamsam_arr[11]</div>
-					<div class="divTableCell" style='border-right:0px;border-bottom:0px'>$g_navamsam_arr[0]</div>
-					<div class="divTableCell" style='border-right:0px;border-bottom:0px'>$g_navamsam_arr[1]</div>
-					<div class="divTableCell" style='border-bottom:0px;'>$g_navamsam_arr[2]</div>
+					<div class="divTableCell" style='border-right:0px; border-bottom:0px'>$display_navamsam_arr[11]</div>
+					<div class="divTableCell" style='border-right:0px;border-bottom:0px'>$display_navamsam_arr[0]</div>
+					<div class="divTableCell" style='border-right:0px;border-bottom:0px'>$display_navamsam_arr[1]</div>
+					<div class="divTableCell" style='border-bottom:0px;'>$display_navamsam_arr[2]</div>
 			</div>
 			<div class="divTableRow">
-					<div class="divTableCell" style='border-bottom:0px;border-right:0px'>$g_navamsam_arr[10]</div>
-					<div class="divTableCenterCell" style='border-left:1px solid;border-top:1px solid'>நவாம்சம்</div>
+					<div class="divTableCell" style='border-bottom:0px;border-right:0px'>$display_navamsam_arr[10]</div>
+					<div class="divTableCenterCell" style='border-left:1px solid;border-top:1px solid'>$navamsam_label</div>
 					<div class="divTableCenterCell" style='border-top:1px solid;border-right:0px'></div>
-					<div class="divTableCell" style='border-left:1px solid;border-bottom:0px'>$g_navamsam_arr[3]</div>
+					<div class="divTableCell" style='border-left:1px solid;border-bottom:0px'>$display_navamsam_arr[3]</div>
 			</div>
 			<div class="divTableRow">
-					<div class="divTableCell" style='border-bottom:0px;border-right:0px'>$g_navamsam_arr[9]</div>
+					<div class="divTableCell" style='border-bottom:0px;border-right:0px'>$display_navamsam_arr[9]</div>
 					<div class="divTableCenterCell" style='border-left:1px solid;border-bottom:0px'></div>
 					<div class="divTableCenterCell" style='border-right:0px;border-bottom:0px'>D9</div>
-					<div class="divTableCell" style='border-bottom:0px; border-left:1px solid'>$g_navamsam_arr[4]</div>
+					<div class="divTableCell" style='border-bottom:0px; border-left:1px solid'>$display_navamsam_arr[4]</div>
 			</div>
 			<div class="divTableRow">
-					<div class="divTableCell" style='border-right:0px'>$g_navamsam_arr[8]</div>
-					<div class="divTableCell" style='border-right:0px;border-top:1px solid'>$g_navamsam_arr[7]</div>
-					<div class="divTableCell" style='border-right:0px;border-top:1px solid'>$g_navamsam_arr[6]</div>
-					<div class="divTableCell" style='border-left:1px solid'>$g_navamsam_arr[5]</div>
+					<div class="divTableCell" style='border-right:0px'>$display_navamsam_arr[8]</div>
+					<div class="divTableCell" style='border-right:0px;border-top:1px solid'>$display_navamsam_arr[7]</div>
+					<div class="divTableCell" style='border-right:0px;border-top:1px solid'>$display_navamsam_arr[6]</div>
+					<div class="divTableCell" style='border-left:1px solid'>$display_navamsam_arr[5]</div>
 			</div>
 		</div>	
 	</div>
@@ -1750,7 +1869,8 @@ calculateCurrentDasaBukthi(true);
 calculateNavamsam();
 
 
-$LANG = 1; //1 tamil  2 english
+$LANG = ($language === 'english') ? 2 : 1; //1 tamil  2 english
+
 //$sw_planet = $_SESSION["inside"];
 $g_thithi_soonyam_arr = $g_thithi_soonyam_arr;
 $starlord_arr = $planet_starlord;
@@ -1762,16 +1882,16 @@ $name = $in_name;
 $sex = $in_sex;
 $karan = $g_karan;
 $yogi_arr = getYogi($panchang['yoga']);
-$yogi = $yogi_arr[1]."(".$yogi_arr[0].")";
-$ayogi = $yogi_arr[3]."(".$yogi_arr[2].")";
+$yogi = translate_tamil_text($yogi_arr[1])."(".translate_tamil_text($yogi_arr[0]).")";
+$ayogi = translate_tamil_text($yogi_arr[3])."(".translate_tamil_text($yogi_arr[2]).")";
 $bukthi_table = prepareBukthiTable();
 $g_thithi_soonyam = $g_thithi_soonyam_matching_arr[0];
 $g_dasaBalance = $g_dasaBalance[0];
 $g_dasaCurrent = $g_dasaCurrent[0];
 $g_sunrise = explode(' ',$today_sunrise)[1];
 $g_sunset = explode(' ',$today_sunset)[1];
-$g_lagnam = getRasi($lagna_house-1);
-$g_rasi = getRasi($moon_house-1);
+$g_lagnam = translate_tamil_text(getRasi($lagna_house-1));
+$g_rasi = translate_tamil_text(getRasi($moon_house-1));
 $g_pancha_pakshi = getPanchaPakshi();
 $g_age=-1;
 $g_vayadhotta_lagna=-1;
@@ -1779,7 +1899,7 @@ $g_vayadhotta_lagna=-1;
 $mudakku_star = getMudakku(1);
 $mudakku_rasi = getMudakku(2);
 $mudakku_baavam = getBavam(getMudakku(2));
-$g_mudakku_detail = $mudakku_star." (".$mudakku_rasi.")<BR>".$mudakku_baavam."ஆம் வீடு";
+$g_mudakku_detail = translate_tamil_text($mudakku_star)." (".translate_tamil_text($mudakku_rasi).")<BR>".translate_tamil_text($mudakku_baavam)."".__('pdf_house');
 
 $g_age = round((strtotime($transit_date)-strtotime($chart_date))/(365*60*60*24),1);
 $vayadhotta_rasi = ceil($g_age) % 12;
@@ -1789,11 +1909,15 @@ if($vayadhotta_rasi == 0){
 }
 
 if($g_age >= 0){
-	$g_vayadhotta_lagna = getRasi(targetHouse($lagna_house,$vayadhotta_rasi-1));
+	$g_vayadhotta_lagna = translate_tamil_text(getRasi(targetHouse($lagna_house,$vayadhotta_rasi-1)));
 }
 else{
-	$g_vayadhotta_lagna = "சாத்தியம் இல்லை";
+	$g_vayadhotta_lagna = __('not_applicable');
 }
+
+$pdf_header_text = __('pdf_birth_horoscope').' ('.$in_name.', '.$birth_date.', '.$birth_time.', '.$place.')';
+$pdf_footer_text = __('pdf_naadi_chart').' & Periyanayaki Astro Solutions';
+$pdf_sloka = __('pdf_sloka');
 
 ?>
 
@@ -1808,10 +1932,9 @@ else{
 	  <!-- <div class="header-right"><img src='images/periyanayaki_astro_solutions.png' height="35px"></div> -->
 	</div>
 	<div class="header-image"></div>
-<center><div class='divTableTextSloka' style='font-family: Verdana, Raavi, sans-serif;font-size:8px;width:100%;line-height:10px'>&#2384; ஜனனி ஜன்ம சௌக்யானாம் வர்தநீ குலஸம்பதாம்
- பதவி பூர்வ  புண்யாணாம் லிக்ய தே ஜன்ம பத்திரிகா !</div></center>
+<center><div class='divTableTextSloka' style='font-family: Verdana, Raavi, sans-serif;font-size:8px;width:100%;line-height:10px'>&#2384; <?php echo $pdf_sloka; ?></div></center>
 	<center>
-		<div class="header">பிறப்பு ஜாதகம் (<?php echo $in_name.', '.$birth_date.', '.$birth_time.', '.$place; ?>)</div>
+		<div class="header"><?php echo $pdf_header_text; ?></div>
 		<!-- <div class="divTableBody"> -->
 		<div class='divTable blueTable' style='width:90%'> 
 			<div class="divTableRow">
@@ -1839,7 +1962,7 @@ else{
 	
 </div>
 
-<div class="PageFooter" style="width:-webkit-fill-available">தர்ம சாஸ்தா ஜோதிட வித்யாலயா & Periyanayaki Astro Solutions
+<div class="PageFooter" style="width:-webkit-fill-available"><?php echo $pdf_footer_text; ?>
 	<span id="currentDateTime"></span>
 </div>
 					
