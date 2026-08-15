@@ -613,7 +613,7 @@ function sortDegree($inArray) // new function
 	
 	$RK_house = -1;
 	
-	$outArray=array(null,null,null,null,null,null,null,null,null,null,null,null);
+	$outArray=array('','','','','','','','','','','',''); // PHP 8.0: use empty strings instead of null to avoid deprecation on concatenation
 	
 	foreach ($planetDeg as $planet => $deg) {
 		foreach ($inArray as $house => $inPlanet)
@@ -771,7 +771,7 @@ function sortDegree_transit($inArray) // new function
 {
 	global $planetDeg_transit,$mandhi_degree_transit,$g_rasi_boy;
 	
-	$outArray=array(null,null,null,null,null,null,null,null,null,null,null,null);
+	$outArray=array('','','','','','','','','','','',''); // PHP 8.0: use empty strings instead of null to avoid deprecation on concatenation
 	
 	foreach ($planetDeg_transit as $planet => $deg) {
 		foreach ($inArray as $house => $inPlanet)

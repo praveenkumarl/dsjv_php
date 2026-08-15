@@ -71,7 +71,7 @@ $_SESSION['phone'] = isset($userInfo['phone']) ? $userInfo['phone'] : 1;
 if(strcmp($_SESSION['user_type'],PANCHANG)==0){
 	header("Location: new_panchang.php");
 }
-elseif(strcmp($_SESSION['user_type'],BIRTH)==0 OR strcmp($_SESSION['user_type'],BIRTHPANCH)==0 OR strcmp($_SESSION['user_type'],BIRTHPANCHMATCH)==0){
+elseif(strcmp($_SESSION['user_type'],BIRTH)==0 OR strcmp($_SESSION['user_type'],BIRTHPANCH)==0 OR strcmp($_SESSION['user_type'],BIRTHPANCHMATCH)==0 OR strcmp($_SESSION['user_type'],BIRTHTHARA)==0){
 	header("Location: Birth_input.php");
 }
 elseif(strcmp($_SESSION['user_type'],MATCHING)==0 OR strcmp($_SESSION['user_type'],BIRTHMATCH)==0 OR strcmp($_SESSION['user_type'],BIRTHPANCHMATCH)==0){

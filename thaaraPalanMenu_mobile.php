@@ -64,6 +64,24 @@ elseif(strcmp($usertype,BIRTHPANCH)==0){
 	</div>
 EOL;
 }
+elseif(strcmp($usertype,BIRTHTHARA)==0){
+    echo <<<EOL
+    <div class="MENU-container">
+        <div class="navbar">
+          <div class="dropdown1">
+			  <button class="dropbtn" style='padding:10px; width:auto'>
+				  <i class="fa fa-caret-square-o-down fa-2x" ></i>
+				</button>
+				<div class="dropdown1-content">
+					<a class='glow-button' href="Birth_input.php">பிறப்பு ஜாதகம்</a>
+					<a class='glow-button' href="planet_kaaragam.php">கிரக காரகம்</a>
+				</div>
+          </div> 
+			<div class='menuHeading'>தாரா பலன்</div>
+		</div>
+	</div>
+EOL;
+}
 elseif(strcmp($usertype,BIRTHPANCHMATCH)==0){
     echo <<<EOL
 	 <div class="MENU-container">

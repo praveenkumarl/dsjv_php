@@ -70,6 +70,13 @@ elseif(strcmp($usertype,BIRTHPANCHMATCH)==0){
 
 EOL;
 }
+if(strcmp($usertype,BIRTHTHARA)==0){
+	echo <<<EOL
+	<button class="menu" onClick='window.open("Birth_input.php","_self")'>பிறப்பு ஜாதகம்</button>
+	<button class="menu" onClick='window.open("star_thaara_palan.php","_self")'>தாரா பலன்</button>
+	<button class="menu" onClick='window.open("new_logout.php","_self")'>Logout</button>
+EOL;
+}
 elseif(strcmp($usertype,PANCHANG)==0){
 	echo <<<EOL
 	<button class="menu" onClick='window.open("hora.php","_self")'>ஓரை</button>

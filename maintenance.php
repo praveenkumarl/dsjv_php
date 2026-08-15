@@ -6,8 +6,9 @@ $imei="";
 $appInfo=array();
 $userInfo=array();
 $results_per_page = 15; // number of results per page
-if (isset($_GET["page"])) { $page  = $_GET["page"]; } else { $page=1; };
-$start_from = ($page-1) * $results_per_page;
+$page = isset($_GET["page"]) ? max(1, (int)$_GET["page"]) : 1;
+$start_from = ($page - 1) * $results_per_page;
+$userTotalPages = 1;
 
 $DEBUG= (int) isset($_SESSION['debug']) ? $_SESSION['debug'] : 0;
 
@@ -18,15 +19,29 @@ if(!isset($_SESSION['userinfo']) or (!strcmp($_SESSION['userinfo']['user_type'],
 
 function getUserDetails()
 {
-	global $conn,$userInfo, $page, $results_per_page, $start_from;
+	global $conn,$userInfo, $page, $results_per_page, $start_from, $userTotalPages;
 	
 	$cnt=0;
 	
 	$conn = dbConnect($conn);
 
 	try {
-		
-		$sql = "SELECT rowid,name,phone,imei,last_login,user_type,registered_date FROM user ORDER BY registered_date DESC LIMIT $start_from, $results_per_page";
+		$countSql = "SELECT COUNT(rowid) AS total FROM user";
+		$totalRows = 0;
+		if (($countResult = mysqli_query($conn, $countSql))) {
+			$countRow = $countResult->fetch_assoc();
+			$totalRows = (int)$countRow["total"];
+		}
+
+		$userTotalPages = max(1, (int)ceil($totalRows / $results_per_page));
+		if ($page > $userTotalPages) {
+			$page = $userTotalPages;
+			$start_from = ($page - 1) * $results_per_page;
+		}
+
+		$limitStart = (int)$start_from;
+		$limitCount = (int)$results_per_page;
+		$sql = "SELECT rowid,name,phone,imei,last_login,user_type,registered_date FROM user ORDER BY registered_date DESC LIMIT $limitStart, $limitCount";
 	
 		if(($result = mysqli_query($conn, $sql))){
 			$count = mysqli_num_rows($result);
@@ -96,16 +111,8 @@ function get_nearest_timezone($cur_lat, $cur_long, $country_code = '') {
 }
 
 function getUserTotal(){
-	global $conn,$results_per_page;
-	
-	$conn = dbConnect($conn);
-	
-	$sql = "SELECT COUNT(rowid) AS total FROM user";
-	$result = $conn->query($sql);
-	$row = $result->fetch_assoc();
-	$total_pages = ceil($row["total"] / $results_per_page); // calculate total pages with results
-	
-	return $total_pages;
+	global $userTotalPages;
+	return $userTotalPages;
 }
 
 //timezone for one NY co-ordinate
@@ -226,7 +233,8 @@ function openUserInfo(rowid){
 							echo "<div class='divPanchangHeading'>reg_date</div>";
 						echo "</div>";
 						
-						for($i=0; $i<sizeof($userInfo['Name']); $i++){
+						$userRowCount = isset($userInfo['Name']) ? count($userInfo['Name']) : 0;
+						for($i=0; $i<$userRowCount; $i++){
 							
 								$rowid = $userInfo['rowid'][$i];
 								
@@ -261,15 +269,7 @@ function openUserInfo(rowid){
 
 					echo "</div>";
 					echo "<BR>";
-					//Print pages for user detail	
-					$total_pages = getUserTotal();
-					  
-					for ($i=1; $i<=$total_pages; $i++) {  // print links for all pages
-						if ($i==$page)
-							echo "<a style='display:box;border: 1px solid; background-color:black;color:white;width:auto;font-size:20px;padding:3px' href='maintenance.php?page=".$i."'>".$i."</a> ";
-						else
-							echo "<a style='display:box;border: 1px solid; background-color:gold;color:white;width:auto;font-size:20px;padding:3px' href='maintenance.php?page=".$i."'>".$i."</a> ";
-					};
+					renderAdminUserPagination($page, getUserTotal(), 'maintenance.php');
 					echo "<BR><BR>";
 					
 ?>
