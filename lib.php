@@ -966,7 +966,7 @@ function sortDegree($inArray) // new function
 	
 	$RK_house = -1;
 	
-	$outArray=array(null,null,null,null,null,null,null,null,null,null,null,null);
+	$outArray=array('','','','','','','','','','','',''); // PHP 8.0: use empty strings instead of null to avoid deprecation on concatenation
 	
 	foreach ($planetDeg as $planet => $deg) {
 
@@ -1161,7 +1161,7 @@ function sortDegree_transit($inArray) // new function
 {
 	global $planetDeg_transit,$mandhi_degree_transit,$g_rasi_boy;
 	
-	$outArray=array(null,null,null,null,null,null,null,null,null,null,null,null);
+	$outArray=array('','','','','','','','','','','',''); // PHP 8.0: use empty strings instead of null to avoid deprecation on concatenation
 	
 	foreach ($planetDeg_transit as $planet => $deg) {
 		foreach ($inArray as $house => $inPlanet)
@@ -1210,7 +1210,7 @@ function sortDegree_boy($inArray) // new function
 	$planetDeg = $planetDeg_transit;
 	$mandhi_degree = $mandhi_degree_transit;
 	
-	$outArray=array(null,null,null,null,null,null,null,null,null,null,null,null);
+	$outArray=array('','','','','','','','','','','',''); // PHP 8.0: use empty strings instead of null to avoid deprecation on concatenation
 	
 	foreach ($planetDeg as $planet => $deg) {
 		foreach ($inArray as $house => $inPlanet)
@@ -7540,6 +7540,13 @@ function sqlDateToDefault($date){
 function displayBhavaChart()
 {
 	global $g_bhava_arr, $tr_sw_planet;
+
+	// Safety guard: bhava chart needs all 12 house cusp entries (0-11)
+	for ($i = 0; $i < 12; $i++) {
+		if (!isset($g_bhava_arr[$i]) || !is_array($g_bhava_arr[$i])) {
+			return; // incomplete bhava data, skip rendering
+		}
+	}
 	
 	echo '<center><div class="divTable blueTable" id="bhava_chart" style="margin-top:20px">';
 		

@@ -104,6 +104,24 @@ $planet_starlord = array();
 $planet_starlord_boy = array();
 $g_bhava_arr = array(null,null,null,null,null,null,null,null,null,null,null,null);
 
+function parseTimezoneOffsetHours($offsetText) {
+	$offsetText = trim((string)$offsetText);
+	if ($offsetText === '') {
+		return 0.0;
+	}
+
+	if (strpos($offsetText, ':') === false) {
+		return (float)$offsetText;
+	}
+
+	$parts = explode(':', $offsetText);
+	$hour = (int)($parts[0] ?? 0);
+	$minute = (int)($parts[1] ?? 0);
+	$sign = $hour < 0 || strpos($parts[0], '-') === 0 ? -1 : 1;
+
+	return $hour + ($sign * abs($minute) / 60);
+}
+
 $g_girlage=0;
 $g_boyage=0;
 $g_mudakku_detail="";
@@ -381,31 +399,31 @@ function updatePlanet_transit(array $planets,array $retro, $in_ragu_house)
 	
 	$out = str_replace('Moon','சந்',$out);
 	
-	if($retro[4]==1){
+	if(isset($retro[4]) && $retro[4]==1){
 		$out = str_replace('Mars','செ',$out);
 	}else{
 		$out = str_replace('Mars','<span class="retro">செ</span>',$out);
 	}
 	
-	if($retro[3]==1){
+	if(isset($retro[3]) && $retro[3]==1){
 		$out = str_replace('Venus','சுக்',$out);
 	}else{
 		$out = str_replace('Venus','<span class="retro">சுக்</span>',$out);
 	}
 	
-	if($retro[2]==1){
+	if(isset($retro[2]) && $retro[2]==1){
 		$out = str_replace('Mercury','புத',$out);
 	}else{
 		$out = str_replace('Mercury','<span class="retro">புத</span>',$out);
 	}
 	
-	if($retro[5]==1){
+	if(isset($retro[5]) && $retro[5]==1){
 		$out = str_replace('Jupiter','குரு',$out);
 	}else{
 		$out = str_replace('Jupiter','<span class="retro">குரு</span>',$out);
 	}
 	
-	if($retro[6]==1){
+	if(isset($retro[6]) && $retro[6]==1){
 		$out = str_replace('Saturn','சனி',$out);
 	}else{
 		$out = str_replace('Saturn','<span class="retro">சனி</span>',$out);
@@ -456,8 +474,8 @@ function updateMandhi_transit(array $out, array $in, $in_sun_degree, $in_day, $i
 		if($key == $mandhi_house){
 			$out[$key] = $out[$key] . " மா";
 			
-			$planetDeg_transit["மா"] = ($mandhi_degree_transit % 30);
-			$planetDeg_default["மா"] = ($mandhi_degree_transit % 30);
+			$planetDeg_transit["மா"] = fmod($mandhi_degree_transit, 30.0);
+			$planetDeg_default["மா"] = fmod($mandhi_degree_transit, 30.0);
 		}
 	}
 	
@@ -533,17 +551,17 @@ function findMandhiHouse_transit($in_dayofweek,$in_sun_degree,$in_day)
 		break;
 	}
 	
-	$mandhi_house = (int)(($mandhi_degree_transit % 360)/30);
+	$mandhi_house = (int)(fmod($mandhi_degree_transit, 360.0)/30);
 	
 	debug("FINDMANDHI Transit - WEEK DAY=" . $in_dayofweek);
 	debug("FINDMANDHI Transit - DAYTIME=" . $in_day);
-	debug("FINDMANDHI Transit - MANDHI DEGREE=" . ($mandhi_degree_transit % 30));
+	debug("FINDMANDHI Transit - MANDHI DEGREE=" . fmod($mandhi_degree_transit, 30.0));
 	debug("FINDMANDHI Transit - SUN DEGREE=" . $in_sun_degree);
 	debug("FINDMANDHI Transit - MANDHI DEGREE FROM SUN=" . $mandhi_degree_transit);
 	debug("FINDMANDHI Transit - MANDHI HOUSE=" . $mandhi_house);
 	
 	//update mandhi degree in degree array
-	$tr_sw_degree["mandhi"] = DECtoDMS($mandhi_degree_transit % 30);
+	$tr_sw_degree["mandhi"] = DECtoDMS(fmod($mandhi_degree_transit, 30.0));
 	
 	return $mandhi_house;
 }
@@ -561,7 +579,7 @@ function findMandhiHouse_transit($in_dayofweek,$in_sun_degree,$in_day)
 		
 		if($count>8 && $count!=21) {continue;}
 
-		debug($count."[".$row[0]."|".$row[1]."|".$row[2]."]<Br>");
+		debug($count."[".($row[0] ?? '')."|".($row[1] ?? '')."|".($row[2] ?? '')."]<Br>");
 		$planetDeg[trim($row[0])] = round(fmod(floatval($row[1]), 30.0),2);
 	}
 	
@@ -631,7 +649,7 @@ function planetSort_transit($inArray)
 		
 		if($count>8 && $count!=21) {continue;}
 
-		debug($count."[".$row[0]."|".$row[1]."|".$row[2]."]<Br>");
+		debug($count."[".($row[0] ?? '')."|".($row[1] ?? '')."|".($row[2] ?? '')."]<Br>");
 		$planetDeg_transit[trim($row[0])] = round(fmod(floatval($row[1]), 30.0),2);		
 	}
 	
@@ -718,7 +736,7 @@ function old_sortDegree($inArray) // new function
 			}
 			
 			if($mandhiUpdated==false && (strpos($inArray[$house],"மா")===0 || strpos($inArray[$house],"மா")>0)){	
-				$outArray[$house] = $outArray[$house] . " " . "மா" . "-". strval(DECtoDMS($mandhi_degree % 30.0));
+				$outArray[$house] = $outArray[$house] . " " . "மா" . "-". strval(DECtoDMS(fmod($mandhi_degree, 30.0)));
 				$mandhiUpdated = true;
 			}
 			
@@ -3317,14 +3335,14 @@ function displayGirlBoyDetails()
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>பிறந்த தேதி</div>";
 			$g_girlage = round((strtotime(date('d-M-Y'))-strtotime($chart_date))/(365*60*60*24),1);
-			$g_vayadhotta_rasi_girl = ceil($g_girlage) % 12;
+			$g_vayadhotta_rasi_girl = (int)ceil($g_girlage) % 12;
 			
 			if($g_vayadhotta_rasi_girl == 0){
 				$g_vayadhotta_rasi_girl = 12;
 			}
 			echo "<div class='divGirlPanchang'>".date('d-M-Y',strtotime($chart_date))."<BR>($g_girlage வயது)</div>";
 			$g_boyage = round((strtotime(date('d-M-Y'))-strtotime($transit_date))/(365*60*60*24),1);
-			$g_vayadhotta_rasi_boy = ceil($g_boyage) % 12;
+			$g_vayadhotta_rasi_boy = (int)ceil($g_boyage) % 12;
 			
 			if($g_vayadhotta_rasi_boy == 0){
 				$g_vayadhotta_rasi_boy = 12;
@@ -3523,15 +3541,11 @@ echo "TZ: " . $TZ_girl ."<BR>";
 date_default_timezone_set($TZ_girl);
 
 if(date('I',strtotime($chart_date))==1) { // DST
-   $hour=(int)strtok($gmt_offset_dst,":");
-   $min=(int)strtok(":");
-   $offset=$hour+$min/60;
+   $offset=parseTimezoneOffsetHours($gmt_offset_dst);
    $tz_offset=$gmt_offset_dst;
 }
 else {
-   $hour=(int)strtok($gmt_offset,":");
-   $min=(int)strtok(":");
-   $offset=$hour+$min/60;
+   $offset=parseTimezoneOffsetHours($gmt_offset);
    $tz_offset=$gmt_offset;
 }
 
@@ -3647,7 +3661,7 @@ foreach ($output as $key => $line)
 	$sw_degree[$row[0]] = round($tot_degree[$key] - $sw_house[$key]*30,2);
 	
     if($count!=21){
-		$sw_dir[$key] = ($row[2] > 0) - ($row[2] < 0);
+		$sw_dir[$key] = isset($row[2]) ? (($row[2] > 0) - ($row[2] < 0)) : 0;
 	}
 	
 	if($sun_house==0 and strpos($row[0],'Sun')===0){
@@ -3744,15 +3758,11 @@ echo "TZ: " . $TZ_boy ."<BR>";
 date_default_timezone_set($TZ_boy);
 
 if(date('I',strtotime($transit_date))==1) { // DST
-   $hour=(int)strtok($gmt_offset_dst,":");
-   $min=(int)strtok(":");
-   $offset=$hour+$min/60;
+   $offset=parseTimezoneOffsetHours($gmt_offset_dst);
    $tz_offset=$gmt_offset_dst;
 }
 else {
-   $hour=(int)strtok($gmt_offset,":");
-   $min=(int)strtok(":");
-   $offset=$hour+$min/60;
+   $offset=parseTimezoneOffsetHours($gmt_offset);
    $tz_offset=$gmt_offset;
 }
 
@@ -3833,7 +3843,7 @@ foreach ($transit as $key => $line)
 	$tr_sw_degree[$row[0]] = DECtoDMS(round($tot_degree[$key] - $tr_sw_house[$key]*30,2));
 
 	if($count!=21){
-		$tr_sw_dir[$key] = ($row[2] > 0) - ($row[2] < 0);
+		$tr_sw_dir[$key] = isset($row[2]) ? (($row[2] > 0) - ($row[2] < 0)) : 0;
 	}
 
 	if($transit_sun_house==0 and strpos($row[0],'Sun')===0){
@@ -3920,10 +3930,10 @@ function displayDetailsGirl()
 			$moon_house,$transit_moon_house,$g_panchang_girl, $g_thithi_soonyam_matching_arr ;
 	
 	$g_girlage = round((strtotime(date('d-M-Y'))-strtotime($chart_date))/(365*60*60*24),1);
-	$vayadhotta_rasi_girl = ceil($g_girlage) % 12;
+	$vayadhotta_rasi_girl = (int)ceil($g_girlage) % 12;
 	
 	$g_boyage = round((strtotime(date('d-M-Y'))-strtotime($transit_chart_date))/(365*60*60*24),1);
-	$vayadhotta_rasi_boy = ceil($g_boyage) % 12;
+	$vayadhotta_rasi_boy = (int)ceil($g_boyage) % 12;
 	
 	if($vayadhotta_rasi_girl == 0){
 		$vayadhotta_rasi_girl = 12;
@@ -4051,7 +4061,7 @@ function displayDetailsBoy()
 
 	
 	$g_boyage = round((strtotime(date('d-M-Y'))-strtotime($transit_date))/(365*60*60*24),1);
-	$vayadhotta_rasi_boy = ceil($g_boyage) % 12;
+	$vayadhotta_rasi_boy = (int)ceil($g_boyage) % 12;
 	
 	
 	$g_chartdate = date('d-M-Y',strtotime($transit_date));
