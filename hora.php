@@ -3,9 +3,8 @@
 require_once "lib.php";
 include_once "lang/lang.php";
 
-// Initialize language from cookie or default to Tamil
-$language = isset($_COOKIE['language']) ? strtolower($_COOKIE['language']) : 'tamil';
-init_language($language);
+// Render this page in English while keeping Tamil calculation tokens unchanged.
+init_language('english');
 
 $DEBUG= (int) isset($_GET['debug']) ? $_GET['debug'] : 0;
 $flag = (int)isset($_GET['flag']) ? $_GET['flag'] : 0;
@@ -114,6 +113,13 @@ function displayHorai($lat,$lon)
 		calculateHoraCurrentDay($lat,$lon);
 		displayHoraTable($day_hora_data);
 	}
+}
+
+function translateHoraDisplay($text)
+{
+	$planetAbbreviations = array("சூரி", "சந்", "செ", "புத", "குரு", "சுக்", "சனி", "ரா", "கே", "மா", "லக்", "இந்");
+	$englishAbbreviations = array_map('translate_planet_abbr', $planetAbbreviations);
+	return str_replace(array_merge($planetAbbreviations, array("வரை")), array_merge($englishAbbreviations, array("till")), $text);
 }
 
 function getSubHora($start_time,$curr_time,$hora_lord,$hora_time)
@@ -481,40 +487,40 @@ function displayHoraTable($hora_data)
 	
 	echo "<center><div class='divTable blueTable' style='height:40px;margin-left:5px' id='currentHoraHeading'>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divTableCell' colspan=4>தற்போதைய ஓரை</div>";
+			echo "<div class='divTableCell' colspan=4>".__('current_horai')."</div>";
 		echo "</div>";
 	echo "</div>";
 	
 	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px' id='currentHoraTable'>";
 		echo "<div class='divTableRow'>";
-				echo "<div class='divThaaraPalanHeading'>ஆரம்பம்</div>";
-				echo "<div class='divThaaraPalanHeading'>முடிவு</div>";
-				echo "<div class='divThaaraPalanHeading'>ஓரை</div>";
-				echo "<div class='divThaaraPalanHeading'>உப ஓரை</div>";
+				echo "<div class='divThaaraPalanHeading'>".__('start')."</div>";
+				echo "<div class='divThaaraPalanHeading'>".__('end')."</div>";
+				echo "<div class='divThaaraPalanHeading'>".__('horai')."</div>";
+				echo "<div class='divThaaraPalanHeading'>Sub-Horai</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			//Condition is to mark current hora in green color for good horas
 			if(strpos($current_hora[3],"குரு")===0 or strpos($current_hora[3],"சுக்")===0 or strpos($current_hora[3],"புத")===0 or strpos($current_hora[3],"சந்")===0){  //== will not differenciate between 0 and false, so should use ===
 				echo "<div class='divThaaraPalanGreen'>".date("h:i A",strtotime($current_hora[1]))."</div>";
 				echo "<div class='divThaaraPalanGreen'>".date("h:i A",strtotime($current_hora[2]))."</div>";	
-				echo "<div class='divThaaraPalanGreen' id='horaLord'><div id='horaLordTxt'>".translate_tamil_text($current_hora[3])."</div></div>";
+					echo "<div class='divThaaraPalanGreen' id='horaLord'><div id='horaLordTxt'>".translateHoraDisplay($current_hora[3])."</div></div>";
 				if(strpos($current_hora[3],"குரு")===0 or strpos($current_hora[3],"சுக்")===0 or strpos($current_hora[3],"புத")===0 or strpos($current_hora[3],"சந்")===0){  //== will not differenciate between 0 and false, so should use ===
-					echo "<div class='divThaaraPalanGreen' id='horaSubLord'>".$current_hora[5]."</div>";
+					echo "<div class='divThaaraPalanGreen' id='horaSubLord'>".translateHoraDisplay($current_hora[5])."</div>";
 				}
 				else{
-					echo "<div class='divThaaraPalanRed' id='horaSubLord'>".$current_hora[5]."</div>";
+					echo "<div class='divThaaraPalanRed' id='horaSubLord'>".translateHoraDisplay($current_hora[5])."</div>";
 				}
 			}
 			else{ //Condition is to mark current hora in red color for bad horas
 				
 				echo "<div class='divThaaraPalanRed'>".date("h:i A",strtotime($current_hora[1]))."</div>";
 				echo "<div class='divThaaraPalanRed'>".date("h:i A",strtotime($current_hora[2]))."</div>";	
-				echo "<div class='divThaaraPalanRed' id='horaLord'><div id='horaLordTxt'>".translate_tamil_text($current_hora[3])."</div></div>";
+					echo "<div class='divThaaraPalanRed' id='horaLord'><div id='horaLordTxt'>".translateHoraDisplay($current_hora[3])."</div></div>";
 				if(strpos($current_hora[3],"குரு")===0 or strpos($current_hora[3],"சுக்")===0 or strpos($current_hora[3],"புத")===0 or strpos($current_hora[3],"சந்")===0){  //== will not differenciate between 0 and false, so should use ===
-					echo "<div class='divThaaraPalanGreen' id='horaSubLord'>".$current_hora[5]."</div>";
+						echo "<div class='divThaaraPalanGreen' id='horaSubLord'>".translateHoraDisplay($current_hora[5])."</div>";
 				}
 				else{
-					echo "<div class='divThaaraPalanRed' id='horaSubLord'>".$current_hora[5]."</div>";
+					echo "<div class='divThaaraPalanRed' id='horaSubLord'>".translateHoraDisplay($current_hora[5])."</div>";
 				}
 			}
 		echo "</div>";
@@ -524,7 +530,7 @@ function displayHoraTable($hora_data)
 	
 	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px' id='fullHoraHeading'>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divTableCell' colspan=4>ஓரை அட்டவணை</div>";
+			echo "<div class='divTableCell' colspan=4>Horai Table</div>";
 		echo "</div>";
 	echo "</div>";
 	
@@ -550,14 +556,14 @@ function displayHoraTable($hora_data)
 					echo "<div class='divThaaraPalanGreen'>".date("h:i A",strtotime($data[1]))."</div>";
 					echo "<div class='divThaaraPalanGreen'>".date("h:i A",strtotime($data[2]))."</div>";	
 					//echo "<div class='divThaaraPalanGreen'>".$data[3]."<div class='divSubHora'>".$data[5]."</div></div>";
-					echo "<div class='divThaaraPalanGreen'>".$data[3]."</div>";
+					echo "<div class='divThaaraPalanGreen'>".translateHoraDisplay($data[3])."</div>";
 				}
 				else{ //Condition is to mark current hora in red color for bad horas
 					echo "<div class='divThaaraPalanRed'>".$data[0]."</div>";
 					echo "<div class='divThaaraPalanRed'>".date("h:i A",strtotime($data[1]))."</div>";
 					echo "<div class='divThaaraPalanRed'>".date("h:i A",strtotime($data[2]))."</div>";	
 					//echo "<div class='divThaaraPalanRed'>".$data[3]."<div class='divSubHora'>".$data[5]."</div></div>";
-					echo "<div class='divThaaraPalanRed'>".$data[3]."</div>";
+					echo "<div class='divThaaraPalanRed'>".translateHoraDisplay($data[3])."</div>";
 				}
 			/*}
 			else{
@@ -624,7 +630,7 @@ if (isset($place_from_post) && $place_from_post) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="canonical" href="https://html5-templates.com/" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>PK Astro Thaara palan</title>
+	<title>PK Astro Horai</title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
 	
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
@@ -707,14 +713,14 @@ function validateForm() {
 	  p = document.getElementById("place").value;
 
 	  if (p == "") {
-		alert('பிறந்த இடம் கொடுல்லவில்லை');
+		alert('Birth place is required.');
 		//document.getElementById("error").innerHTML = "பிறந்த இடம் கொடுல்லவில்லை";
 		document.getElementById('place').style.borderColor = "red";
 		return false;
 	  }
 	  
 	  if (p.includes("|")==false || p.includes("/")==false || p.length<10){
-		  alert('நீங்கள் இடத்தை கீழ் வரும் பட்டியலில் தேர்ந்தெடுக்கவில்லை');
+		  alert('Please select a place from the list below.');
 		  document.getElementById('place').style.borderColor = "red";
 		  return false;
 	  }
@@ -781,7 +787,7 @@ $(document).ready(function(){
 	</div>
 	<div class='column-body'>			
 				<center><form name="horaForm" style="width:320px" action="hora.php?debug=<?php echo $DEBUG; ?>" method="post" id='horaForm'>
-				<CENTER><P style="color:#660000;font-weight:bold; font-size:16px; background-color:white;">ஓரை</P></CENTER>
+				<CENTER><P style="color:#660000;font-weight:bold; font-size:16px; background-color:white;">Horai</P></CENTER>
 					<table style="width:25%; text-align:left;">
 					
 						<tr>

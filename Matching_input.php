@@ -258,14 +258,14 @@ function updateNow() {
 				<button class="menu" onClick="window.open('index.php','_self')"><?php _e('back'); ?></button>
 				<button class='menu' onClick='window.open("matchingChartDisplay.php","_self")'><?php _e('history'); ?></button>
 				<button class='menu' onclick="toggleLanguage()" style="background:transparent;border:1px solid #fff;color:#fff;min-width:80px;padding:8px;margin-left:6px;">
-					<?php echo ($language === 'english' ? 'EN' : 'தமிழ்'); ?>
+					<?php echo ($language === 'english' ? 'EN' : 'TA'); ?>
 				</button>
 			</div>
 			<div class='mobile'>
 				<?php include "matchingInputMenu_mobile.php"; ?>
 				<div style="text-align:right;padding:8px 10px;">
 					<button class='menu' onclick="toggleLanguage()" style="background:transparent;border:1px solid #fff;color:#fff;min-width:72px;padding:8px;font-size:12px;">
-						<?php echo ($language === 'english' ? 'EN' : 'தமிழ்'); ?>
+						<?php echo ($language === 'english' ? 'EN' : 'TA'); ?>
 					</button>
 				</div>
 			</div>
@@ -317,8 +317,8 @@ function updateNow() {
 								</tr>
 								
 								<tr  style="background-color: #FFFFFF">
-									<td align="center"><button type="button" value="MatchBirth" class="primary wide" style="width:100%; text-align:center; font-weight:bold; background:#660000; font-size:11px; border:none; color:white; cursor:pointer;" onclick="window.open('matchBirthChart.php','_self')">பொருத்தம்</button></td>
-									<td align="center"><input type="submit" value="சமர்ப்பிக்க" class="primary wide" style="width:100%; text-align:center; font-weight:bold; background:#660000; font-size:11px; border:none; color:white; cursor:pointer;" onclick="return validateForm();"></td>
+									<td align="center"><button type="button" value="MatchBirth" class="primary wide" style="width:100%; text-align:center; font-weight:bold; background:#660000; font-size:11px; border:none; color:white; cursor:pointer;" onclick="window.open('matchBirthChart.php','_self')"><?php _e('match_birth_chart'); ?></button></td>
+									<td align="center"><input type="submit" value="<?php echo htmlspecialchars(__('submit'), ENT_QUOTES, 'UTF-8'); ?>" class="primary wide" style="width:100%; text-align:center; font-weight:bold; background:#660000; font-size:11px; border:none; color:white; cursor:pointer;" onclick="return validateForm();"></td>
 								</tr>
 								<tr style="background-color: #FFFFFF">
 									<td colspan="2" align="center"><div id="error" style="color:red;"></div></td>

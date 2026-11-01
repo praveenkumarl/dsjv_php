@@ -1,6 +1,7 @@
 <!doctype html>
 <?php session_start();
 require "lib.php";
+init_language('english');
 
 $devInfo = $_GET;
 //array_csv_download(); exit;
@@ -47,6 +48,33 @@ $devInfo = $_GET;
 				width: 100%;
 				height: -webkit-fill-available; /* Adjust height to cover the moved content */
 			}
+			.numerology-info {
+				max-width: 760px;
+				margin: 24px auto;
+				padding: 0 12px;
+				font-family: Arial, sans-serif;
+			}
+			.numerology-info h3 {
+				margin: 20px 0 8px;
+				color: #064b9b;
+				text-align: center;
+			}
+			.numerology-info table {
+				width: 100%;
+				border-collapse: collapse;
+				margin-bottom: 20px;
+				background: #fff;
+			}
+			.numerology-info th,
+			.numerology-info td {
+				border: 1px solid #d5deea;
+				padding: 8px;
+				text-align: center;
+			}
+			.numerology-info th {
+				background: #064b9b;
+				color: #fff;
+			}
 
 
 		</style>
@@ -71,6 +99,11 @@ $devInfo = $_GET;
 	});
 
 	
+	const chartPlanetAbbreviations = <?php
+	$chartPlanetKeys = ['சூரி', 'சந்', 'செ', 'புத', 'குரு', 'சுக்', 'சனி', 'ரா', 'கே', 'மா', 'லக்', 'இந்'];
+	echo json_encode(array_combine($chartPlanetKeys, array_map('translate_planet_abbr', $chartPlanetKeys)), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+	?>;
+
 	var g_input = '';
 	var g_pyramid_number = '';
 	var g_date = '';
@@ -767,6 +800,11 @@ function printPyramid(numbers){
 			let index = inData.findIndex(element => element.includes("லக்"));
 			console.log('Lagna house = '+index);
 			new_calculate(index);
+			const abbreviationKeys = Object.keys(chartPlanetAbbreviations).sort((a, b) => b.length - a.length);
+			inData = inData.map(chartCell => abbreviationKeys.reduce(
+				(translated, tamilAbbreviation) => translated.replaceAll(tamilAbbreviation, chartPlanetAbbreviations[tamilAbbreviation]),
+				chartCell
+			));
 			// You can use g_name here
 			
 			var chartHTML = '<center><div class="divTable blueTable" id="chart">' +
@@ -898,7 +936,7 @@ function printPyramid(numbers){
 			<button type="button" class="glow-button" id='calculatorBtn' onclick="window.open('numerologyCalc.php','_self')" style="width:-webkit-fill-available;line-height: normal;">Calculator</button>
 		</center>
 		
-		<center><BR><p id='birthTitle' style="color:#660000;font-weight:bold; font-size:20px; text-align:center; margin:0px">DSJV எண் கணிதம்</p></center>
+		<center><BR><p id='birthTitle' style="color:#660000;font-weight:bold; font-size:20px; text-align:center; margin:0px">DSJV Numerology</p></center>
 		
 		<center><div class='name_number' id='name_number' style='text-align: -webkit-center;'></div></center>
 		<center><div style='display: flex; overflow-x: auto; white-space: nowrap; text_align:center'><div class='py' id='py'></div></div></center>
@@ -915,9 +953,40 @@ function printPyramid(numbers){
 	
 	<BR>
 	
-	<center><div id="foot" style='display:none'><p><span style='color:red;'>&#9679; பகை</span><span style='color:#32CD32;'>&#9679; வசியம்</span></p>
+	<center><div id="foot" style='display:none'><p><span style='color:red;'>&#9679; Enemy</span><span style='color:#32CD32;'>&#9679; Attraction</span></p>
 	<p style='display:none'>*Uses Chaldean method </p></div></center>
-	<?php displayNumerologyInfo(); ?>
+	<section class="numerology-info" aria-label="Numerology reference tables">
+		<h3>Numbers for English Letters</h3>
+		<table>
+			<thead><tr><th>Number</th><th>Planet</th><th>Letters</th></tr></thead>
+			<tbody>
+				<tr><td>1</td><td>Sun</td><td>A, I, J, Q, Y</td></tr>
+				<tr><td>2</td><td>Moon</td><td>B, K, R</td></tr>
+				<tr><td>3</td><td>Jupiter</td><td>C, G, L, S</td></tr>
+				<tr><td>4</td><td>Rahu</td><td>D, M, T</td></tr>
+				<tr><td>5</td><td>Mercury</td><td>E, H, N, X</td></tr>
+				<tr><td>6</td><td>Venus</td><td>U, V, W</td></tr>
+				<tr><td>7</td><td>Ketu</td><td>O, Z</td></tr>
+				<tr><td>8</td><td>Saturn</td><td>F, P</td></tr>
+				<tr><td>9</td><td>Mars</td><td>—</td></tr>
+			</tbody>
+		</table>
+		<h3>Planetary Relationships</h3>
+		<table>
+			<thead><tr><th>Planet</th><th>Friends</th><th>Enemies</th><th>Attraction</th></tr></thead>
+			<tbody>
+				<tr><td>Sun (1)</td><td>2, 3, 9</td><td>6, 7, 8</td><td>4</td></tr>
+				<tr><td>Moon (2)</td><td>1, 3, 9</td><td>4, 8</td><td>7</td></tr>
+				<tr><td>Jupiter (3)</td><td>1, 2, 9</td><td>5</td><td>6</td></tr>
+				<tr><td>Rahu (4)</td><td>5, 6, 8</td><td>2, 9</td><td>1</td></tr>
+				<tr><td>Mercury (5)</td><td>1, 6, 8</td><td>3, 9</td><td>3</td></tr>
+				<tr><td>Venus (6)</td><td>4, 5, 8</td><td>1, 7</td><td>3</td></tr>
+				<tr><td>Ketu (7)</td><td>3, 5</td><td>1, 6</td><td>2</td></tr>
+				<tr><td>Saturn (8)</td><td>4, 5, 6</td><td>1, 2</td><td>9</td></tr>
+				<tr><td>Mars (9)</td><td>1, 2, 3</td><td>7, 4</td><td>8</td></tr>
+			</tbody>
+		</table>
+	</section>
 	
 </center>
 </body>

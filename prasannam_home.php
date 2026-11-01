@@ -1,5 +1,6 @@
 <?php session_start();
 require "lib.php";
+init_language('english');
 
 $key = isset($_COOKIE['key']) ? $_COOKIE['key'] : "";
 
@@ -12,7 +13,7 @@ $key = isset($_COOKIE['key']) ? $_COOKIE['key'] : "";
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="canonical" href="https://html5-templates.com/" />
-    <title>PK Astro Jamakol</title>
+	<title>PK Astro Prasannam</title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
 	
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
@@ -50,11 +51,11 @@ $key = isset($_COOKIE['key']) ? $_COOKIE['key'] : "";
 </div>
 <div class='column-body'>
 	<div class="grid-container">
-	  <div class="grid-item" onClick="window.open('prasannams.php?type=1','_self')" style="cursor:pointer;">லக்ன பிரசன்னம்</div>
-	  <div class="grid-item" onClick="window.open('prasannams.php?type=2','_self')" style="cursor:pointer;">கடிகார பிரசன்னம்</div>
-	  <div class="grid-item" onClick="window.open('prasannams.php?type=3','_self')" style="cursor:pointer;">ராசி பிரசன்னம்</div>
-	  <div class="grid-item" onClick="window.open('prasannams.php?type=4','_self')" style="cursor:pointer;">பாத பிரசன்னம்</div>
-	  <div class="grid-item" onClick="window.open('prasannams.php?type=5','_self')" style="cursor:pointer;">ஹோரை பிரசன்னம்</div>
+	  <div class="grid-item" onClick="window.open('prasannams.php?type=1','_self')" style="cursor:pointer;">Ascendant Prasannam</div>
+	  <div class="grid-item" onClick="window.open('prasannams.php?type=2','_self')" style="cursor:pointer;">Clock Prasannam</div>
+	  <div class="grid-item" onClick="window.open('prasannams.php?type=3','_self')" style="cursor:pointer;">Rasi Prasannam</div>
+	  <div class="grid-item" onClick="window.open('prasannams.php?type=4','_self')" style="cursor:pointer;">Pada Prasannam</div>
+	  <div class="grid-item" onClick="window.open('prasannams.php?type=5','_self')" style="cursor:pointer;">Hora Prasannam</div>
 	</div>
 	
 	

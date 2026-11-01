@@ -18,7 +18,7 @@ if(strcmp($usertype,FREE)==0){
             </div>
           </div> 
 		  <a href="index.php"><i class="fa fa-home fa-2x"></i></a>
-		  <div class='menuHeading'>ஓரை</div>
+      <div class='menuHeading'>Horai</div>
         </div>
      </div>
 EOL;
@@ -33,12 +33,12 @@ elseif(strcmp($usertype,PANCHANG)==0){
 				  <i class="fa fa-caret-square-o-down fa-2x" ></i>
 				</button>
 				<div class="dropdown1-content">
-					<a class='glow-button' href="new_panchang.php">பஞ்சாங்கம்</a>
-					<a class='glow-button' href="star_thaara_palan.php">தாரா பலன்</a>
-					<a class='glow-button' href="planet_kaaragam.php">கிரக காரகம்</a>
+          <a class='glow-button' href="new_panchang.php">Panchangam</a>
+          <a class='glow-button' href="star_thaara_palan.php">Star Result</a>
+          <a class='glow-button' href="planet_kaaragam.php">Planet Indicator</a>
 				</div>
           </div> 
-			<div class='menuHeading'>ஓரை</div>
+      <div class='menuHeading'>Horai</div>
 		</div>
 	</div>
 EOL;
@@ -52,13 +52,13 @@ elseif(strcmp($usertype,BIRTHPANCH)==0){
 				  <i class="fa fa-caret-square-o-down fa-2x" ></i>
 				</button>
 				<div class="dropdown1-content">
-					<a class='glow-button' href="Birth_input.php">பிறப்பு ஜாதகம்</a>
-					<a class='glow-button' href="new_panchang.php">பஞ்சாங்கம்</a>
-					<a class='glow-button' href="star_thaara_palan.php">தாரா பலன்</a>
-					<a class='glow-button' href="planet_kaaragam.php">கிரக காரகம்</a>
+          <a class='glow-button' href="Birth_input.php">Birth Horoscope</a>
+          <a class='glow-button' href="new_panchang.php">Panchangam</a>
+          <a class='glow-button' href="star_thaara_palan.php">Star Result</a>
+          <a class='glow-button' href="planet_kaaragam.php">Planet Indicator</a>
 				</div>
           </div> 
-			<div class='menuHeading'>ஓரை</div>
+      <div class='menuHeading'>Horai</div>
 		</div>
 	</div>
 EOL;
@@ -72,15 +72,15 @@ elseif(strcmp($usertype,BIRTHPANCHMATCH)==0){
 				  <i class="fa fa-caret-square-o-down fa-2x" ></i>
 				</button>
 				<div class="dropdown1-content">
-				  <a class='glow-button' href="Birth_input.php">பிறப்பு ஜாதகம்</a>
-				  <a class='glow-button' href="Matching_input.php">திருமண பொருத்தம்</a>
-				  <a class='glow-button' href="new_panchang.php">பஞ்சாங்கம்</a>
-				  <a class='glow-button' href="planet_kaaragam.php">கிரக காரகம்</a>
-				  <a class='glow-button' href="hora.php">ஓரை</a>
-				  <a class='glow-button' href="star_thaara_palan.php">தாரா பலன்</a>
+          <a class='glow-button' href="Birth_input.php">Birth Horoscope</a>
+          <a class='glow-button' href="Matching_input.php">Marriage Compatibility</a>
+          <a class='glow-button' href="new_panchang.php">Panchangam</a>
+          <a class='glow-button' href="planet_kaaragam.php">Planet Indicator</a>
+          <a class='glow-button' href="hora.php">Horai</a>
+          <a class='glow-button' href="star_thaara_palan.php">Star Result</a>
 				</div>
           </div> 
-			<img src='images/dsjv_title.png' style='padding:10px;width:40%' />
+      <div class='menuHeading'>Horai</div>
 		</div>
 	</div>
 
@@ -96,17 +96,17 @@ elseif(strcmp($usertype,PAID)==0){
 				  <i class="fa fa-caret-square-o-down fa-2x" ></i>
 				</button>
             <div class="dropdown1-content">
-              <a class='glow-button' href="Jamakol_input.php">ஜாமக்கோள்</a>
-              <a class='glow-button' href="Birth_input.php">பிறப்பு ஜாதகம்</a>
-			  <a class='glow-button' href="numerology.php">எண் கணிதம்</div</a>
-              <a class='glow-button' href="planet_kaaragam.php">கிரக காரகம்</a>
-              <a class='glow-button' href="star_thaara_palan.php">தாரா பலன்</a>
-			  <a class='glow-button' href="new_panchang.php">பஞ்சாங்கம்</a>
-			  <a class='glow-button' href="prasannam_home.php">பிரசன்னம்</a>
+              <a class='glow-button' href="Jamakol_input.php">Jamakol</a>
+              <a class='glow-button' href="Birth_input.php">Birth Horoscope</a>
+        <a class='glow-button' href="numerology.php">Numerology</a>
+              <a class='glow-button' href="planet_kaaragam.php">Planet Indicator</a>
+              <a class='glow-button' href="star_thaara_palan.php">Star Result</a>
+			  <a class='glow-button' href="new_panchang.php">Panchangam</a>
+			  <a class='glow-button' href="prasannam_home.php">Prasannam</a>
             </div>
           </div> 
 		  <a href="index.php"><i class="fa fa-home fa-2x"></i></a>
-		  <div class='menuHeading'>ஓரை</div>
+      <div class='menuHeading'>Horai</div>
         </div>
      </div>
 EOL;
@@ -122,20 +122,20 @@ elseif(strcmp($usertype,SUPER)==0){
 				  <i class="fa fa-caret-square-o-down fa-2x" ></i>
 				</button>
             <div class="dropdown1-content">
-              <a class='glow-button' href="Jamakol_input.php">ஜாமக்கோள்</a>
-              <a class='glow-button' href="Birth_input.php">பிறப்பு ஜாதகம்</a>
-              <a class='glow-button' href="Matching_input.php">திருமண பொருத்தம்</div</a>
-			  <a class='glow-button' href="numerology.php">எண் கணிதம்</div</a>
-              <a class='glow-button' href="planet_kaaragam.php">கிரக காரகம்</a>
-              <a class='glow-button' href="star_thaara_palan.php">தாரா பலன்</a>
-			  <a class='glow-button' href="new_panchang.php">பஞ்சாங்கம்</a>
-			  <a class='glow-button' href="prasannam_home.php">பிரசன்னம்</a>
+              <a class='glow-button' href="Jamakol_input.php">Jamakol</a>
+              <a class='glow-button' href="Birth_input.php">Birth Horoscope</a>
+              <a class='glow-button' href="Matching_input.php">Marriage Compatibility</a>
+			  <a class='glow-button' href="numerology.php">Numerology</a>
+              <a class='glow-button' href="planet_kaaragam.php">Planet Indicator</a>
+              <a class='glow-button' href="star_thaara_palan.php">Star Result</a>
+			  <a class='glow-button' href="new_panchang.php">Panchangam</a>
+			  <a class='glow-button' href="prasannam_home.php">Prasannam</a>
 			  <a class='glow-button' href="maintenance.php">Manage</a>
               
             </div>
           </div> 
 		  <a href="index.php"><i class="fa fa-home fa-2x"></i></a>
-		  <div class='menuHeading'>ஓரை</div>
+      <div class='menuHeading'>Horai</div>
         </div>
         </div>
 EOL;
@@ -149,20 +149,20 @@ elseif(strcmp($usertype,ADMIN)==0){
 				  <i class="fa fa-caret-square-o-down fa-2x" ></i>
 				</button>
             <div class="dropdown1-content">
-              <a class='glow-button' href="Jamakol_input.php">ஜாமக்கோள்</a>
-              <a class='glow-button' href="Birth_input.php">பிறப்பு ஜாதகம்</a>
-              <a class='glow-button' href="Matching_input.php">திருமண பொருத்தம்</div</a>
-			  <a class='glow-button' href="numerology.php">எண் கணிதம்</div</a>
-              <a class='glow-button' href="planet_kaaragam.php">கிரக காரகம்</a>
-              <a class='glow-button' href="star_thaara_palan.php">தாரா பலன்</a>
-			  <a class='glow-button' href="new_panchang.php">பஞ்சாங்கம்</a>
-			  <a class='glow-button' href="prasannam_home.php">பிரசன்னம்</a>
+              <a class='glow-button' href="Jamakol_input.php">Jamakol</a>
+              <a class='glow-button' href="Birth_input.php">Birth Horoscope</a>
+              <a class='glow-button' href="Matching_input.php">Marriage Compatibility</a>
+			  <a class='glow-button' href="numerology.php">Numerology</a>
+              <a class='glow-button' href="planet_kaaragam.php">Planet Indicator</a>
+              <a class='glow-button' href="star_thaara_palan.php">Star Result</a>
+			  <a class='glow-button' href="new_panchang.php">Panchangam</a>
+			  <a class='glow-button' href="prasannam_home.php">Prasannam</a>
               <a class='glow-button' href="admin.php">ADMIN</a>
 			  <a class='glow-button' href="maintenance.php">Manage</a>
             </div>
           </div> 
 		  <a href="index.php"><i class="fa fa-home fa-2x"></i></a>
-		  <div class='menuHeading'>ஓரை</div>
+      <div class='menuHeading'>Horai</div>
         </div>
         </div>
 EOL;

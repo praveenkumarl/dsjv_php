@@ -52,7 +52,7 @@ elseif(strcmp($usertype,NUMEROLOGY)==0){
 				</button>
 				
           </div> 
-		  <img src='images/dsjv_title.png' style='padding:10px;width:40%' />
+      <div class='menuHeading'>DSJV Numerology</div>
 			
 		</div>
 	</div>
