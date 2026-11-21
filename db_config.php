@@ -32,7 +32,7 @@ $db="jamakol";
 $servername = "localhost";
 $username = "root";
 $password = "";
-$db="dsjv";
+$db="u835731528_dsjv";
 
 
 ?>

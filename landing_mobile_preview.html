@@ -1,0 +1,765 @@
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a0b2e">
+<meta name="color-scheme" content="dark">
+<title>DSJV · PK Astro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600&family=Noto+Serif+Tamil:wght@600;700&family=Noto+Sans:wght@400;500&family=Noto+Serif:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#f7effa;
+    --ink-soft:rgba(247,239,250,.66);
+    --line:rgba(255,255,255,.14);
+    --surface:rgba(28,14,44,.58);
+    --surface-2:rgba(255,255,255,.07);
+    --gold:#f5c542;
+    --pink:#ff8fc4;
+    --plum:#7c4dff;
+    --font-display:"Noto Serif Tamil","Noto Serif",Georgia,serif;
+    --font-ui:"Noto Sans Tamil","Noto Sans",system-ui,sans-serif;
+  }
+
+  *,*::before,*::after{box-sizing:border-box;}
+
+  html{-webkit-text-size-adjust:100%;}
+
+  body{
+    margin:0;
+    background:#120a1e;
+    color:var(--ink);
+    font-family:var(--font-ui);
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  a{color:inherit;}
+  svg,img{display:block;}
+
+  .topbar,.daybar,main,.foot{position:relative;z-index:1;}
+  .topbar{z-index:4;}
+
+  ::selection{background:var(--pink);color:#1a0b2e;}
+
+  :focus-visible{outline:3px solid var(--gold);outline-offset:3px;}
+
+  /* ---------- sky ---------- */
+
+  .sky{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    overflow:hidden;
+    pointer-events:none;
+    background:
+      radial-gradient(1100px 820px at 10% -12%, rgba(255,92,168,.34), transparent 62%),
+      radial-gradient(900px 700px at 102% -4%, rgba(124,77,255,.32), transparent 60%),
+      radial-gradient(760px 760px at 86% 58%, rgba(255,92,168,.2), transparent 62%),
+      radial-gradient(900px 900px at 50% 118%, rgba(139,30,75,.34), transparent 64%),
+      linear-gradient(165deg,#1a0b2e 0%,#2a0f3d 42%,#3a1040 72%,#170a22 100%);
+  }
+
+  .sky canvas{position:absolute;inset:0;width:100%;height:100%;}
+
+  /* ---------- top bar ---------- */
+
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:12px 16px;
+    padding-top:calc(12px + env(safe-area-inset-top));
+  }
+
+  .brand{display:flex;align-items:center;gap:9px;text-decoration:none;}
+
+  .brand-name{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:18px;
+    letter-spacing:.02em;
+  }
+
+  .brand-sub{display:none;}
+
+  .topnav{display:flex;align-items:center;gap:10px;font-size:14px;}
+
+  .lang{display:flex;gap:9px;}
+  .lang a{text-decoration:none;}
+  .lang a[aria-current="true"]{
+    font-weight:600;
+    color:var(--gold);
+    text-decoration:underline;
+    text-underline-offset:4px;
+    text-decoration-thickness:2px;
+  }
+
+  .menu-btn{
+    appearance:none;
+    background:none;
+    border:1px solid var(--line);
+    width:44px;
+    height:44px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    padding:0;
+    color:var(--ink);
+  }
+
+  .menu-btn span{display:block;width:16px;height:1.5px;background:currentColor;}
+  .menu-btn:active{border-color:var(--gold);background:var(--surface-2);}
+
+  .menu-panel{
+    position:absolute;
+    top:calc(100% - 4px);
+    right:16px;
+    z-index:5;
+    display:none;
+    width:min(280px,calc(100vw - 32px));
+    max-height:70vh;
+    overflow:auto;
+    padding:8px;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:rgba(28,14,44,.97);
+    box-shadow:0 16px 36px rgba(0,0,0,.4);
+    backdrop-filter:blur(16px);
+  }
+
+  .menu-panel.open{display:grid;gap:3px;}
+
+  .menu-panel a{
+    padding:9px 10px;
+    border-radius:9px;
+    color:var(--ink);
+    font-size:14px;
+    text-decoration:none;
+  }
+
+  .menu-panel a:hover,
+  .menu-panel a:focus-visible{background:var(--surface-2);}
+
+  /* ---------- panchang band (top) ---------- */
+
+  .daybar{
+    background:linear-gradient(180deg,rgba(10,5,18,.62),rgba(10,5,18,.38));
+    border-top:1px solid rgba(245,197,66,.22);
+    border-bottom:1px solid var(--line);
+    color:var(--ink);
+    padding:14px 16px 16px;
+  }
+
+  .daybar-inner{max-width:1180px;margin:0 auto;}
+
+  .daybar-head{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:4px 16px;
+    padding-bottom:10px;
+    border-bottom:1px solid var(--line);
+    font-size:12.5px;
+    color:var(--ink-soft);
+  }
+
+  .daybar-head a{
+    color:var(--gold);
+    text-decoration-color:rgba(245,197,66,.45);
+    text-underline-offset:4px;
+  }
+
+  .panchang-list{
+    display:flex;
+    flex-wrap:wrap;
+    margin:8px 0 0;
+    padding:0;
+  }
+
+  .panchang-list div{flex:0 0 33.333%;padding:6px 0;min-width:0;}
+  .panchang-list div:nth-child(n+4){flex:0 0 50%;}
+
+  .panchang-list dt{margin:0;font-size:11.5px;color:var(--ink-soft);}
+
+  .panchang-list dd{
+    margin:1px 0 0;
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:17px;
+    line-height:1.35;
+    font-variant-numeric:tabular-nums;
+    overflow-wrap:anywhere;
+  }
+
+  /* ---------- intro ---------- */
+
+  main{padding:18px 16px 24px;}
+
+  .intro h1{
+    margin:0;
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:30px;
+    line-height:1.2;
+    letter-spacing:-.01em;
+  }
+
+  .lede{
+    margin:10px 0 0;
+    font-size:15.5px;
+    line-height:1.6;
+    max-width:34ch;
+    color:rgba(247,239,250,.8);
+  }
+
+  /* ---------- board ---------- */
+
+  .board{
+    display:flex;
+    flex-wrap:wrap;
+    margin-top:18px;
+    border:1px solid var(--line);
+    background:var(--surface);
+  }
+
+  .cell{
+    flex:0 0 50%;
+    display:flex;
+    flex-direction:column;
+    padding:0;
+    border-bottom:1px solid var(--line);
+    border-right:1px solid var(--line);
+    text-decoration:none;
+    color:var(--ink);
+    background:var(--surface);
+    transition:background-color .15s ease;
+  }
+
+  .cell:nth-child(2n){border-right:0;}
+  .cell:nth-last-child(-n+2){border-bottom:0;}
+
+  .cell:active{background:rgba(255,255,255,.1);}
+
+  .thumb{
+    width:100%;
+    height:78px;
+    object-fit:cover;
+    border-bottom:1px solid var(--line);
+  }
+
+  .cell-text{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    flex:1;
+    padding:9px 12px 11px;
+  }
+
+  .cell-name{
+    display:block;
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:16.5px;
+    line-height:1.3;
+    overflow-wrap:break-word;
+  }
+
+  .cell-sub{
+    display:block;
+    margin-top:2px;
+    font-size:11.5px;
+    line-height:1.35;
+    color:var(--ink-soft);
+  }
+
+  .help{background:var(--surface-2);}
+  .help .cell-text{justify-content:center;}
+
+  /* ---------- footer ---------- */
+
+  .foot{
+    border-top:1px solid var(--line);
+    padding:14px 16px;
+    padding-bottom:calc(14px + env(safe-area-inset-bottom));
+  }
+
+  .foot-inner{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:4px 16px;
+    max-width:1180px;
+    margin:0 auto;
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+
+  .foot-inner p{margin:0;}
+  .foot-inner a{color:var(--gold);text-underline-offset:3px;}
+
+  /* ---------- one entrance ---------- */
+
+  @keyframes boardIn{from{opacity:0;}}
+  .board{animation:boardIn .45s ease-out;}
+
+  @media (prefers-reduced-motion:reduce){
+    .board{animation:none;}
+    .cell{transition:none;}
+  }
+
+  /* ---------- narrow phones ---------- */
+
+  @media (max-width:359px){
+    .panchang-list div,
+    .panchang-list div:nth-child(n+4){flex:0 0 50%;}
+  }
+
+  /* ---------- 480 ---------- */
+
+  @media (min-width:480px){
+    .brand-sub{
+      display:inline;
+      font-size:12.5px;
+      color:var(--ink-soft);
+      padding-left:9px;
+      border-left:1px solid var(--line);
+    }
+    .intro h1{font-size:36px;}
+    .lede{font-size:16.5px;}
+    .panchang-list div,
+    .panchang-list div:nth-child(n+4){flex:0 0 20%;}
+    .thumb{height:92px;}
+    .cell-name{font-size:17.5px;}
+  }
+
+  /* ---------- 620 ---------- */
+
+  @media (min-width:620px){
+    main{padding:22px 24px 32px;}
+    .daybar{padding-left:24px;padding-right:24px;}
+    .foot{padding-left:24px;padding-right:24px;}
+    .intro h1{font-size:40px;}
+    .board{max-width:600px;margin-left:auto;margin-right:auto;}
+  }
+
+  /* ---------- 1000: two columns, 3x3 board ---------- */
+
+  @media (min-width:1000px){
+    .topbar{
+      max-width:1180px;
+      margin:0 auto;
+      padding:16px 32px;
+      padding-top:calc(16px + env(safe-area-inset-top));
+    }
+
+    .daybar{padding-left:32px;padding-right:32px;}
+
+    main{
+      display:grid;
+      grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);
+      column-gap:56px;
+      align-items:start;
+      max-width:1180px;
+      margin:0 auto;
+      padding:32px 32px 48px;
+    }
+
+    .intro{max-width:34ch;}
+    .intro h1{font-size:40px;}
+    .lede{max-width:34ch;}
+
+    .board{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:1px;
+      background:var(--line);
+      border:1px solid var(--line);
+      max-width:620px;
+      width:100%;
+      justify-self:end;
+      margin-top:0;
+      animation:none;
+    }
+
+    .cell{
+      flex:none;
+      border:0;
+      background:var(--surface);
+    }
+
+    .cell:nth-last-child(-n+2){border-bottom:0;}
+
+    .thumb{height:104px;}
+
+    .cell-name{font-size:17px;}
+    .cell-sub{font-size:12px;}
+
+    .help{grid-column:1 / -1;}
+    .help .cell-text{
+      flex-direction:row;
+      align-items:baseline;
+      justify-content:flex-start;
+      gap:12px;
+      padding:14px 16px;
+    }
+    .help .cell-sub{margin-top:0;}
+
+    .foot{padding-left:32px;padding-right:32px;}
+  }
+
+  @media (hover:hover){
+    .cell:hover{background:rgba(255,255,255,.1);}
+  }
+</style>
+</head>
+<body>
+
+<div class="sky" aria-hidden="true"><canvas id="stars"></canvas></div>
+
+<header class="topbar">
+  <a class="brand" href="#" aria-label="DSJV முகப்பு" data-ta-aria-label="DSJV முகப்பு" data-en-aria-label="DSJV Home">
+    <svg width="20" height="20" viewBox="0 0 4 4" aria-hidden="true">
+      <path d="M.5 0V4M1.5 0V4M2.5 0V4M3.5 0V4M0 .5H4M0 1.5H4M0 2.5H4M0 3.5H4"
+            fill="none" stroke="currentColor" stroke-width=".45"/>
+      <rect x="1.5" y="1.5" width="1" height="1" fill="currentColor"/>
+    </svg>
+    <span class="brand-name">DSJV</span>
+    <span class="brand-sub" lang="ta">தமிழ் ஜோதிடம்</span>
+  </a>
+  <nav class="topnav" aria-label="முதன்மை" data-ta-aria-label="முதன்மை" data-en-aria-label="Main navigation">
+    <span class="lang">
+      <a href="#" data-preview-language="ta" aria-current="true" lang="ta">தமிழ்</a>
+      <a href="#" data-preview-language="en" lang="en">English</a>
+    </span>
+    <button class="menu-btn" id="menuToggle" type="button" aria-label="மெனு" data-ta-aria-label="மெனு" data-en-aria-label="Menu" aria-expanded="false" aria-controls="menuPanel">
+      <span></span><span></span>
+    </button>
+    <div class="menu-panel" id="menuPanel" aria-hidden="true">
+      <a href="Jamakol_input.php" data-ta="ஜாமக்கோள்" data-en="Jamakol">ஜாமக்கோள்</a>
+      <a href="new_panchang.php" data-ta="பஞ்சாங்கம்" data-en="Panchangam">பஞ்சாங்கம்</a>
+      <a href="numerology.php" data-ta="எண் கணிதம்" data-en="Numerology">எண் கணிதம்</a>
+      <a href="Matching_input.php" data-ta="திருமண பொருத்தம்" data-en="Marriage Matching">திருமண பொருத்தம்</a>
+      <a href="Birth_input.php" data-ta="பிறப்பு ஜாதகம்" data-en="Birth Horoscope">பிறப்பு ஜாதகம்</a>
+      <a href="star_thaara_palan.php" data-ta="தாரா பலன்" data-en="Thaara Palan">தாரா பலன்</a>
+      <a href="hora.php" data-ta="ஓரை" data-en="Hora">ஓரை</a>
+      <a href="prasannam_home.php" data-ta="பிரசன்னம்" data-en="Prasannam">பிரசன்னம்</a>
+      <a href="planet_kaaragam.php" data-ta="கிரக காரகம்" data-en="Planet Characteristics">கிரக காரகம்</a>
+    </div>
+  </nav>
+</header>
+
+<section class="daybar" id="today" aria-label="இன்றைய பஞ்சாங்கம்" data-ta-aria-label="இன்றைய பஞ்சாங்கம்" data-en-aria-label="Today's Panchangam">
+  <div class="daybar-inner">
+    <div class="daybar-head">
+      <span lang="ta" data-ta="இன்று, 21 நவம்பர் 2026." data-en="Today, 21 November 2026.">இன்று, 21 நவம்பர் 2026.</span>
+      <a href="new_panchang.php" lang="ta" data-ta="முழு பஞ்சாங்கம்" data-en="Full Panchangam">முழு பஞ்சாங்கம்</a>
+    </div>
+    <dl class="panchang-list">
+      <div>
+        <dt lang="ta" data-ta="வாரம்" data-en="Weekday">வாரம்</dt>
+        <dd lang="ta" data-ta="சனி" data-en="Saturday">சனி</dd>
+      </div>
+      <div>
+        <dt lang="ta" data-ta="திதி" data-en="Tithi">திதி</dt>
+        <dd lang="ta" data-ta="திரயோதசி" data-en="Trayodashi">திரயோதசி</dd>
+      </div>
+      <div>
+        <dt lang="ta" data-ta="நட்சத்திரம்" data-en="Star">நட்சத்திரம்</dt>
+        <dd lang="ta" data-ta="உத்திராடம்" data-en="Uttara Ashadha">உத்திராடம்</dd>
+      </div>
+      <div>
+        <dt lang="ta" data-ta="யோகம்" data-en="Yoga">யோகம்</dt>
+        <dd lang="ta" data-ta="வ்யாகாதம்" data-en="Vyaghata">வ்யாகாதம்</dd>
+      </div>
+      <div>
+        <dt lang="ta" data-ta="கரணம்" data-en="Karana">கரணம்</dt>
+        <dd lang="ta" data-ta="வனிஜை" data-en="Vanija">வனிஜை</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<main>
+  <section class="intro">
+    <h1 data-ta="தர்மசாஸ்தா ஜோதிட வித்யாலயா" data-en="Dharma Sastha Jyothida Vidyalaya">தர்மசாஸ்தா ஜோதிட வித்யாலயா</h1>
+    <p class="lede" data-ta="ஜாமகோல், ஜாதகம், பொருத்தம், ஹோரை. தேவையான கருவியைத் தேர்ந்தெடுங்கள்." data-en="Jamakol, horoscopes, matching, and hora. Choose a tool to get started.">ஜாமகோல், ஜாதகம், பொருத்தம், ஹோரை. தேவையான கருவியைத் தேர்ந்தெடுங்கள்.</p>
+  </section>
+
+  <nav class="board" aria-label="கருவிகள்" data-ta-aria-label="கருவிகள்" data-en-aria-label="Tools">
+    <a class="cell" href="Jamakol_input.php">
+      <img class="thumb" src="images/jamakol.jpg" alt="" loading="lazy" decoding="async">
+      <span class="cell-text">
+        <span class="cell-name" lang="ta" data-ta="ஜாமக்கோள்" data-en="Jamakol">ஜாமக்கோள்</span>
+        <span class="cell-sub" lang="ta" data-ta="கேட்ட நேரத்தின் பதில்" data-en="Answers for the question you ask">கேட்ட நேரத்தின் பதில்</span>
+      </span>
+    </a>
+
+    <a class="cell" href="new_panchang.php">
+      <img class="thumb" src="images/panchang.jpg" alt="" loading="lazy" decoding="async">
+      <span class="cell-text">
+        <span class="cell-name" lang="ta" data-ta="பஞ்சாங்கம்" data-en="Panchangam">பஞ்சாங்கம்</span>
+        <span class="cell-sub" lang="ta" data-ta="இன்றைய திதி, நட்சத்திரம்" data-en="Today's tithi and star">இன்றைய திதி, நட்சத்திரம்</span>
+      </span>
+    </a>
+
+    <a class="cell" href="numerology.php">
+      <img class="thumb" src="images/numerology.jpg" alt="" loading="lazy" decoding="async">
+      <span class="cell-text">
+        <span class="cell-name" lang="ta" data-ta="எண் கணிதம்" data-en="Numerology">எண் கணிதம்</span>
+        <span class="cell-sub" lang="ta" data-ta="பெயர் மற்றும் பிறந்த எண்" data-en="Name and birth numbers">பெயர் மற்றும் பிறந்த எண்</span>
+      </span>
+    </a>
+
+    <a class="cell" href="Matching_input.php">
+      <img class="thumb" src="images/matching.jpg" alt="" loading="lazy" decoding="async">
+      <span class="cell-text">
+        <span class="cell-name" lang="ta" data-ta="திருமண பொருத்தம்" data-en="Marriage Matching">திருமண பொருத்தம்</span>
+        <span class="cell-sub" lang="ta" data-ta="இரு ஜாதகங்களின் ஒப்பீடு" data-en="Compare two birth charts">இரு ஜாதகங்களின் ஒப்பீடு</span>
+      </span>
+    </a>
+
+    <a class="cell" href="Birth_input.php">
+      <img class="thumb" src="images/birth.jpg" alt="" loading="lazy" decoding="async">
+      <span class="cell-text">
+        <span class="cell-name" lang="ta" data-ta="பிறப்பு ஜாதகம்" data-en="Birth Horoscope">பிறப்பு ஜாதகம்</span>
+        <span class="cell-sub" lang="ta" data-ta="பிறந்த நேரத்தின் கணிப்பு" data-en="Astrology for your birth time">பிறந்த நேரத்தின் கணிப்பு</span>
+      </span>
+    </a>
+
+    <a class="cell" href="star_thaara_palan.php">
+      <img class="thumb" src="images/thaara_palan.jpg" alt="" loading="lazy" decoding="async">
+      <span class="cell-text">
+        <span class="cell-name" lang="ta" data-ta="தாரா பலன்" data-en="Thaara Palan">தாரா பலன்</span>
+        <span class="cell-sub" lang="ta" data-ta="நட்சத்திர பலன்" data-en="Star-based guidance">நட்சத்திர பலன்</span>
+      </span>
+    </a>
+
+    <a class="cell" href="hora.php">
+      <img class="thumb" src="images/hora.jpg" alt="" loading="lazy" decoding="async">
+      <span class="cell-text">
+        <span class="cell-name" lang="ta" data-ta="ஓரை" data-en="Hora">ஓரை</span>
+        <span class="cell-sub" lang="ta" data-ta="இன்றைய ஹோரை நேரம்" data-en="Today's hora timings">இன்றைய ஹோரை நேரம்</span>
+      </span>
+    </a>
+
+    <a class="cell" href="prasannam_home.php">
+      <img class="thumb" src="images/prasannam.jpg" alt="" loading="lazy" decoding="async">
+      <span class="cell-text">
+        <span class="cell-name" lang="ta" data-ta="பிரசன்னம்" data-en="Prasannam">பிரசன்னம்</span>
+        <span class="cell-sub" lang="ta" data-ta="நேரடி பிரசன்ன குறிப்பு" data-en="A live prasannam reading">நேரடி பிரசன்ன குறிப்பு</span>
+      </span>
+    </a>
+
+    <a class="cell" href="planet_kaaragam.php">
+      <img class="thumb" src="images/planet_kaaragam.jpg" alt="" loading="lazy" decoding="async">
+      <span class="cell-text">
+        <span class="cell-name" lang="ta" data-ta="கிரக காரகம்" data-en="Planet Characteristics">கிரக காரகம்</span>
+        <span class="cell-sub" lang="ta" data-ta="ஒவ்வொரு கிரகத்தின் பொறுப்பு" data-en="The role of each planet">ஒவ்வொரு கிரகத்தின் பொறுப்பு</span>
+      </span>
+    </a>
+  </nav>
+</main>
+
+<footer class="foot">
+  <div class="foot-inner">
+    <p lang="ta" data-ta="இலவசத் திட்டம், 21-11-2026 வரை" data-en="Free plan, valid until 21-11-2026">இலவசத் திட்டம், 21-11-2026 வரை</p>
+    <a href="#" lang="ta" data-ta="புதுப்பிக்க" data-en="Renew">புதுப்பிக்க</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var languageLinks = document.querySelectorAll('[data-preview-language]');
+  var menuButton = document.getElementById('menuToggle');
+  var menuPanel = document.getElementById('menuPanel');
+
+  function setLanguage(language) {
+    var selectedLanguage = language === 'en' ? 'en' : 'ta';
+    document.documentElement.lang = selectedLanguage;
+
+    document.querySelectorAll('[data-ta][data-en]').forEach(function (element) {
+      element.textContent = element.getAttribute('data-' + selectedLanguage);
+      element.lang = selectedLanguage;
+    });
+
+    document.querySelectorAll('[data-ta-aria-label][data-en-aria-label]').forEach(function (element) {
+      element.setAttribute('aria-label', element.getAttribute('data-' + selectedLanguage + '-aria-label'));
+    });
+
+    languageLinks.forEach(function (link) {
+      if (link.dataset.previewLanguage === selectedLanguage) {
+        link.setAttribute('aria-current', 'true');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  }
+
+  function closeMenu() {
+    menuPanel.classList.remove('open');
+    menuPanel.setAttribute('aria-hidden', 'true');
+    menuButton.setAttribute('aria-expanded', 'false');
+  }
+
+  languageLinks.forEach(function (link) {
+    link.addEventListener('click', function (event) {
+      event.preventDefault();
+      setLanguage(link.dataset.previewLanguage);
+    });
+  });
+
+  menuButton.addEventListener('click', function (event) {
+    event.stopPropagation();
+    var isOpen = menuPanel.classList.toggle('open');
+    menuPanel.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+    menuButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+
+  menuPanel.addEventListener('click', function (event) {
+    if (event.target.closest('a')) closeMenu();
+  });
+
+  document.addEventListener('click', function (event) {
+    if (!menuPanel.contains(event.target) && !menuButton.contains(event.target)) closeMenu();
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && menuPanel.classList.contains('open')) {
+      closeMenu();
+      menuButton.focus();
+    }
+  });
+})();
+
+(function () {
+  var canvas = document.getElementById('stars');
+  if (!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  var reduce = window.matchMedia &&
+               window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var w = 0, h = 0, dpr = 1, stars = [], raf = null, t0 = null;
+  var LINK = 120;
+
+  /* Visible now, still slow — was 0.014–0.034 px/frame (≈1 px/sec). */
+  var DRIFT_MIN = 0.08, DRIFT_MAX = 0.22;
+  var TWINKLE  = 0.0009;   /* was 0.00018  → ~18–36 s cycles  */
+  var BREATHE  = 0.0007;   /* was 0.00022  → ~28 s cycle      */
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    /* getBoundingClientRect is reliable even when window.innerWidth
+       is 0 on the very first tick inside an iframe/preview pane. */
+    var rect = canvas.getBoundingClientRect();
+    w = Math.max(1, Math.round(rect.width)  || window.innerWidth  || 360);
+    h = Math.max(1, Math.round(rect.height) || window.innerHeight || 640);
+
+    canvas.width  = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    var count = Math.max(44, Math.min(110, Math.round(w / 7)));
+    stars = [];
+    for (var i = 0; i < count; i++) {
+      var ang = Math.random() * Math.PI * 2;
+      var spd = DRIFT_MIN + Math.random() * (DRIFT_MAX - DRIFT_MIN);
+      stars.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: 0.6 + Math.random() * 1.5,
+        vx: Math.cos(ang) * spd,
+        vy: Math.sin(ang) * spd,
+        p: Math.random() * Math.PI * 2,
+        s: 0.6 + Math.random() * 1.0
+      });
+    }
+    draw(t0 || 0);
+  }
+
+  function draw(t) {
+    ctx.clearRect(0, 0, w, h);
+
+    for (var i = 0; i < stars.length; i++) {
+      var st = stars[i];
+      if (!reduce) {
+        st.x += st.vx;
+        st.y += st.vy;
+        if (st.x < -12) st.x = w + 12;
+        if (st.x > w + 12) st.x = -12;
+        if (st.y < -12) st.y = h + 12;
+        if (st.y > h + 12) st.y = -12;
+      }
+      var a = 0.35 + 0.55 * (0.5 + 0.5 * Math.sin(t * TWINKLE * st.s + st.p));
+      ctx.beginPath();
+      ctx.fillStyle = 'rgba(255,236,248,' + a.toFixed(3) + ')';
+      ctx.arc(st.x, st.y, st.r, 0, 6.2832);
+      ctx.fill();
+    }
+
+    var breathe = 0.72 + 0.28 * Math.sin(t * BREATHE);
+    for (var a1 = 0; a1 < stars.length; a1++) {
+      for (var b1 = a1 + 1; b1 < stars.length; b1++) {
+        var dx = stars[a1].x - stars[b1].x;
+        var dy = stars[a1].y - stars[b1].y;
+        var d2 = dx * dx + dy * dy;
+        if (d2 < LINK * LINK) {
+          var o = (1 - Math.sqrt(d2) / LINK) * 0.32 * breathe;
+          if (o < 0.002) continue;
+          ctx.strokeStyle = 'rgba(255,190,225,' + o.toFixed(3) + ')';
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(stars[a1].x, stars[a1].y);
+          ctx.lineTo(stars[b1].x, stars[b1].y);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function loop(t) {
+    if (t0 === null) t0 = t;
+    draw(t);
+    raf = requestAnimationFrame(loop);
+  }
+
+  function start() {
+    if (reduce || raf) return;
+    raf = requestAnimationFrame(loop);
+  }
+
+  function stop() {
+    if (raf) { cancelAnimationFrame(raf); raf = null; }
+  }
+
+  /* Robust re-init hooks — an iframe / preview pane commonly reports
+     0 width on the first script tick and only settles a frame later. */
+  window.addEventListener('resize', resize);
+  window.addEventListener('load',   resize);
+  if (window.ResizeObserver) {
+    try { new ResizeObserver(resize).observe(canvas.parentElement); }
+    catch (e) { /* ignore */ }
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) stop(); else start();
+  });
+
+  resize();
+  /* Defer start one frame so the layout has real dimensions. */
+  requestAnimationFrame(function () { resize(); start(); });
+})();
+</script>
+
+</body>
+</html>

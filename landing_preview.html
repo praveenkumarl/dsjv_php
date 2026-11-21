@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DSJV · PK Astro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600&family=Noto+Serif+Tamil:wght@600;700&family=Noto+Sans:wght@400;500&family=Noto+Serif:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#e4dfd4;
+    --sandal:#f3eee4;
+    --ink:#182226;
+    --ink-soft:#4a5457;
+    --kumkum:#9c2b34;
+    --kumkum-deep:#7d1f27;
+    --verdigris:#3d6a5d;
+    --night:#1b2230;
+    --rule:rgba(24,34,38,.24);
+    --font-display:"Noto Serif Tamil","Noto Serif",Georgia,serif;
+    --font-ui:"Noto Sans Tamil","Noto Sans",system-ui,sans-serif;
+    --gutter:clamp(18px,4vw,44px);
+    --max:1180px;
+  }
+
+  *,*::before,*::after{box-sizing:border-box;}
+
+  html{-webkit-text-size-adjust:100%;}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-ui);
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  ::selection{background:var(--kumkum);color:var(--sandal);}
+
+  a{color:inherit;}
+
+  :focus-visible{outline:3px solid var(--kumkum);outline-offset:3px;}
+
+  /* ---------- top bar ---------- */
+
+  .topbar{
+    max-width:var(--max);
+    margin:0 auto;
+    padding:clamp(14px,2vw,22px) var(--gutter);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+  }
+
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    text-decoration:none;
+  }
+
+  .brand-mark{display:block;color:var(--ink);flex:none;}
+
+  .brand-name{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:19px;
+    letter-spacing:.02em;
+  }
+
+  .brand-sub{
+    font-size:13px;
+    color:var(--ink-soft);
+    padding-left:10px;
+    border-left:1px solid var(--rule);
+  }
+
+  .topnav{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    font-size:14px;
+  }
+
+  .topnav a{text-decoration:none;}
+  .topnav a:hover{text-decoration:underline;text-underline-offset:4px;}
+
+  .lang{
+    display:flex;
+    gap:10px;
+  }
+
+  .lang a[aria-current="true"]{
+    font-weight:600;
+    text-decoration:underline;
+    text-underline-offset:4px;
+    text-decoration-thickness:2px;
+  }
+
+  .menu-btn{
+    appearance:none;
+    background:none;
+    border:1px solid var(--rule);
+    width:38px;
+    height:34px;
+    display:grid;
+    place-content:center;
+    gap:4px;
+    padding:0;
+    cursor:pointer;
+    color:var(--ink);
+  }
+
+  .menu-btn span{display:block;width:16px;height:1.5px;background:currentColor;}
+  .menu-btn:hover{border-color:var(--ink);}
+
+  /* ---------- page ---------- */
+
+  .page{
+    max-width:var(--max);
+    margin:0 auto;
+    padding:clamp(20px,4vw,56px) var(--gutter) clamp(40px,6vw,88px);
+    display:grid;
+    grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);
+    gap:clamp(28px,5vw,72px);
+    align-items:start;
+  }
+
+  .intro{max-width:36ch;}
+
+  .intro h1{
+    margin:0;
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(30px,4.4vw,52px);
+    line-height:1.16;
+    letter-spacing:-.01em;
+  }
+
+  .lede{
+    margin:clamp(16px,2.4vw,26px) 0 0;
+    font-size:clamp(16px,1.6vw,18px);
+    line-height:1.7;
+    color:var(--ink);
+  }
+
+  .aside{
+    margin:14px 0 0;
+    font-size:14px;
+    color:var(--ink-soft);
+  }
+
+  .aside a{
+    color:var(--verdigris);
+    text-underline-offset:3px;
+  }
+
+  /* ---------- board ---------- */
+
+  .board{
+    position:relative;
+    width:100%;
+    max-width:640px;
+    justify-self:end;
+    aspect-ratio:1/1;
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    grid-template-rows:repeat(4,minmax(0,1fr));
+    grid-template-areas:
+      "hero hero panchang birth"
+      "plan core core numer"
+      "lang core core prasannam"
+      "match horai thara karagam";
+    background:var(--sandal);
+  }
+
+  .board-lines{
+    position:absolute;
+    inset:0;
+    z-index:2;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+  }
+
+  .line{
+    fill:none;
+    stroke:var(--ink);
+    stroke-width:.012;
+    stroke-dasharray:4;
+    stroke-dashoffset:4;
+    animation:draw .8s cubic-bezier(.4,0,.2,1) forwards;
+    animation-delay:calc(.1s + var(--i) * 65ms);
+  }
+
+  .line--frame{stroke-dasharray:16;stroke-dashoffset:16;}
+
+  .cell{
+    position:relative;
+    z-index:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:2px;
+    padding:clamp(10px,1.1vw,14px);
+    text-decoration:none;
+    color:var(--ink);
+    background:transparent;
+    transition:background-color .18s ease;
+    animation:settle .55s ease-out both;
+    animation-delay:.72s;
+  }
+
+  .cell:hover{background:rgba(24,34,38,.06);}
+  .cell:active{background:rgba(24,34,38,.1);}
+
+  .cell-name{
+    display:block;
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(13px,1.15vw,16px);
+    line-height:1.3;
+    overflow-wrap:break-word;
+  }
+
+  .cell-sub{
+    display:block;
+    margin-top:3px;
+    font-size:clamp(10px,.85vw,11.5px);
+    line-height:1.35;
+    color:var(--ink-soft);
+  }
+
+  .cell--hero{
+    grid-area:hero;
+    background:var(--kumkum);
+    color:var(--sandal);
+    padding:clamp(14px,1.6vw,20px);
+  }
+
+  .cell--hero:hover{background:var(--kumkum-deep);}
+  .cell--hero:active{background:var(--kumkum-deep);}
+
+  .cell--hero .cell-name{font-size:clamp(19px,2.2vw,26px);}
+
+  .cell--hero .cell-sub{color:rgba(243,238,228,.86);}
+
+  .panchang{grid-area:panchang;}
+  .birth{grid-area:birth;}
+  .numer{grid-area:numer;}
+  .prasannam{grid-area:prasannam;}
+  .karagam{grid-area:karagam;}
+  .thara{grid-area:thara;}
+  .horai{grid-area:horai;}
+  .match{grid-area:match;}
+
+  /* ---------- centre ---------- */
+
+  .core{
+    grid-area:core;
+    position:relative;
+    z-index:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    gap:2px;
+    padding:clamp(10px,2vw,24px);
+    animation:settle .55s ease-out both;
+    animation-delay:.72s;
+  }
+
+  .core-label{font-size:12px;color:var(--ink-soft);margin:0;}
+
+  .core-value{
+    margin:0;
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(22px,3vw,34px);
+    line-height:1.2;
+  }
+
+  .core-time{
+    margin:0;
+    font-size:13px;
+    font-variant-numeric:tabular-nums;
+    color:var(--ink-soft);
+  }
+
+  /* ---------- quiet meta cells ---------- */
+
+  .meta{justify-content:center;gap:3px;}
+
+  .meta-title{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin:0;
+  }
+
+  .meta-body{font-size:13px;margin:0;}
+
+  .meta a{
+    color:var(--verdigris);
+    font-size:13px;
+    text-underline-offset:3px;
+  }
+
+  .lang-cell{display:flex;gap:12px;font-size:13px;}
+  .lang-cell a{color:var(--verdigris);text-underline-offset:3px;}
+  .lang-cell a[aria-current="true"]{color:var(--ink);font-weight:600;}
+
+  .plan{grid-area:plan;}
+  .langwrap{grid-area:lang;}
+
+  /* ---------- night strip ---------- */
+
+  .night{
+    background:var(--night);
+    color:var(--sandal);
+    padding:clamp(22px,3.4vw,38px) var(--gutter);
+  }
+
+  .night-inner{max-width:var(--max);margin:0 auto;}
+
+  .night-head{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:8px 20px;
+    padding-bottom:14px;
+    border-bottom:1px solid rgba(243,238,228,.22);
+    font-size:13.5px;
+    color:rgba(243,238,228,.72);
+  }
+
+  .night-head a{
+    color:var(--sandal);
+    text-decoration-color:rgba(243,238,228,.45);
+    text-underline-offset:4px;
+  }
+
+  .panchang-list{
+    margin:18px 0 0;
+    display:grid;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:clamp(12px,2vw,28px);
+  }
+
+  .panchang-list div{min-width:0;}
+
+  .panchang-list dt{
+    font-size:12px;
+    color:rgba(243,238,228,.62);
+    margin:0;
+  }
+
+  .panchang-list dd{
+    margin:3px 0 0;
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(16px,1.9vw,22px);
+    line-height:1.3;
+    font-variant-numeric:tabular-nums;
+    overflow-wrap:anywhere;
+  }
+
+  /* ---------- motion ---------- */
+
+  @keyframes draw{to{stroke-dashoffset:0;}}
+  @keyframes settle{from{opacity:0;}to{opacity:1;}}
+
+  /* ---------- responsive ---------- */
+
+  @media (max-width:900px){
+    .page{
+      grid-template-columns:1fr;
+      gap:clamp(24px,5vw,40px);
+    }
+    .intro{max-width:44ch;}
+    .board{justify-self:stretch;max-width:620px;}
+    .cell-name{font-size:clamp(15px,2.4vw,19px);}
+    .cell-sub{font-size:clamp(11px,1.6vw,12px);}
+  }
+
+  @media (max-width:620px){
+    .brand-sub{display:none;}
+    .board{
+      aspect-ratio:auto;
+      gap:1px;
+      background:var(--rule);
+      border:1px solid var(--ink);
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      grid-template-rows:none;
+      grid-auto-rows:minmax(92px,auto);
+      grid-template-areas:
+        "hero hero"
+        "core core"
+        "panchang birth"
+        "numer prasannam"
+        "karagam thara"
+        "horai match"
+        "plan lang";
+    }
+    .board-lines{display:none;}
+    .cell,.core{background:var(--sandal);}
+    .cell:hover{background:#eae5da;}
+    .cell--hero{background:var(--kumkum);}
+    .cell--hero:hover,.cell--hero:active{background:var(--kumkum-deep);}
+    .core{min-height:118px;}
+    .panchang-list{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:16px;}
+    .panchang-list div:last-child{grid-column:1 / -1;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .line{animation:none;stroke-dashoffset:0;}
+    .cell,.core{animation:none;opacity:1;}
+    .cell{transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="#" aria-label="DSJV முகப்பு">
+    <svg class="brand-mark" width="20" height="20" viewBox="0 0 4 4" aria-hidden="true">
+      <path d="M.5 0V4M1.5 0V4M2.5 0V4M3.5 0V4M0 .5H4M0 1.5H4M0 2.5H4M0 3.5H4"
+            fill="none" stroke="currentColor" stroke-width=".45"/>
+      <rect x="1.5" y="1.5" width="1" height="1" fill="currentColor"/>
+    </svg>
+    <span class="brand-name">DSJV</span>
+    <span class="brand-sub" lang="ta">தமிழ் ஜோதிடம்</span>
+  </a>
+  <nav class="topnav" aria-label="முதன்மை">
+    <span class="lang">
+      <a href="#" aria-current="true" lang="ta">தமிழ்</a>
+      <a href="#" lang="en">English</a>
+    </span>
+    <button class="menu-btn" type="button" aria-label="மெனு">
+      <span></span><span></span>
+    </button>
+  </nav>
+</header>
+
+<main class="page">
+  <section class="intro">
+    <h1>ஒரு கேள்வி.<br>ஒரு நேரம்.<br>ஒரு பதில்.</h1>
+    <p class="lede">கேட்ட நொடியில் ஜாமகோல்; பிறந்த நொடியில் ஜாதகம். தமிழில், உங்கள் ஊர் நேரப்படி.</p>
+    <p class="aside">இன்றைய பஞ்சாங்கம் <a href="#today">கீழே உள்ளது</a>.</p>
+  </section>
+
+  <section class="board" aria-label="கருவிகள்">
+    <svg class="board-lines" viewBox="0 0 4 4" preserveAspectRatio="none" aria-hidden="true">
+      <path class="line" style="--i:0" pathLength="1" d="M0 0H4V4H0Z"/>
+      <path class="line" style="--i:1" pathLength="1" d="M1 1V4"/>
+      <path class="line" style="--i:2" pathLength="1" d="M2 0V4"/>
+      <path class="line" style="--i:3" pathLength="1" d="M3 0V4"/>
+      <path class="line" style="--i:4" pathLength="1" d="M0 1H4"/>
+      <path class="line" style="--i:5" pathLength="1" d="M0 2H4"/>
+      <path class="line" style="--i:6" pathLength="1" d="M0 3H4"/>
+    </svg>
+
+    <a class="cell cell--hero" href="Jamakol_input.php">
+      <span class="cell-name" lang="ta">ஜாமகோல்</span>
+      <span class="cell-sub" lang="ta">கேட்ட நேரத்தின் பதில்</span>
+    </a>
+
+    <a class="cell panchang" href="new_panchang.php">
+      <span class="cell-name" lang="ta">பஞ்சாங்கம்</span>
+      <span class="cell-sub" lang="ta">இன்றைய திதி, நட்சத்திரம்</span>
+    </a>
+
+    <a class="cell birth" href="Birth_input.php">
+      <span class="cell-name" lang="ta">ஜாதகம்</span>
+      <span class="cell-sub" lang="ta">பிறந்த நேரத்தின் கணிப்பு</span>
+    </a>
+
+    <a class="cell numer" href="numerology.php">
+      <span class="cell-name" lang="ta">எண் கணிதம்</span>
+      <span class="cell-sub" lang="ta">பெயர் மற்றும் பிறந்த எண்</span>
+    </a>
+
+    <a class="cell prasannam" href="prasannam_home.php">
+      <span class="cell-name" lang="ta">பிரசன்னம்</span>
+      <span class="cell-sub" lang="ta">நேரடி பிரசன்ன குறிப்பு</span>
+    </a>
+
+    <a class="cell karagam" href="planet_kaaragam.php">
+      <span class="cell-name" lang="ta">கிரக காரகம்</span>
+      <span class="cell-sub" lang="ta">ஒவ்வொரு கிரகத்தின் பொறுப்பு</span>
+    </a>
+
+    <a class="cell thara" href="star_thaara_palan.php">
+      <span class="cell-name" lang="ta">தாரா பலன்</span>
+      <span class="cell-sub" lang="ta">நட்சத்திர பலன்</span>
+    </a>
+
+    <a class="cell horai" href="hora.php">
+      <span class="cell-name" lang="ta">ஹோரை</span>
+      <span class="cell-sub" lang="ta">இன்றைய ஹோரை நேரம்</span>
+    </a>
+
+    <a class="cell match" href="Matching_input.php">
+      <span class="cell-name" lang="ta">திருமணப் பொருத்தம்</span>
+      <span class="cell-sub" lang="ta">இரு ஜாதகங்களின் ஒப்பீடு</span>
+    </a>
+
+    <div class="core">
+      <p class="core-label" lang="ta">இப்போது லக்னம்</p>
+      <p class="core-value" lang="ta">கும்பம்</p>
+      <p class="core-time">13:42</p>
+    </div>
+
+    <div class="cell meta plan">
+      <p class="meta-title" lang="ta">இலவசத் திட்டம்</p>
+      <p class="meta-body">21-11-2026</p>
+      <a href="#" lang="ta">புதுப்பிக்க</a>
+    </div>
+
+    <div class="cell meta langwrap">
+      <p class="meta-title" lang="ta">மொழி</p>
+      <span class="lang-cell">
+        <a href="#" aria-current="true" lang="ta">தமிழ்</a>
+        <a href="#" lang="en">English</a>
+      </span>
+    </div>
+  </section>
+</main>
+
+<footer class="night" id="today">
+  <div class="night-inner">
+    <div class="night-head">
+      <span lang="ta">இன்று, 21 நவம்பர் 2026. சனிக்கிழமை.</span>
+      <a href="new_panchang.php" lang="ta">முழு பஞ்சாங்கம்</a>
+    </div>
+    <dl class="panchang-list">
+      <div>
+        <dt lang="ta">வாரம்</dt>
+        <dd lang="ta">சனி</dd>
+      </div>
+      <div>
+        <dt lang="ta">திதி</dt>
+        <dd lang="ta">திரயோதசி</dd>
+      </div>
+      <div>
+        <dt lang="ta">நட்சத்திரம்</dt>
+        <dd lang="ta">உத்திராடம்</dd>
+      </div>
+      <div>
+        <dt lang="ta">யோகம்</dt>
+        <dd lang="ta">வ்யாகாதம்</dd>
+      </div>
+      <div>
+        <dt lang="ta">கரணம்</dt>
+        <dd lang="ta">வனிஜை</dd>
+      </div>
+    </dl>
+  </div>
+</footer>
+
+</body>
+</html>

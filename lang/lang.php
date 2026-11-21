@@ -183,6 +183,34 @@ function translate_text($text, $mapping = null) {
 }
 
 /**
+ * Translate known menu labels in rendered menu HTML.
+ *
+ * @param string $html The rendered menu markup
+ * @return string The menu markup with labels in the current language
+ */
+function translate_menu_html($html) {
+    $menu_labels = [
+        'ஜாமக்கோள்' => 'jamakol',
+        'பிறப்பு ஜாதகம்' => 'birth_horoscope',
+        'திருமண பொருத்தம்' => 'marriage_matching',
+        'எண் கணிதம்' => 'numerology',
+        'கிரக காரகம்' => 'planet_indicator',
+        'ராசி காரகம்' => 'rasi_kaaragam',
+        'ஓரை' => 'horai',
+        'தாரா பலன்' => 'tara_palan',
+        'பஞ்சாங்கம்' => 'panchangam',
+        'பிரசன்னம்' => 'prasannam',
+    ];
+
+    $translations = [];
+    foreach ($menu_labels as $label => $key) {
+        $translations[$label] = htmlspecialchars(__($key), ENT_QUOTES, 'UTF-8');
+    }
+
+    return strtr($html, $translations);
+}
+
+/**
  * Get translation array for JavaScript
  * Returns JSON encoded translation array
  * 

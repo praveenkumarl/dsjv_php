@@ -115,19 +115,19 @@ else{
 <body>
     <!-- <table>
         <tr>
-            <td class="image-cell"><button class="home-button" onclick="toggle3DEffect()"  style="background-image: url('images/birth.png')"></td>
-            <td class="image-cell"><button class="home-button" onclick="toggle3DEffect()"  style="background-image: url('images/panchang.png')"></td>
-            <td class="image-cell"><button class="home-button" onclick="toggle3DEffect()"  style="background-image: url('images/matching.png')"></td>
+            <td class="image-cell"><button class="home-button" onclick="toggle3DEffect()"  style="background-image: url('images/birth.jpg')"></td>
+            <td class="image-cell"><button class="home-button" onclick="toggle3DEffect()"  style="background-image: url('images/panchang.jpg')"></td>
+            <td class="image-cell"><button class="home-button" onclick="toggle3DEffect()"  style="background-image: url('images/matching.jpg')"></td>
         </tr>
 		<tr>
-            <td class="image-cell"><img src="images/matching.png" alt="Image 1" class="image"></td>
+            <td class="image-cell"><img src="images/matching.jpg" alt="Image 1" class="image"></td>
             <td class="image-cell"><img src="images/dsjv_logo_home.jpg" alt="DSJV" class="logo"></td>
-            <td class="image-cell"><img src="images/thaara_palan.png" alt="Image 2" class="image"></td>
+            <td class="image-cell"><img src="images/thaara_palan.jpg" alt="Image 2" class="image"></td>
         </tr>
         <tr>
-            <td class="image-cell"><img src="images/hora.png" alt="Image 3" class="image"></td>
-            <td class="image-cell"><img src="images/prasannam.png" alt="Image 4" class="image"></td>
-			<td class="image-cell"><img src="images/planet_kaaragam.png" alt="Image 2" class="image"></td>
+            <td class="image-cell"><img src="images/hora.jpg" alt="Image 3" class="image"></td>
+            <td class="image-cell"><img src="images/prasannam.jpg" alt="Image 4" class="image"></td>
+			<td class="image-cell"><img src="images/planet_kaaragam.jpg" alt="Image 2" class="image"></td>
         </tr>
     </table>
 	-->

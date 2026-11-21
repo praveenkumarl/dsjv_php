@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><style>
+  html,body{margin:0;padding:0;background:#5a5a5a;}
+  iframe{display:block;border:0;background:#1a0b2e;}
+</style></head>
+<body>
+  <iframe id="f" src="/landing_mobile_preview.html"></iframe>
+  <script>
+    var w = parseInt(new URLSearchParams(location.search).get('w') || '390', 10);
+    var f = document.getElementById('f');
+    f.style.width = w + 'px';
+    f.style.height = '1500px';
+  </script>
+</body>
+</html>

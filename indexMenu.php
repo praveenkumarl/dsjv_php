@@ -2,6 +2,7 @@
 include_once 'lib.php';
 
 $usertype = $_SESSION['user_type'];
+ob_start();
 
 
 if(strcmp($usertype,FREE)==0){
@@ -9,7 +10,7 @@ if(strcmp($usertype,FREE)==0){
 	<button class="menu" onClick='window.open("new_panchang.php","_self")'>பஞ்சாங்கம்</button>
 	<button class="menu" onClick='window.open("planet_kaaragam.php","_self")'>கிரக காரகம்</button>
 	<button class="menu" onClick='window.open("raasi_kaaragam.php","_self")'>ராசி காரகம்</button>
-	<button class="menu" onClick='window.open("hora.php","_self")'>Horai/ஹோரை</button>
+	<button class="menu" onClick='window.open("hora.php","_self")'>ஓரை</button>
 	<button class="menu" onClick='window.open("star_thaara_palan.php","_self")'>தாரா பலன்</button>
 	<button class="menu" onClick='window.open("new_logout.php","_self")'>Logout</button>
 EOL;
@@ -127,13 +128,17 @@ else{
 	echo "Error: Missing menu";
 }
 
-// Modern language selector (right-end of menu)
-$currentLang = isset($_COOKIE['language']) ? strtolower($_COOKIE['language']) : 'tamil';
-$label = ($currentLang === 'english') ? 'EN' : 'தமிழ்';
-echo "<div class='lang-selector' style='float:right;margin-right:10px;'>";
-echo "  <div class='lang-btn' onclick=\"toggleLanguage()\" title='Language' style='display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:20px;border:1px solid transparent;background:transparent;cursor:pointer;color:#fff;'>";
-echo "    <i class='fa fa-globe' aria-hidden='true' style='color:inherit'></i> <span id='currentLangLabel'>" . htmlspecialchars($label, ENT_QUOTES) . "</span>";
-echo "  </div>";
-echo "</div>";
+if (empty($hideIndexMenuLanguageToggle)) {
+	$currentLang = isset($_COOKIE['language']) ? strtolower($_COOKIE['language']) : 'tamil';
+	$label = ($currentLang === 'english') ? 'EN' : 'தமிழ்';
+	echo "<div class='lang-selector' style='float:right;margin-right:10px;'>";
+	echo "  <div class='lang-btn' onclick=\"toggleLanguage()\" title='Language' style='display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:20px;border:1px solid transparent;background:transparent;cursor:pointer;color:#fff;'>";
+	echo "    <i class='fa fa-globe' aria-hidden='true' style='color:inherit'></i> <span id='currentLangLabel'>" . htmlspecialchars($label, ENT_QUOTES) . "</span>";
+	echo "  </div>";
+	echo "</div>";
+}
+
+$menuHtml = ob_get_clean();
+echo translate_menu_html($menuHtml);
 
 ?>

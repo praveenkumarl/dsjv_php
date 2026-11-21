@@ -17,6 +17,7 @@ function setLanguage(lang) {
 	// update visible label if present
 	var lbl = document.getElementById('currentLangLabel');
 	if(lbl) lbl.textContent = (lang === 'english') ? 'EN' : 'தமிழ்';
+	var message = (lang === 'english') ? 'Language changed to English' : 'தமிழ் மொழிக்கு மாற்றப்பட்டது';
 	// Inform server (if logged-in) so DB and session are updated, then reload
 	try {
 		fetch('set_user_lang.php', {
@@ -26,17 +27,16 @@ function setLanguage(lang) {
 		}).then(function(resp){
 			// Try to parse response and show toast, then reload shortly so user sees message
 			resp.json().then(function(json){
-				var msg = (lang === 'english') ? 'Language switched to English' : 'மொழி: தமிழ்';
-				showToast(msg, 900);
+				showToast(message, 900);
 				setTimeout(function(){ window.location.reload(); }, 900);
 			}).catch(function(){
 				// fallback
-				showToast('Language changed', 700);
+				showToast(message, 700);
 				setTimeout(function(){ window.location.reload(); }, 700);
 			});
 		}).catch(function(){
 			// network error
-			showToast('Language changed', 700);
+			showToast(message, 700);
 			setTimeout(function(){ window.location.reload(); }, 700);
 		});
 	} catch (e) {
@@ -94,6 +94,9 @@ document.addEventListener('click', function(e){
 // Inject compact language links for mobile navbars (if not already present)
 // Modern mobile FAB language control
 document.addEventListener('DOMContentLoaded', function(){
+	if(document.querySelector('#menuPanel .lang-selector')) return;
+	if(document.querySelector('#panchangDock .panchang-dock-language')) return;
+
 	// Only add on small screens
 	if(window.innerWidth > 768) return;
 

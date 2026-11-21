@@ -146,16 +146,39 @@ putenv("PATH=$libPath");
 // ------- Swiss ephemeris // ------- 
 
 
-if(isset($_POST['nDate']) && $_POST['nDate']==""){
-	$chart_date = date("Y-m-d");
-	//$chart_time = date("H:i:s");
-	$chart_time = date("07:00:00"); // Set time to 7:00 AM
+$chart_date = isset($_POST['nDate']) && $_POST['nDate'] !== ''
+	? $_POST['nDate']
+	: date("Y-m-d");
+
+$conn = dbConnect($conn);
+$sql = "SELECT Latitude, Longitude, GMT_offset, GMT_offset_dsl,country FROM world_cities WHERE Place="."'".$city."'"." AND TZ="."'".$TZ."'";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+	while ($row = $result->fetch_assoc()) {
+		$lat = $row["Latitude"];
+		$lon = $row["Longitude"];
+		$gmt_offset = $row["GMT_offset"];
+		$gmt_offset_dst = $row["GMT_offset_dsl"];
+		$country = $row["country"];
+	}
+} else {
+	echo "0 results";
 }
-else{
-	$chart_date = isset($_POST['nDate']) ? $_POST['nDate'] : date("Y-m-d");
-	//$chart_time = isset($_POST['nTime']) ? $_POST['nTime'] : date("H:i:s");
-	$chart_time = isset($_POST['nTime']) ? $_POST['nTime'] : date("07:00:00");
+
+$defaultPanchangTime = getSunrise(strtotime($chart_date), floatval($lat), floatval($lon));
+$requestedTime = isset($_POST['nTime']) ? trim((string)$_POST['nTime']) : '';
+$requestedTimeMode = isset($_POST['time_mode']) ? $_POST['time_mode'] : '';
+if (isset($_POST['nDate']) && $_POST['nDate'] === '') {
+	$timeMode = 'sunrise';
+} elseif ($requestedTimeMode === 'custom' && $requestedTime !== '') {
+	$timeMode = 'custom';
+} elseif ($requestedTimeMode === 'sunrise' || $requestedTime === '') {
+	$timeMode = 'sunrise';
+} else {
+	$timeMode = 'custom';
 }
+$chart_time = $timeMode === 'custom' ? $requestedTime : $defaultPanchangTime;
 
 echo $today_sunrise;
 
@@ -199,6 +222,1140 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/birth_chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/rose-gold-theme.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/landing-theme.css?<?php echo date('ymdhis'); ?>">
+	<style>
+		#mybody1 {
+			min-height:100vh;
+			padding-bottom:100px;
+			background:var(--landing-background);
+			color:var(--theme-text);
+		}
+		#mybody1 .panchang-topbar {
+			position:relative;
+			z-index:2;
+			display:flex;
+			min-height:82px;
+			align-items:center;
+			justify-content:center;
+			gap:14px;
+			margin:0 0 18px;
+			padding:10px 70px 10px 18px;
+			border-bottom:1px solid rgba(245,197,66,.42);
+			background:var(--panchang-topbar-gradient,linear-gradient(120deg,rgba(20,20,46,.97),rgba(30,22,58,.95),rgba(54,27,50,.95)));
+			box-shadow:0 12px 34px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.1);
+			backdrop-filter:blur(20px);
+			-webkit-backdrop-filter:blur(20px);
+		}
+		#mybody1.remedy-dialog-open .panchang-topbar {
+			position:fixed;
+			top:0;
+			right:0;
+			left:0;
+			z-index:30001;
+			margin:0;
+		}
+		#mybody1 .panchang-topbar .brand img {
+			height:42px;
+			max-width:30vw;
+		}
+		#mybody1 .panchang-topbar .headline {
+			margin:0;
+			font-size:clamp(17px,4.2vw,25px);
+			text-align:center;
+		}
+		#mybody1 .panchang-topbar .home-icon {
+			position:absolute;
+			top:50%;
+			right:18px;
+			display:flex;
+			width:42px;
+			height:42px;
+			align-items:center;
+			justify-content:center;
+			transform:translateY(-50%);
+			border:1px solid rgba(245,197,66,.42);
+			border-radius:14px;
+			background:rgba(255,255,255,.08);
+			color:var(--landing-text-gold);
+			font-size:20px;
+			text-decoration:none;
+			transition:background .16s ease,transform .16s ease;
+		}
+		#mybody1 .panchang-topbar .home-icon:hover,
+		#mybody1 .panchang-topbar .home-icon:focus-visible {
+			background:rgba(245,197,66,.18);
+		}
+		#mybody1 .column-menu {
+			background:var(--theme-surface-menu)!important;
+			border-color:rgba(245,197,66,.28);
+			box-shadow:0 12px 32px rgba(4,4,15,.42),inset 0 1px rgba(255,255,255,.1);
+			color:var(--landing-text-light);
+			backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
+			-webkit-backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
+		}
+		#mybody1 .envWeb {
+			gap:6px;
+			padding:5px;
+			border-bottom:1px solid rgba(245,197,66,.24);
+			background:var(--theme-surface-toolbar)!important;
+			color:var(--landing-text-light);
+			backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
+			-webkit-backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
+		}
+		#mybody1 .userinfo, #mybody1 .userinfoMobile {
+			border:1px solid rgba(245,197,66,.3);
+			border-radius:12px;
+			background:rgba(255,255,255,.07)!important;
+			color:var(--landing-text-gold);
+			backdrop-filter:blur(12px);
+			-webkit-backdrop-filter:blur(12px);
+		}
+		#mybody1 .navbar {
+			border-bottom:1px solid rgba(245,197,66,.24);
+			background:var(--theme-surface-navbar)!important;
+			backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
+			-webkit-backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
+		}
+		#mybody1 .navbar a, #mybody1 .navbar .dropbtn {
+			color:var(--landing-text-gold);
+		}
+		#mybody1 .dropdown1-content a {
+			color:var(--landing-text-light)!important;
+		}
+		#mybody1 .navbar a:hover, #mybody1 .dropdown1:hover .dropbtn {
+			background:rgba(245,197,66,.14)!important;
+			color:var(--landing-text-gold);
+		}
+		#mybody1 .dropdown1-content {
+			border:1px solid rgba(185,140,255,.3);
+			border-radius:14px;
+			background:var(--theme-surface-dropdown)!important;
+			box-shadow:0 22px 60px rgba(4,4,15,.5),0 0 26px rgba(91,43,224,.16),inset 0 1px rgba(255,255,255,.12);
+			backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
+			-webkit-backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
+		}
+		#mybody1 #appMenu.dropdown-panel {
+			position:fixed;
+			bottom:84px;
+			left:50%;
+			z-index:101;
+			width:min(88vw,360px);
+			max-height:min(72vh,620px);
+			transform:translateX(-50%);
+			border:1px solid rgba(185,140,255,.3);
+			border-radius:var(--landing-panel-radius);
+			background:var(--landing-menu-gradient)!important;
+			box-shadow:0 22px 60px rgba(4,4,15,.68),0 0 26px rgba(91,43,224,.16),inset 0 1px rgba(255,255,255,.12);
+		}
+		#mybody1 #appMenu.dropdown-panel:not(.open) {
+			display:none!important;
+		}
+		#mybody1 #appMenu.dropdown-panel.open {
+			display:block!important;
+		}
+		#mybody1 #panchangDock .panchang-profile-toggle {
+			display:inline-flex;
+			width:50px;
+			height:50px;
+			align-items:center;
+			justify-content:center;
+			border:1px solid rgba(245,197,66,.42);
+			border-radius:50%;
+			background:rgba(255,255,255,.08);
+			color:var(--landing-text-gold);
+			cursor:pointer;
+			font-size:18px;
+		}
+		#mybody1 #panchangDock .panchang-profile-toggle:hover,
+		#mybody1 #panchangDock .panchang-profile-toggle[aria-expanded="true"] {
+			background:rgba(245,197,66,.18);
+		}
+		#mybody1 #panchangDock .panchang-profile-card {
+			position:absolute;
+			top:auto;
+			right:auto;
+			bottom:calc(100% + 12px);
+			left:50%;
+			z-index:3;
+			display:none;
+			width:min(82vw,320px);
+			max-height:min(65vh,520px);
+			padding:14px;
+			overflow:auto;
+			border:1px solid rgba(245,197,66,.42);
+			border-radius:16px;
+			background:var(--theme-surface-panel-solid);
+			box-shadow:0 16px 38px rgba(4,4,15,.42);
+			color:var(--theme-text);
+			transform:translateX(-50%);
+		}
+		#mybody1 #panchangDock .panchang-profile-card.open {
+			display:grid;
+			gap:8px;
+		}
+		#mybody1 #panchangDock .panchang-profile-card h2 {
+			margin:0 0 2px;
+			color:var(--theme-text-heading);
+			font-size:16px;
+		}
+		#mybody1 #panchangDock .panchang-profile-row {
+			display:grid;
+			grid-template-columns:minmax(90px,.8fr) minmax(0,1.2fr);
+			gap:8px;
+			padding-bottom:6px;
+			border-bottom:1px solid var(--theme-border-subtle);
+			font-size:13px;
+			overflow-wrap:anywhere;
+		}
+		#mybody1 #panchangDock .panchang-profile-row:last-child {
+			padding-bottom:0;
+			border-bottom:0;
+		}
+		#mybody1 #panchangDock .panchang-profile-row span:first-child {
+			color:var(--theme-text-secondary);
+		}
+		#mybody1 .column-body {
+			display:block;
+			float:none;
+			width:calc(100% - 24px);
+			max-width:1080px;
+			margin:0 auto 20px;
+			padding:16px;
+			border:1px solid rgba(197,151,44,.3);
+			border-radius:24px;
+			background:rgba(255,255,255,.97)!important;
+			box-shadow:0 16px 42px rgba(38,27,54,.12),inset 0 1px rgba(255,255,255,.95);
+			color:var(--theme-text);
+		}
+		#divOrigContainer .divTable.blueTable {
+			width:min(100%,760px)!important;
+			max-width:100%;
+			height:auto!important;
+			margin:12px auto;
+			padding:10px!important;
+			border:1px solid var(--theme-border-strong)!important;
+			border-radius:20px;
+			background:var(--theme-surface-chart)!important;
+			box-shadow:0 14px 36px var(--theme-shadow-chart),inset 0 1px var(--theme-highlight-inset);
+			color:var(--theme-text);
+		}
+		#panchangDetailsHeading .divTableRow {
+			display:block;
+			background:transparent!important;
+		}
+		#panchangDetailsHeading {
+			display:none!important;
+		}
+		#panchangDetailsHeading .divPanchangHeading {
+			display:block;
+			height:auto;
+			padding:4px;
+			border:0;
+			background:transparent!important;
+		}
+		#panchangDetailsHeading h6, #transitChartHeading h6 {
+			margin:2px;
+			color:var(--theme-text-accent)!important;
+			font-size:clamp(19px,4vw,24px);
+			font-weight:800;
+		}
+		#vivahaChakram {
+			display:block!important;
+			width:min(100%,var(--chart-width))!important;
+			max-width:100%;
+			box-sizing:border-box;
+			margin:18px auto!important;
+			padding:16px!important;
+			border:1px solid var(--theme-border-accent)!important;
+			border-radius:16px!important;
+			background:var(--theme-surface-panel-solid)!important;
+			box-shadow:0 12px 30px rgba(48,22,44,.12),inset 0 1px rgba(255,255,255,.9);
+			color:var(--theme-text)!important;
+			font-size:14px!important;
+			font-weight:400!important;
+			line-height:1.45;
+			text-align:left;
+		}
+		#vivahaChakram .vivaha-card-title {
+			margin:0 0 12px;
+			color:var(--theme-text-accent-strong)!important;
+			font-size:17px;
+			font-weight:800;
+			text-align:center;
+		}
+		#vivahaChakram .vivagaResultRed,
+		#vivahaChakram .vivagaResultGreen {
+			display:block;
+			height:auto!important;
+			margin:0 0 12px!important;
+			padding:9px 12px;
+			border-radius:10px;
+			font-size:13px;
+			font-weight:700;
+			line-height:1.4;
+			text-align:center;
+		}
+		#vivahaChakram .vivagaResultRed {
+			border:1px solid rgba(184,56,89,.24);
+			background:var(--theme-danger-soft)!important;
+			color:var(--theme-text-error-strong)!important;
+		}
+		#vivahaChakram .vivagaResultGreen {
+			border:1px solid rgba(70,131,84,.24);
+			background:var(--theme-success-soft)!important;
+			color:var(--theme-text-success)!important;
+		}
+		#vivahaChakram .vivaha-star-row {
+			display:flex;
+			align-items:center;
+			justify-content:space-between;
+			gap:10px;
+			margin-top:7px;
+			padding:8px 10px;
+			border:1px solid var(--theme-border-subtle);
+			border-radius:10px;
+			background:var(--theme-surface-cell);
+			font-size:13px!important;
+			text-align:left;
+		}
+		#vivahaChakram .vivaha-star-label {
+			color:var(--theme-text-secondary);
+			font-weight:600;
+		}
+		#vivahaChakram .vivaha-star-name {
+			color:var(--theme-text-accent-strong);
+			font-weight:700;
+			text-align:right;
+			overflow-wrap:anywhere;
+		}
+		#panchangDetails {
+			display:block;
+			padding:10px!important;
+		}
+		#panchangDetails .divTableRow {
+			display:grid;
+			grid-template-columns:minmax(108px,.8fr) minmax(0,1.2fr);
+			align-items:stretch;
+			gap:8px;
+			padding:4px 0;
+			border-bottom:1px solid var(--theme-border-subtle);
+		}
+		#panchangDetails .divTableRow:last-child {
+			border-bottom:0;
+		}
+		#panchangDetails .divPanchangHeading,
+		#panchangDetails .divPanchangHeadingRed {
+			display:block;
+			width:auto;
+			height:auto;
+			padding:10px 12px;
+			border:0;
+			border-radius:12px;
+			background:transparent!important;
+			color:var(--theme-text-secondary);
+			font-size:clamp(13px,.75vw + 10px,15px);
+			font-weight:700;
+			line-height:1.4;
+			text-align:left;
+		}
+		#panchangDetails .divPanchangHeadingRed {
+			color:var(--theme-text-error-strong);
+		}
+		#panchangDetails .divPanchang {
+			display:block;
+			width:auto;
+			height:auto;
+			min-width:0;
+			padding:10px 12px;
+			border:1px solid var(--theme-border-soft);
+			border-radius:12px;
+			background:var(--theme-surface-cell);
+			color:var(--theme-text);
+			font-size:clamp(14px,.75vw + 11px,16px);
+			font-weight:600;
+			line-height:1.45;
+			overflow-wrap:anywhere;
+		}
+		#panchangDetails .divPanchang[onclick] {
+			position:relative;
+			padding-right:38px;
+			border-color:var(--theme-border-accent);
+			background:var(--theme-accent-soft);
+			color:var(--theme-text-accent)!important;
+			cursor:pointer;
+			box-shadow:inset 3px 0 0 var(--theme-text-accent);
+		}
+		#panchangDetails .divPanchang[onclick]::after {
+			content:"+";
+			position:absolute;
+			top:10px;
+			right:10px;
+			display:flex;
+			width:19px;
+			height:19px;
+			align-items:center;
+			justify-content:center;
+			border:1px solid currentColor;
+			border-radius:50%;
+			font-size:14px;
+			font-weight:700;
+			line-height:1;
+			opacity:.75;
+		}
+		#panchangDetails .panchang-next-value {
+			font-weight:400;
+		}
+		#panchangDetails .divPanchang[onclick]:hover {
+			border-color:var(--theme-border-accent);
+			background:var(--theme-accent-soft);
+			color:var(--theme-text-accent-strong)!important;
+		}
+		#divOrigContainer .divTable.blueTable:not(#transitChart) .divTableCell,
+		#divOrigContainer .divTable.blueTable:not(#transitChart) .divTableHead {
+			border:1px solid var(--theme-border);
+			background:var(--theme-surface-table);
+			color:var(--theme-text);
+			line-height:1.4;
+		}
+		#divOrigContainer .divTable.blueTable h6 {
+			color:var(--theme-text-accent)!important;
+		}
+		#divOrigContainer .divPanchangHeadingSmall {
+			border-color:var(--theme-border);
+			background:var(--theme-accent-medium);
+			color:var(--theme-text-accent-soft);
+		}
+		#divOrigContainer .divPanchangSmall {
+			border-color:var(--theme-border-subtle);
+			background:var(--theme-surface-table-light);
+			color:var(--theme-text);
+		}
+		#divOrigContainer .divPanchangSmallGreen {
+			border-color:var(--theme-border-strong);
+			background:var(--theme-gold-soft);
+			color:var(--theme-text-gold);
+		}
+		#divOrigContainer .divTable.blueTable .divThaaraPalanWhite,
+		#divOrigContainer .divTable.blueTable .divThaaraPalanRed,
+		#divOrigContainer .divTable.blueTable .divThaaraPalanGreen,
+		#divOrigContainer .divTable.blueTable .divThaaraPalanRedBright,
+		#divOrigContainer .divTable.blueTable .divThaaraPalanGreenBright {
+			border:1px solid var(--theme-border-soft);
+			color:var(--theme-text);
+		}
+		#divOrigContainer .divTable.blueTable .divThaaraPalanWhite {
+			background:var(--theme-surface-table-light);
+		}
+		#divOrigContainer .divTable.blueTable .divThaaraPalanRed,
+		#divOrigContainer .divTable.blueTable .divThaaraPalanRedBright {
+			background:var(--theme-danger-soft);
+			color:var(--theme-text-error);
+		}
+		#divOrigContainer .divTable.blueTable .divThaaraPalanGreen,
+		#divOrigContainer .divTable.blueTable .divThaaraPalanGreenBright {
+			background:var(--theme-success-soft);
+			color:var(--theme-text-success);
+		}
+		#divOrigContainer #starlordHeadMutable {
+			display:block!important;
+			width:min(100%,760px)!important;
+			max-width:100%;
+			height:auto!important;
+			margin:20px auto 0!important;
+			padding:0!important;
+			border:1px solid var(--theme-border-accent)!important;
+			border-bottom:0!important;
+			border-radius:16px 16px 0 0;
+			background:var(--theme-surface-panel-solid)!important;
+			box-shadow:0 12px 28px rgba(48,22,44,.1);
+		}
+		#starlordHeadMutable .divTableRow {
+			display:block!important;
+			background:transparent!important;
+		}
+		#starlordHeadMutable .divTableCell {
+			display:block!important;
+			width:auto!important;
+			padding:13px 15px 11px!important;
+			border:0!important;
+			background:transparent!important;
+			text-align:left;
+		}
+		#starlordHeadMutable h6 {
+			display:flex;
+			align-items:center;
+			gap:8px;
+			margin:0;
+			padding-left:10px;
+			border-left:3px solid var(--theme-text-accent);
+			color:var(--theme-text-accent-strong)!important;
+			font-size:17px;
+			font-weight:800;
+		}
+		#divOrigContainer #starlordBodyMutable {
+			display:block!important;
+			width:min(100%,760px)!important;
+			max-width:100%;
+			height:auto!important;
+			margin:0 auto 18px!important;
+			padding:0!important;
+			overflow-x:auto;
+			overscroll-behavior-x:contain;
+			border:1px solid var(--theme-border-accent)!important;
+			border-top:0!important;
+			border-radius:0 0 16px 16px;
+			background:var(--theme-surface-panel-solid)!important;
+			box-shadow:0 14px 30px rgba(48,22,44,.1);
+			scrollbar-width:thin;
+			scrollbar-color:var(--theme-border-accent) transparent;
+		}
+		#starlordBodyMutable::-webkit-scrollbar {
+			height:7px;
+		}
+		#starlordBodyMutable::-webkit-scrollbar-track {
+			border-radius:999px;
+			background:var(--theme-surface-table-light);
+		}
+		#starlordBodyMutable::-webkit-scrollbar-thumb {
+			border:2px solid transparent;
+			border-radius:999px;
+			background:var(--theme-border-accent);
+			background-clip:padding-box;
+		}
+		#starlordBodyMutable .divTableRow {
+			display:grid!important;
+			grid-template-columns:minmax(78px,.8fr) minmax(108px,1fr) minmax(100px,.95fr) minmax(125px,1.15fr) minmax(140px,1.3fr);
+			min-width:560px;
+			background:var(--theme-surface-panel-solid);
+		}
+		#starlordBodyMutable .divTableRow:first-child {
+			position:sticky;
+			top:0;
+			z-index:2;
+			background:var(--theme-accent-soft);
+		}
+		#starlordBodyMutable .divTableRow > div {
+			display:flex;
+			width:auto!important;
+			min-width:0;
+			min-height:40px;
+			align-items:center;
+			justify-content:center;
+			box-sizing:border-box;
+			height:auto!important;
+			margin:0;
+			padding:8px 9px;
+			border:0;
+			border-right:1px solid var(--theme-border-subtle);
+			border-bottom:1px solid var(--theme-border-subtle);
+			border-radius:0;
+			background:transparent;
+			color:var(--theme-text);
+			font-size:12px;
+			line-height:1.35;
+			text-align:center;
+			overflow-wrap:anywhere;
+		}
+		#starlordBodyMutable .divTableRow > div:last-child {
+			border-right:0;
+		}
+		#starlordBodyMutable .divTableRow > div:first-child {
+			position:sticky;
+			left:0;
+			z-index:1;
+			background:var(--theme-surface-panel-solid);
+		}
+		#starlordBodyMutable .divTableRow:first-child > .divTableCell {
+			min-height:44px;
+			background:var(--theme-accent-soft);
+			color:var(--theme-text-accent-strong);
+			font-size:12px;
+			font-weight:800;
+			line-height:1.25;
+		}
+		#starlordBodyMutable .divTableRow:first-child > .divTableCell:first-child {
+			z-index:3;
+		}
+		#starlordBodyMutable .divTableRow:not(:first-child) > .divPanchangHeadingSmall {
+			position:sticky;
+			left:0;
+			z-index:1;
+			background:var(--theme-surface-panel-solid)!important;
+			color:var(--theme-text-accent-strong);
+			font-weight:800;
+			box-shadow:inset 3px 0 var(--theme-text-accent);
+		}
+		#starlordBodyMutable .divTableRow:first-child > .divTableCell:first-child {
+			background:var(--theme-text-accent-strong)!important;
+			color:#fff!important;
+		}
+		#starlordBodyMutable .divTableRow > .divPanchangSmall:last-child {
+			white-space:nowrap;
+			font-size:11px;
+			font-variant-numeric:tabular-nums;
+		}
+		#starlordBodyMutable #hidePdf1 {
+			display:none!important;
+		}
+		#divOrigContainer .divTable.blueTable.transit-chart-legend {
+			display:flex!important;
+			width:min(100%,760px)!important;
+			max-width:100%;
+			flex-wrap:wrap;
+			align-items:center;
+			justify-content:center;
+			gap:7px;
+			margin:10px auto 18px!important;
+			padding:9px!important;
+			border:1px solid var(--theme-border)!important;
+			border-radius:14px;
+			background:var(--theme-surface-panel-solid)!important;
+			box-shadow:0 8px 20px rgba(48,22,44,.08);
+		}
+		.transit-chart-legend .legend-item {
+			display:inline-flex;
+			min-height:30px;
+			align-items:center;
+			gap:7px;
+			padding:4px 9px;
+			border:1px solid var(--theme-border-subtle);
+			border-radius:10px;
+			background:var(--theme-surface-cell);
+			color:var(--theme-text-secondary);
+			font-size:12px;
+			line-height:1.25;
+		}
+		.transit-chart-legend .legend-symbol {
+			padding:3px 6px;
+			border-radius:7px;
+			background:var(--theme-accent-soft);
+			color:var(--theme-text-accent-strong);
+			font-size:10px;
+			font-weight:800;
+			white-space:nowrap;
+		}
+		.transit-chart-legend .legend-symbol-mandhi {
+			background:#b52f45;
+			color:#fff;
+		}
+		.transit-chart-legend .legend-symbol-indhu {
+			background:var(--theme-success-soft);
+			color:var(--theme-text-success);
+		}
+		.transit-chart-legend .legend-symbol-thithi {
+			background:var(--theme-danger-soft);
+			color:var(--theme-text-error-strong);
+		}
+		@media (max-width:640px) {
+			#starlordHeadMutable h6::after {
+				content:"↔";
+				display:inline-flex;
+				width:24px;
+				height:24px;
+				align-items:center;
+				justify-content:center;
+				margin-left:auto;
+				border:1px solid var(--theme-border-accent);
+				border-radius:50%;
+				color:var(--theme-text-accent);
+				font-size:14px;
+			}
+		}
+		#divOrigContainer #transitChart {
+			display:block!important;
+			width:min(100%,420px)!important;
+			max-width:100%;
+			height:auto!important;
+			aspect-ratio:1/1;
+			box-sizing:border-box;
+			margin:8px auto 14px!important;
+			padding:8px!important;
+			border:1px solid var(--theme-border-strong)!important;
+			border-radius:20px;
+			background:var(--theme-surface-chart)!important;
+		}
+		#transitChart .divTableBody {
+			display:grid!important;
+			width:100%;
+			height:100%;
+			grid-template-columns:repeat(4,minmax(0,1fr));
+			grid-template-rows:repeat(4,minmax(0,1fr));
+		}
+		#transitChart .divTableRow {
+			display:contents!important;
+		}
+		#transitChart .divTableCell,
+		#transitChart .divTableCenterCell {
+			display:flex!important;
+			width:auto;
+			height:auto;
+			min-width:0;
+			min-height:0;
+			align-items:center;
+			justify-content:center;
+			flex-direction:column;
+			gap:2px;
+			padding:clamp(4px,1.4vw,10px);
+			border:1px solid var(--theme-chart-border)!important;
+			background:var(--theme-chart-background)!important;
+			color:var(--theme-chart-text,var(--theme-text))!important;
+			line-height:1.15;
+			text-align:center;
+			overflow-wrap:anywhere;
+		}
+		#transitChart .divTableCell {
+			font-size:var(--transit-chart-cell-font-size,clamp(13px,3.8vw,18px));
+		}
+		#transitChart .divTableCenterCell {
+			font-size:clamp(10px,2.4vw,14px);
+		}
+		#transitChart .transit-planet-label {
+			display:block;
+			width:100%;
+			max-width:100%;
+			overflow-wrap:normal;
+		}
+		#transitChart .transit-planet-label.is-two-column {
+			display:grid;
+			grid-template-columns:repeat(2,minmax(0,1fr));
+			gap:1px 2px;
+			align-items:center;
+			justify-items:stretch;
+		}
+		#transitChart .transit-planet-label.is-crowded .transit-planet-entry {
+			line-height:1;
+		}
+		#transitChart .retro::after {
+			margin-left:1px;
+			font-size:.72em;
+			font-weight:800;
+			white-space:nowrap;
+		}
+		#transitChart[data-language="english"] .retro::after {
+			content:"(R)";
+		}
+		#transitChart[data-language="tamil"] .retro::after {
+			content:"(வ)";
+		}
+		#transitChart .transit-planet-label.is-crowded .mandhi,
+		#transitChart .transit-planet-label.is-crowded .moon,
+		#transitChart .transit-planet-label.is-crowded .lagna {
+			padding:0 1px;
+		}
+		#transitChart .divTableCell.is-crowded {
+			padding:2px;
+		}
+		#transitChart .transit-planet-entry {
+			display:inline-flex;
+			flex-wrap:nowrap;
+			align-items:center;
+			min-width:0;
+			max-width:100%;
+			white-space:nowrap!important;
+			vertical-align:middle;
+		}
+		#transitChart .is-two-column .transit-planet-entry {
+			justify-content:center;
+			transform:scaleX(.85);
+		}
+		#transitChart .mandhi,
+		#transitChart .moon,
+		#transitChart .lagna,
+		#transitChart .thithi_soonyam,
+		#transitChart .thithi_soonyam_main {
+			display:inline-block;
+			padding:1px 3px;
+			border-radius:3px;
+		}
+		#transitChart .mandhi,
+		#transitChart .indhu,
+		#transitChart .thithi_soonyam,
+		#transitChart .thithi_soonyam_main {
+			font-size:10px!important;
+			line-height:1;
+		}
+		#transitChart .mandhi,
+		#transitChart .moon,
+		#transitChart .lagna,
+		#transitChart .indhu {
+			display:inline-flex!important;
+			min-height:14px;
+			align-items:center;
+			justify-content:center;
+			padding:1px 5px!important;
+			border:1px solid rgba(255,255,255,.24);
+			border-radius:999px;
+			font-weight:700;
+			line-height:1!important;
+			vertical-align:middle;
+			white-space:nowrap;
+		}
+		#transitChart .mandhi {
+			background-color:red!important;
+			color:white!important;
+		}
+		#transitChart .moon {
+			background-color:#00ffff!important;
+			border:1px solid rgba(0,0,0,.14);
+			border-radius:999px;
+			color:#111!important;
+		}
+		#transitChart .is-lagna-house {
+			background-image:linear-gradient(135deg,transparent 48.8%,rgba(153,93,42,.58) 49.6%,rgba(153,93,42,.58) 50.4%,transparent 51.2%)!important;
+		}
+		#transitChart .divTableCenterCell {
+			border:0!important;
+			background:var(--theme-surface-chart-center)!important;
+			color:var(--theme-text-secondary)!important;
+		}
+		#transitChart .divTableDummyCell {
+			display:none!important;
+		}
+		#transitChart .thithi_soonyam {
+			background:var(--theme-danger-soft);
+			color:var(--theme-text-error-strong);
+		}
+		#muhurthamDiv {
+			background:var(--theme-overlay)!important;
+			backdrop-filter:blur(8px);
+			-webkit-backdrop-filter:blur(8px);
+		}
+		#muhurthamDiv .table-container {
+			position:fixed;
+			top:50%;
+			left:50%;
+			width:min(94vw,900px);
+			height:min(82vh,720px);
+			margin:0;
+			padding:24px 12px 12px;
+			transform:translate(-50%,-50%);
+			border:1px solid var(--theme-border-strong);
+			border-radius:22px;
+			background:var(--theme-surface-panel-solid);
+			box-shadow:0 24px 70px var(--theme-shadow-strong),0 0 30px var(--theme-accent-soft);
+		}
+		#muhurthamDiv .scrollable-table {
+			height:100%;
+			padding:0 0 56px;
+			overflow:auto;
+		}
+		#muhurthamDiv .divTable.blueTable {
+			width:100%!important;
+			height:auto!important;
+			margin:0 auto;
+			border:0;
+			background:transparent;
+		}
+		#muhurthamDiv .divMuhurtHeading {
+			border:1px solid var(--theme-border-strong);
+			background:var(--theme-accent-medium);
+			color:var(--theme-text-heading);
+		}
+		#muhurthamDiv .divMurtaRed,
+		#muhurthamDiv .divMurtaBrightGreen,
+		#muhurthamDiv .divMurtaGreen {
+			border:1px solid var(--theme-border-soft);
+			color:var(--theme-text);
+		}
+		#muhurthamDiv .divMurtaRed {
+			background:var(--theme-danger-soft);
+			color:var(--theme-text-error);
+		}
+		#muhurthamDiv .divMurtaBrightGreen {
+			background:var(--theme-success-soft);
+			color:var(--theme-text-success);
+		}
+		#muhurthamDiv .divMurtaGreen {
+			background:var(--theme-success-soft);
+			color:var(--theme-text-success);
+		}
+		#muhurthamDiv .close-btn {
+			width:40px;
+			height:40px;
+			border:1px solid var(--theme-border-on-accent);
+			border-radius:12px;
+			background:var(--theme-button-gradient-close);
+			opacity:1;
+		}
+		#mybody1 #thithiDetailsDiv,
+		#mybody1 #karanaDetailsDiv,
+		#mybody1 #yogiDetailsDiv,
+		#mybody1 #ayogiDetailsDiv,
+		#mybody1 #nakDetailsDiv,
+		#mybody1 #rasiDetailsDiv {
+			position:fixed;
+			inset:0;
+			z-index:30000;
+			display:none;
+			align-items:center;
+			justify-content:center;
+			width:auto;
+			height:auto;
+			padding:16px;
+			background:var(--theme-overlay)!important;
+			color:var(--theme-text);
+			backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
+			-webkit-backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
+		}
+		#mybody1 #thithiDetailsDiv .remedy-dialog-card,
+		#mybody1 #karanaDetailsDiv .remedy-dialog-card,
+		#mybody1 #yogiDetailsDiv .remedy-dialog-card,
+		#mybody1 #ayogiDetailsDiv .remedy-dialog-card,
+		#mybody1 #nakDetailsDiv .remedy-dialog-card,
+		#mybody1 #rasiDetailsDiv .remedy-dialog-card {
+			position:relative;
+			display:grid;
+			grid-template-columns:minmax(108px,.8fr) minmax(0,1.2fr);
+			grid-auto-rows:min-content;
+			align-content:start;
+			gap:0;
+			width:min(560px,100%);
+			height:auto!important;
+			max-height:82vh;
+			max-height:82dvh;
+			min-height:0!important;
+			margin:0;
+			padding:20px;
+			overflow-y:auto;
+			overscroll-behavior:contain;
+			border:1px solid var(--theme-glass-border)!important;
+			border-radius:22px;
+			background:var(--theme-surface-panel-solid)!important;
+			box-shadow:0 24px 70px var(--theme-glass-shadow),0 0 0 1px rgba(212,175,55,.16),inset 0 1px var(--theme-glass-highlight),inset 0 -1px var(--theme-glass-edge);
+			color:var(--theme-text);
+			backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
+			-webkit-backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
+		}
+		#mybody1 .remedy-dialog-card .parigaaram-grid-item {
+			min-width:0;
+			padding:12px;
+			border:1px solid var(--theme-border-soft);
+			background:var(--theme-surface-cell);
+			color:var(--theme-text);
+			line-height:1.45;
+			overflow-wrap:anywhere;
+		}
+		#mybody1 .remedy-dialog-card .parigaaram-grid-item-head:first-of-type {
+			grid-column:1/-1;
+			justify-content:flex-start;
+			padding:10px 52px 14px 12px;
+			border:0;
+			border-bottom:1px solid var(--theme-border);
+			border-radius:12px 12px 0 0;
+			background:transparent;
+			color:var(--theme-text-accent-strong);
+			font-size:1.2em;
+			text-align:left;
+		}
+		#mybody1 .remedy-dialog-card .parigaaram-grid-item-left {
+			font-weight:700;
+			color:var(--theme-text-secondary);
+		}
+		#mybody1 .remedy-dialog-card .parigaaram-grid-item-right img,
+		#mybody1 .remedy-dialog-card .parigaaram-grid-item-right image {
+			max-width:100%;
+			height:auto;
+			border-radius:12px;
+		}
+		#mybody1 .remedy-dialog-card .parigaaram-grid-item-right a {
+			color:var(--theme-text-accent-strong)!important;
+			font-weight:700;
+			text-decoration:underline;
+			text-underline-offset:2px;
+		}
+		#mybody1 .remedy-dialog-close {
+			position:absolute;
+			top:14px;
+			right:14px;
+			z-index:1;
+			display:grid;
+			width:38px;
+			height:38px;
+			place-items:center;
+			padding:0;
+			border:1px solid var(--theme-border-on-accent);
+			border-radius:12px;
+			background:var(--theme-button-gradient-close);
+			box-shadow:inset 0 1px var(--theme-glass-highlight),0 6px 16px var(--theme-shadow-accent);
+			color:var(--theme-button-text);
+			font-size:24px;
+			line-height:1;
+			cursor:pointer;
+		}
+		#mybody1 .remedy-dialog-card .parigaaram-grid-item-head:last-child {
+			grid-column:1/-1;
+			background:transparent;
+			border:0;
+		}
+		#mybody1 .remedy-dialog-card .actionBtn {
+			min-height:40px;
+			padding:8px 18px;
+			border:1px solid var(--theme-border-on-accent);
+			border-radius:12px;
+			background:var(--theme-button-gradient);
+			color:var(--theme-button-text);
+			font-weight:700;
+		}
+		#mybody1.remedy-dialog-open {
+			overflow:hidden;
+		}
+		#mybody1.remedy-dialog-open #thithiDetailsDiv,
+		#mybody1.remedy-dialog-open #karanaDetailsDiv,
+		#mybody1.remedy-dialog-open #yogiDetailsDiv,
+		#mybody1.remedy-dialog-open #ayogiDetailsDiv,
+		#mybody1.remedy-dialog-open #nakDetailsDiv,
+		#mybody1.remedy-dialog-open #rasiDetailsDiv {
+			top:82px;
+		}
+		#mybody1.remedy-dialog-open #thithiDetailsDiv .remedy-dialog-card,
+		#mybody1.remedy-dialog-open #karanaDetailsDiv .remedy-dialog-card,
+		#mybody1.remedy-dialog-open #yogiDetailsDiv .remedy-dialog-card,
+		#mybody1.remedy-dialog-open #ayogiDetailsDiv .remedy-dialog-card,
+		#mybody1.remedy-dialog-open #nakDetailsDiv .remedy-dialog-card,
+		#mybody1.remedy-dialog-open #rasiDetailsDiv .remedy-dialog-card {
+			max-height:calc(100vh - 114px);
+			max-height:calc(100dvh - 114px);
+		}
+		#mybody1 .starDivition {
+			border-color:var(--theme-border-strong);
+			background:var(--theme-surface-panel-solid);
+			box-shadow:0 12px 34px var(--theme-shadow-strong);
+			color:var(--theme-text);
+		}
+		#mybody1 .starDivition .close-btn {
+			border:1px solid var(--theme-border-on-accent);
+			border-radius:12px;
+			background:var(--theme-button-gradient-close);
+			color:var(--theme-button-text);
+			opacity:1;
+		}
+		#mybody1 .starDivition table th,
+		#mybody1 .starDivition table td {
+			border:1px solid var(--theme-border)!important;
+			background:var(--theme-surface-table)!important;
+			color:var(--theme-text);
+			padding:5px;
+		}
+		#mybody1 .starDivition table tbody td:first-child {
+			text-align:center;
+		}
+		#mybody1 .starDivition table thead tr {
+			background:var(--theme-accent-medium)!important;
+		}
+		#mybody1 .column-menu,
+		#mybody1 .dropdown1-content,
+		#panchangForm,
+		#divOrigContainer .divTable.blueTable:not(#transitChart),
+		#muhurthamDiv .table-container,
+		#mybody1 .starDivition {
+			border-color:var(--theme-glass-border)!important;
+			box-shadow:0 18px 48px var(--theme-glass-shadow),0 0 0 1px rgba(212,175,55,.16),inset 0 1px var(--theme-glass-highlight),inset 0 -1px var(--theme-glass-edge);
+			backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
+			-webkit-backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
+		}
+		#divOrigContainer #transitChart {
+			box-shadow:0 18px 42px var(--theme-glass-shadow),0 0 0 1px rgba(212,175,55,.22),inset 0 1px var(--theme-glass-highlight),inset 0 -1px var(--theme-glass-edge);
+			backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
+			-webkit-backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
+		}
+		#divOrigContainer .divTable.blueTable:not(#transitChart) .divTableCell,
+		#divOrigContainer .divTable.blueTable:not(#transitChart) .divTableHead,
+		#panchangDetails .divPanchang {
+			backdrop-filter:blur(10px);
+			-webkit-backdrop-filter:blur(10px);
+		}
+		@media (max-width:600px) {
+			#mybody1 #thithiDetailsDiv,
+			#mybody1 #karanaDetailsDiv,
+			#mybody1 #yogiDetailsDiv,
+			#mybody1 #ayogiDetailsDiv,
+			#mybody1 #nakDetailsDiv,
+			#mybody1 #rasiDetailsDiv {
+				padding:12px;
+			}
+			#mybody1.remedy-dialog-open #thithiDetailsDiv,
+			#mybody1.remedy-dialog-open #karanaDetailsDiv,
+			#mybody1.remedy-dialog-open #yogiDetailsDiv,
+			#mybody1.remedy-dialog-open #ayogiDetailsDiv,
+			#mybody1.remedy-dialog-open #nakDetailsDiv,
+			#mybody1.remedy-dialog-open #rasiDetailsDiv {
+				top:88px;
+			}
+			#mybody1 #thithiDetailsDiv .remedy-dialog-card,
+			#mybody1 #karanaDetailsDiv .remedy-dialog-card,
+			#mybody1 #yogiDetailsDiv .remedy-dialog-card,
+			#mybody1 #ayogiDetailsDiv .remedy-dialog-card,
+			#mybody1 #nakDetailsDiv .remedy-dialog-card,
+			#mybody1 #rasiDetailsDiv .remedy-dialog-card {
+				grid-template-columns:minmax(92px,.75fr) minmax(0,1.25fr);
+				width:100%;
+				max-height:86vh;
+				max-height:86dvh;
+				padding:12px;
+				border-radius:18px;
+			}
+			#mybody1.remedy-dialog-open #thithiDetailsDiv .remedy-dialog-card,
+			#mybody1.remedy-dialog-open #karanaDetailsDiv .remedy-dialog-card,
+			#mybody1.remedy-dialog-open #yogiDetailsDiv .remedy-dialog-card,
+			#mybody1.remedy-dialog-open #ayogiDetailsDiv .remedy-dialog-card,
+			#mybody1.remedy-dialog-open #nakDetailsDiv .remedy-dialog-card,
+			#mybody1.remedy-dialog-open #rasiDetailsDiv .remedy-dialog-card {
+				max-height:calc(100vh - 112px);
+				max-height:calc(100dvh - 112px);
+			}
+			#mybody1 .remedy-dialog-card .parigaaram-grid-item {
+				padding:9px;
+			}
+			#mybody1 .remedy-dialog-close {
+				top:10px;
+				right:10px;
+				width:36px;
+				height:36px;
+			}
+			#mybody1 .panchang-topbar {
+				min-height:88px;
+				flex-direction:column;
+				gap:2px;
+				padding:8px 60px 8px 12px;
+			}
+			#mybody1 .panchang-topbar .brand img {
+				height:34px;
+				max-width:52vw;
+			}
+			#mybody1 .panchang-topbar .headline {
+				font-size:18px;
+			}
+			#mybody1 .column-body {
+				width:calc(100% - 16px);
+				padding:10px;
+				border-radius:20px;
+			}
+			#panchangDetails .divTableRow {
+				grid-template-columns:minmax(92px,.78fr) minmax(0,1.22fr);
+				gap:5px;
+			}
+			#panchangDetails .divPanchangHeading,
+			#panchangDetails .divPanchangHeadingRed,
+			#panchangDetails .divPanchang {
+				padding:9px 8px;
+			}
+			#muhurthamDiv .table-container {
+				width:96vw;
+				height:86vh;
+				padding:22px 8px 8px;
+			}
+			#panchangDetails .divPanchang[onclick]::after {
+				content:"\f25a";
+				width:19px;
+				height:19px;
+				border:0;
+				font-family:FontAwesome;
+				font-size:16px;
+				font-weight:normal;
+			}
+		}
+	</style>
 	
 	<!-- this is used for swipe gestures, disabling this due to some side effects -->
 	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script> -->
@@ -211,7 +1368,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" defer></script>
 	
 
-    <script src="script.js" defer></script>
+    <script src="script.js?<?php echo date('ymdhis'); ?>" defer></script>
 	<script src="panchang.js?<?php echo date('ymdhis'); ?>" defer></script>
 	<script src="my_panchang.js?<?php echo date('ymdhis'); ?>" defer></script>
 	<script src="common.js?<?php echo date('ymdhis'); ?>" defer></script>
@@ -269,11 +1426,17 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 
 		return out;
 	}
+
+	function formatTithiName(text) {
+		var translated = translateDynamic(text);
+		if (currentLanguage !== 'english' || typeof translated !== 'string') return translated;
+		return translated.replace(/\s*(wax|wan)$/i, ' ($1)');
+	}
 	
 	// Language handled server-side; client-side translation removed
 	
-	const panchangTime = "07:00:00" //this is the default panchang time the panchang will be generated on load. Download panchang button will be enabled only if time is equal to panchangTime
-	const panchangDate = new Date(); 
+	const panchangTime = "<?php echo $defaultPanchangTime; ?>";
+	const panchangDate = "<?php echo date('Y-m-d'); ?>";
 	
 	function init(){
 			if(getCookie(focus)=='date'){
@@ -369,14 +1532,22 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 
 			  document.getElementById('nDate').value= today ; 
 			  document.getElementById('nTime').value= time ; 
+			  document.getElementById('time_mode').value = 'custom';
 			  
 			  return true;
 			}
 			
 		function updateToday() {
-			document.getElementById('nTime').value = panchangTime;
+			document.getElementById('time_mode').value = 'sunrise';
+			document.getElementById('nTime').value = '';
 			document.getElementById('nDate').value = panchangDate;
-			location.reload(true);
+			document.forms["updatePanchang"].submit();
+		}
+
+		function preparePanchangTimeMode() {
+			if (document.getElementById('time_mode').value !== 'custom') {
+				document.getElementById('nTime').value = '';
+			}
 		}
 		
 		//Submit form on date change
@@ -447,42 +1618,37 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		function dropdownFormSubmit() {
 			document.getElementById('nDate').value = "";
 			document.getElementById('nTime').value = "";
+			document.getElementById('time_mode').value = 'sunrise';
 			document.forms["updatePanchang"].submit();
 		}
 		
-		function movePanchang(days){
-			datetime = (new Date(document.getElementById('nDate').value+' '+document.getElementById('nTime').value));
-			switch(days){
-				case -1:
-					new_datetime = new Date(datetime.getTime()-60*60*24*1000);
-					document.getElementById('nDate').value = formatDateYYYYMMDD(new_datetime);
-					break;
-				case -30:
-					new_datetime = new Date(datetime.getTime()-60*60*24*1000*30);
-					document.getElementById('nDate').value = formatDateYYYYMMDD(new_datetime);
-					break;
-				case -365:
-					new_datetime = new Date(datetime.getTime()-60*60*24*1000*365);
-					document.getElementById('nDate').value = formatDateYYYYMMDD(new_datetime);
-					break;
-				case 1:
-					new_datetime = new Date(datetime.getTime()+60*60*24*1000);
-					document.getElementById('nDate').value = formatDateYYYYMMDD(new_datetime);
-					break;
-				case 30:
-					new_datetime = new Date(datetime.getTime()+60*60*24*1000*30);
-					document.getElementById('nDate').value = formatDateYYYYMMDD(new_datetime);
-					break;
-				case 365:
-					new_datetime = new Date(datetime.getTime()+60*60*24*1000*365);
-					document.getElementById('nDate').value = formatDateYYYYMMDD(new_datetime);
-					break;
-				default:
-					break;
+		function movePanchangPeriod(amount, unit) {
+			const dateInput = document.getElementById('nDate');
+			const dateParts = dateInput.value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+			if (!dateParts) {
+				console.error('Cannot move the Panchang timeline without a selected date.');
+				return;
 			}
-			document.querySelector("#loader").style.visibility = "visible";
-			
-			document.forms["updatePanchang"].submit();
+
+			const year = Number(dateParts[1]);
+			const month = Number(dateParts[2]);
+			const day = Number(dateParts[3]);
+			let targetDate;
+			if (unit === 'month') {
+				targetDate = new Date(year, month - 1 + amount, 1);
+			} else if (unit === 'year') {
+				targetDate = new Date(year + amount, month - 1, 1);
+			} else {
+				console.error('Unsupported Panchang timeline unit:', unit);
+				return;
+			}
+
+			const lastDayOfMonth = new Date(targetDate.getFullYear(), targetDate.getMonth() + 1, 0).getDate();
+			targetDate.setDate(Math.min(day, lastDayOfMonth));
+			const pad = function(value) { return String(value).padStart(2, '0'); };
+			dateInput.value = targetDate.getFullYear() + '-' + pad(targetDate.getMonth() + 1) + '-' + pad(targetDate.getDate());
+			document.querySelector('#loader').style.visibility = 'visible';
+			document.forms['updatePanchang'].submit();
 		}
 		
 		function showKaranamDiv() {
@@ -493,61 +1659,90 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		  document.getElementById("karanamDiv").style.display = "none";
 		}
 		
-		function showDetailsDiv(e,type) {
-			switch(type){
-				case 1:
-					divName = "thithiDetailsDiv";
-					break;
-				case 2:
-					divName = "karanaDetailsDiv";
-					break;
-				case 3:
-					divName = "yogiDetailsDiv";
-					break;
-				case 4:
-					divName = "ayogiDetailsDiv";
-					break;
-				case 5:
-					divName = "nakDetailsDiv";
-					break;
-				case 6:
-					divName = "rasiDetailsDiv";
-					break;
-			}
-			
-			$(divName).delay(3000).fadeOut('slow');
-			//document.getElementById(divName).style.display = "inline";
-			document.getElementById(divName).style.display = "block";
-			
-			//var left  = e.clientX - 100 + "px";
-			//var top  = e.clientY  + "px";
-			//var left  = e.pageX - 50 + "px";
-			var left = e.ScreenX/2 + "px";
-			var top  = e.pageY  + "px";
-		
-			var div = document.getElementById(divName);
+		var activeDetailsTrigger = null;
+		var remedyDetailsByType = {
+			1: "thithiDetailsDiv",
+			2: "karanaDetailsDiv",
+			3: "yogiDetailsDiv",
+			4: "ayogiDetailsDiv",
+			5: "nakDetailsDiv",
+			6: "rasiDetailsDiv"
+		};
 
-			//div.style.left = left;
-			//div.style.top = top;
-			div.style.left = 0;
-			div.style.top = 0;
-			//div.style.position = absolute;
-			//div.style.left = (e.screenX + window.scrolLeft);
-			//div.style.top = (e.screenY + window.scrolTop);
-		  
-		  //document.getElementById("detailsDiv").style.top = 0;
-		  //document.getElementById("detailsDiv").style.left = 0;
-		  //document.getElementById("detailsDiv").style. = 0;
+		function showDetailsDiv(event,type) {
+			var divName = remedyDetailsByType[type];
+			var overlay = divName ? document.getElementById(divName) : null;
+			if (!overlay) {
+				console.error("Remedy details overlay is unavailable for type:", type);
+				return;
+			}
+
+			var card = overlay.querySelector('.parigaaram-grid-container');
+			if (!card) {
+				console.error("Remedy details content is missing in:", divName);
+				return;
+			}
+
+			hideDetailsDiv();
+			document.body.appendChild(overlay);
+			activeDetailsTrigger = event && event.currentTarget;
+			card.classList.add('remedy-dialog-card');
+			overlay.style.display = 'flex';
+			overlay.setAttribute('role','dialog');
+			overlay.setAttribute('aria-modal','true');
+
+			var heading = card.querySelector('.parigaaram-grid-item-head:first-of-type');
+			if (heading) {
+				heading.id = divName + 'Heading';
+				overlay.setAttribute('aria-labelledby',heading.id);
+			}
+
+			var closeButton = card.querySelector('.remedy-dialog-close');
+			if (!closeButton) {
+				closeButton = document.createElement('button');
+				closeButton.type = 'button';
+				closeButton.className = 'remedy-dialog-close';
+				closeButton.textContent = '×';
+				closeButton.setAttribute('aria-label',<?php echo json_encode(__('close')); ?>);
+				closeButton.title = <?php echo json_encode(__('close')); ?>;
+				card.insertBefore(closeButton,card.firstChild);
+			}
+			closeButton.onclick = hideDetailsDiv;
+			card.querySelectorAll('button').forEach(function(button) {
+				button.type = 'button';
+				button.onclick = hideDetailsDiv;
+			});
+			overlay.onclick = function(clickEvent) {
+				if (clickEvent.target === overlay) hideDetailsDiv();
+			};
+
+			document.getElementById('mybody1').classList.add('remedy-dialog-open');
+			closeButton.focus();
 		}
 
 		function hideDetailsDiv() {
-		  document.getElementById("thithiDetailsDiv").style.display = "none";
-		  document.getElementById("karanaDetailsDiv").style.display = "none";
-		  document.getElementById("yogiDetailsDiv").style.display = "none";
-		  document.getElementById("ayogiDetailsDiv").style.display = "none";
-		  document.getElementById("nakDetailsDiv").style.display = "none";
-		  document.getElementById("rasiDetailsDiv").style.display = "none";
+			[
+				"thithiDetailsDiv",
+				"karanaDetailsDiv",
+				"yogiDetailsDiv",
+				"ayogiDetailsDiv",
+				"nakDetailsDiv",
+				"rasiDetailsDiv"
+			].forEach(function(id) {
+				var overlay = document.getElementById(id);
+				if (overlay) overlay.style.display = 'none';
+			});
+
+			document.getElementById('mybody1').classList.remove('remedy-dialog-open');
+			if (activeDetailsTrigger && activeDetailsTrigger.isConnected) activeDetailsTrigger.focus();
+			activeDetailsTrigger = null;
 		}
+
+		document.addEventListener('keydown',function(event) {
+			if (event.key === 'Escape' && document.getElementById('mybody1').classList.contains('remedy-dialog-open')) {
+				hideDetailsDiv();
+			}
+		});
 		
 		function formSubmitButton(){
 			if(validateForm()==true){
@@ -560,6 +1755,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		}
 		
 		function onTimeChange(){
+			document.getElementById('time_mode').value = 'custom';
 			document.forms["updatePanchang"].submit();
 		}
 		
@@ -594,7 +1790,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 
 			const timeText = timeElement.value; // Get time
 		
-			// Disable the button if time is NOT "7:00:00"
+			// Enable the button only when time matches the selected date's sunrise.
 			if (timeText !== panchangTime) {
 				button.disabled = true;
 			} else {
@@ -690,7 +1886,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			//	document.writeln('<div class="divTablePanchangMedium" style="width:160px">'+panchang.Yoga.name+' '+formatDateTime(panchang.Yoga.start)+" முதல் "+formatDateTime(panchang.Yoga.end)+' வரை'+displayNextYoga(newdate,panchang.Yoga)+'</div>');
 			//document.writeln('</div>');
 			
-			document.getElementById('thithi').innerHTML = translateDynamic(panchang.Tithi.name)+'<BR><div class="divSmall"> '+formatDateTime(panchang.Tithi.start)+' <?php echo __("from"); ?> <BR> '+formatDateTime(panchang.Tithi.end)+' <?php echo __("to"); ?> </div>';
+			document.getElementById('thithi').innerHTML = formatTithiName(panchang.Tithi.name)+'<BR><div class="divSmall"> '+formatDateTime(panchang.Tithi.start)+' <?php echo __("from"); ?> <BR> '+formatDateTime(panchang.Tithi.end)+' <?php echo __("to"); ?> </div>';
 			
 			// Use nakshatra name from PHP data attribute instead of panchang library
 			var nakDiv = document.getElementById('nak');
@@ -715,7 +1911,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 	
 		//To add next nak
 		panchang.calculate(newdate, function() {
-			document.getElementById('nak').innerHTML = document.getElementById('nak').innerHTML + translateDynamic(panchang.Nakshatra.name)+'<BR><div class="divSmall"> '+formatDateTime(panchang.Nakshatra.start)+' <?php echo __("from"); ?> <BR>'+formatDateTime(panchang.Nakshatra.end)+' <?php echo __("to"); ?> </div>';
+			document.getElementById('nak').innerHTML = document.getElementById('nak').innerHTML + '<span class="panchang-next-value">' + translateDynamic(panchang.Nakshatra.name) + '</span><BR><div class="divSmall"> '+formatDateTime(panchang.Nakshatra.start)+' <?php echo __("from"); ?> <BR>'+formatDateTime(panchang.Nakshatra.end)+' <?php echo __("to"); ?> </div>';
 		});
 
 		//To add next karanam
@@ -723,7 +1919,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		//newdate = changeTimezone(newdate,timezone);
 	
 		panchang.calculate(newdate, function() {
-			document.getElementById('karanam').innerHTML = document.getElementById('karanam').innerHTML + translateDynamic(panchang.Karna.name)+' ('+translateDynamic(getKaranaPlanet(panchang.Karna.name))+')'+'<BR><div class="divSmall"> '+formatDateTime(panchang.Karna.start)+' <?php echo __("from"); ?> <BR>'+formatDateTime(panchang.Karna.end)+' <?php echo __("to"); ?> </div>';
+			document.getElementById('karanam').innerHTML = document.getElementById('karanam').innerHTML + '<span class="panchang-next-value">' + translateDynamic(panchang.Karna.name)+' ('+translateDynamic(getKaranaPlanet(panchang.Karna.name))+')</span>'+'<BR><div class="divSmall"> '+formatDateTime(panchang.Karna.start)+' <?php echo __("from"); ?> <BR>'+formatDateTime(panchang.Karna.end)+' <?php echo __("to"); ?> </div>';
 		});
 
 		//To add next thithi
@@ -732,7 +1928,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		//newdate = changeTimezone(newdate,timezone);
 	
 		panchang.calculate(newdate, function() {
-			document.getElementById('thithi').innerHTML = document.getElementById('thithi').innerHTML + translateDynamic(panchang.Tithi.name)+' <BR><div class="divSmall">'+formatDateTime(panchang.Tithi.start)+' <?php echo __("from"); ?> <BR> '+formatDateTime(panchang.Tithi.end)+' <?php echo __("to"); ?> </div>';
+			document.getElementById('thithi').innerHTML = document.getElementById('thithi').innerHTML + '<span class="panchang-next-value">' + formatTithiName(panchang.Tithi.name) + '</span> <BR><div class="divSmall">'+formatDateTime(panchang.Tithi.start)+' <?php echo __("from"); ?> <BR> '+formatDateTime(panchang.Tithi.end)+' <?php echo __("to"); ?> </div>';
 		});
 
 		//To add next yogam
@@ -740,7 +1936,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		//newdate = changeTimezone(newdate,timezone);
 	
 		panchang.calculate(newdate, function() {
-			document.getElementById('yogam').innerHTML = document.getElementById('yogam').innerHTML + translateDynamic(panchang.Yoga.name)+'<BR><div class="divSmall"> '+formatDateTime(panchang.Yoga.start)+' <?php echo __("from"); ?> <BR>'+formatDateTime(panchang.Yoga.end)+' <?php echo __("to"); ?> </div>';
+			document.getElementById('yogam').innerHTML = document.getElementById('yogam').innerHTML + '<span class="panchang-next-value">' + translateDynamic(panchang.Yoga.name) + '</span><BR><div class="divSmall"> '+formatDateTime(panchang.Yoga.start)+' <?php echo __("from"); ?> <BR>'+formatDateTime(panchang.Yoga.end)+' <?php echo __("to"); ?> </div>';
 		});
 	}
 	
@@ -820,11 +2016,11 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 	outputHTML += `
 		<table style="width:100%;border-collapse:collapse;margin-top:10px;">
 			<thead>
-				<tr style="background:#f0f0f0;">
-					<th style="border:1px solid #ccc;padding:5px;">#</th>
-					<th style="border:1px solid #ccc;padding:5px;">${'<?php echo addslashes(__("from")); ?>'}</th>
-					<th style="border:1px solid #ccc;padding:5px;">${'<?php echo addslashes(__("to")); ?>'}</th>
-					<th style="border:1px solid #ccc;padding:5px;">${'<?php echo addslashes(__("nakshatra")); ?>'}</th>
+				<tr class="nakshatra-table-header">
+					<th>#</th>
+					<th>${'<?php echo addslashes(__("from")); ?>'}</th>
+					<th>${'<?php echo addslashes(__("to")); ?>'}</th>
+					<th>${'<?php echo addslashes(__("nakshatra")); ?>'}</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -838,10 +2034,10 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 
 		outputHTML += `
 			<tr>
-				<td style="border:1px solid #ccc;padding:5px;text-align:center;">${i + 1}</td>
-				<td style="border:1px solid #ccc;padding:5px;">${formatTime(segStart)}</td>
-				<td style="border:1px solid #ccc;padding:5px;">${formatTime(segEnd)}</td>
-				<td style="border:1px solid #ccc;padding:5px;">${currentNak}</td>
+				<td>${i + 1}</td>
+				<td>${formatTime(segStart)}</td>
+				<td>${formatTime(segEnd)}</td>
+				<td>${currentNak}</td>
 			</tr>
 		`;
 	}
@@ -1613,7 +2809,7 @@ function closePushkaraTable() {
 	</script>
 </head>
 
-<body id='mybody1'>
+<body id='mybody1' class='theme-rose-gold theme-landing'>
 <div class="karanamDiv" id="karanamDiv" onclick="hideKaranamDiv()"><!-- <img src='images/karanam.png' /> --></div>
 <!-- <div class="muhurthamDiv" id="muhurthamDiv" onclick="this.style.display='none'"></div> -->
 <div class="muhurthamDiv" id="muhurthamDiv"></div>
@@ -1893,13 +3089,7 @@ function displayHoroDetails()
 	// Determine language index: 0 for English, 1 for Tamil
 	$lang_index = ($language === 'english') ? 0 : 1;
 	
-	echo "<div class='divTable blueTable' style='height:40px;' id='panchangDetailsHeading'>";
-		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)'>";
-				echo "<div class='divPanchangHeading' colspan='3'>";
-					echo "<H6 style='font-weight:bold;color:black'>" . __('panchangam') . "</H6>";
-				echo "</div>";
-			echo "</div>";
-	echo "</div>";
+	echo "<div class='divTable blueTable' style='height:0;display:none;' id='panchangDetailsHeading'></div>";
 	
 	//display panchang table 
 	echo "<div class='divTable blueTable' id='panchangDetails'>"; 
@@ -1975,7 +3165,6 @@ function displayHoroDetails()
 			echo "<div class='divPanchangHeading'>" . __('yogi') . "</div>";
 			echo "<div class='divPanchang' id='yogi' OnClick='showDetailsDiv(event, 3)' style='color:blue;cursor:pointer'>".translate_tamil_text($yogi_arr[1])." (".translate_tamil_text($yogi_arr[0]).")</div>";
 		echo "</div>";
-		displayDetailsDiv('yogi',$g_yoga_idx);
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>" . __('current_horai') . "</div>";
 			echo "<div class='divPanchang' id='hora'></div>";
@@ -2080,6 +3269,7 @@ function displayHoroDetails()
 function displayTransitChart()
 {
 	global $sw_planet,$g_thithi_soonyam_arr, $language;
+	$transit_language = ($language === 'english') ? 'english' : 'tamil';
 	
 	// Translate planet abbreviations if language is English
 	$display_planets = $sw_planet;
@@ -2108,7 +3298,18 @@ function displayTransitChart()
 			}
 		}
 	}
-	
+	foreach ($display_planets as $i => $planetLabel) {
+		if (!empty($planetLabel)) {
+			$display_planets[$i] = preg_replace_callback(
+				'/(<span\b[^>]*>.*?<\/span>|[^<\s]+)(?:-\d+°(?:\d+\')?)?/us',
+				function ($matches) {
+					return '<span class="transit-planet-entry">' . $matches[0] . '</span>';
+				},
+				$planetLabel
+			);
+		}
+	}
+
 	echo "<BR>";
 	echo "<div class='divTable blueTable' style='height:40px;'>";
 		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)' id='transitChartHeading'>";
@@ -2119,7 +3320,7 @@ function displayTransitChart()
 	echo "</div>";
 	
 echo <<<EOL
-	<div class="divTable blueTable" id="transitChart">
+	<div class="divTable blueTable" id="transitChart" data-language="$transit_language">
 		<div class="divTableBody">
 			<div class="divTableRow">
 					<div class="divTableDummyCell"></div>
@@ -2131,38 +3332,38 @@ echo <<<EOL
 			</div>
 			<div class="divTableRow">
 					<div class="divTableDummyCell"></div>
-					<div class="divTableCell">$display_planets[11]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[11]</span></div>
-					<div class="divTableCell">$display_planets[0]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[0]</span></div>
-					<div class="divTableCell">$display_planets[1]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[1]</span></div>
-					<div class="divTableCell">$display_planets[2]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[2]</span></div>
+					<div class="divTableCell"><span class="transit-planet-label">$display_planets[11]</span>$g_thithi_soonyam_arr[11]</div>
+					<div class="divTableCell"><span class="transit-planet-label">$display_planets[0]</span>$g_thithi_soonyam_arr[0]</div>
+					<div class="divTableCell"><span class="transit-planet-label">$display_planets[1]</span>$g_thithi_soonyam_arr[1]</div>
+					<div class="divTableCell"><span class="transit-planet-label">$display_planets[2]</span>$g_thithi_soonyam_arr[2]</div>
 					<div class="divTableDummyCell"></div>
 			</div>
 			<div class="divTableRow">
 					<div class="divTableDummyCell"></div>
-					<div class="divTableCell">$display_planets[10]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[10]</span></div>
+					<div class="divTableCell"><span class="transit-planet-label">$display_planets[10]</span>$g_thithi_soonyam_arr[10]</div>
 					<div class="divTableCenterCell" style='font-size:10px'>
 EOL;
 	echo __('rasi_chart');
 echo <<<EOL
 </div>
 					<div class="divTableCenterCell"></div>
-					<div class="divTableCell">$display_planets[3]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[3]</span></div>
+					<div class="divTableCell"><span class="transit-planet-label">$display_planets[3]</span>$g_thithi_soonyam_arr[3]</div>
 					<div class="divTableDummyCell"></div>
 			</div>
 			<div class="divTableRow">
 					<div class="divTableDummyCell"></div>
-					<div class="divTableCell">$display_planets[9]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[9]</span></div>
+					<div class="divTableCell"><span class="transit-planet-label">$display_planets[9]</span>$g_thithi_soonyam_arr[9]</div>
 					<div class="divTableCenterCell"></div>
 					<div class="divTableCenterCell" style='font-size:10px'>D1</div>
-					<div class="divTableCell">$display_planets[4]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[4]</span></div>
+					<div class="divTableCell"><span class="transit-planet-label">$display_planets[4]</span>$g_thithi_soonyam_arr[4]</div>
 					<div class="divTableDummyCell"></div>
 			</div>
 			<div class="divTableRow">
 					<div class="divTableDummyCell"></div>
-					<div class="divTableCell">$display_planets[8]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[8]</span></div>
-					<div class="divTableCell">$display_planets[7]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[7]</span></div>
-					<div class="divTableCell">$display_planets[6]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[6]</span></div>
-					<div class="divTableCell">$display_planets[5]<span class='thithi_soonyam'>$g_thithi_soonyam_arr[5]</span></div>
+					<div class="divTableCell"><span class="transit-planet-label">$display_planets[8]</span>$g_thithi_soonyam_arr[8]</div>
+					<div class="divTableCell"><span class="transit-planet-label">$display_planets[7]</span>$g_thithi_soonyam_arr[7]</div>
+					<div class="divTableCell"><span class="transit-planet-label">$display_planets[6]</span>$g_thithi_soonyam_arr[6]</div>
+					<div class="divTableCell"><span class="transit-planet-label">$display_planets[5]</span>$g_thithi_soonyam_arr[5]</div>
 					<div class="divTableDummyCell"></div>
 			</div>
 			<div class="divTableRow">
@@ -2178,32 +3379,14 @@ echo <<<EOL
 
 EOL;
 
-	echo "<div class='divTable blueTable' style='height:auto; padding:6px 10px; margin-top:6px; font-size:12px; text-align:left;'>";
-		echo __('mandhi_abbr') . " = " . __('mandhi') . "&nbsp;&nbsp;|&nbsp;&nbsp;";
-		echo __('indhu_abbr') . " = " . __('indhu') . " " . __('lagna') . "&nbsp;&nbsp;|&nbsp;&nbsp;";
-		echo __('thrisoolam_abbr') . " = " . __('thithi_soonyam');
+	echo "<div class='divTable blueTable transit-chart-legend' role='list' aria-label='Chart legend'>";
+		echo "<span class='legend-item' role='listitem'><span class='legend-symbol legend-symbol-mandhi'>" . __('mandhi_abbr') . "</span><span>" . __('mandhi') . "</span></span>";
+		echo "<span class='legend-item' role='listitem'><span class='legend-symbol legend-symbol-indhu'>" . __('indhu_abbr') . "</span><span>" . __('indhu') . " " . __('lagna') . "</span></span>";
+		echo "<span class='legend-item' role='listitem'><span class='legend-symbol legend-symbol-thithi'>" . __('thrisoolam_abbr') . "</span><span>" . __('thithi_soonyam') . "</span></span>";
 		if ($language === 'english') {
-			echo "&nbsp;&nbsp;|&nbsp;&nbsp;(R) = Retrograde";
+			echo "<span class='legend-item' role='listitem'><span class='legend-symbol'>(R)</span><span>Retrograde</span></span>";
 		}
 		echo "</div>";
-}
-
-$conn = dbConnect($conn);
-
-$sql = "SELECT Latitude, Longitude, GMT_offset, GMT_offset_dsl,country FROM world_cities WHERE Place="."'".$city."'"." AND TZ="."'".$TZ."'";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-  // output data of each row
-  while($row = $result->fetch_assoc()) {
-    $lat = $row["Latitude"];
-    $lon = $row["Longitude"];
-    $gmt_offset = $row["GMT_offset"];
-    $gmt_offset_dst=$row["GMT_offset_dsl"];
-	$country=$row["country"];
-  }
-} else {
-  echo "0 results";
 }
 
 if($DEBUG==1){
@@ -2404,22 +3587,310 @@ $sw_planet = sortDegree($sw_planet);
 
 updateIndhuLagna();
 
+calculatePanchang();
+calculateBirthPanchang();
+
+$profileData = isset($_SESSION['userinfo']) && is_array($_SESSION['userinfo']) ? $_SESSION['userinfo'] : [];
+$profileLabels = $language === 'english'
+	? ['title' => 'Profile', 'name' => 'Name', 'phone' => 'Phone', 'imei' => 'IMEI', 'expiry' => 'Expiry', 'user_type' => 'User type', 'registered' => 'Registered', 'office' => 'Office', 'office_contact' => 'Office phone', 'last_login' => 'Last login', 'unavailable' => 'Not available']
+	: ['title' => 'பயனர் விவரம்', 'name' => 'பெயர்', 'phone' => 'கைபேசி', 'imei' => 'IMEI', 'expiry' => 'காலாவதி', 'user_type' => 'பயனர் வகை', 'registered' => 'பதிவு தேதி', 'office' => 'அலுவலகம்', 'office_contact' => 'அலுவலக தொலைபேசி', 'last_login' => 'கடைசி உள்நுழைவு', 'unavailable' => 'கிடைக்கவில்லை'];
+$expiryValue = isset($profileData['expiry_date']) ? trim((string)$profileData['expiry_date']) : '';
+$expiryTimestamp = $expiryValue !== '' ? strtotime($expiryValue) : false;
+if ($expiryTimestamp !== false) {
+	$expiryValue = date('d-m-Y', $expiryTimestamp);
+}
+$registeredValue = isset($profileData['registered_date']) ? trim((string)$profileData['registered_date']) : '';
+$registeredTimestamp = $registeredValue !== '' ? strtotime($registeredValue) : false;
+if ($registeredTimestamp !== false) {
+	$registeredValue = date('d-m-Y', $registeredTimestamp);
+}
+$lastLoginValue = isset($profileData['last_login']) ? trim((string)$profileData['last_login']) : '';
+$lastLoginTimestamp = $lastLoginValue !== '' ? strtotime($lastLoginValue) : false;
+if ($lastLoginTimestamp !== false) {
+	$lastLoginValue = date('d-m-Y H:i', $lastLoginTimestamp);
+}
+$profileFields = [
+	[$profileLabels['name'], isset($profileData['name']) ? trim((string)$profileData['name']) : ''],
+	[$profileLabels['phone'], isset($profileData['phone']) ? trim((string)$profileData['phone']) : ''],
+	[$profileLabels['imei'], isset($profileData['imei']) ? trim((string)$profileData['imei']) : ''],
+	[$profileLabels['expiry'], $expiryValue],
+	[$profileLabels['user_type'], isset($profileData['user_type']) ? trim((string)$profileData['user_type']) : ''],
+	[$profileLabels['registered'], $registeredValue],
+	[$profileLabels['office'], isset($profileData['office_name']) ? trim((string)$profileData['office_name']) : ''],
+	[$profileLabels['office_contact'], isset($profileData['office_contact']) ? trim((string)$profileData['office_contact']) : ''],
+	[$profileLabels['last_login'], $lastLoginValue]
+];
+$profileDetails = '';
+foreach ($profileFields as $profileField) {
+	$profileValue = $profileField[1] !== '' ? $profileField[1] : $profileLabels['unavailable'];
+	$profileDetails .= "<div class='panchang-profile-row'><span>" . htmlspecialchars($profileField[0], ENT_QUOTES, 'UTF-8') . "</span><span>" . htmlspecialchars($profileValue, ENT_QUOTES, 'UTF-8') . "</span></div>";
+}
+$profileTitle = htmlspecialchars($profileLabels['title'], ENT_QUOTES, 'UTF-8');
+$formDateLabel = htmlspecialchars(__('date'), ENT_QUOTES, 'UTF-8');
+$formTimeLabel = htmlspecialchars(__('time'), ENT_QUOTES, 'UTF-8');
+$formPlaceLabel = htmlspecialchars(__('place'), ENT_QUOTES, 'UTF-8');
+$placeSegments = explode('|', (string)$place);
+$placeDisplayValue = trim($placeSegments[0]);
+if (count($placeSegments) > 2) {
+	$placeDisplayValue .= ', ' . trim($placeSegments[count($placeSegments) - 1]);
+}
+$formPlaceDisplay = htmlspecialchars($placeDisplayValue, ENT_QUOTES, 'UTF-8');
+$formPlaceTimezone = htmlspecialchars(date('T', strtotime($chart_date)), ENT_QUOTES, 'UTF-8');
+$formPlacePlaceholder = htmlspecialchars(__('search_place_placeholder'), ENT_QUOTES, 'UTF-8');
+$formNavigationLabel = htmlspecialchars(__('date_navigation'), ENT_QUOTES, 'UTF-8');
+$formAdvancedOptionsLabel = htmlspecialchars(__('advanced_options'), ENT_QUOTES, 'UTF-8');
+$formNowLabel = htmlspecialchars(__('now'), ENT_QUOTES, 'UTF-8');
+$formTodayLabel = htmlspecialchars(__('today'), ENT_QUOTES, 'UTF-8');
+$timelinePrevYearLabel = htmlspecialchars(__('previous_year'), ENT_QUOTES, 'UTF-8');
+$timelinePrevMonthLabel = htmlspecialchars(__('previous_month'), ENT_QUOTES, 'UTF-8');
+$timelineNextMonthLabel = htmlspecialchars(__('next_month_full'), ENT_QUOTES, 'UTF-8');
+$timelineNextYearLabel = htmlspecialchars(__('next_year_full'), ENT_QUOTES, 'UTF-8');
+$timelineLocale = ($language === 'tamil') ? 'ta-IN' : 'en-IN';
+$timelineDateItemsMarkup = '';
+$timelineSelectedTimestamp = strtotime($chart_date);
+for ($timelineOffset = -14; $timelineOffset <= 14; $timelineOffset++) {
+	$timelineDateTimestamp = strtotime(($timelineOffset < 0 ? $timelineOffset : '+' . $timelineOffset) . ' days', $timelineSelectedTimestamp);
+	$timelineDate = date('Y-m-d', $timelineDateTimestamp);
+	$timelineCurrent = ($timelineOffset === 0) ? " aria-current='date'" : '';
+	$timelineDateItemsMarkup .= "<button type='button' class='panchang-timeline-date' data-date='$timelineDate'$timelineCurrent>"
+		. "<span class='panchang-timeline-weekday'></span>"
+		. "<span class='panchang-timeline-day'>" . date('j', $timelineDateTimestamp) . "</span>"
+		. "<span class='panchang-timeline-month-marker'></span>"
+		. "</button>";
+}
+$summaryLanguageIndex = ($language === 'english') ? 0 : 1;
+$summaryTitle = htmlspecialchars(__('panchang_summary'), ENT_QUOTES, 'UTF-8');
+$summaryFullDetailsLabel = htmlspecialchars(__('view_full_details'), ENT_QUOTES, 'UTF-8');
+$summarySelectedDate = $chart_date;
+$summaryTamilDateRaw = getTamilDate();
+$chart_date = $summarySelectedDate;
+$summaryTamilDateParts = preg_split('/<br\s*\/?>/i', $summaryTamilDateRaw);
+$summaryTamilMonth = '';
+$summaryTamilDay = 0;
+if (isset($summaryTamilDateParts[1]) && preg_match('/^(.+?)\s+(\d+)$/u', trim(strip_tags($summaryTamilDateParts[1])), $summaryTamilDateMatch)) {
+	$summaryTamilMonth = trim($summaryTamilDateMatch[1]);
+	$summaryTamilDay = (int)$summaryTamilDateMatch[2];
+}
+$summaryTamilDate = htmlspecialchars(translate_tamil_text(trim(preg_replace('/\s+/', ' ', strip_tags(str_ireplace('<br>', ' ', $summaryTamilDateRaw))))), ENT_QUOTES, 'UTF-8');
+$summaryDate = htmlspecialchars(date('j M Y', strtotime($summarySelectedDate)), ENT_QUOTES, 'UTF-8');
+$summaryCalendarDay = htmlspecialchars(date('j', strtotime($summarySelectedDate)), ENT_QUOTES, 'UTF-8');
+$summaryCalendarMonthYear = htmlspecialchars(date('M Y', strtotime($summarySelectedDate)), ENT_QUOTES, 'UTF-8');
+$summaryTime = htmlspecialchars(date('g:i A', strtotime($chart_time)), ENT_QUOTES, 'UTF-8');
+$summaryWeekday = htmlspecialchars(explode('/', $panchang['vaaram'])[$summaryLanguageIndex], ENT_QUOTES, 'UTF-8');
+$summaryThithi = htmlspecialchars(explode('/', explode('[', $panchang['thithi'])[0])[$summaryLanguageIndex], ENT_QUOTES, 'UTF-8');
+$summaryNakshatra = htmlspecialchars(explode('/', $panchang['nak'])[$summaryLanguageIndex], ENT_QUOTES, 'UTF-8');
+$summaryYogam = htmlspecialchars(translate_tamil_text($panchang['yoga']), ENT_QUOTES, 'UTF-8');
+$summaryKaranam = htmlspecialchars(explode('/', $panchang['karan'])[$summaryLanguageIndex], ENT_QUOTES, 'UTF-8');
+$summaryCity = htmlspecialchars($city, ENT_QUOTES, 'UTF-8');
+$summaryRahuKaalam = getRahuKaalam();
+$summaryEmaKantam = getEmaKantam();
+$summaryKuligai = getKulikai();
+$summaryKariNaal = isset($g_kariNaal) && $g_kariNaal === 'கரி நாள்';
+$summaryThaniyaDates = [
+	'சித்திரை' => [3, 20], 'வைகாசி' => [9, 22], 'ஆனி' => [8, 22], 'ஆடி' => [7, 20],
+	'ஆவணி' => [7, 18], 'புரட்டாசி' => [9, 26], 'ஐப்பசி' => [8, 19], 'கார்த்திகை' => [8, 14],
+	'மார்கழி' => [8, 26], 'தை' => [8, 15], 'மாசி' => [15, 24], 'பங்குனி' => [18, 24]
+];
+$summaryIsThaniya = isset($summaryThaniyaDates[$summaryTamilMonth]) && in_array($summaryTamilDay, $summaryThaniyaDates[$summaryTamilMonth], true);
+$summaryIsCaution = $summaryKariNaal || $summaryIsThaniya || in_array((int)$g_thithi_idx, [7, 8], true);
+
+$summaryHoraCycle = ['சூரி', 'சுக்', 'புத', 'சந்', 'சனி', 'குரு', 'செ'];
+$summaryHoraDayLords = [0, 3, 6, 2, 5, 4, 1];
+$summaryHoraLordAt = function($weekday, $index) use ($summaryHoraCycle, $summaryHoraDayLords) {
+	return $summaryHoraCycle[($summaryHoraDayLords[$weekday] + $index) % count($summaryHoraCycle)];
+};
+$summaryReferenceTimestamp = time();
+$summaryHoraTimestamp = time();
+$summaryHoraDate = date('Y-m-d', $summaryHoraTimestamp);
+$summaryHoraNextDate = date('Y-m-d', strtotime('+1 day', $summaryHoraTimestamp));
+$summaryHoraPreviousDate = date('Y-m-d', strtotime('-1 day', $summaryHoraTimestamp));
+$summarySunriseTimestamp = strtotime($summaryHoraDate . ' ' . getSunrise(strtotime($summaryHoraDate), floatval($lat), floatval($lon)));
+$summarySunsetTimestamp = strtotime($summaryHoraDate . ' ' . getSunset(strtotime($summaryHoraDate), floatval($lat), floatval($lon)));
+$summaryTomorrowSunriseTimestamp = strtotime($summaryHoraNextDate . ' ' . getSunrise(strtotime($summaryHoraNextDate), floatval($lat), floatval($lon)));
+$summaryPreviousSunsetTimestamp = strtotime($summaryHoraPreviousDate . ' ' . getSunset(strtotime($summaryHoraPreviousDate), floatval($lat), floatval($lon)));
+$summaryHoraWeekday = $summaryHoraTimestamp !== false
+	? (int)date('w', $summaryHoraTimestamp)
+	: (int)date('w', strtotime($summarySelectedDate));
+$summaryHoraIndex = 0;
+$summaryHoraStartTimestamp = false;
+$summaryHoraEndTimestamp = false;
+$summaryHoraValid = false;
+if ($summaryHoraTimestamp !== false && $summarySunriseTimestamp !== false && $summarySunsetTimestamp !== false && $summaryTomorrowSunriseTimestamp !== false && $summaryPreviousSunsetTimestamp !== false) {
+	if ($summaryHoraTimestamp < $summarySunriseTimestamp) {
+		$summaryHoraWeekday = ($summaryHoraWeekday + 6) % 7;
+		$summaryHoraStartTimestamp = $summaryPreviousSunsetTimestamp;
+		$summaryHoraEndTimestamp = $summarySunriseTimestamp;
+		$summaryHoraIndex = 12;
+	} elseif ($summaryHoraTimestamp >= $summarySunsetTimestamp) {
+		$summaryHoraStartTimestamp = $summarySunsetTimestamp;
+		$summaryHoraEndTimestamp = $summaryTomorrowSunriseTimestamp;
+		$summaryHoraIndex = 12;
+	} else {
+		$summaryHoraStartTimestamp = $summarySunriseTimestamp;
+		$summaryHoraEndTimestamp = $summarySunsetTimestamp;
+	}
+
+	$summaryHoraDuration = ($summaryHoraEndTimestamp - $summaryHoraStartTimestamp) / 12;
+	if ($summaryHoraDuration > 0) {
+		$summaryHoraIndex += (int)floor(($summaryHoraTimestamp - $summaryHoraStartTimestamp) / $summaryHoraDuration);
+		$summaryHoraIndex = max(0, min(23, $summaryHoraIndex));
+		$summaryHoraValid = true;
+	}
+}
+
+$summaryCurrentHora = '';
+if ($summaryHoraValid) {
+	$summaryCurrentHora = $summaryHoraLordAt($summaryHoraWeekday, $summaryHoraIndex);
+	$summaryBeneficHoras = ['குரு', 'சுக்', 'புத', 'சந்'];
+}
+
+$summaryParseMeridianTime = function($timeValue) {
+	if (!preg_match('/^\s*(\d{1,2}):(\d{2})\s*(AM|PM)\s*$/i', $timeValue, $matches)) {
+		return null;
+	}
+	$hour = ((int)$matches[1]) % 12;
+	if (strtoupper($matches[3]) === 'PM') {
+		$hour += 12;
+	}
+	return $hour * 60 + (int)$matches[2];
+};
+$summaryChartHour = $summaryReferenceTimestamp !== false
+	? (int)date('H', $summaryReferenceTimestamp)
+	: (int)date('H', strtotime($chart_time));
+$summaryChartMinute = $summaryReferenceTimestamp !== false
+	? (int)date('i', $summaryReferenceTimestamp)
+	: (int)date('i', strtotime($chart_time));
+$summaryCurrentMinutes = $summaryChartHour * 60 + $summaryChartMinute;
+$summaryPeriods = [
+	['label' => __('ema_kantam'), 'value' => $summaryEmaKantam],
+	['label' => __('rahu_kaalam'), 'value' => $summaryRahuKaalam],
+	['label' => __('kuligai_time'), 'value' => $summaryKuligai]
+];
+$summaryActivePeriod = null;
+$summaryNextPeriod = null;
+foreach ($summaryPeriods as $summaryPeriodIndex => $summaryPeriod) {
+	$summaryRangeParts = preg_split('/\s*-\s*/', $summaryPeriod['value']);
+	if (count($summaryRangeParts) !== 2) {
+		continue;
+	}
+	$summaryPeriodStart = $summaryParseMeridianTime($summaryRangeParts[0]);
+	$summaryPeriodEnd = $summaryParseMeridianTime($summaryRangeParts[1]);
+	if ($summaryPeriodStart === null || $summaryPeriodEnd === null) {
+		continue;
+	}
+	$summaryPeriods[$summaryPeriodIndex]['start'] = trim($summaryRangeParts[0]);
+	$summaryPeriods[$summaryPeriodIndex]['end'] = trim($summaryRangeParts[1]);
+	if ($summaryCurrentMinutes >= $summaryPeriodStart && $summaryCurrentMinutes <= $summaryPeriodEnd) {
+		if ($summaryActivePeriod === null) {
+			$summaryActivePeriod = $summaryPeriods[$summaryPeriodIndex];
+		}
+	} elseif ($summaryPeriodStart > $summaryCurrentMinutes && ($summaryNextPeriod === null || $summaryPeriodStart < $summaryNextPeriod['start_minutes'])) {
+		$summaryPeriods[$summaryPeriodIndex]['start_minutes'] = $summaryPeriodStart;
+		$summaryNextPeriod = $summaryPeriods[$summaryPeriodIndex];
+	}
+}
+if ($summaryActivePeriod !== null) {
+	$summaryKaalStatus = $summaryActivePeriod['label'] . ' · ' . __('active_until') . ' ' . $summaryActivePeriod['end'];
+	$summaryKaalStatusClass = 'is-active';
+} elseif ($summaryNextPeriod !== null) {
+	$summaryKaalStatus = $summaryNextPeriod['label'] . ' · ' . __('next_period_at') . ' ' . $summaryNextPeriod['start'];
+	$summaryKaalStatusClass = 'is-upcoming';
+} else {
+	$summaryKaalStatus = __('periods_finished');
+	$summaryKaalStatusClass = 'is-clear';
+}
+
+$summaryItems = [
+	[__('thithi'), $summaryThithi, 'thithi'],
+	[__('nakshatra'), $summaryNakshatra, 'nakshatra'],
+	[__('yogam'), $summaryYogam, 'yogam'],
+	[__('karanam'), $summaryKaranam, 'karanam']
+];
+
+$summaryCoreItemsMarkup = '';
+foreach ($summaryItems as $summaryItem) {
+	$summaryLabel = htmlspecialchars($summaryItem[0], ENT_QUOTES, 'UTF-8');
+	$summaryValue = htmlspecialchars((string)$summaryItem[1], ENT_QUOTES, 'UTF-8');
+	$summaryTone = htmlspecialchars($summaryItem[2], ENT_QUOTES, 'UTF-8');
+	$summaryCoreItemsMarkup .= "<div class='panchang-summary-item tone-$summaryTone' role='listitem' aria-label='$summaryLabel: $summaryValue'><span>$summaryLabel</span><strong>$summaryValue</strong></div>";
+}
+$summaryDayMarksMarkup = '';
+if ($summaryKariNaal) {
+	$summaryDayMarksMarkup .= "<span class='panchang-summary-day-mark'>" . htmlspecialchars(__('kari_naal'), ENT_QUOTES, 'UTF-8') . "</span>";
+}
+if ($summaryIsThaniya) {
+	$summaryDayMarksMarkup .= "<span class='panchang-summary-day-mark'>" . htmlspecialchars(__('thaniya_day'), ENT_QUOTES, 'UTF-8') . "</span>";
+}
+if ($summaryDayMarksMarkup === '' && $summaryIsCaution) {
+	$summaryDayMarksMarkup = "<span class='panchang-summary-day-mark is-caution'>" . htmlspecialchars(__('caution_day'), ENT_QUOTES, 'UTF-8') . "</span>";
+}
+
+$summaryPeriodItemsMarkup = '';
+foreach ($summaryPeriods as $summaryPeriod) {
+	$summaryPeriodClass = '';
+	if ($summaryActivePeriod !== null && $summaryActivePeriod['label'] === $summaryPeriod['label']) {
+		$summaryPeriodClass = ' is-active';
+	} elseif ($summaryActivePeriod === null && $summaryNextPeriod !== null && $summaryNextPeriod['label'] === $summaryPeriod['label']) {
+		$summaryPeriodClass = ' is-upcoming';
+	}
+	$summaryPeriodLabel = htmlspecialchars($summaryPeriod['label'], ENT_QUOTES, 'UTF-8');
+	$summaryPeriodValue = htmlspecialchars($summaryPeriod['value'], ENT_QUOTES, 'UTF-8');
+	$summaryPeriodItemsMarkup .= "<div class='panchang-summary-period$summaryPeriodClass' role='listitem'><strong>$summaryPeriodLabel</strong><span>$summaryPeriodValue</span></div>";
+}
+$summaryInauspiciousLabel = htmlspecialchars(__('inauspicious_times'), ENT_QUOTES, 'UTF-8');
+$summaryHoraMarkup = '';
+if ($summaryHoraValid) {
+	$summaryHoraCurrentLabel = htmlspecialchars(translate_planet_abbr($summaryCurrentHora), ENT_QUOTES, 'UTF-8');
+	$summaryHoraCurrentText = htmlspecialchars(__('current_horai'), ENT_QUOTES, 'UTF-8');
+	$summaryHoraTime = htmlspecialchars(date('g:i A', $summaryHoraTimestamp), ENT_QUOTES, 'UTF-8');
+	$summaryHoraCategory = in_array($summaryCurrentHora, $summaryBeneficHoras, true)
+		? 'good'
+		: ($summaryCurrentHora === 'சூரி' ? 'mixed' : 'avoid');
+	$summaryHoraCategoryText = htmlspecialchars(__('hora_' . $summaryHoraCategory), ENT_QUOTES, 'UTF-8');
+	$summaryHoraAria = htmlspecialchars($summaryHoraCurrentText . ' · ' . $summaryHoraTime . ' · ' . $summaryHoraCurrentLabel . ' · ' . $summaryHoraCategoryText, ENT_QUOTES, 'UTF-8');
+	$summaryHoraMarkup = "<div class='panchang-hora-indicator is-$summaryHoraCategory' role='status' aria-label='$summaryHoraAria'>"
+		. "<i class='fa fa-clock-o' aria-hidden='true'></i><span>$summaryHoraCurrentText · $summaryHoraTime</span>"
+		. "<strong>$summaryHoraCurrentLabel</strong>"
+		. "<span class='panchang-hora-quality'>$summaryHoraCategoryText</span>"
+		. "</div>";
+}
+$summaryKaalStatusText = htmlspecialchars($summaryKaalStatus, ENT_QUOTES, 'UTF-8');
+$summaryKaalStatusClass = htmlspecialchars($summaryKaalStatusClass, ENT_QUOTES, 'UTF-8');
+$summaryCard = "<section class='panchang-summary-card' aria-labelledby='panchangSummaryTitle'>"
+	. "<div class='panchang-summary-header'><div class='panchang-summary-title-row'><h2 id='panchangSummaryTitle'>$summaryTitle</h2><div class='panchang-summary-header-actions'><div class='panchang-summary-location' aria-label='$summaryCity'><i class='fa fa-map-marker' aria-hidden='true'></i><span>$summaryCity</span></div><div class='panchang-summary-day-marks'>$summaryDayMarksMarkup</div></div></div>"
+	. "<div class='panchang-summary-context' role='list'>"
+	. "<div class='panchang-summary-calendar panchang-summary-calendar-date-tile panchang-summary-calendar-primary' role='listitem' aria-label='$summaryDate, $summaryWeekday, $summaryTamilDate, $summaryTime'>"
+	. "<div class='panchang-summary-calendar-date'><span>$summaryCalendarMonthYear</span><strong>$summaryCalendarDay</strong></div><div class='panchang-summary-primary-details'><strong class='panchang-summary-calendar-weekday'>$summaryWeekday</strong>" . ($summaryTamilDate !== '' ? "<span class='panchang-summary-tamil-date'>$summaryTamilDate</span>" : '') . "</div><strong class='panchang-summary-calendar-time'>$summaryTime</strong>"
+	. "</div>"
+	. "</div></div>"
+	. "<div class='panchang-summary-grid' role='list' aria-label='$summaryTitle'>$summaryCoreItemsMarkup</div>"
+	. "<div class='panchang-summary-time'>"
+	. "<div class='panchang-summary-time-heading'><strong>$summaryInauspiciousLabel</strong><span class='panchang-summary-status $summaryKaalStatusClass' role='status'>$summaryKaalStatusText</span></div>"
+	. "<div class='panchang-summary-periods' role='list' aria-label='$summaryInauspiciousLabel'>$summaryPeriodItemsMarkup</div>"
+	. "</div>"
+	. $summaryHoraMarkup
+	. "<div class='panchang-summary-footer'><a class='panchang-summary-link' href='#panchangDetails'>$summaryFullDetailsLabel&nbsp;→</a></div>"
+	. "</section>";
+$moduleName = htmlspecialchars(__('panchangam'), ENT_QUOTES, 'UTF-8');
+$brandHeader = "<header class='panchang-topbar'><a class='brand' href='index.php' aria-label='DSJV home'><img src='images/dsjv_title.png' alt='DSJV'></a><h1 class='headline'>$moduleName</h1><a class='home-icon' href='index.php' aria-label='Home' title='Home'><i class='fa fa-home' aria-hidden='true'></i></a></header>";
+
 echo <<<EOL
 	<div class="title" id='title'></div>
-		<div class='column-menu' id='appMenu' style='display:$home'>
+		$brandHeader
+		<div class='column-menu dropdown-panel' id='appMenu' style='display:$home'>
 			<div class='desktop'>
 				
 EOL;
-				displayUserInfo($_SESSION['userinfo']);
+				$hideIndexMenuLanguageToggle = true;
 				echo "<button class='menu' onClick=\"window.open('index.php','_self')\">Home</button>";
 				include "indexMenu.php";
+				unset($hideIndexMenuLanguageToggle);
 echo <<<EOL
 			</div>
 			<div class='mobile'>
 EOL;
 			
-					//displayUserInfoMobile($_SESSION['userinfo']);
-					include "panchangMenu_mobile.php";
+					include "indexMenu_mobile.php";
 					//include "setDefaultHome.php";
 			
 
@@ -2428,100 +3899,140 @@ echo <<<EOL
 		</div>
 		<div class='column-body' id='panchangBody'>
 		<div id='divOrigContainer'>
-			<center>
-			<form name='updatePanchang' id='panchangForm' action='new_panchang.php?debug=$DEBUG' method='post'>
+			$summaryCard
+			<form name='updatePanchang' id='panchangForm' action='new_panchang.php?debug=$DEBUG' method='post' onsubmit='preparePanchangTimeMode();'>
 				<input type='hidden' id='nPlace' name='nPlace' value='$place'>
 				<input type='hidden' id='place_flag' name='place_flag' value=0>
-					<H4 style="color:#000000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px; width:parent;">
-		EOL;
-		echo <<<EOL
-							</select>
-						<TABLE style='width:inherit'>
-						<CENTER><P style="color:#660000;font-weight:bold; font-size:16px; background-color:white;width:200px;">
-EOL;
-						echo __('panchangam');
-echo <<<EOL
-</P></CENTER>
-						<TR>
-							<TD>
-								Date: <input type='date' id='nDate' name='nDate' onChange='onDateChange();' style="background-color:#FDE966;color:#000000;font-size:14px;font-weight:bold;width:110px;text-align:center;" value=$chart_date> 
-								
-							</TD>
-							<TD>
-								Time: <input type='time' id='nTime' name='nTime' onChange='onTimeChange();' style="background-color:#FDE966;color:#000000;font-size:14px;font-weight:bold;width:110px;text-align:center;" step='1' value=$chart_time>								
-							</TD>
-						</TR>
-						<TR>
-							<TD colspan=2>
-								<center>
-									<div class='nav-button-container'>
-										<!-- Desktop buttons -->
-EOL;
-										echo "<input type='button' class='actionBtnSmall btn-desktop-nav' id='prevDay' onClick='movePanchang(-1);' value='" . __("prev_day") . "' />";
-										echo "<button class='actionBtnSmall btn-desktop-nav' id='prevMonth' onClick='movePanchang(-30);'>" . __('prev_month') . "</button>";
-										echo "<button class='actionBtnSmall btn-desktop-nav' id='prevYear' onClick='movePanchang(-365);'>" . __('prev_year') . "</button>";
-										echo "<button class='actionBtnSmall btn-desktop-nav' id='nextYear' onClick='movePanchang(365);'>" . __('next_year') . "</button>";
-										echo "<button class='actionBtnSmall btn-desktop-nav' id='nextMonth' onClick='movePanchang(30);'>" . __('next_month') . "</button>";
-										echo "<button class='actionBtnSmall btn-desktop-nav' id='nextDay' onClick='movePanchang(1);'>" . __('next_day') . "</button>";
-										echo "<button class='actionBtn btn-desktop-nav' id='now' onClick='updateNow();window.reload();'>" . __('now') . "</button>";
-										echo "<button class='actionBtn btn-desktop-nav' id='todayBtn' onClick='updateToday();'>" . __('today') . "</button>";
-echo <<<EOL
-
-										<!-- Mobile controls -->
-EOL;
-										echo "<button class='actionBtn btn-mobile' id='mobileNowBtn' onClick='updateNow();window.reload();'>" . __('now') . "</button>";
-										echo "<button class='actionBtn btn-mobile' id='mobileTodayBtn' onClick='updateToday();'>" . __('today') . "</button>";
-echo <<<EOL
-										<select class='actionBtnSmall mobile-nav-dropdown' onchange="handleNavigation(this)">
-EOL;
-											echo "<option value=''>" . __('others') . "</option>";
-											echo "<option value='-365'>" . __('previous_year') . "</option>";
-											echo "<option value='-30'>" . __('previous_month') . "</option>";
-											echo "<option value='-1'>" . __('previous_day') . "</option>";
-											echo "<option value='1'>" . __('next_day_full') . "</option>";
-											echo "<option value='30'>" . __('next_month_full') . "</option>";
-											echo "<option value='365'>" . __('next_year_full') . "</option>";
-echo <<<EOL
-										</select>
-									</div>
-								</center>
-							</TD>
-						</TR>
-						<TR>
-							<TD colspan=2>
-								*Place : <div class="search-box" style='display:inline-block;'><input type="text" name="place" id="place" autocomplete="off" style="background-color:#FDE966;color:#000000;font-size:14px;font-weight:bold;width:200px" placeholder="Search place..." onfocus=this.value='' onBlur='placeOnBlur();' /><div class="result" ></div>
-							</TD>
-						</TR>
-						</TABLE>
-					</H4>
-				<div class='button-container'>
-EOL;
-					echo "<input type='button' id='downloadPanchang' class='actionBtn btn-desktop' value='" . __("monthly") . "' onClick=\"genPanchang('$place');\" />";
-					echo "<input type='button' class='actionBtn btn-desktop' id='onePageBtn' onclick=\"displayOnePagePanchang()\" value=\"" . __('download') . "\" />";
-					echo "<input type='button' class=\"actionBtn btn-desktop\" id=\"showNakshatraBtn\" value='" . __("nakshatra_division") . "' />";
-					echo "<input type='button' class=\"actionBtn btn-desktop\" id=\"showPushkaraBtn\" value='" . __("pushkara") . "' onclick=\"showPushkaraTimes()\" />";
-					echo "<input type='button' class=\"actionBtn btn-desktop\" id=\"showMuhurtamBtn\" value='" . __("muhurtham") . "' onclick=\"generateMuhurtam_default()\" />";
-echo <<<EOL
-					
-					<!-- Mobile dropdown -->
-					<select id='mobileActionsMenu' class='actionBtn mobile-dropdown' onchange="handleMobileAction(this)">
-EOL;
-						echo "<option value=''>" . __('more') . "</option>";
-						echo "<option value='monthly'>" . __('monthly') . "</option>";
-						echo "<option value='download'>" . __('download') . "</option>";
-						echo "<option value='nakshatra'>" . __('nakshatra_division') . "</option>";
-						echo "<option value='pushkara'>" . __('pushkara') . "</option>";
-						echo "<option value='muhurtam'>" . __('muhurtham') . "</option>";
-echo <<<EOL
-					</select>
+				<input type='hidden' id='time_mode' name='time_mode' value='$timeMode'>
+				<div class='panchang-form-fields'>
+					<label class='panchang-form-field panchang-date-time-field' for='nDate'>
+						<span>$formDateLabel</span>
+						<input type='date' id='nDate' name='nDate' onChange='onDateChange();' value='$chart_date'>
+						<span class='panchang-date-time-value' id='nDateDisplay' aria-hidden='true'></span>
+					</label>
+					<label class='panchang-form-field panchang-date-time-field' for='nTime'>
+						<span>$formTimeLabel</span>
+						<input type='time' id='nTime' name='nTime' onChange='onTimeChange();' step='1' value='$chart_time'>
+						<span class='panchang-date-time-value' id='nTimeDisplay' aria-hidden='true'></span>
+					</label>
+					<div class='panchang-form-field panchang-place-field'>
+						<label for='place'>$formPlaceLabel</label>
+						<div class='search-box panchang-place-search'>
+							<input type='text' name='place' id='place' autocomplete='off' placeholder='$formPlacePlaceholder' onfocus=this.value='' onBlur='placeOnBlur();'>
+							<span class='panchang-place-display' id='placeDisplay' aria-hidden='true'>
+								<span>$formPlaceDisplay</span>
+								<span class='panchang-place-timezone'>$formPlaceTimezone</span>
+							</span>
+							<i class='fa fa-angle-right panchang-place-chevron' aria-hidden='true'></i>
+							<div class='result'></div>
+						</div>
+					</div>
 				</div>
-				<BR>
+				<div class='panchang-form-navigation'>
+					<section class='panchang-control-section' aria-labelledby='panchangNavigationLabel'>
+						<h3 class='panchang-control-heading' id='panchangNavigationLabel'>$formNavigationLabel</h3>
+						<div class='panchang-timeline' data-locale='$timelineLocale'>
+							<div class='panchang-timeline-header'>
+								<div class='panchang-timeline-month-controls' role='group' aria-label='$formNavigationLabel'>
+									<button type='button' class='panchang-period-button' aria-label='$timelinePrevYearLabel' onclick="movePanchangPeriod(-1, 'year')"><i class='fa fa-angle-double-left' aria-hidden='true'></i></button>
+									<button type='button' class='panchang-period-button' aria-label='$timelinePrevMonthLabel' onclick="movePanchangPeriod(-1, 'month')"><i class='fa fa-angle-left' aria-hidden='true'></i></button>
+									<span class='panchang-timeline-month' id='panchangTimelineMonth' aria-live='polite'></span>
+									<button type='button' class='panchang-period-button' aria-label='$timelineNextMonthLabel' onclick="movePanchangPeriod(1, 'month')"><i class='fa fa-angle-right' aria-hidden='true'></i></button>
+									<button type='button' class='panchang-period-button' aria-label='$timelineNextYearLabel' onclick="movePanchangPeriod(1, 'year')"><i class='fa fa-angle-double-right' aria-hidden='true'></i></button>
+								</div>
+								<div class='panchang-timeline-shortcuts'>
+									<button type='button' class='actionBtnSmall' id='now' onclick="updateNow();document.forms['updatePanchang'].submit();">$formNowLabel</button>
+									<button type='button' class='actionBtnSmall' id='todayBtn' onclick='updateToday();'>$formTodayLabel</button>
+								</div>
+							</div>
+							<div class='panchang-timeline-track' id='panchangTimelineTrack' role='group' aria-label='$formNavigationLabel'>
+								$timelineDateItemsMarkup
+							</div>
+						</div>
+					</section>
+					<details class='panchang-advanced-options'>
+						<summary><i class='fa fa-cog' aria-hidden='true'></i><span>$formAdvancedOptionsLabel</span></summary>
+						<div class='button-container'>
+EOL;
+					echo "<input type='button' id='downloadPanchang' class='actionBtn' value='" . __("monthly") . "' onClick=\"genPanchang('$place');\" />";
+					echo "<input type='button' class='actionBtn' id='onePageBtn' onclick=\"displayOnePagePanchang()\" value=\"" . __('download') . "\" />";
+					echo "<input type='button' class=\"actionBtn\" id=\"showNakshatraBtn\" value='" . __("nakshatra_division") . "' />";
+					echo "<input type='button' class=\"actionBtn\" id=\"showPushkaraBtn\" value='" . __("pushkara") . "' onclick=\"showPushkaraTimes()\" />";
+					echo "<input type='button' class=\"actionBtn\" id=\"showMuhurtamBtn\" value='" . __("muhurtham") . "' onclick=\"generateMuhurtam_default()\" />";
+echo <<<EOL
+						</div>
+					</details>
+				</div>
 			</form>
+			<script>
+				document.addEventListener('DOMContentLoaded', function() {
+					const dateInput = document.getElementById('nDate');
+					const timeInput = document.getElementById('nTime');
+					const dateDisplay = document.getElementById('nDateDisplay');
+					const timeDisplay = document.getElementById('nTimeDisplay');
+					const dateTimeDateFormatter = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+					const timeDisplayFormatter = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' });
+					const updateDateTimeDisplay = function() {
+						const dateParts = dateInput.value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+						dateDisplay.textContent = dateParts
+							? dateTimeDateFormatter.format(new Date(Number(dateParts[1]), Number(dateParts[2]) - 1, Number(dateParts[3]), 12))
+							: '';
+
+						const timeParts = timeInput.value.match(/^(\d{2}):(\d{2})/);
+						timeDisplay.textContent = timeParts
+							? timeDisplayFormatter.format(new Date(2000, 0, 1, Number(timeParts[1]), Number(timeParts[2])))
+							: '';
+					};
+					updateDateTimeDisplay();
+					dateInput.addEventListener('input', updateDateTimeDisplay);
+					timeInput.addEventListener('input', updateDateTimeDisplay);
+
+					const timeline = document.querySelector('.panchang-timeline');
+					const track = document.getElementById('panchangTimelineTrack');
+					if (!timeline || !track) return;
+
+					const locale = timeline.dataset.locale;
+					const weekdayFormatter = new Intl.DateTimeFormat(locale, { weekday: 'short' });
+					const dateFormatter = new Intl.DateTimeFormat(locale, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+					const monthYearFormatter = new Intl.DateTimeFormat(locale, { month: 'short', year: '2-digit' });
+					const monthFormatter = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' });
+					const selectedDate = track.querySelector('[aria-current="date"]');
+					const centerSelectedDate = function() {
+						if (!selectedDate) return;
+						track.scrollLeft += selectedDate.getBoundingClientRect().left - track.getBoundingClientRect().left - (track.clientWidth - selectedDate.offsetWidth) / 2;
+					};
+
+					let previousMonth = '';
+					track.querySelectorAll('.panchang-timeline-date').forEach(function(button, index) {
+						const date = new Date(button.dataset.date + 'T12:00:00');
+						const monthKey = date.getFullYear() + '-' + date.getMonth();
+						button.querySelector('.panchang-timeline-weekday').textContent = weekdayFormatter.format(date);
+						button.setAttribute('aria-label', dateFormatter.format(date));
+						if (index === 0 || monthKey !== previousMonth) {
+							button.querySelector('.panchang-timeline-month-marker').textContent = monthYearFormatter.format(date);
+						}
+						previousMonth = monthKey;
+					});
+
+					if (selectedDate) {
+						const selected = new Date(selectedDate.dataset.date + 'T12:00:00');
+						document.getElementById('panchangTimelineMonth').textContent = monthFormatter.format(selected);
+						requestAnimationFrame(centerSelectedDate);
+					}
+					window.addEventListener('resize', centerSelectedDate);
+
+					track.addEventListener('click', function(event) {
+						const button = event.target.closest('.panchang-timeline-date');
+						if (!button) return;
+						document.getElementById('nDate').value = button.dataset.date;
+						document.getElementById('loader').style.visibility = 'visible';
+						document.forms['updatePanchang'].submit();
+					});
+				});
+			</script>
 
 EOL;
     
-					calculatePanchang();
-					calculateBirthPanchang();
 					calculateVimDasaBalance($moon_degree,$moon_house,$chart_time,$chart_time,$panchang['nak'],$nak_pad_idx, true);
 					calculateVimDasa();
 					calculateCurrentDasaBukthi(true);
@@ -2635,7 +4146,7 @@ echo <<<EOL
 				</table>
 			<!-- Add more divs as needed -->
 			<!-- <button class='actionBtn' id='backBtn' onclick="displayOrigPanchang()" style='display:none'>Back</button> -->
-			</div></center>
+			</div>
 EOL;
 
 getStarLetters($g_nak);
@@ -2667,8 +4178,8 @@ unset($_SESSION['menu_clicked']);
 
 <style>
 .pushkara-loader {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
+    border: 4px solid var(--theme-loader-track);
+    border-top: 4px solid var(--theme-loader-accent);
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -2693,6 +4204,183 @@ unset($_SESSION['menu_clicked']);
 
 .nav-button-container {
     justify-content: center;
+}
+
+.panchang-timeline {
+    min-width: 0;
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 14px;
+    background: var(--panchang-topbar-gradient, linear-gradient(120deg, rgba(20,20,46,.97), rgba(30,22,58,.95), rgba(54,27,50,.95)));
+}
+
+.panchang-timeline-header,
+.panchang-timeline-shortcuts,
+.panchang-timeline-month-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.panchang-timeline-header {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    padding: 0 2px;
+}
+
+.panchang-timeline-month {
+    color: #fff4e8;
+    min-width: 0;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: left;
+}
+
+.panchang-period-button {
+    display: inline-flex !important;
+    width: 16px;
+    height: 26px;
+    flex: 0 0 16px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #c3a9dc !important;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.panchang-timeline-shortcuts .actionBtnSmall {
+    min-height: 26px !important;
+    padding: 4px 10px !important;
+    border: 1px solid rgba(255, 255, 255, .1) !important;
+    border-radius: 999px !important;
+    background: #332e3e !important;
+    box-shadow: none !important;
+    color: #fff4e8 !important;
+    font-size: 11px !important;
+}
+
+.panchang-timeline-track {
+    display: flex;
+    gap: 5px;
+    overflow-x: auto;
+    padding: 3px 10px;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.panchang-timeline-track::-webkit-scrollbar {
+    display: none;
+}
+
+.panchang-timeline-date {
+    display: flex;
+    flex: 0 0 44px;
+    min-height: 52px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 11px;
+    background: #2b2635;
+    color: #fff4e8 !important;
+    cursor: pointer;
+    scroll-snap-align: center;
+    transition: background .16s ease, border-color .16s ease, transform .16s ease;
+}
+
+.panchang-timeline-date:hover {
+    border-color: rgba(181, 126, 255, .7);
+}
+
+.panchang-timeline-date[aria-current="date"] {
+    border-color: #a76bff;
+    background: linear-gradient(145deg, #a14dff, #7027d9);
+    box-shadow: 0 5px 16px rgba(126, 53, 223, .34);
+    color: #fff !important;
+}
+
+.panchang-timeline-weekday {
+    color: inherit;
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 1;
+    opacity: .95;
+    text-transform: uppercase;
+}
+
+.panchang-timeline-day {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.panchang-timeline-month-marker {
+    font-size: 8px;
+    font-weight: 700;
+    line-height: 1;
+    opacity: .8;
+}
+
+.panchang-timeline-month-marker:empty {
+    display: none;
+}
+
+.panchang-advanced-options {
+    margin-top: 6px;
+    border: 0;
+    background: transparent;
+}
+
+.panchang-advanced-options > summary {
+    display: inline-flex;
+    min-height: 0;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 0;
+    border-radius: 4px;
+    color: var(--theme-text-accent-strong, #402276) !important;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    list-style: none;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.panchang-advanced-options > summary:hover {
+    color: var(--theme-text-accent, #563092) !important;
+}
+
+.panchang-advanced-options > summary:focus-visible {
+    outline: 2px solid var(--theme-border-focus, #5b2be0);
+    outline-offset: 3px;
+}
+
+.panchang-advanced-options > summary::-webkit-details-marker {
+    display: none;
+}
+
+.panchang-advanced-options > summary::after {
+    content: "+";
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.panchang-advanced-options[open] > summary::after {
+    content: "−";
+}
+
+.panchang-advanced-options > .button-container {
+    padding: 0 12px 12px;
 }
 
 /* Hide mobile dropdown by default */
@@ -2733,9 +4421,9 @@ unset($_SESSION['menu_clicked']);
         margin: 3px !important;
         padding: 6px 12px !important;
         font-size: 13px !important;
-		border: 2px solid #000 !important;
-		background-color: #A0522D !important;
-        color: white !important;
+		border: 2px solid var(--theme-border-strong) !important;
+		background-color: var(--theme-button-background) !important;
+        color: var(--theme-button-text) !important;
         border-radius: 4px !important;
         cursor: pointer !important;
         vertical-align: middle !important;
@@ -2808,62 +4496,6 @@ unset($_SESSION['menu_clicked']);
     }
 }
 </style>
-
-<script>
-function handleMobileAction(select) {
-    var action = select.value;
-    if (!action) return;
-    
-    switch(action) {
-        case 'monthly':
-            genPanchang('<?php echo $place; ?>');
-            break;
-        case 'download':
-            displayOnePagePanchang();
-            break;
-        case 'nakshatra':
-            document.getElementById('showNakshatraBtn').click();
-            break;
-        case 'pushkara':
-            showPushkaraTimes();
-            break;
-        case 'muhurtam':
-            generateMuhurtam_default();
-            break;
-    }
-    
-    // Reset dropdown
-    select.value = '';
-}
-
-function handleNavigation(select) {
-    var days = parseInt(select.value);
-    if (isNaN(days)) return;
-    
-    movePanchang(days);
-    
-    // Reset dropdown
-    select.value = '';
-}
-
-function handleTimeAction(select) {
-    var action = select.value;
-    if (!action) return;
-    
-    switch(action) {
-        case 'now':
-            updateNow();
-            window.reload();
-            break;
-        case 'today':
-            updateToday();
-            break;
-    }
-    
-    // Reset dropdown
-    select.value = '';
-}
-</script>
 
 <script>
 // Global flag to track Pushkara data loading status
@@ -2978,6 +4610,142 @@ window.addEventListener('load', () => {
 });
 // ---- End Panchang value capture utilities ----
 </script>
+
+<script>
+function labelStellarPositionCells() {
+	var table = document.getElementById('starlordBodyMutable');
+	if (!table) return;
+
+	var rows = Array.from(table.querySelectorAll('.divTableRow'));
+	if (!rows.length) return;
+
+	var labels = Array.from(rows[0].children).map(function(cell) {
+		return cell.textContent.trim();
+	});
+
+	rows.slice(1).forEach(function(row) {
+		Array.from(row.children).forEach(function(cell, index) {
+			if (!labels[index]) return;
+			cell.dataset.label = labels[index];
+			cell.setAttribute('aria-label', labels[index] + ': ' + cell.textContent.trim());
+		});
+	});
+}
+labelStellarPositionCells();
+
+function fitTransitChartPlanetText() {
+	document.querySelectorAll('#transitChart .divTableCell').forEach(function(cell) {
+		var label = cell.querySelector('.transit-planet-label');
+		if (!label) return;
+
+		var entries = Array.from(label.querySelectorAll('.transit-planet-entry'));
+		var planetCount = entries.length;
+		var cellWidth = cell.getBoundingClientRect().width;
+		var twoColumns = planetCount >= 8 || (planetCount >= 4 && cellWidth >= 96);
+		label.classList.toggle('is-crowded', planetCount > 3);
+		label.classList.toggle('is-two-column', twoColumns);
+		cell.classList.toggle('is-crowded', planetCount > 3);
+		cell.classList.toggle('is-lagna-house', Boolean(label.querySelector('.lagna')));
+
+		var fontSize = Math.max(7, Math.min(18, cellWidth * 0.2) - Math.max(0, planetCount - 2) * 0.75);
+		var cellStyle = getComputedStyle(cell);
+		var availableHeight = cell.clientHeight - parseFloat(cellStyle.paddingTop) - parseFloat(cellStyle.paddingBottom);
+
+		while (true) {
+			cell.style.setProperty('--transit-chart-cell-font-size', fontSize + 'px');
+			var contentHeight = Array.from(cell.children).reduce(function(total, child) {
+				return total + child.getBoundingClientRect().height;
+			}, 0);
+			var labelOverflows = entries.some(function(entry) {
+				return entry.scrollWidth * (twoColumns ? 0.85 : 1) > entry.clientWidth;
+			}) || label.scrollWidth > label.clientWidth;
+			if ((!labelOverflows && contentHeight <= availableHeight) || fontSize <= 7) break;
+			fontSize = Math.max(7, fontSize - 0.5);
+		}
+
+		cell.style.setProperty('--transit-chart-cell-font-size', fontSize + 'px');
+	});
+}
+fitTransitChartPlanetText();
+window.addEventListener('resize', fitTransitChartPlanetText);
+</script>
+
+<?php if ($flag == 0 && $home !== "none") { ?>
+<div class="dock" id="panchangDock">
+	<div class="menu-wrap">
+		<button class="dock-btn" type="button" onclick="togglePanchangMenu(event)" aria-label="Menu" aria-controls="appMenu" aria-expanded="false">
+			<i class="fa fa-bars" aria-hidden="true"></i>
+		</button>
+	</div>
+	<button class="dock-btn panchang-profile-toggle" type="button" onclick="togglePanchangProfile(event)" aria-label="<?php echo $profileTitle; ?>" title="<?php echo $profileTitle; ?>" aria-controls="panchangProfileCard" aria-expanded="false">
+		<i class="fa fa-user-circle" aria-hidden="true"></i>
+	</button>
+	<div class="panchang-profile-card" id="panchangProfileCard" role="region" aria-label="<?php echo $profileTitle; ?>">
+		<h2><?php echo $profileTitle; ?></h2>
+		<?php echo $profileDetails; ?>
+	</div>
+	<button class="dock-btn panchang-dock-language" type="button" onclick="toggleLanguage()" aria-label="Toggle language" title="Language / மொழி">
+		<i class="fa fa-language" aria-hidden="true"></i>
+	</button>
+	<?php if (strcmp($_SESSION['user_type'], ADMIN) == 0 || strcmp($_SESSION['user_type'], SUPER) == 0) { ?>
+	<a class="dock-btn" href="admin.php" aria-label="Settings"><i class="fa fa-cog" aria-hidden="true"></i></a>
+	<?php } ?>
+</div>
+<script>
+function togglePanchangMenu(event) {
+	event.stopPropagation();
+	var panel = document.getElementById('appMenu');
+	var button = event.currentTarget;
+	var isOpen = panel.classList.toggle('open');
+	if (isOpen) {
+		var profileCard = document.getElementById('panchangProfileCard');
+		var profileButton = document.querySelector('.panchang-profile-toggle');
+		if (profileCard) profileCard.classList.remove('open');
+		if (profileButton) profileButton.setAttribute('aria-expanded', 'false');
+	}
+	button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+}
+function togglePanchangProfile(event) {
+	event.stopPropagation();
+	var button = event.currentTarget;
+	var card = document.getElementById('panchangProfileCard');
+	var isOpen = card.classList.toggle('open');
+	if (isOpen) {
+		var panel = document.getElementById('appMenu');
+		var menuButton = document.querySelector('#panchangDock .dock-btn[aria-label="Menu"]');
+		if (panel) panel.classList.remove('open');
+		if (menuButton) menuButton.setAttribute('aria-expanded', 'false');
+	}
+	button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+}
+document.addEventListener('click', function(event) {
+	var panel = document.getElementById('appMenu');
+	if (panel && !panel.contains(event.target)) {
+		panel.classList.remove('open');
+		var button = document.querySelector('#panchangDock .dock-btn[aria-label="Menu"]');
+		if (button) button.setAttribute('aria-expanded', 'false');
+	}
+	var profileCard = document.getElementById('panchangProfileCard');
+	var profileButton = document.querySelector('.panchang-profile-toggle');
+	if (profileCard && profileButton && !profileCard.contains(event.target) && !profileButton.contains(event.target)) {
+		profileCard.classList.remove('open');
+		profileButton.setAttribute('aria-expanded', 'false');
+	}
+});
+document.addEventListener('keydown', function(event) {
+	if (event.key === 'Escape') {
+		var panel = document.getElementById('appMenu');
+		if (panel) panel.classList.remove('open');
+		var profileCard = document.getElementById('panchangProfileCard');
+		var profileButton = document.querySelector('.panchang-profile-toggle');
+		if (profileCard) profileCard.classList.remove('open');
+		if (profileButton) profileButton.setAttribute('aria-expanded', 'false');
+		var button = document.querySelector('#panchangDock .dock-btn[aria-label="Menu"]');
+		if (button) button.setAttribute('aria-expanded', 'false');
+	}
+});
+</script>
+<?php } ?>
 
 </body>
 </html>

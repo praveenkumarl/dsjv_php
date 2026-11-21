@@ -166,6 +166,7 @@ const SUPER = "SUPER";
 const ADMIN = "ADMIN";
 const PRASANNAM = "PRASANNAM";
 const NUMEROLOGY = "NUMEROLOGY";
+const BIRTHTHARA = "BIRTHTHARA";
 
 const VAINASIGAM_PAD_COUNT = 88;
 const ABHIJIT_PAD_COUNT = 84;
@@ -173,7 +174,7 @@ const ABHIJIT_PAD_COUNT = 84;
 $g_nak="";
 
 //usertype array used in drop down
-$usertype_arr = [PAID, MATCHING, BIRTH, BIRTHMATCH, BIRTHPANCH, BIRTHPANCHMATCH, JAMAKOL, JAMA_MATCH, JAMA_BIRTH, PANCHANG, PRASANNAM, NUMEROLOGY, SUPER, ADMIN, FREE];
+$usertype_arr = [PAID, MATCHING, BIRTH, BIRTHMATCH, BIRTHPANCH, BIRTHPANCHMATCH, JAMAKOL, JAMA_MATCH, JAMA_BIRTH, PANCHANG, PRASANNAM, NUMEROLOGY, SUPER, ADMIN, FREE, BIRTHTHARA];
 
 $timestamp = date('ymdhis');
 
@@ -996,7 +997,7 @@ function sortDegree($inArray) // new function
 						updateBhavaArray($planetDeg[$planet],"$planet",$house);
 					}
 					elseif(strpos($planet,'மா')>0 || strpos($planet,"மா")===0){
-						$outArray[$house] = $outArray[$house] . " " . "<span class='mandhi'>" . $planet . "</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]);
+						$outArray[$house] = $outArray[$house] . " " . "<span class='mandhi'>" . $planet . "</span>" . "-" . DECtoDMS_jamakol($planetDeg[$planet]);
 						
 						//updateBhavaArray($planetDeg[$planet],"$planet" . "-". $planetDeg[$planet],$house);
 						updateBhavaArray($planetDeg[$planet],"$planet",$house);
@@ -1080,8 +1081,8 @@ function sortDegree($inArray) // new function
 							//updateBhavaArray($planetDeg[$planet],"$planet" . "-". $planetDeg[$planet],$house);
 							updateBhavaArray($planetDeg[$planet],"$planet",$house);
 						}
-						elseif(strpos($planet,'??')>0 || strpos($planet,'??')===0){
-							$outArray[$house] = "<span class='mandhi'>" . translate_tamil_text($planet) . "</span>" . "-". DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house];
+						elseif(strpos($planet,'மா')>0 || strpos($planet,'மா')===0 || strpos($planet,'??')>0 || strpos($planet,'??')===0){
+							$outArray[$house] = "<span class='mandhi'>" . translate_tamil_text($planet) . "</span>" . "-" . DECtoDMS_jamakol($planetDeg[$planet]) . " " . $outArray[$house];
 							
 							//updateBhavaArray($planetDeg[$planet],"$planet" . "-". $planetDeg[$planet],$house);
 							updateBhavaArray($planetDeg[$planet],"$planet",$house);
@@ -2510,7 +2511,8 @@ function resortStarLordArray($inner=true){
 function displayStarLord()
 {
 	global $planetDeg,$sw_planet, $planet_starlord, $g_planetKaranaLord, $g_planetThithiLord, $g_planetYogamLord, 
-	$g_planetVainasigamNak, $g_planetAbhijitNak,$planetDeg_default, $g_nak, $g_padham, $rearranged_arr, $nak_array ;
+	$g_planetVainasigamNak, $g_planetAbhijitNak,$planetDeg_default, $g_nak, $g_padham, $rearranged_arr, $nak_array, $language;
+	$retrograde_marker = (isset($language) && $language === 'english') ? '(R)' : '(வ)';
 	
 	//$planet_starlord = array();
 	
@@ -2685,7 +2687,7 @@ function displayStarLord()
 				strcmp("புத",$planet)==0) and $planetDeg_default[$planet] < 0.0){
 					//strcmp("புத",$planet)==0) and $planetDeg[$planet] < 0.0){
 						
-				echo "<div class='divPanchangHeadingSmall'>$planet_translated " . translate_tamil_text("(வ)") . "</div>";
+				echo "<div class='divPanchangHeadingSmall'>$planet_translated $retrograde_marker</div>";
 			}
 			else{
 				echo "<div class='divPanchangHeadingSmall'>$planet_translated</div>";
@@ -5976,14 +5978,16 @@ function getThithiParigaaram($thithi_idx)
 function getKaranaParigaaram($karan)
 {					
 	global $timestamp, $g_all_parigaaram;
-	$kar = explode('/',$karan)[1];
+	$karan_parts = explode('/',$karan,2);
+	$kar_display = is_english() ? $karan_parts[0] : (isset($karan_parts[1]) ? $karan_parts[1] : $karan_parts[0]);
+	$kar = isset($karan_parts[1]) ? $karan_parts[1] : $karan_parts[0];
 	//$details = "<DIV class='parigaraDiv'><div id='labelParigaraDiv'>கரண பரிகாரம்</div><img src='images/karanam_gods/$kar.jpg' /></DIV>";
 	
 	$details = "<DIV class='parigaaram-grid-container'>";
 	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>".translate_text('கரண விவரங்கள்')."</DIV>";
         
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('கரணம்')."</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".map_display_text($kar)."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$kar_display."</DIV>";
         
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('கரண பரிகாரம் கோவில்')."</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><img style='width:150px' src='images/karanam_gods/$kar.jpg?$timestamp' /></DIV>";
@@ -6007,20 +6011,41 @@ function getYogiParigaaram($yogi_idx)
     $yogam = $yoga_arr[$yogi_idx];
 	
 	$data = getDataFromYogiById($conn,$yogi_idx);
+	$starPlanetParts = explode('(',trim($data['star_planet']),2);
+	$starName = trim($starPlanetParts[0]);
+	$starPlanetDisplay = is_english() ? map_display_text($starName) : $starName;
+	if (isset($starPlanetParts[1])) {
+		$planetName = rtrim(trim($starPlanetParts[1]),')');
+		$planetTranslations = [
+			'சூரியன்' => 'Sun',
+			'சந்திரன்' => 'Moon',
+			'செவ்வாய்' => 'Mars',
+			'புதன்' => 'Mercury',
+			'குரு' => 'Jupiter',
+			'சுக்கிரன்' => 'Venus',
+			'சுக்ரன்' => 'Venus',
+			'சனி' => 'Saturn',
+			'சனீஸ்வரன்' => 'Saturn',
+			'ராகு' => 'Rahu',
+			'கேது' => 'Ketu'
+		];
+		$starPlanetDisplay .= ' (' . (is_english() ? ($planetTranslations[$planetName] ?? translate_text($planetName)) : $planetName) . ')';
+	}
 	
 	$details = "<DIV class='parigaaram-grid-container'>";
 	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>".translate_text('யோகி விவரங்கள்')."</DIV>";
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('யோகம்')."</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".translate_text($data['yogam'])."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".translate_text(trim($data['yogam']))."</DIV>";
         
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('நக்ஷ் (கிரகம்)')."</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".translate_text($data['star_planet'])."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".$starPlanetDisplay."</DIV>";
         
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('யோகி கோவில்')."</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".translate_text($data['temple'])."</DIV>";
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".translate_text(trim($data['temple']))."</DIV>";
         
 		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".translate_text('பரிகாரம்')."</DIV>";
-		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".translate_text($data['remedy'])."</DIV>";
+		$remedy = preg_replace('/\s+/u',' ',trim($data['remedy']));
+		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'>".translate_text($remedy)."</DIV>";
 		
 		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
 		
@@ -6044,9 +6069,9 @@ function getAvaYogiParigaaram($ayogi_idx)
 	//$details = "<DIV class='parigaraDiv'><div id='labelParigaraDiv'>அவயோகி பரிகாரம்</div><img src='images/avayogi_parigaaram/$ayogi_idx.png' /></DIV>";
 	
 	$details = "<DIV class='parigaaram-grid-container'>";
-	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>அவயோகி விவரங்கள்</DIV>";
+	$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-head'>".__('avayogi_details')."</DIV>";
 		
-		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>அவயோகி பரிகாரம் கோவில்</DIV>";
+		$details = $details . "<div class='parigaaram-grid-item parigaaram-grid-item-left'>".__('avayogi_temple')."</DIV>";
 		$details = $details . "<DIV class='parigaaram-grid-item parigaaram-grid-item-right'><img style='width:150px' src='images/avayogi_parigaaram/$ayogi_idx.png?$timestamp' /></DIV>";
 		
 		$g_all_parigaaram = $g_all_parigaaram . $details . "</DIV>";
@@ -7131,6 +7156,13 @@ function displayHomePageButtons($in_usertype){
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'hora.php\',\'_self\')">ஹோரை</button>';
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'star_thaara_palan.php\',\'_self\')">நட் தாரா பலன் </button>';
 		break;
+		case BIRTHPANCH:
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'Birth_input.php\',\'_self\')">புதிய ஜாதகம்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'birthChartDisplay.php\',\'_self\')">சேமித்த ஜாதகங்கள்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'new_panchangam.php\',\'_self\')">பஞ்சாங்கம்</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'hora.php\',\'_self\')">ஹோரை</button>';
+			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'star_thaara_palan.php\',\'_self\')">நட் தாரா பலன் </button>';
+
 		case BIRTHPANCHMATCH:
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'Matching_input.php\',\'_self\')">புதிய திருமண பொருத்தம்</button>';
 			echo '<button class="btn btn-primary btn-lg btn-block" type="button" onClick="window.open(\'matchingChartDisplay.php\',\'_self\')">சேமித்த திருமண பொருத்தங்கள்</button>';
@@ -7177,6 +7209,7 @@ function checkUserType($in_usertype){
 		case BIRTH:
 		case BIRTHMATCH:
 		case BIRTHPANCH:
+		case BIRTHTHARA:
 		case BIRTHPANCHMATCH:
 		case PANCHANG:
 		case JAMAKOL:
@@ -8199,12 +8232,11 @@ function displayVivahaChakra_Manikantan($sun_nakshatra, $moon_nakshatra) {
 		$result = '<div class="vivagaResultRed"  id="vivahaRes">' . __('this_day_not_good_vivah') . '</div>';
 	}
 	
-	echo "<center>";
-	echo "<div class='divPanchangHeading' id='vivahaChakram' style='width: var(--chart-width);padding-top:15px; padding-bottom:15px'>" . __('today_marriage_chakra') . "<BR><BR>" . $result;
-	echo "<BR>";
-	echo "<div style='font-size: 12px;text-align:left;' id='vivSunNak'>" . __('sun_star') . ": <U>" . translate_tamil_text($sun_nakshatra) . "</U></div>";
-	echo "<div style='font-size: 12px;text-align:left' id='vivMooNak'>" . __('moon_star') . ": <U>" . translate_tamil_text($moon_nakshatra) . "</U></div>";
-	echo "</center>";
+	echo "<div class='divPanchangHeading vivaha-card' id='vivahaChakram' style='width:var(--chart-width)'>";
+	echo "<div class='vivaha-card-title'>" . __('today_marriage_chakra') . "</div>";
+	echo $result;
+	echo "<div class='vivaha-star-row' id='vivSunNak'><span class='vivaha-star-label'>" . __('sun_star') . "</span><span class='vivaha-star-name'>" . translate_tamil_text($sun_nakshatra) . "</span></div>";
+	echo "<div class='vivaha-star-row' id='vivMooNak'><span class='vivaha-star-label'>" . __('moon_star') . "</span><span class='vivaha-star-name'>" . translate_tamil_text($moon_nakshatra) . "</span></div>";
 	echo "</div>";
 	
 }
