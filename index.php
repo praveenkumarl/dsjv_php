@@ -97,6 +97,59 @@ elseif(strcmp($_SESSION['user_type'],FREE)==0){
 }
 
 $expiry_date = $_SESSION['userinfo']['expiry_date'];
+$currentLanguage = isset($_COOKIE['language']) ? strtolower($_COOKIE['language']) : 'tamil';
+require_once "lang/lang.php";
+init_language($currentLanguage);
+$landingTamilMonths = array(
+	1 => 'ஜனவரி', 2 => 'பிப்ரவரி', 3 => 'மார்ச்', 4 => 'ஏப்ரல்',
+	5 => 'மே', 6 => 'ஜூன்', 7 => 'ஜூலை', 8 => 'ஆகஸ்ட்',
+	9 => 'செப்டம்பர்', 10 => 'அக்டோபர்', 11 => 'நவம்பர்', 12 => 'டிசம்பர்'
+);
+$landingNow = new DateTime('now', new DateTimeZone('Asia/Kolkata'));
+$landingTodayLabel = ($currentLanguage === 'english')
+	? 'Today, ' . $landingNow->format('j F Y') . '.'
+	: 'இன்று, ' . $landingNow->format('j') . ' ' . $landingTamilMonths[(int)$landingNow->format('n')] . ' ' . $landingNow->format('Y') . '.';
+$landingPanchang = ($currentLanguage === 'english')
+	? array(
+		array(__('weekday'), 'Saturday'),
+		array(__('thithi'), 'Trayodashi'),
+		array(__('nakshatra'), 'Uttara Ashadha'),
+		array(__('yogam'), 'Vyaghata'),
+		array(__('karanam'), 'Vanija')
+	)
+	: array(
+		array(__('weekday'), 'சனி'),
+		array(__('thithi'), 'திரயோதசி'),
+		array(__('nakshatra'), 'உத்திராடம்'),
+		array(__('yogam'), 'வ்யாகாதம்'),
+		array(__('karanam'), 'வனிஜை')
+	);
+$landingIntro = ($currentLanguage === 'english')
+	? 'Jamakol, horoscopes, matching, and hora. Choose a tool to get started.'
+	: 'ஜாமகோல், ஜாதகம், பொருத்தம், ஹோரை. தேவையான கருவியைத் தேர்ந்தெடுங்கள்.';
+$landingToolDescriptions = ($currentLanguage === 'english')
+	? array(
+		'Answers for the question you ask',
+		"Today's tithi and star",
+		'Name and birth numbers',
+		'Compare two birth charts',
+		'Astrology for your birth time',
+		'Star-based guidance',
+		"Today's hora timings",
+		'A live prasannam reading',
+		'The role of each planet'
+	)
+	: array(
+		'கேட்ட நேரத்தின் பதில்',
+		'இன்றைய திதி, நட்சத்திரம்',
+		'பெயர் மற்றும் பிறந்த எண்',
+		'இரு ஜாதகங்களின் ஒப்பீடு',
+		'பிறந்த நேரத்தின் கணிப்பு',
+		'நட்சத்திர பலன்',
+		'இன்றைய ஹோரை நேரம்',
+		'நேரடி பிரசன்ன குறிப்பு',
+		'ஒவ்வொரு கிரகத்தின் பொறுப்பு'
+	);
 
 ?>
 <?php
@@ -123,13 +176,15 @@ try {
 ?>
 
 <!doctype html>
-<html lang="en" class="no-js">
+<html lang="<?php echo ($currentLanguage === 'english') ? 'en' : 'ta'; ?>" class="no-js">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <link rel="canonical" href="https://html5-templates.com/" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">	
+    <link href="https://fonts.googleapis.com/css2?family=Catamaran:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600&family=Noto+Serif+Tamil:wght@600;700&family=Noto+Sans:wght@400;500&family=Noto+Serif:wght@600&display=swap" rel="stylesheet">
 
     <title>DSJV app</title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
@@ -137,6 +192,7 @@ try {
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/landing-theme.css?<?php echo date('ymdhis'); ?>">
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
@@ -149,8 +205,8 @@ try {
 	}
 	</script>
 	<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> -->
-    <script src="script.js"?<?php echo date('ymdhis'); ?>></script>
-	<script src="common.js"?<?php echo date('ymdhis'); ?>></script>
+    <script src="script.js?<?php echo date('ymdhis'); ?>"></script>
+	<script src="common.js?<?php echo date('ymdhis'); ?>"></script>
     <script type="text/javascript">
  
 
@@ -246,12 +302,10 @@ function handleSwipe(){
 				var message = 'Your DSJV App subscription expired on <BR>' + formatted_expiry_date + '. Please contact admin to renew. <BR> &#128241; Mrs. Sowmya<BR>(+91 7305731547)';
 			}
 
-			var html_str = '<div class="table-container">';
-			html_str += '<button class="close-btn" onclick="closeTable()">X</button>';
-			html_str += '<div class="scrollable-table">';
-			html_str += '<center><div class="divTable blueTable" style="width:100%;height:100%">';
-			html_str += '<div class="divTableRow"><div class="divExpiryAlertHeading"><BR><BR><SPAN style="color:red; font-size: 26px">IMPORTANT ALERT</SPAN><BR><BR>' + message_tam + '<br><br>' + message + '</div></div>';
-			html_str += '</div></div></div>';
+			var html_str = '<div class="expiry-box">';
+			html_str += '<button class="close-btn" onclick="closeTable()" aria-label="Close alert">X</button>';
+			html_str += '<SPAN style="color:#F5C542; font-size:22px; font-weight:800">IMPORTANT ALERT</SPAN><BR><BR>';
+			html_str += message_tam + '<br><br>' + message + '</div>';
 
 			document.getElementById('expiryAlertDiv').innerHTML = html_str;
 			document.getElementById('expiryAlertDiv').style.display = 'block';
@@ -278,10 +332,10 @@ function handleSwipe(){
     </script>
 </head>
 
-<body onLoad="init();">
+<body class="theme-landing theme-index-preview" onLoad="init();">
 <?php if (!empty($announcement_msg)) { ?>
-<div id="announcementOverlay" onclick="this.style.display='none'" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);color:#fff;display:flex;align-items:center;justify-content:center;z-index:9999;font-size:1.2em;text-align:center;cursor:pointer;">
-	<div onclick="event.stopPropagation();" style="background:rgba(253, 216, 7, 0.92);padding:16px 22px;border-radius:999px;box-shadow:0 2px 12px #000;max-width:90vw;max-height:80vh;overflow:auto;color:#1a237e;font-weight:700;cursor:default;line-height:1.5;">
+<div id="announcementOverlay" onclick="this.style.display='none'">
+	<div onclick="event.stopPropagation();" style="cursor:default;">
 		<?php echo htmlspecialchars($announcement_msg); ?>
 	</div>
 </div>
@@ -299,89 +353,185 @@ function handleSwipe(){
 	});
 </script>
 <?php } ?>
-<!-- <div id="loader" class="center"></div> -->
 <div class="expiryAlertDiv" id="expiryAlertDiv"></div>
 
-<div class="title"></div>
+<div class="aurora" aria-hidden="true">
+	<div class="blob b1"></div>
+	<div class="blob b2"></div>
+	<div class="blob b3"></div>
+</div>
+<canvas id="stars" aria-hidden="true"></canvas>
 
-		<div class="column-menu">
-			<span class="notranslate">
-				<div class='desktop'>
-					<?php
-						if(!isLogged()){
-							echo <<<EOL
-							<button class='menu' onClick='window.open("new_loginPage.php","_self")'>Login</button>
-EOL;
-						}
-						else
-						{
-							displayUserInfo($_SESSION['userinfo']);
-							include "indexMenu.php";
-						}
-				echo "</div>";
-				echo "<div class='mobile'>";
-						if(!isLogged()){
-							//$key = $_GET['key'];
-							echo <<<EOL
-							<div class="dropdown">
-								<button class="dropbtn"><a href="new_registration_mobile.php?key=$key" target="_self">Registration</a></button>
-							</div>
-EOL;
-						}
-						else
-						{
-							include "indexMenu_mobile.php";
-							//include "setDefaultHome.php";
-						}
-				echo "</div>";
-					?>
-			</span>
+<main class="wrap">
+	<header class="topbar">
+		<div class="brand"><i class="fa fa-th" aria-hidden="true"></i><span class="brand-name">DSJV</span></div>
+		<div class="dock">
+			<div class="menu-wrap">
+				<button class="dock-btn" onclick="toggleMenu(event)" aria-label="Menu" aria-expanded="false"><i class="fa fa-bars"></i></button>
+				<div class="dropdown-panel" id="menuPanel">
+					<div class="notranslate">
+						<div class="desktop">
+							<?php
+							if (!isLogged()) {
+								echo '<button class="menu" onclick="window.open(\'new_loginPage.php\',\'_self\')">Login</button>';
+							} else {
+								displayUserInfo($_SESSION['userinfo']);
+								$hideIndexMenuLanguageToggle = true;
+								include "indexMenu.php";
+								unset($hideIndexMenuLanguageToggle);
+							}
+							?>
+						</div>
+						<div class="mobile">
+							<?php
+							if (!isLogged()) {
+								echo '<a class="mobile-registration" href="new_registration_mobile.php?key=' . rawurlencode($key) . '">Registration</a>';
+							} else {
+								include "indexMenu_mobile.php";
+							}
+							?>
+						</div>
+						<?php
+						$currentLang = isset($_COOKIE['language']) ? strtolower($_COOKIE['language']) : 'tamil';
+						$languageLabel = ($currentLang === 'english') ? 'EN' : 'தமிழ்';
+						?>
+						<div class="lang-selector">
+							<button class="lang-btn" type="button" onclick="toggleLanguage()" aria-label="Toggle language">
+								<i class="fa fa-globe" aria-hidden="true"></i>
+								<span id="currentLangLabel"><?php echo htmlspecialchars($languageLabel, ENT_QUOTES, 'UTF-8'); ?></span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<button class="dock-btn language-toggle" type="button" onclick="toggleLanguage()" aria-label="Toggle language" title="Language / மொழி">
+				<span class="lang-options" aria-hidden="true">
+					<span class="lang-option<?php echo ($currentLanguage === 'tamil') ? ' active' : ''; ?>" lang="ta">தமிழ்</span>
+					<span class="lang-option<?php echo ($currentLanguage === 'english') ? ' active' : ''; ?>" lang="en">English</span>
+				</span>
+			</button>
+			<?php if (strcmp($_SESSION['user_type'], ADMIN) == 0 || strcmp($_SESSION['user_type'], SUPER) == 0) { ?>
+			<a class="dock-btn" href="admin.php" aria-label="Settings"><i class="fa fa-cog"></i></a>
+			<?php } ?>
 		</div>
+	</header>
 
-		<div class="column-body" id='colbody'>
-		
-		<!-- <form>
-			<input type="radio" id="jamakol" name="defaultHome" value=1 style='width:auto' />
-			<label class='divBirthInputLable' for="jamakol" style='width:auto'>Jamakol</label>
-			<input type="radio" id="Panchang" name="defaultHome" style='width:auto' value=2 />
-			<label class='divBirthInputLable' for="Panchang" style='width:auto'>Panchang</label>
-			<button class='actionBtn' onClick="handleSelection()">Set Home</button>
-		</form> -->
-		
-		<?php
-		if(!isFreeUser($_SESSION['user_type'])){
-			echo <<<EOL
-			
-			<!-- <P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">தற்போதய  ஜாமக்கோள்</P>
-			<DIV id='msg'>Please wait, jamakol chart is loading</DIV> 
-			<div class='current-jama' id='current-jama' onClick='window.open("Jamakol_input.php","_self");' style='cursor: pointer;margin-top:-25px'> -->
-EOL;
-				//include "live_jamakol_chart.php";
-				include "home_page.php";
-				
-			//echo <<<EOL
-			//	</div>
-//EOL;
-		}
-		else{
-			echo <<<EOL
-			
-			<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">தற்போதய  ஜாமக்கோள்</P>
-			<DIV id='msg'>Please wait, jamakol chart is loading</DIV>
-			<div class='current-jama' id='current-jama' style='cursor: pointer;'>
-EOL;
-
-				echo '<div style="margin-top:auto">';
-					include "live_jamakol_chart.php";
-				echo '</div>';
-			echo '</div>';
-
-		}
-		?>
-
+	<section class="daybar" aria-label="<?php echo ($currentLanguage === 'english') ? 'Today\'s Panchangam' : 'இன்றைய பஞ்சாங்கம்'; ?>">
+		<div class="daybar-head">
+			<span><?php echo htmlspecialchars($landingTodayLabel, ENT_QUOTES, 'UTF-8'); ?></span>
+			<a href="new_panchang.php"><?php echo ($currentLanguage === 'english') ? 'Full Panchangam' : 'முழு பஞ்சாங்கம்'; ?></a>
 		</div>
+		<dl class="panchang-list">
+			<?php foreach ($landingPanchang as $panchangItem) { ?>
+			<div>
+				<dt><?php echo htmlspecialchars($panchangItem[0], ENT_QUOTES, 'UTF-8'); ?></dt>
+				<dd><?php echo htmlspecialchars($panchangItem[1], ENT_QUOTES, 'UTF-8'); ?></dd>
+			</div>
+			<?php } ?>
+		</dl>
+	</section>
+
+	<section class="intro">
+		<h1 class="headline"><?php echo htmlspecialchars(__('school_name'), ENT_QUOTES, 'UTF-8'); ?></h1>
+		<p class="lede"><?php echo htmlspecialchars($landingIntro, ENT_QUOTES, 'UTF-8'); ?></p>
+	</section>
+
+	<div class="chips">
+		<span class="chip">&#128241; <?php echo htmlspecialchars((string)$_SESSION['phone'], ENT_QUOTES, 'UTF-8'); ?></span>
+		<span class="chip">&#128197; <?php echo htmlspecialchars(date('d-m-Y', strtotime($expiry_date)), ENT_QUOTES, 'UTF-8'); ?></span>
 	</div>
-		
+
+	<?php if (!isFreeUser($_SESSION['user_type'])) { ?>
+	<div class="deck">
+		<a class="card hero" href="Jamakol_input.php"><img class="card-image" src="images/jamakol.jpg" alt="" loading="lazy" decoding="async"><span class="card-content"><span class="card-label"><?php echo htmlspecialchars(__('jamakol'), ENT_QUOTES, 'UTF-8'); ?></span><span class="card-sub"><?php echo htmlspecialchars($landingToolDescriptions[0], ENT_QUOTES, 'UTF-8'); ?></span></span></a>
+		<a class="card" href="new_panchang.php"><img class="card-image" src="images/panchang.jpg" alt="" loading="lazy" decoding="async"><span class="card-content"><span class="card-label"><?php echo htmlspecialchars(__('panchangam'), ENT_QUOTES, 'UTF-8'); ?></span><span class="card-sub"><?php echo htmlspecialchars($landingToolDescriptions[1], ENT_QUOTES, 'UTF-8'); ?></span></span></a>
+		<a class="card" href="numerology.php"><img class="card-image" src="images/numerology.jpg" alt="" loading="lazy" decoding="async"><span class="card-content"><span class="card-label"><?php echo htmlspecialchars(__('numerology'), ENT_QUOTES, 'UTF-8'); ?></span><span class="card-sub"><?php echo htmlspecialchars($landingToolDescriptions[2], ENT_QUOTES, 'UTF-8'); ?></span></span></a>
+		<a class="card" href="Matching_input.php"><img class="card-image" src="images/matching.jpg" alt="" loading="lazy" decoding="async"><span class="card-content"><span class="card-label"><?php echo htmlspecialchars(__('marriage_matching'), ENT_QUOTES, 'UTF-8'); ?></span><span class="card-sub"><?php echo htmlspecialchars($landingToolDescriptions[3], ENT_QUOTES, 'UTF-8'); ?></span></span></a>
+		<a class="card" href="Birth_input.php"><img class="card-image" src="images/birth.jpg" alt="" loading="lazy" decoding="async"><span class="card-content"><span class="card-label"><?php echo htmlspecialchars(__('birth_horoscope'), ENT_QUOTES, 'UTF-8'); ?></span><span class="card-sub"><?php echo htmlspecialchars($landingToolDescriptions[4], ENT_QUOTES, 'UTF-8'); ?></span></span></a>
+		<a class="card" href="star_thaara_palan.php"><img class="card-image" src="images/thaara_palan.jpg" alt="" loading="lazy" decoding="async"><span class="card-content"><span class="card-label"><?php echo htmlspecialchars(__('tara_palan'), ENT_QUOTES, 'UTF-8'); ?></span><span class="card-sub"><?php echo htmlspecialchars($landingToolDescriptions[5], ENT_QUOTES, 'UTF-8'); ?></span></span></a>
+		<a class="card" href="hora.php"><img class="card-image" src="images/hora.jpg" alt="" loading="lazy" decoding="async"><span class="card-content"><span class="card-label"><?php echo htmlspecialchars(__('horai'), ENT_QUOTES, 'UTF-8'); ?></span><span class="card-sub"><?php echo htmlspecialchars($landingToolDescriptions[6], ENT_QUOTES, 'UTF-8'); ?></span></span></a>
+		<a class="card" href="prasannam_home.php"><img class="card-image" src="images/prasannam.jpg" alt="" loading="lazy" decoding="async"><span class="card-content"><span class="card-label"><?php echo htmlspecialchars(__('prasannam'), ENT_QUOTES, 'UTF-8'); ?></span><span class="card-sub"><?php echo htmlspecialchars($landingToolDescriptions[7], ENT_QUOTES, 'UTF-8'); ?></span></span></a>
+		<a class="card" href="planet_kaaragam.php"><img class="card-image" src="images/planet_kaaragam.jpg" alt="" loading="lazy" decoding="async"><span class="card-content"><span class="card-label"><?php echo htmlspecialchars(__('planet_indicator'), ENT_QUOTES, 'UTF-8'); ?></span><span class="card-sub"><?php echo htmlspecialchars($landingToolDescriptions[8], ENT_QUOTES, 'UTF-8'); ?></span></span></a>
+	</div>
+	<?php } else { ?>
+	<section class="live-card">
+		<h2 class="live-title">தற்போதைய ஜாமக்கோள்</h2>
+		<div id="msg">Please wait, jamakol chart is loading</div>
+		<div class="current-jama" id="current-jama">
+			<?php include "live_jamakol_chart.php"; ?>
+		</div>
+	</section>
+	<?php } ?>
+</main>
+
+<script>
+function toggleMenu(event) {
+	event.stopPropagation();
+	var panel = document.getElementById('menuPanel');
+	var button = event.currentTarget;
+	panel.classList.toggle('open');
+	button.setAttribute('aria-expanded', panel.classList.contains('open') ? 'true' : 'false');
+}
+document.addEventListener('click', function(event) {
+	var panel = document.getElementById('menuPanel');
+	if (panel && !panel.contains(event.target)) {
+		panel.classList.remove('open');
+		var button = document.querySelector('.dock-btn[aria-label="Menu"]');
+		if (button) button.setAttribute('aria-expanded', 'false');
+	}
+});
+document.addEventListener('DOMContentLoaded', function() {
+	initStars();
+});
+function initStars() {
+	var canvas = document.getElementById('stars');
+	var ctx = canvas.getContext('2d');
+	var width, height, points = [];
+	function resize() {
+		width = canvas.width = window.innerWidth;
+		height = canvas.height = window.innerHeight;
+		var count = Math.min(60, Math.floor(width * height / 16000));
+		points = Array.from({length:count}, function() {
+			return {x:Math.random()*width, y:Math.random()*height, vx:(Math.random()-.5)*.2, vy:(Math.random()-.5)*.2, r:Math.random()+.4};
+		});
+	}
+	function frame() {
+		ctx.clearRect(0, 0, width, height);
+		points.forEach(function(point) {
+			point.x += point.vx;
+			point.y += point.vy;
+			if (point.x < 0 || point.x > width) point.vx *= -1;
+			if (point.y < 0 || point.y > height) point.vy *= -1;
+		});
+		for (var i = 0; i < points.length; i++) {
+			for (var j = i + 1; j < points.length; j++) {
+				var dx = points[i].x - points[j].x;
+				var dy = points[i].y - points[j].y;
+				var distance = Math.sqrt(dx * dx + dy * dy);
+				if (distance < 130) {
+					var opacity = (1 - distance / 130) * .32;
+					ctx.strokeStyle = 'rgba(255,190,225,' + opacity.toFixed(3) + ')';
+					ctx.lineWidth = .8;
+					ctx.beginPath();
+					ctx.moveTo(points[i].x, points[i].y);
+					ctx.lineTo(points[j].x, points[j].y);
+					ctx.stroke();
+				}
+			}
+		}
+		points.forEach(function(point) {
+			ctx.beginPath();
+			ctx.arc(point.x, point.y, point.r, 0, Math.PI * 2);
+			ctx.fillStyle = 'rgba(255,236,248,.85)';
+			ctx.fill();
+		});
+		requestAnimationFrame(frame);
+	}
+	resize();
+	window.addEventListener('resize', resize);
+	frame();
+}
+</script>
 </body>
 
 </html>
