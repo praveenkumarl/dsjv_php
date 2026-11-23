@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/webview_only.php';
 
 require_once 'vendor/autoload.php';
 

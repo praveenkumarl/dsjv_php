@@ -1,4 +1,6 @@
-<?php session_start();
+<?php
+require_once __DIR__ . '/webview_only.php';
+session_start();
 include "db.php"; 
 $place=$_SESSION["place"];
 $date=$_SESSION["date"];

@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/webview_only.php';
 /**
  * chart_proxy.php
  * Server-side proxy + renderer for Birth_Chart_API JSON.
@@ -197,27 +198,27 @@ function esc($s) { return htmlspecialchars((string)($s ?? ''), ENT_QUOTES|ENT_SU
 
 // CSS (kept inline so it's self-contained and matches API HTML)
 $css = <<<'CSS'
-body { font-family: "Arial Unicode MS", "Noto Sans Tamil", sans-serif; background-color: #f7f7f7; margin: 0; padding: 10px; color: #0f172a; }
-.page-container{max-width:794px;margin:0 auto;background:#fff;padding:12px;box-sizing:border-box;box-shadow:0 2px 6px rgba(0,0,0,0.04)}
-.header-box { background-color: #ffffff; border: 2px solid #a00000; border-radius: 8px; overflow: hidden; margin-bottom: 12px; }
-.table-heading { font-weight:bold; color:#ffffff; font-size:20px; background: linear-gradient(140deg,#d61818,#a00000); padding:8px 12px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; }
+body { font-family: "Arial Unicode MS", "Noto Sans Tamil", sans-serif; background-color: var(--client-page,#f7f7f7); margin: 0; padding: 10px; color: var(--client-text,#0f172a); }
+.page-container{max-width:794px;margin:0 auto;background:var(--client-surface,#fff);color:var(--client-text,#0f172a);padding:12px;box-sizing:border-box;box-shadow:0 2px 6px rgba(0,0,0,0.2)}
+.header-box { background-color: var(--client-surface-alt,#ffffff); border: 2px solid var(--client-accent,#a00000); border-radius: 8px; overflow: hidden; margin-bottom: 12px; }
+.table-heading { font-weight:bold; color:var(--client-on-accent,#ffffff); font-size:20px; background: linear-gradient(140deg,var(--client-secondary,#d61818),var(--client-primary,#a00000)); padding:8px 12px; border-radius:6px; display:flex; justify-content:space-between; align-items:center; }
 .info-grid { width: 100%; border-spacing: 10px; border-collapse: separate; margin: 10px 0; display:flex; gap:8px; flex-wrap:wrap; }
-.info-box { background-color: #ffffff; border-left: 4px solid #a00000; border-radius: 6px; padding: 8px; border: 1px solid #f0dede; flex:1 1 150px; min-width:140px; box-sizing:border-box;}
-.info-title { font-size: 11px; font-weight: bold; color: #a00000; margin-bottom: 6px; text-transform: uppercase; }
-.info-value { font-size: 14px; font-weight:bold; color:#1f1f1f; }
+.info-box { background-color: var(--client-surface-alt,#ffffff); border-left: 4px solid var(--client-accent,#a00000); border-radius: 6px; padding: 8px; border: 1px solid var(--client-accent,#f0dede); flex:1 1 150px; min-width:140px; box-sizing:border-box;}
+.info-title { font-size: 11px; font-weight: bold; color: var(--client-accent,#a00000); margin-bottom: 6px; text-transform: uppercase; }
+.info-value { font-size: 14px; font-weight:bold; color:var(--client-text,#1f1f1f); }
 .chart-row { display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap; }
 .chart-box { flex:1 1 380px; background:transparent; }
 .chart-table { width:100%; border-collapse: collapse; table-layout: fixed; background-color: transparent; }
-.chart-cell { background-color: #ffffff; height: 70px; vertical-align: middle; text-align: center; padding: 4px 3px; position: relative; border: 2.5px solid #a00000; border-radius: 0; }
-.chart-center { background-color: #ffffff; text-align: center; vertical-align: middle; border: 1px solid #000000; }
-.chart-center-text { font-size: 18px; font-weight: bold; color: #1f1f1f; font-style: italic; font-family: serif; opacity: 1; }
-.chart-cell .planet { font-size:12px; font-weight:bold; color:#1f1f1f; display:block; line-height:1.2 }
+.chart-cell { background-color: var(--client-chart-box,#ffffff); height: 70px; vertical-align: middle; text-align: center; padding: 4px 3px; position: relative; border: 2.5px solid var(--client-accent,#a00000); border-radius: 0; color:var(--client-chart-text,#1f1f1f); }
+.chart-center { background-color: var(--client-surface-alt,#ffffff); color:var(--client-text,#1f1f1f); text-align: center; vertical-align: middle; border: 1px solid var(--client-accent,#000000); }
+.chart-center-text { font-size: 18px; font-weight: bold; color: var(--client-text,#1f1f1f); font-style: italic; font-family: serif; opacity: 1; }
+.chart-cell .planet { font-size:12px; font-weight:bold; color:var(--client-chart-text,#1f1f1f); display:block; line-height:1.2 }
 .tables-row { display:flex; align-items:flex-start; gap:12px; margin-top:12px; flex-wrap:wrap; }
-.table-card { background:#fff; border:1px solid #f0dede; border-radius:8px; padding:8px; box-sizing:border-box; }
-.table-card .table-heading { font-weight:bold; color:#ffffff; font-size:14px; margin-bottom:8px; background: linear-gradient(140deg,#d61818,#a00000); padding:6px 8px; border-radius:6px; }
+.table-card { background:var(--client-surface,#fff); color:var(--client-text,#1f1f1f); border:1px solid var(--client-accent,#f0dede); border-radius:8px; padding:8px; box-sizing:border-box; }
+.table-card .table-heading { font-weight:bold; color:var(--client-on-accent,#ffffff); font-size:14px; margin-bottom:8px; background: linear-gradient(140deg,var(--client-secondary,#d61818),var(--client-primary,#a00000)); padding:6px 8px; border-radius:6px; }
 .starlord-table, .bukthi-table { width:100%; border-collapse:collapse; font-size:12px; }
-.starlord-table td, .bukthi-table td { padding:6px 8px; border-bottom:1px solid #f5eeee; color:#4a1f1f; font-weight:bold; }
-.footer { text-align:center; color:#8a2a2a; font-size:10px; margin-top:10px; }
+.starlord-table td, .bukthi-table td { padding:6px 8px; border-bottom:1px solid var(--client-accent,#f5eeee); color:var(--client-text,#4a1f1f); font-weight:bold; }
+.footer { text-align:center; color:var(--client-muted,#8a2a2a); font-size:10px; margin-top:10px; }
 @media print { .page-container{width:210mm;max-width:100%;margin:0 auto;padding:0;box-shadow:none} .footer{position:fixed;bottom:10mm;} }
 /* Mobile responsive tweaks */
 @media (max-width: 900px) {
@@ -294,7 +295,7 @@ function build_chart_table($getter, $centerLabel) {
 
 // Render HTML
 header('Content-Type: text/html; charset=utf-8');
-echo '<!doctype html><html lang="ta"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Embedded Birth Chart</title><style>' . $css . '</style></head><body>';
+echo '<!doctype html><html lang="ta"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Embedded Birth Chart</title><style>' . $css . '</style><link rel="stylesheet" href="css/client_theme_css.php"></head><body>';
 echo '<div class="page-container">';
 
 // Header

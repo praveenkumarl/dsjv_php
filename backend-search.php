@@ -1,4 +1,24 @@
 <?php
+$jsonResponse = isset($_GET['format']) && $_GET['format'] === 'json';
+$jsonBufferLevel = ob_get_level();
+if ($jsonResponse) {
+	ob_start();
+}
+
+function sendPlaceSearchJson($payload, $statusCode) {
+	global $jsonBufferLevel;
+
+	while (ob_get_level() > $jsonBufferLevel) {
+		ob_end_clean();
+	}
+
+	http_response_code($statusCode);
+	header('Content-Type: application/json; charset=utf-8');
+	echo json_encode($payload, JSON_UNESCAPED_UNICODE);
+	exit;
+}
+
+require_once __DIR__ . '/webview_only.php';
 include "db.php";
 
 $conn="";
@@ -6,6 +26,47 @@ $conn="";
 /* Attempt MySQL server connection. Assuming you are running MySQL
 server with default setting (user 'root' with no password) */
 $conn=dbConnect($conn);
+
+if ($jsonResponse) {
+	if (!($conn instanceof mysqli)) {
+		sendPlaceSearchJson(array('error' => 'Place search is temporarily unavailable.'), 503);
+	}
+
+	$places = array();
+	$term = isset($_GET['term']) ? trim($_GET['term']) : '';
+
+	if (strlen($term) >= 3) {
+		$sql = "SELECT Place,TZ,country FROM world_cities WHERE other_names LIKE ? and country='India' UNION SELECT Place,TZ,country FROM world_cities WHERE other_names LIKE ? and country!='India' LIMIT 20";
+		$stmt = null;
+		try {
+			$stmt = $conn->prepare($sql);
+			$searchTerm = $term . '%';
+			$stmt->bind_param('ss', $searchTerm, $searchTerm);
+			$stmt->execute();
+			$stmt->bind_result($place, $timezone, $country);
+
+			while ($stmt->fetch()) {
+				$places[] = array(
+					'place' => $place,
+					'timezone' => $timezone,
+					'country' => $country
+				);
+			}
+
+			$stmt->close();
+		} catch (mysqli_sql_exception $exception) {
+			if ($stmt instanceof mysqli_stmt) {
+				$stmt->close();
+			}
+			dbDisconnect($conn);
+			error_log('backend-search.php: place search failed: ' . $exception->getMessage());
+			sendPlaceSearchJson(array('error' => 'Place search is temporarily unavailable.'), 500);
+		}
+	}
+
+	dbDisconnect($conn);
+	sendPlaceSearchJson($places, 200);
+}
  
 // Check connection
 if($conn === false){

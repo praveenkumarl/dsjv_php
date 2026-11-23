@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/webview_only.php';
 session_start();
 
 $month = isset($_POST['month']) ? $_POST['month'] : date('n');

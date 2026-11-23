@@ -54,6 +54,7 @@ H6 {
 <body>
 
 <?php
+require_once __DIR__ . '/webview_only.php';
 // --- Tab Buttons ---
 echo "<div id='tabsContainer' style='text-align:center;margin-bottom:20px;'>";
 echo "<button class='tabButton' onclick=\"openTab('starlordTab1')\">கோட் கிரக சாரம்</button>";

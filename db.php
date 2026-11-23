@@ -73,5 +73,3 @@ function sanitiseInput($db,$input)
 	return mysqli_real_escape_string($db, $input);
 }
 
-?>
-
