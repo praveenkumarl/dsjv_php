@@ -87,7 +87,7 @@ $curr_month = date('m');
 		<button class="menu" onClick="window.open('index.php','_self')">Home</button>
 	</div>
 	<div class='mobile'>
-		<?php include "OnePagePanchangMenu_mobile.php"; ?>
+		<?php include "onePagePanchangMenu_mobile.php"; ?>
 	</div>
 	</div>
 	<div class='column-body'>

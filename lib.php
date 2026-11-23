@@ -5,9 +5,54 @@ if(!session_id()){
 	session_start();
 }
 
+require_once __DIR__ . '/webview_only.php';
+require_once __DIR__ . '/language_switch.php';
+
 //include_once "/home/u835731528/public_html/dsjv_home/db.php";
 include_once "db.php";
 include_once "lang/lang.php";
+
+function renderAdminUserPagination($page, $totalPages, $scriptName)
+{
+	$page = (int)$page;
+	$totalPages = max(1, (int)$totalPages);
+	if ($totalPages <= 1) {
+		return;
+	}
+
+	$linkStyle = "display:inline-block;border:1px solid;background-color:gold;color:white;width:auto;font-size:20px;padding:3px";
+	$activeStyle = "display:inline-block;border:1px solid;background-color:black;color:white;width:auto;font-size:20px;padding:3px";
+	$window = 2;
+
+	if ($page > 1) {
+		echo "<a style='$linkStyle' href='{$scriptName}?page=" . ($page - 1) . "'>Prev</a> ";
+	}
+
+	if ($page > $window + 2) {
+		echo "<a style='$linkStyle' href='{$scriptName}?page=1'>1</a> ";
+		if ($page > $window + 3) {
+			echo "<span style='font-size:20px;padding:3px'>...</span> ";
+		}
+	}
+
+	$start = max(1, $page - $window);
+	$end = min($totalPages, $page + $window);
+	for ($i = $start; $i <= $end; $i++) {
+		$style = ($i == $page) ? $activeStyle : $linkStyle;
+		echo "<a style='$style' href='{$scriptName}?page=$i'>$i</a> ";
+	}
+
+	if ($page < $totalPages - $window - 1) {
+		if ($page < $totalPages - $window - 2) {
+			echo "<span style='font-size:20px;padding:3px'>...</span> ";
+		}
+		echo "<a style='$linkStyle' href='{$scriptName}?page=$totalPages'>$totalPages</a> ";
+	}
+
+	if ($page < $totalPages) {
+		echo "<a style='$linkStyle' href='{$scriptName}?page=" . ($page + 1) . "'>Next</a> ";
+	}
+}
 
 /**
  * Translate Tamil text to English based on current language setting
@@ -180,7 +225,7 @@ $timestamp = date('ymdhis');
 
 $DEBUG= isset($_SESSION['debug']) ? $_SESSION['debug'] : 0;
 
-echo '<head><link rel="stylesheet" href="css/main.css"></head>';
+echo '<head><link rel="stylesheet" href="css/main.css?v=' . filemtime(__DIR__ . '/css/main.css') . '"></head>';
 
 $nak_array = array("dummy","Aswini 1/அசுவினி 1","Aswini 2/அசுவினி 2","Aswini 3/அசுவினி 3","Aswini 4/அசுவினி 4",
 						"Bharani 1/பரணி 1","Bharani 2/பரணி 2","Bharani 3/பரணி 3","Bharani 4/பரணி 4",
@@ -768,7 +813,7 @@ function getUserInfo_web($phone)
 
 	try {
 		
-		$sql = "SELECT user.name, user.phone, user.user_type, user.imei, user.last_login, user.registered_date, user_trial.expiry_date,user.office_name,user.office_contact from user, user_trial 
+		$sql = "SELECT user.name, user.phone, user.user_type, user.imei, user.last_login, user.registered_date, user.place, user.tz, user.GMT_offset, user.GMT_offset_dsl, user_trial.expiry_date,user.office_name,user.office_contact from user, user_trial
 		where user.phone=user_trial.phone and user.phone='$phone'";
 	
 		if(($result = mysqli_query($conn, $sql))){
@@ -808,7 +853,7 @@ function getUserInfo_mobile($key)
 	try {
 		
 		//$sql = "SELECT name, phone, user_type, imei, last_login, registered_date from user where imei='$key'";
-		$sql = "SELECT user.name, user.phone, user.user_type, user.imei, user.last_login, user.registered_date, user_trial.expiry_date,user.office_name,user.office_contact from user, user_trial 
+		$sql = "SELECT user.name, user.phone, user.user_type, user.imei, user.last_login, user.registered_date, user.place, user.tz, user.GMT_offset, user.GMT_offset_dsl, user_trial.expiry_date,user.office_name,user.office_contact from user, user_trial
 		where user.phone=user_trial.phone and user.imei='$key'";
 	
 		if(($result = mysqli_query($conn, $sql))){
@@ -851,25 +896,170 @@ function checkAdminKey($key)
 	}
 }
 
-//To display user details
-function displayUserInfo($userinfo)
+function getApplicationOverlayConfig($scriptName, $currentLanguage)
 {
-	echo "<div class='envWeb' style='background-color:".envColor()."'>";
-		echo "<div class='userinfo'>";
-			echo $userinfo['name'];
-		echo "</div>";
-		echo "<div class='userinfo'>";
-			echo $userinfo['phone'];
-		echo "</div>";
-		echo "<div class='userinfo'>";
-			echo $userinfo['user_type'];
-		echo "</div>";
-		echo "<div class='userinfo'>";
-			//echo $userinfo['expiry_date'];
-			echo date("d-m-Y", strtotime($userinfo['expiry_date']));
-		echo "</div>";
+	$isEnglish = ($currentLanguage === 'english');
+	$actions = array(
+		'Jamakol_input.php' => array(
+			array('href' => 'jamaChartDisplay.php', 'icon' => 'fa-history', 'label' => $isEnglish ? 'Jamakol chart history' : 'ஜாமக்கோள் வரலாறு')
+		),
+		'Matching_input.php' => array(
+			array('href' => 'matchingChartDisplay.php', 'icon' => 'fa-history', 'label' => $isEnglish ? 'Matching chart history' : 'திருமணப் பொருத்த வரலாறு')
+		),
+		'Birth_input.php' => array(
+			array('href' => 'birthChartDisplay.php', 'icon' => 'fa-history', 'label' => $isEnglish ? 'Birth chart history' : 'பிறப்பு ஜாதக வரலாறு')
+		),
+		'birthChartDisplay.php' => array(
+			array('href' => 'Birth_input.php', 'icon' => 'fa-plus', 'label' => $isEnglish ? 'New birth chart' : 'புதிய பிறப்பு ஜாதகம்')
+		),
+		'Birth_Chart.php' => array(
+			array('href' => 'Birth_input.php', 'icon' => 'fa-plus', 'label' => $isEnglish ? 'New birth chart' : 'புதிய பிறப்பு ஜாதகம்'),
+			array('href' => 'birthChartDisplay.php', 'icon' => 'fa-history', 'label' => $isEnglish ? 'Birth chart history' : 'பிறப்பு ஜாதக வரலாறு')
+		),
+		'matchingChartDisplay.php' => array(
+			array('href' => 'Matching_input.php', 'icon' => 'fa-plus', 'label' => $isEnglish ? 'New matching chart' : 'புதிய திருமணப் பொருத்தம்')
+		),
+		'matchBirthChart.php' => array(
+			array('href' => 'Matching_input.php', 'icon' => 'fa-plus', 'label' => $isEnglish ? 'New matching chart' : 'புதிய திருமணப் பொருத்தம்')
+		),
+		'Matching_Chart.php' => array(
+			array('href' => 'Matching_input.php', 'icon' => 'fa-plus', 'label' => $isEnglish ? 'New matching chart' : 'புதிய திருமணப் பொருத்தம்'),
+			array('href' => 'matchingChartDisplay.php', 'icon' => 'fa-history', 'label' => $isEnglish ? 'Matching chart history' : 'திருமணப் பொருத்த வரலாறு')
+		)
+	);
+	$cleanNavigationPages = array(
+		'Jamakol_input.php',
+		'numerology.php',
+		'Matching_input.php',
+		'Birth_input.php',
+		'birthChartDisplay.php',
+		'Birth_Chart.php',
+		'matchingChartDisplay.php',
+		'matchBirthChart.php',
+		'Matching_Chart.php',
+		'star_thaara_palan.php',
+		'start_thaara_palan.php',
+		'hora.php',
+		'prasannam_home.php',
+		'prasannams.php',
+		'planet_kaaragam.php'
+	);
+
+	return array(
+		'cleanNavigation' => in_array($scriptName, $cleanNavigationPages, true),
+		'actions' => isset($actions[$scriptName]) ? $actions[$scriptName] : array()
+	);
+}
+
+function renderApplicationOverlayPanel($currentLanguage, $scriptName = '')
+{
+	$homeLabel = ($currentLanguage === 'english') ? 'Home' : 'முகப்பு';
+	$panelLabel = ($currentLanguage === 'english') ? 'Page actions' : 'பக்க செயல்கள்';
+	$overlayConfig = getApplicationOverlayConfig($scriptName, $currentLanguage);
+	$panelClass = 'app-page-panel';
+	if ($overlayConfig['cleanNavigation']) {
+		$panelClass .= ' app-page-panel-clean-nav';
+	}
+
+	echo "<nav class='" . $panelClass . "' aria-label='" . htmlspecialchars($panelLabel, ENT_QUOTES, 'UTF-8') . "'>";
+	echo "<a class='app-panel-home' href='index.php' aria-label='" . htmlspecialchars($homeLabel, ENT_QUOTES, 'UTF-8') . "' title='" . htmlspecialchars($homeLabel, ENT_QUOTES, 'UTF-8') . "'><i class='fa fa-home' aria-hidden='true'></i></a>";
+	$userType = isset($_SESSION['user_type'])
+		? $_SESSION['user_type']
+		: (isset($_SESSION['userinfo']['user_type']) ? $_SESSION['userinfo']['user_type'] : '');
+	if ($userType === 'ADMIN' || $userType === 'SUPER') {
+		$settingsLabel = ($currentLanguage === 'english') ? 'Settings' : 'அமைப்புகள்';
+		echo "<a class='app-panel-action' href='admin.php' aria-label='" . htmlspecialchars($settingsLabel, ENT_QUOTES, 'UTF-8') . "' title='" . htmlspecialchars($settingsLabel, ENT_QUOTES, 'UTF-8') . "'><i class='fa fa-cog' aria-hidden='true'></i></a>";
+	}
+	foreach ($overlayConfig['actions'] as $action) {
+		$label = htmlspecialchars($action['label'], ENT_QUOTES, 'UTF-8');
+		$href = htmlspecialchars($action['href'], ENT_QUOTES, 'UTF-8');
+		$icon = htmlspecialchars($action['icon'], ENT_QUOTES, 'UTF-8');
+		echo "<a class='app-panel-action' href='" . $href . "' aria-label='" . $label . "' title='" . $label . "'><i class='fa " . $icon . "' aria-hidden='true'></i></a>";
+	}
+	echo "</nav>";
+}
+
+//To display user details
+function displayUserInfo($userinfo, $includePagePanel = true)
+{
+	$currentLanguage = isset($_COOKIE['language']) && strtolower($_COOKIE['language']) === 'english'
+		? 'english'
+		: 'tamil';
+	$scriptName = isset($_SERVER['SCRIPT_NAME']) ? basename($_SERVER['SCRIPT_NAME']) : '';
+
+	$userType = isset($userinfo['user_type']) ? strtoupper(trim((string)$userinfo['user_type'])) : 'FREE';
+	$userName = isset($userinfo['name']) ? trim((string)$userinfo['name']) : '';
+	$userPhone = isset($userinfo['phone']) ? trim((string)$userinfo['phone']) : '';
+	$expiryTimestamp = isset($userinfo['expiry_date']) ? strtotime((string)$userinfo['expiry_date']) : false;
+	$expiryDate = ($expiryTimestamp !== false) ? date('d-m-Y', $expiryTimestamp) : '';
+	$subscriptionNames = array(
+		'FREE' => array('tamil' => 'இலவசம்', 'english' => 'Free'),
+		'PAID' => array('tamil' => 'பிரீமியம்', 'english' => 'Premium'),
+		'BIRTH' => array('tamil' => 'பிறப்பு ஜாதகம்', 'english' => 'Birth Horoscope'),
+		'MATCH' => array('tamil' => 'திருமணப் பொருத்தம்', 'english' => 'Marriage Matching'),
+		'BIRTHMATCH' => array('tamil' => 'பிறப்பு ஜாதகம் + திருமணப் பொருத்தம்', 'english' => 'Birth Horoscope + Marriage Matching'),
+		'BIRTHPANCH' => array('tamil' => 'பிறப்பு ஜாதகம் + பஞ்சாங்கம்', 'english' => 'Birth Horoscope + Panchangam'),
+		'BIRTHPANCHMATCH' => array('tamil' => 'பிறப்பு ஜாதகம் + பஞ்சாங்கம் + பொருத்தம்', 'english' => 'Birth Horoscope + Panchangam + Matching'),
+		'BIRTHTHARA' => array('tamil' => 'பிறப்பு ஜாதகம் + தாரா பலன்', 'english' => 'Birth Horoscope + Thaara Palan'),
+		'PANCHANG' => array('tamil' => 'பஞ்சாங்கம்', 'english' => 'Panchangam'),
+		'JAMAKOL' => array('tamil' => 'ஜாமக்கோள்', 'english' => 'Jamakol'),
+		'JAMAMATCH' => array('tamil' => 'ஜாமக்கோள் + திருமணப் பொருத்தம்', 'english' => 'Jamakol + Marriage Matching'),
+		'JAMABIRTH' => array('tamil' => 'ஜாமக்கோள் + பிறப்பு ஜாதகம்', 'english' => 'Jamakol + Birth Horoscope'),
+		'PRASANNAM' => array('tamil' => 'பிரசன்னம்', 'english' => 'Prasannam'),
+		'NUMEROLOGY' => array('tamil' => 'எண் கணிதம்', 'english' => 'Numerology'),
+		'ADMIN' => array('tamil' => 'நிர்வாகி', 'english' => 'Admin'),
+		'SUPER' => array('tamil' => 'முதன்மை நிர்வாகி', 'english' => 'Super Admin')
+	);
+	$subscriptionName = isset($subscriptionNames[$userType])
+		? $subscriptionNames[$userType][$currentLanguage]
+		: $userType;
+	$safeName = htmlspecialchars($userName, ENT_QUOTES, 'UTF-8');
+	$safePhone = htmlspecialchars($userPhone, ENT_QUOTES, 'UTF-8');
+	$safeSubscription = htmlspecialchars($subscriptionName, ENT_QUOTES, 'UTF-8');
+	$safeExpiry = htmlspecialchars($expiryDate, ENT_QUOTES, 'UTF-8');
+	$isFree = ($userType === 'FREE');
+	$welcomeLabel = ($currentLanguage === 'english') ? 'Welcome' : '';
+	$profileLabel = ($currentLanguage === 'english') ? 'Profile' : 'சுயவிவரம்';
+	$nameLabel = ($currentLanguage === 'english') ? 'Name' : 'பெயர்';
+	$phoneLabel = ($currentLanguage === 'english') ? 'Phone' : 'தொலைபேசி';
+	$subscriptionLabel = ($currentLanguage === 'english') ? 'Subscription' : 'சந்தா';
+	$expiryLabel = ($currentLanguage === 'english') ? 'Expires' : 'காலாவதி';
+	$signOutLabel = ($currentLanguage === 'english') ? 'Sign out' : 'வெளியேறு';
+	$profileActionLabel = ($currentLanguage === 'english') ? 'Open user profile' : 'பயனர் சுயவிவரத்தைத் திற';
+
+	echo "<header class='envWeb app-topbar'>";
+	echo "<div class='topbar-user'>";
+	echo "<div class='welcome-row'>";
+	echo "<details class='app-profile'>";
+	echo "<summary class='profile-trigger' aria-label='" . htmlspecialchars($profileActionLabel, ENT_QUOTES, 'UTF-8') . "'>";
+	echo "<i class='fa fa-user-o' aria-hidden='true'></i>";
+	echo "<span class='profile-badge'>" . ($isFree ? 'FREE' : 'PRO') . "</span>";
+	echo "</summary>";
+	echo "<section class='profile-panel' aria-label='" . htmlspecialchars($profileLabel, ENT_QUOTES, 'UTF-8') . "'>";
+	echo "<div class='profile-heading'><h2>" . htmlspecialchars($profileLabel, ENT_QUOTES, 'UTF-8') . "</h2></div>";
+	echo "<dl class='profile-details'>";
+	echo "<div><dt>" . htmlspecialchars($nameLabel, ENT_QUOTES, 'UTF-8') . "</dt><dd>$safeName</dd></div>";
+	echo "<div><dt>" . htmlspecialchars($phoneLabel, ENT_QUOTES, 'UTF-8') . "</dt><dd>$safePhone</dd></div>";
+	echo "<div><dt>" . htmlspecialchars($subscriptionLabel, ENT_QUOTES, 'UTF-8') . "</dt><dd>$safeSubscription</dd></div>";
+	echo "<div><dt>" . htmlspecialchars($expiryLabel, ENT_QUOTES, 'UTF-8') . "</dt><dd>$safeExpiry</dd></div>";
+	echo "</dl>";
+	echo "</section>";
+	echo "</details>";
+	echo "<div class='welcome-copy'>";
+	echo "<p class='welcome'>" . htmlspecialchars($welcomeLabel, ENT_QUOTES, 'UTF-8');
+	if ($userName !== '') {
+		echo ($welcomeLabel !== '' ? ', ' : '') . $safeName;
+	}
+	echo "</p>";
+	echo "<p class='subscription-details'>$safeSubscription</p>";
 	echo "</div>";
-	
+	echo "</div>";
+	echo "</div>";
+	renderLanguageSwitch($currentLanguage);
+	echo "</header>";
+	if ($includePagePanel) {
+		renderApplicationOverlayPanel($currentLanguage, $scriptName);
+	}
 }
 
 function displayUserInfoMobile($userinfo)
@@ -7639,6 +7829,18 @@ function displayBhavaChart()
 
 function updateBhavaArray($deg, $planet, $house, $reverse = false) {
     global $g_bhava_arr, $lagna_house;
+
+    if (!is_array($g_bhava_arr) || !is_numeric($lagna_house) || $lagna_house < 1 || $lagna_house > 12
+        || !is_numeric($house) || $house < 0 || $house > 11) {
+        return;
+    }
+
+    for ($i = 0; $i < 12; $i++) {
+        if (!isset($g_bhava_arr[$i]) || !is_array($g_bhava_arr[$i])
+            || !isset($g_bhava_arr[$i][0]) || !is_numeric($g_bhava_arr[$i][0])) {
+            return;
+        }
+    }
     
     $targetHouse = countHouses($lagna_house, $house);
     

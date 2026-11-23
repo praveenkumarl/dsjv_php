@@ -1,6 +1,6 @@
 <?php
 session_start();
-include_once "lib.php";
+include_once "db.php";
 
 // Accept POST lang parameter and update DB if user logged in
 $lang = isset($_POST['lang']) ? trim($_POST['lang']) : '';

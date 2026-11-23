@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/webview_only.php';
 //ini_set("session.gc_maxlifetime", "86400");
 
 if(!session_id()){

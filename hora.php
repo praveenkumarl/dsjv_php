@@ -4,7 +4,7 @@ require_once "lib.php";
 include_once "lang/lang.php";
 
 // Initialize language from cookie or default to Tamil
-$language = isset($_COOKIE['language']) ? strtolower($_COOKIE['language']) : 'tamil';
+$language = isset($_COOKIE['language']) && strtolower(trim($_COOKIE['language'])) === 'english' ? 'english' : 'tamil';
 init_language($language);
 
 $DEBUG= (int) isset($_GET['debug']) ? $_GET['debug'] : 0;
@@ -159,25 +159,25 @@ function getSubHora($start_time,$curr_time,$hora_lord,$hora_time)
 	
 	switch($hora_lord){
 		case "சூரி":
-			$subHora = $sub_hora_order_sun[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
+			$subHora = $sub_hora_order_sun[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." ".__('to');
 			break;
 		case "சுக்":
-			$subHora = $sub_hora_order_ven[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
+			$subHora = $sub_hora_order_ven[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." ".__('to');
 			break;
 		case "புத":
-			$subHora = $sub_hora_order_mer[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
+			$subHora = $sub_hora_order_mer[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." ".__('to');
 			break;
 		case "சந்":
-			$subHora = $sub_hora_order_moo[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
+			$subHora = $sub_hora_order_moo[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." ".__('to');
 			break;
 		case "சனி":
-			$subHora = $sub_hora_order_sat[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
+			$subHora = $sub_hora_order_sat[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." ".__('to');
 			break;
 		case "குரு":
-			$subHora = $sub_hora_order_jup[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
+			$subHora = $sub_hora_order_jup[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." ".__('to');
 			break;
 		case "செ":
-			$subHora = $sub_hora_order_mar[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." வரை";
+			$subHora = $sub_hora_order_mar[$sub_hora_idx] . "<BR>". date("h:i A",strtotime($subHora_endtime)) ." ".__('to');
 			break;
 	}
 	
@@ -481,40 +481,40 @@ function displayHoraTable($hora_data)
 	
 	echo "<center><div class='divTable blueTable' style='height:40px;margin-left:5px' id='currentHoraHeading'>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divTableCell' colspan=4>தற்போதைய ஓரை</div>";
+			echo "<div class='divTableCell' colspan=4>".__('current_horai')."</div>";
 		echo "</div>";
 	echo "</div>";
 	
 	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px' id='currentHoraTable'>";
 		echo "<div class='divTableRow'>";
-				echo "<div class='divThaaraPalanHeading'>ஆரம்பம்</div>";
-				echo "<div class='divThaaraPalanHeading'>முடிவு</div>";
-				echo "<div class='divThaaraPalanHeading'>ஓரை</div>";
-				echo "<div class='divThaaraPalanHeading'>உப ஓரை</div>";
+				echo "<div class='divThaaraPalanHeading'>".__('start')."</div>";
+				echo "<div class='divThaaraPalanHeading'>".__('end')."</div>";
+				echo "<div class='divThaaraPalanHeading'>".__('horai')."</div>";
+				echo "<div class='divThaaraPalanHeading'>".__('sub_horai')."</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			//Condition is to mark current hora in green color for good horas
 			if(strpos($current_hora[3],"குரு")===0 or strpos($current_hora[3],"சுக்")===0 or strpos($current_hora[3],"புத")===0 or strpos($current_hora[3],"சந்")===0){  //== will not differenciate between 0 and false, so should use ===
 				echo "<div class='divThaaraPalanGreen'>".date("h:i A",strtotime($current_hora[1]))."</div>";
 				echo "<div class='divThaaraPalanGreen'>".date("h:i A",strtotime($current_hora[2]))."</div>";	
-				echo "<div class='divThaaraPalanGreen' id='horaLord'><div id='horaLordTxt'>".translate_tamil_text($current_hora[3])."</div></div>";
+				echo "<div class='divThaaraPalanGreen' id='horaLord'><div id='horaLordTxt'>".map_display_text($current_hora[3])."</div></div>";
 				if(strpos($current_hora[3],"குரு")===0 or strpos($current_hora[3],"சுக்")===0 or strpos($current_hora[3],"புத")===0 or strpos($current_hora[3],"சந்")===0){  //== will not differenciate between 0 and false, so should use ===
-					echo "<div class='divThaaraPalanGreen' id='horaSubLord'>".$current_hora[5]."</div>";
+					echo "<div class='divThaaraPalanGreen' id='horaSubLord'>".map_display_text($current_hora[5])."</div>";
 				}
 				else{
-					echo "<div class='divThaaraPalanRed' id='horaSubLord'>".$current_hora[5]."</div>";
+					echo "<div class='divThaaraPalanRed' id='horaSubLord'>".map_display_text($current_hora[5])."</div>";
 				}
 			}
 			else{ //Condition is to mark current hora in red color for bad horas
 				
 				echo "<div class='divThaaraPalanRed'>".date("h:i A",strtotime($current_hora[1]))."</div>";
 				echo "<div class='divThaaraPalanRed'>".date("h:i A",strtotime($current_hora[2]))."</div>";	
-				echo "<div class='divThaaraPalanRed' id='horaLord'><div id='horaLordTxt'>".translate_tamil_text($current_hora[3])."</div></div>";
+				echo "<div class='divThaaraPalanRed' id='horaLord'><div id='horaLordTxt'>".map_display_text($current_hora[3])."</div></div>";
 				if(strpos($current_hora[3],"குரு")===0 or strpos($current_hora[3],"சுக்")===0 or strpos($current_hora[3],"புத")===0 or strpos($current_hora[3],"சந்")===0){  //== will not differenciate between 0 and false, so should use ===
-					echo "<div class='divThaaraPalanGreen' id='horaSubLord'>".$current_hora[5]."</div>";
+					echo "<div class='divThaaraPalanGreen' id='horaSubLord'>".map_display_text($current_hora[5])."</div>";
 				}
 				else{
-					echo "<div class='divThaaraPalanRed' id='horaSubLord'>".$current_hora[5]."</div>";
+					echo "<div class='divThaaraPalanRed' id='horaSubLord'>".map_display_text($current_hora[5])."</div>";
 				}
 			}
 		echo "</div>";
@@ -524,16 +524,16 @@ function displayHoraTable($hora_data)
 	
 	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px' id='fullHoraHeading'>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divTableCell' colspan=4>ஓரை அட்டவணை</div>";
+			echo "<div class='divTableCell' colspan=4>".__('horai_table')."</div>";
 		echo "</div>";
 	echo "</div>";
 	
 	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px' id='fullHoraTable'>";
 	echo "<div class='divTableRow'>";
-			echo "<div class='divThaaraPalanHeading'>Date</div>";
-			echo "<div class='divThaaraPalanHeading'>Start</div>";
-			echo "<div class='divThaaraPalanHeading'>End</div>";
-			echo "<div class='divThaaraPalanHeading'>Planet</div>";
+			echo "<div class='divThaaraPalanHeading'>".__('horai_table_date')."</div>";
+			echo "<div class='divThaaraPalanHeading'>".__('start')."</div>";
+			echo "<div class='divThaaraPalanHeading'>".__('end')."</div>";
+			echo "<div class='divThaaraPalanHeading'>".__('planet')."</div>";
 	echo "</div>";
 	
 	echo array_search("current hora",$hora_data);
@@ -550,21 +550,21 @@ function displayHoraTable($hora_data)
 					echo "<div class='divThaaraPalanGreen'>".date("h:i A",strtotime($data[1]))."</div>";
 					echo "<div class='divThaaraPalanGreen'>".date("h:i A",strtotime($data[2]))."</div>";	
 					//echo "<div class='divThaaraPalanGreen'>".$data[3]."<div class='divSubHora'>".$data[5]."</div></div>";
-					echo "<div class='divThaaraPalanGreen'>".$data[3]."</div>";
+					echo "<div class='divThaaraPalanGreen'>".map_display_text($data[3])."</div>";
 				}
 				else{ //Condition is to mark current hora in red color for bad horas
 					echo "<div class='divThaaraPalanRed'>".$data[0]."</div>";
 					echo "<div class='divThaaraPalanRed'>".date("h:i A",strtotime($data[1]))."</div>";
 					echo "<div class='divThaaraPalanRed'>".date("h:i A",strtotime($data[2]))."</div>";	
 					//echo "<div class='divThaaraPalanRed'>".$data[3]."<div class='divSubHora'>".$data[5]."</div></div>";
-					echo "<div class='divThaaraPalanRed'>".$data[3]."</div>";
+					echo "<div class='divThaaraPalanRed'>".map_display_text($data[3])."</div>";
 				}
 			/*}
 			else{
 				echo "<div class='divThaaraPalanWhite'>".$data[0]."</div>";
 				echo "<div class='divThaaraPalanWhite'>".date("h:i A",strtotime($data[1]))."</div>";
 				echo "<div class='divThaaraPalanWhite'>".date("h:i A",strtotime($data[2]))."</div>";	
-				echo "<div class='divThaaraPalanWhite'>".$data[3]."</div>";
+				echo "<div class='divThaaraPalanWhite'>".map_display_text($data[3])."</div>";
 			}*/
 		echo "</div>";
 	}
@@ -617,14 +617,14 @@ if (isset($place_from_post) && $place_from_post) {
 ?>
 
 <!doctype html>
-<html lang="en" class="no-js">
+<html lang="<?php echo $language === 'english' ? 'en' : 'ta'; ?>" class="no-js">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="canonical" href="https://html5-templates.com/" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>PK Astro Thaara palan</title>
+    <title>PK Astro - <?php echo htmlspecialchars(__('horai'), ENT_QUOTES, 'UTF-8'); ?></title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
 	
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
@@ -707,14 +707,14 @@ function validateForm() {
 	  p = document.getElementById("place").value;
 
 	  if (p == "") {
-		alert('பிறந்த இடம் கொடுல்லவில்லை');
+		alert(<?php echo json_encode(__('place_not_provided')); ?>);
 		//document.getElementById("error").innerHTML = "பிறந்த இடம் கொடுல்லவில்லை";
 		document.getElementById('place').style.borderColor = "red";
 		return false;
 	  }
 	  
 	  if (p.includes("|")==false || p.includes("/")==false || p.length<10){
-		  alert('நீங்கள் இடத்தை கீழ் வரும் பட்டியலில் தேர்ந்தெடுக்கவில்லை');
+		  alert(<?php echo json_encode(__('place_not_selected')); ?>);
 		  document.getElementById('place').style.borderColor = "red";
 		  return false;
 	  }
@@ -773,21 +773,21 @@ $(document).ready(function(){
 	<div class='column-menu' id='appMenu'>
 		<?php displayUserInfo($_SESSION['userinfo']); ?>
 		<div class='desktop'>
-			<button class="menu" onClick="window.open('index.php','_self')">Home</button>
+			<button class="menu" onClick="window.open('index.php','_self')"><?php echo htmlspecialchars(__('home'), ENT_QUOTES, 'UTF-8'); ?></button>
 		</div>
 		<div class='mobile'>
-				<?php include "horaMenu_mobile.php"; ?>
+				<?php ob_start(); include "horaMenu_mobile.php"; echo translate_menu_html(ob_get_clean()); ?>
 		</div>
 	</div>
 	<div class='column-body'>			
 				<center><form name="horaForm" style="width:320px" action="hora.php?debug=<?php echo $DEBUG; ?>" method="post" id='horaForm'>
-				<CENTER><P style="color:#660000;font-weight:bold; font-size:16px; background-color:white;">ஓரை</P></CENTER>
+				<CENTER><P style="color:#660000;font-weight:bold; font-size:16px; background-color:white;"><?php echo htmlspecialchars(__('horai'), ENT_QUOTES, 'UTF-8'); ?></P></CENTER>
 					<table style="width:25%; text-align:left;">
 					
 						<tr>
-							<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:15px">*Place:</H5></td>
+							<td><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:15px">*<?php echo htmlspecialchars(__('place'), ENT_QUOTES, 'UTF-8'); ?>:</H5></td>
 							<td style="width:150px">
-								<div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="color:#660000;width:auto;font-size:15px;background:#FDE966" placeholder="Search place..." onFocus="initialize();" onBlur="setTimeout(dropdownFormSubmit, 500)" /><div class="result" ></div>
+								<div class="search-box"><input type="text" name="place" id="place" autocomplete="off" style="color:#660000;width:auto;font-size:15px;background:#FDE966" placeholder="<?php echo htmlspecialchars(__('search_place_placeholder'), ENT_QUOTES, 'UTF-8'); ?>" onFocus="initialize();" onBlur="setTimeout(dropdownFormSubmit, 500)" /><div class="result" ></div>
 							</td>
 						</tr>
 						<tr>

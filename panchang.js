@@ -763,8 +763,12 @@ panchang = {
  Ayanamsa: {},
  Raasi:{},
  version: "0.2",
- calculate: function(d,cb){
+ calculate: function(d,cb,timezoneId){
    var n_wday, n_tithi=1, n_naksh=1, n_karana, n_yoga;
+    var timezoneName = typeof timezoneId === "string" ? timezoneId.trim() : "";
+    if (!timezoneName && typeof window.timezone === "string") {
+      timezoneName = window.timezone;
+    }
 
     with(Math){
      var day = d.getDate();
@@ -773,7 +777,9 @@ panchang = {
      var hr = d.getHours();
      hr += d.getMinutes()/60;
      //var tzone = d.getTimezoneOffset()/60*(-1);
-     var tzone = getTimezoneOffsetInHours(timezone,d);
+     var tzone = timezoneName
+       ? getTimezoneOffsetInHours(timezoneName,d)
+       : -d.getTimezoneOffset()/60;
      console.log(tzone);
     }
     inpmin = Math.floor(d.getMinutes());

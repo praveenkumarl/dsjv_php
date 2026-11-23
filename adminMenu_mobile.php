@@ -21,6 +21,7 @@ if(strcmp($usertype,ADMIN)==0){
 				  <a class='glow-button' href="new_panchang.php">பஞ்சாங்கம்</a>
 				  <a class='glow-button' href="prasannam_home.php">பிரசன்னம்</a>
 				  <a class='glow-button' href="maintenance.php">Manage</a>
+				  <a class='glow-button' href="admin.php?section=theme">Theme settings</a>
 				</div>
 			</div> 
 			<a href="index.php"><i class="fa fa-home fa-2x"></i></a>

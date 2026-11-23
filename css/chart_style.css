@@ -127,13 +127,13 @@ div.blueTable {
 	display: table-cell;
 	text-align:center;
 	vertical-align:middle;
-	border:solid 1px #660000;
+	border:solid 1px var(--theme-chart-border,var(--client-accent,#660000));
 
 	background-color: var(--chart-background);
 	font-size: var(--chart-inner-font-size);
 	line-height: 15px;
 	font-weight: var(--chart-inner-font-weight);
-	color: #660000;
+	color: var(--client-chart-text,#660000);
 	width: 20%;
 	height: 20%;
 	padding:5px;
