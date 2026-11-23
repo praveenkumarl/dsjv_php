@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/webview_only.php';
 require 'vendor/autoload.php'; // Load Composer dependencies
 
 use DeepSeek\DeepSeekClient;
@@ -76,15 +77,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DeepSeek Chatbot</title>
+    <link rel="stylesheet" href="css/client_theme_css.php">
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            background-color: #f4f4f4;
+            background-color: var(--client-page, #f4f4f4);
+            color: var(--client-text, #1f1f1f);
             text-align: center;
         }
         .chat-container {
-            background: white;
+            background: var(--client-surface, white);
+            color: var(--client-text, #1f1f1f);
             padding: 20px;
             border-radius: 10px;
             width: 50%;
@@ -95,21 +99,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 100%;
             height: 80px;
             margin-top: 10px;
+            background: var(--client-surface-alt, white);
+            color: var(--client-text, #1f1f1f);
+            border: 1px solid var(--client-accent, #aaa);
         }
         button {
             padding: 10px;
-            background: #28a745;
-            color: white;
-            border: none;
+            background: var(--client-primary, #28a745);
+            color: var(--client-on-accent, white);
+            border: 1px solid var(--client-accent, #218838);
             cursor: pointer;
             margin-top: 10px;
         }
         button:hover {
-            background: #218838;
+            background: var(--client-secondary, #218838) !important;
         }
         .response {
             margin-top: 20px;
-            background: #ddd;
+            background: var(--client-surface-alt, #ddd);
+            color: var(--client-text, #1f1f1f);
             padding: 10px;
             border-radius: 5px;
         }

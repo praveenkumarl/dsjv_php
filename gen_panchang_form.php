@@ -165,7 +165,7 @@ for ($i = 1; $i <= 12; $i++) {
         <button class="menu" onClick="window.open('index.php','_self')"><?php echo __('back'); ?></button>
     </div>
     <div class='mobile'>
-        <?php include "OnePagePanchangMenu_mobile.php"; ?>
+        <?php include "onePagePanchangMenu_mobile.php"; ?>
     </div>
 </div>
 

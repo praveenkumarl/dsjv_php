@@ -24,6 +24,7 @@ else{
     <!-- <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <title>My Company</title>
+	<link rel="stylesheet" href="css/client_theme_css.php">
     <style>
         body {
             margin: 0;
@@ -50,7 +51,7 @@ else{
         }
         .image-cell {
             position: relative;
-			background-color: white;
+			background-color: var(--client-surface, white);
 			align-content: center;
 			padding: 5px;
         }

@@ -40,7 +40,7 @@ if(isMobile() and $key){
 }
 elseif(isMobile() and isset($_COOKIE['key'])){
 	$_SESSION['logged']=true;
-	$userInfo = getUserInfo_mobile($_COOKIES['key']);
+	$userInfo = getUserInfo_mobile($_COOKIE['key']);
 	$_SESSION['userinfo']=$userInfo;
 }
 elseif(!strcmp($phone,"9999999999")==0){
@@ -100,33 +100,100 @@ $expiry_date = $_SESSION['userinfo']['expiry_date'];
 $currentLanguage = isset($_COOKIE['language']) ? strtolower($_COOKIE['language']) : 'tamil';
 require_once "lang/lang.php";
 init_language($currentLanguage);
-$landingTamilMonths = array(
-	1 => 'ஜனவரி', 2 => 'பிப்ரவரி', 3 => 'மார்ச்', 4 => 'ஏப்ரல்',
-	5 => 'மே', 6 => 'ஜூன்', 7 => 'ஜூலை', 8 => 'ஆகஸ்ட்',
-	9 => 'செப்டம்பர்', 10 => 'அக்டோபர்', 11 => 'நவம்பர்', 12 => 'டிசம்பர்'
-);
-$landingNow = new DateTime('now', new DateTimeZone('Asia/Kolkata'));
-$landingTodayLabel = ($currentLanguage === 'english')
-	? 'Today, ' . $landingNow->format('j F Y') . '.'
-	: 'இன்று, ' . $landingNow->format('j') . ' ' . $landingTamilMonths[(int)$landingNow->format('n')] . ' ' . $landingNow->format('Y') . '.';
+$landingUserInfo = isset($_SESSION['userinfo']) && is_array($_SESSION['userinfo'])
+	? $_SESSION['userinfo']
+	: array();
+$landingUserPhone = isset($landingUserInfo['phone']) ? trim((string)$landingUserInfo['phone']) : '';
+$landingPlace = isset($landingUserInfo['place']) ? trim((string)$landingUserInfo['place']) : '';
+$landingTimezone = isset($landingUserInfo['tz']) ? trim((string)$landingUserInfo['tz']) : '';
+$landingPlaceParts = explode('|', $landingPlace);
+if (count($landingPlaceParts) > 1) {
+	if ($landingTimezone === '') {
+		$landingTimezone = trim($landingPlaceParts[1]);
+	}
+	$landingPlace = trim($landingPlaceParts[0]);
+}
+$landingCanSaveProfile = $landingUserPhone !== '' && $landingUserPhone !== '9999999999';
+$landingProfileNeedsLocation = $landingCanSaveProfile && ($landingPlace === '' || $landingTimezone === '');
+$landingProfilePanelOpen = $landingProfileNeedsLocation || isset($_GET['profile_error']);
+$landingProfileEditOpen = $landingProfileNeedsLocation || isset($_GET['profile_error']);
+if (!isset($_SESSION['profile_location_token'])) {
+	$_SESSION['profile_location_token'] = bin2hex(random_bytes(32));
+}
+$landingProfileError = '';
+if (isset($_GET['profile_error'])) {
+	$landingProfileError = ($currentLanguage === 'english')
+		? 'Your profile could not be saved. Please select a city from the suggestions and try again.'
+		: 'உங்கள் சுயவிவரத்தைச் சேமிக்க முடியவில்லை. பரிந்துரைகளிலிருந்து நகரத்தைத் தேர்ந்தெடுத்து மீண்டும் முயற்சிக்கவும்.';
+}
+$landingPanchangPlace = ($landingPlace !== '' && $landingTimezone !== '')
+	? $landingPlace . '|' . $landingTimezone
+	: '';
+$landingPanchangLoading = '...';
 $landingPanchang = ($currentLanguage === 'english')
 	? array(
-		array(__('weekday'), 'Saturday'),
-		array(__('thithi'), 'Trayodashi'),
-		array(__('nakshatra'), 'Uttara Ashadha'),
-		array(__('yogam'), 'Vyaghata'),
-		array(__('karanam'), 'Vanija')
+		array('Tithi', $landingPanchangLoading, 'thithi'),
+		array('Nakshatra', $landingPanchangLoading, 'nakshatra'),
+		array('Yoga', $landingPanchangLoading, 'yoga'),
+		array('Karana', $landingPanchangLoading, 'karanam')
 	)
 	: array(
-		array(__('weekday'), 'சனி'),
-		array(__('thithi'), 'திரயோதசி'),
-		array(__('nakshatra'), 'உத்திராடம்'),
-		array(__('yogam'), 'வ்யாகாதம்'),
-		array(__('karanam'), 'வனிஜை')
+		array(__('thithi'), $landingPanchangLoading, 'thithi'),
+		array(__('nakshatra'), $landingPanchangLoading, 'nakshatra'),
+		array(__('yogam'), $landingPanchangLoading, 'yoga'),
+		array(__('karanam'), $landingPanchangLoading, 'karanam')
 	);
-$landingIntro = ($currentLanguage === 'english')
-	? 'Jamakol, horoscopes, matching, and hora. Choose a tool to get started.'
-	: 'ஜாமகோல், ஜாதகம், பொருத்தம், ஹோரை. தேவையான கருவியைத் தேர்ந்தெடுங்கள்.';
+$landingInauspiciousPeriods = array(
+	array(__('ema_kantam'), 'ema_kantam'),
+	array(__('kuligai_time'), 'kuligai_time'),
+	array(__('rahu_kaalam'), 'rahu_kaalam')
+);
+$landingUserType = isset($_SESSION['user_type']) ? $_SESSION['user_type'] : 'FREE';
+$landingSubscriptionNames = ($currentLanguage === 'english')
+	? array(
+		'FREE' => 'Free',
+		'PAID' => 'Premium',
+		'BIRTH' => 'Birth Horoscope',
+		'MATCH' => 'Marriage Matching',
+		'BIRTHMATCH' => 'Birth Horoscope + Marriage Matching',
+		'BIRTHPANCH' => 'Birth Horoscope + Panchangam',
+		'BIRTHPANCHMATCH' => 'Birth Horoscope + Panchangam + Matching',
+		'BIRTHTHARA' => 'Birth Horoscope + Thaara Palan',
+		'PANCHANG' => 'Panchangam',
+		'JAMAKOL' => 'Jamakol',
+		'JAMAMATCH' => 'Jamakol + Marriage Matching',
+		'JAMABIRTH' => 'Jamakol + Birth Horoscope',
+		'PRASANNAM' => 'Prasannam',
+		'NUMEROLOGY' => 'Numerology',
+		'ADMIN' => 'Admin',
+		'SUPER' => 'Super Admin'
+	)
+	: array(
+		'FREE' => 'இலவசம்',
+		'PAID' => 'பிரீமியம்',
+		'BIRTH' => 'பிறப்பு ஜாதகம்',
+		'MATCH' => 'திருமணப் பொருத்தம்',
+		'BIRTHMATCH' => 'பிறப்பு ஜாதகம் + திருமணப் பொருத்தம்',
+		'BIRTHPANCH' => 'பிறப்பு ஜாதகம் + பஞ்சாங்கம்',
+		'BIRTHPANCHMATCH' => 'பிறப்பு ஜாதகம் + பஞ்சாங்கம் + பொருத்தம்',
+		'BIRTHTHARA' => 'பிறப்பு ஜாதகம் + தாரா பலன்',
+		'PANCHANG' => 'பஞ்சாங்கம்',
+		'JAMAKOL' => 'ஜாமக்கோள்',
+		'JAMAMATCH' => 'ஜாமக்கோள் + திருமணப் பொருத்தம்',
+		'JAMABIRTH' => 'ஜாமக்கோள் + பிறப்பு ஜாதகம்',
+		'PRASANNAM' => 'பிரசன்னம்',
+		'NUMEROLOGY' => 'எண் கணிதம்',
+		'ADMIN' => 'நிர்வாகி',
+		'SUPER' => 'முதன்மை நிர்வாகி'
+	);
+$landingSubscriptionName = isset($landingSubscriptionNames[$landingUserType])
+	? $landingSubscriptionNames[$landingUserType]
+	: $landingUserType;
+$landingUserName = isset($_SESSION['userinfo']['name']) ? trim((string)$_SESSION['userinfo']['name']) : '';
+$landingExpiryTimestamp = strtotime((string)$expiry_date);
+$landingExpiryDisplay = ($landingExpiryTimestamp !== false)
+	? date('d-m-Y', $landingExpiryTimestamp)
+	: (string)$expiry_date;
 $landingToolDescriptions = ($currentLanguage === 'english')
 	? array(
 		'Answers for the question you ask',
@@ -159,19 +226,26 @@ $announcement_msg = "";
 date_default_timezone_set('Asia/Kolkata'); // Ensure correct timezone
 try {
 	$conn = dbConnect(0);
-	$today = date('Y-m-d');
-	$sql = "SELECT message FROM announcement_msgs WHERE is_active=1 AND show_date<=? AND (expiry_date IS NULL OR expiry_date>=?) ORDER BY show_date DESC LIMIT 1";
-	$stmt = $conn->prepare($sql);
-	$stmt->bind_param('ss', $today, $today);
-	$stmt->execute();
-	$stmt->bind_result($msg);
-	if ($stmt->fetch()) {
-		$announcement_msg = $msg;
+	if ($conn instanceof mysqli) {
+		$today = date('Y-m-d');
+		$sql = "SELECT message FROM announcement_msgs WHERE is_active=1 AND show_date<=? AND (expiry_date IS NULL OR expiry_date>=?) ORDER BY show_date DESC LIMIT 1";
+		$stmt = $conn->prepare($sql);
+		$stmt->bind_param('ss', $today, $today);
+		$stmt->execute();
+		$stmt->bind_result($msg);
+		if ($stmt->fetch()) {
+			$announcement_msg = $msg;
+		}
+		$stmt->close();
+		dbDisconnect($conn);
+	} else {
+		error_log('index.php: announcement lookup skipped because the database connection failed.');
 	}
-	$stmt->close();
-	dbDisconnect($conn);
-} catch (Exception $e) {
-	// fail silently
+} catch (mysqli_sql_exception $e) {
+	error_log('index.php: announcement lookup failed: ' . $e->getMessage());
+	if (isset($conn) && $conn instanceof mysqli) {
+		dbDisconnect($conn);
+	}
 }
 ?>
 
@@ -193,6 +267,7 @@ try {
 	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/landing-theme.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/client_theme_css.php">
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
@@ -363,87 +438,150 @@ function handleSwipe(){
 <canvas id="stars" aria-hidden="true"></canvas>
 
 <main class="wrap">
-	<header class="topbar">
-		<div class="brand"><i class="fa fa-th" aria-hidden="true"></i><span class="brand-name">DSJV</span></div>
-		<div class="dock">
-			<div class="menu-wrap">
-				<button class="dock-btn" onclick="toggleMenu(event)" aria-label="Menu" aria-expanded="false"><i class="fa fa-bars"></i></button>
-				<div class="dropdown-panel" id="menuPanel">
-					<div class="notranslate">
-						<div class="desktop">
-							<?php
-							if (!isLogged()) {
-								echo '<button class="menu" onclick="window.open(\'new_loginPage.php\',\'_self\')">Login</button>';
-							} else {
-								displayUserInfo($_SESSION['userinfo']);
-								$hideIndexMenuLanguageToggle = true;
-								include "indexMenu.php";
-								unset($hideIndexMenuLanguageToggle);
-							}
-							?>
-						</div>
-						<div class="mobile">
-							<?php
-							if (!isLogged()) {
-								echo '<a class="mobile-registration" href="new_registration_mobile.php?key=' . rawurlencode($key) . '">Registration</a>';
-							} else {
-								include "indexMenu_mobile.php";
-							}
-							?>
-						</div>
-						<?php
-						$currentLang = isset($_COOKIE['language']) ? strtolower($_COOKIE['language']) : 'tamil';
-						$languageLabel = ($currentLang === 'english') ? 'EN' : 'தமிழ்';
-						?>
-						<div class="lang-selector">
-							<button class="lang-btn" type="button" onclick="toggleLanguage()" aria-label="Toggle language">
-								<i class="fa fa-globe" aria-hidden="true"></i>
-								<span id="currentLangLabel"><?php echo htmlspecialchars($languageLabel, ENT_QUOTES, 'UTF-8'); ?></span>
-							</button>
-						</div>
-					</div>
+	<header class="topbar app-topbar">
+		<div class="topbar-user">
+			<div class="welcome-row">
+				<button class="profile-trigger" id="profileTrigger" type="button" aria-controls="profilePanel" aria-expanded="<?php echo $landingProfilePanelOpen ? 'true' : 'false'; ?>" aria-label="<?php echo ($currentLanguage === 'english') ? 'Open user profile' : 'பயனர் சுயவிவரத்தைத் திற'; ?>">
+					<i class="fa fa-user-o" aria-hidden="true"></i>
+					<span class="profile-badge"><?php echo isFreeUser($landingUserType) ? 'FREE' : 'PRO'; ?></span>
+				</button>
+				<div class="welcome-copy">
+					<p class="welcome"><?php
+						$welcomeLabel = ($currentLanguage === 'english') ? 'Welcome' : '';
+						echo $welcomeLabel;
+						if ($landingUserName !== '') {
+							echo ($welcomeLabel !== '' ? ', ' : '') . htmlspecialchars($landingUserName, ENT_QUOTES, 'UTF-8');
+						}
+					?></p>
+					<p class="subscription-details">
+						<?php echo htmlspecialchars($landingSubscriptionName, ENT_QUOTES, 'UTF-8'); ?>
+					</p>
 				</div>
 			</div>
-			<button class="dock-btn language-toggle" type="button" onclick="toggleLanguage()" aria-label="Toggle language" title="Language / மொழி">
-				<span class="lang-options" aria-hidden="true">
-					<span class="lang-option<?php echo ($currentLanguage === 'tamil') ? ' active' : ''; ?>" lang="ta">தமிழ்</span>
-					<span class="lang-option<?php echo ($currentLanguage === 'english') ? ' active' : ''; ?>" lang="en">English</span>
-				</span>
-			</button>
-			<?php if (strcmp($_SESSION['user_type'], ADMIN) == 0 || strcmp($_SESSION['user_type'], SUPER) == 0) { ?>
-			<a class="dock-btn" href="admin.php" aria-label="Settings"><i class="fa fa-cog"></i></a>
-			<?php } ?>
+			<section class="profile-panel" id="profilePanel" aria-label="<?php echo ($currentLanguage === 'english') ? 'User profile' : 'பயனர் விவரம்'; ?>" <?php echo $landingProfilePanelOpen ? '' : 'hidden'; ?>>
+				<div class="profile-heading">
+					<h2><?php echo ($currentLanguage === 'english') ? 'Profile' : 'சுயவிவரம்'; ?></h2>
+					<?php if ($landingCanSaveProfile && !$landingProfileNeedsLocation) { ?>
+					<button class="profile-edit-toggle" id="profileEditToggle" type="button" aria-controls="profileLocationForm" aria-expanded="<?php echo $landingProfileEditOpen ? 'true' : 'false'; ?>" aria-label="<?php echo $landingProfileEditOpen ? (($currentLanguage === 'english') ? 'Cancel editing' : 'திருத்தத்தை ரத்துசெய்') : (($currentLanguage === 'english') ? 'Edit profile' : 'சுயவிவரத்தைத் திருத்து'); ?>" title="<?php echo $landingProfileEditOpen ? (($currentLanguage === 'english') ? 'Cancel editing' : 'திருத்தத்தை ரத்துசெய்') : (($currentLanguage === 'english') ? 'Edit profile' : 'சுயவிவரத்தைத் திருத்து'); ?>" data-edit-label="<?php echo ($currentLanguage === 'english') ? 'Edit profile' : 'சுயவிவரத்தைத் திருத்து'; ?>" data-cancel-label="<?php echo ($currentLanguage === 'english') ? 'Cancel editing' : 'திருத்தத்தை ரத்துசெய்'; ?>" onclick="toggleProfileEdit()"><i class="fa <?php echo $landingProfileEditOpen ? 'fa-times' : 'fa-pencil'; ?>" aria-hidden="true"></i></button>
+					<?php } ?>
+				</div>
+				<dl class="profile-details">
+					<div><dt><?php echo ($currentLanguage === 'english') ? 'Name' : 'பெயர்'; ?></dt><dd><?php echo htmlspecialchars($landingUserName, ENT_QUOTES, 'UTF-8'); ?></dd></div>
+					<div><dt><?php echo ($currentLanguage === 'english') ? 'Phone' : 'தொலைபேசி'; ?></dt><dd><?php echo htmlspecialchars($landingUserPhone, ENT_QUOTES, 'UTF-8'); ?></dd></div>
+					<?php if (!empty($landingUserInfo['imei'])) { ?>
+					<div><dt><?php echo ($currentLanguage === 'english') ? 'Key' : 'அணுகு விசை'; ?></dt><dd class="profile-key-value"><span id="profileKeyValue"><?php echo htmlspecialchars($landingUserInfo['imei'], ENT_QUOTES, 'UTF-8'); ?></span><button class="profile-copy-key" type="button" onclick="copyProfileKey(this)" aria-label="<?php echo ($currentLanguage === 'english') ? 'Copy key' : 'விசையை நகலெடு'; ?>" title="<?php echo ($currentLanguage === 'english') ? 'Copy key' : 'விசையை நகலெடு'; ?>" data-copy-label="<?php echo ($currentLanguage === 'english') ? 'Copy key' : 'விசையை நகலெடு'; ?>" data-copied-label="<?php echo ($currentLanguage === 'english') ? 'Key copied' : 'விசை நகலெடுக்கப்பட்டது'; ?>" data-failed-label="<?php echo ($currentLanguage === 'english') ? 'Copy failed' : 'நகலெடுக்க முடியவில்லை'; ?>"><i class="fa fa-copy" aria-hidden="true"></i></button></dd></div>
+					<?php } ?>
+					<div><dt><?php echo ($currentLanguage === 'english') ? 'Subscription' : 'சந்தா'; ?></dt><dd><?php echo htmlspecialchars($landingSubscriptionName, ENT_QUOTES, 'UTF-8'); ?></dd></div>
+					<div><dt><?php echo ($currentLanguage === 'english') ? 'Expires' : 'காலாவதி'; ?></dt><dd><?php echo htmlspecialchars($landingExpiryDisplay, ENT_QUOTES, 'UTF-8'); ?></dd></div>
+					<?php if (!empty($landingUserInfo['office_name'])) { ?>
+					<div><dt><?php echo ($currentLanguage === 'english') ? 'Office' : 'அலுவலகம்'; ?></dt><dd><?php echo htmlspecialchars($landingUserInfo['office_name'], ENT_QUOTES, 'UTF-8'); ?></dd></div>
+					<?php } ?>
+					<?php if (!empty($landingUserInfo['office_contact'])) { ?>
+					<div><dt><?php echo ($currentLanguage === 'english') ? 'Office contact' : 'அலுவலகத் தொடர்பு'; ?></dt><dd><?php echo htmlspecialchars($landingUserInfo['office_contact'], ENT_QUOTES, 'UTF-8'); ?></dd></div>
+					<?php } ?>
+					<div><dt><?php echo ($currentLanguage === 'english') ? 'Place' : 'இடம்'; ?></dt><dd><?php echo htmlspecialchars($landingPlace, ENT_QUOTES, 'UTF-8') ?: '—'; ?></dd></div>
+					<div><dt><?php echo ($currentLanguage === 'english') ? 'Timezone' : 'நேர மண்டலம்'; ?></dt><dd><?php echo htmlspecialchars($landingTimezone, ENT_QUOTES, 'UTF-8') ?: '—'; ?></dd></div>
+				</dl>
+				<?php if ($landingProfileError !== '') { ?>
+				<p class="profile-message<?php echo isset($_GET['profile_error']) ? ' is-error' : ''; ?>" role="status"><?php echo htmlspecialchars($landingProfileError, ENT_QUOTES, 'UTF-8'); ?></p>
+				<?php } ?>
+				<?php if ($landingProfileNeedsLocation) { ?>
+				<p class="profile-location-prompt"><?php echo ($currentLanguage === 'english') ? 'Add your place and timezone to show accurate Panchang details.' : 'சரியான பஞ்சாங்க விவரங்களைக் காண உங்கள் இடத்தையும் நேர மண்டலத்தையும் சேர்க்கவும்.'; ?></p>
+				<?php } ?>
+				<?php if ($landingCanSaveProfile) { ?>
+				<form class="profile-location-form" action="save_user_place.php" method="post" id="profileLocationForm" <?php echo $landingProfileEditOpen ? '' : 'hidden'; ?>>
+					<input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['profile_location_token'], ENT_QUOTES, 'UTF-8'); ?>">
+					<label for="profileName"><?php echo ($currentLanguage === 'english') ? 'Name' : 'பெயர்'; ?></label>
+					<input id="profileName" name="name" type="text" maxlength="160" required value="<?php echo htmlspecialchars($landingUserName, ENT_QUOTES, 'UTF-8'); ?>">
+					<label for="profileOfficeName"><?php echo ($currentLanguage === 'english') ? 'Office name' : 'அலுவலகப் பெயர்'; ?></label>
+					<input id="profileOfficeName" name="office_name" type="text" maxlength="160" value="<?php echo htmlspecialchars(isset($landingUserInfo['office_name']) ? $landingUserInfo['office_name'] : '', ENT_QUOTES, 'UTF-8'); ?>">
+					<label for="profileOfficePhone"><?php echo ($currentLanguage === 'english') ? 'Office phone' : 'அலுவலகத் தொலைபேசி'; ?></label>
+					<input id="profileOfficePhone" name="office_contact" type="tel" maxlength="40" value="<?php echo htmlspecialchars(isset($landingUserInfo['office_contact']) ? $landingUserInfo['office_contact'] : '', ENT_QUOTES, 'UTF-8'); ?>">
+					<label for="profilePlace"><?php echo ($currentLanguage === 'english') ? 'Search city' : 'நகரத்தைத் தேடுங்கள்'; ?></label>
+					<input id="profilePlace" name="place" type="text" autocomplete="off" required value="<?php echo htmlspecialchars($landingPlace, ENT_QUOTES, 'UTF-8'); ?>" placeholder="<?php echo ($currentLanguage === 'english') ? 'Start typing a city' : 'நகரத்தின் பெயரை உள்ளிடுங்கள்'; ?>">
+					<div id="profilePlaceResults" class="profile-place-results" role="listbox"></div>
+					<label for="profileTimezone"><?php echo ($currentLanguage === 'english') ? 'Timezone' : 'நேர மண்டலம்'; ?></label>
+					<input id="profileTimezone" name="tz" type="text" readonly required value="<?php echo htmlspecialchars($landingTimezone, ENT_QUOTES, 'UTF-8'); ?>">
+					<button type="submit" aria-label="<?php echo ($currentLanguage === 'english') ? 'Save profile' : 'சுயவிவரத்தைச் சேமி'; ?>" title="<?php echo ($currentLanguage === 'english') ? 'Save profile' : 'சுயவிவரத்தைச் சேமி'; ?>"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+				</form>
+				<?php } ?>
+				</section>
 		</div>
+		<?php renderLanguageSwitch($currentLanguage); ?>
 	</header>
 
-	<section class="daybar" aria-label="<?php echo ($currentLanguage === 'english') ? 'Today\'s Panchangam' : 'இன்றைய பஞ்சாங்கம்'; ?>">
-		<div class="daybar-head">
-			<span><?php echo htmlspecialchars($landingTodayLabel, ENT_QUOTES, 'UTF-8'); ?></span>
-			<a href="new_panchang.php"><?php echo ($currentLanguage === 'english') ? 'Full Panchangam' : 'முழு பஞ்சாங்கம்'; ?></a>
-		</div>
-		<dl class="panchang-list">
+	<section class="daybar" data-panchang-place="<?php echo htmlspecialchars($landingPanchangPlace, ENT_QUOTES, 'UTF-8'); ?>" aria-label="<?php echo htmlspecialchars(__('panchang_summary'), ENT_QUOTES, 'UTF-8'); ?>">
+		<section class="daybar-hero" aria-label="<?php echo ($currentLanguage === 'english') ? 'Date and day' : 'தேதி மற்றும் கிழமை'; ?>">
+			<div class="daybar-calendar-date">
+				<strong class="daybar-day" data-panchang-value="gregorian_day">...</strong>
+				<span class="daybar-month-year" data-panchang-value="gregorian_month_year">...</span>
+			</div>
+			<div class="daybar-primary-details">
+				<div class="daybar-weekday-row">
+					<strong class="daybar-weekday" data-panchang-value="weekday">...</strong>
+					<div class="daybar-location">
+						<i class="fa fa-map-marker" aria-hidden="true"></i>
+						<span data-panchang-value="place"><?php echo htmlspecialchars($landingPlace !== '' ? $landingPlace : 'Chennai', ENT_QUOTES, 'UTF-8'); ?></span>
+					</div>
+				</div>
+				<span class="daybar-tamil-date" data-panchang-value="tamil_date">...</span>
+				<div class="daybar-sun-times">
+					<span class="daybar-sun-pill"><i class="fa fa-sun-o" aria-hidden="true"></i><span><?php echo htmlspecialchars(__('sunrise'), ENT_QUOTES, 'UTF-8'); ?></span><strong data-panchang-value="sunrise">...</strong></span>
+					<span class="daybar-sun-pill"><i class="fa fa-moon-o" aria-hidden="true"></i><span><?php echo htmlspecialchars(__('sunset'), ENT_QUOTES, 'UTF-8'); ?></span><strong data-panchang-value="sunset">...</strong></span>
+				</div>
+			</div>
+		</section>
+		<div class="daybar-limbs" role="list" aria-label="<?php echo ($currentLanguage === 'english') ? 'Panchang elements' : 'பஞ்சாங்க அங்கங்கள்'; ?>">
 			<?php foreach ($landingPanchang as $panchangItem) { ?>
-			<div>
-				<dt><?php echo htmlspecialchars($panchangItem[0], ENT_QUOTES, 'UTF-8'); ?></dt>
-				<dd><?php echo htmlspecialchars($panchangItem[1], ENT_QUOTES, 'UTF-8'); ?></dd>
+			<div class="daybar-limb" role="listitem">
+				<span><?php echo htmlspecialchars($panchangItem[0], ENT_QUOTES, 'UTF-8'); ?></span>
+				<strong data-panchang-value="<?php echo htmlspecialchars($panchangItem[2], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($panchangItem[1], ENT_QUOTES, 'UTF-8'); ?></strong>
 			</div>
 			<?php } ?>
-		</dl>
+		</div>
+		<details class="daybar-inauspicious">
+			<summary class="daybar-section-heading">
+				<strong><?php echo htmlspecialchars(__('inauspicious_times'), ENT_QUOTES, 'UTF-8'); ?></strong>
+				<span class="daybar-period-status" data-panchang-value="period_status">...</span>
+				<span class="daybar-hora-inline">
+					<span><?php echo htmlspecialchars(__('current_horai'), ENT_QUOTES, 'UTF-8'); ?></span>
+					<strong data-panchang-value="hora_name">...</strong>
+					<time data-panchang-value="hora_time">...</time>
+				</span>
+				<span class="daybar-disclosure-icon" aria-hidden="true"></span>
+			</summary>
+			<div class="daybar-inauspicious-content">
+				<div class="daybar-periods">
+					<?php foreach ($landingInauspiciousPeriods as $periodItem) { ?>
+					<div class="daybar-period" data-period-key="<?php echo htmlspecialchars($periodItem[1], ENT_QUOTES, 'UTF-8'); ?>">
+						<strong><?php echo htmlspecialchars($periodItem[0], ENT_QUOTES, 'UTF-8'); ?></strong>
+						<span data-panchang-value="<?php echo htmlspecialchars($periodItem[1], ENT_QUOTES, 'UTF-8'); ?>">...</span>
+					</div>
+					<?php } ?>
+				</div>
+			</div>
+		</details>
 	</section>
 
-	<section class="intro">
-		<h1 class="headline"><?php echo htmlspecialchars(__('school_name'), ENT_QUOTES, 'UTF-8'); ?></h1>
-		<p class="lede"><?php echo htmlspecialchars($landingIntro, ENT_QUOTES, 'UTF-8'); ?></p>
-	</section>
+	<a class="daybar-personal" href="star_thaara_palan.php">
+		<span class="daybar-personal-icon"><i class="fa fa-star-o" aria-hidden="true"></i></span>
+		<span class="daybar-personal-copy">
+			<small><?php echo ($currentLanguage === 'english') ? 'For your star today' : 'உங்கள் நட்சத்திரத்திற்கு இன்று'; ?></small>
+			<strong><?php echo ($currentLanguage === 'english') ? 'View Tara Balam and Chandrashtama' : 'தாராபலம், சந்திராஷ்டமம் பார்க்க'; ?></strong>
+		</span>
+		<i class="fa fa-chevron-right daybar-personal-chevron" aria-hidden="true"></i>
+	</a>
 
-	<div class="chips">
-		<span class="chip">&#128241; <?php echo htmlspecialchars((string)$_SESSION['phone'], ENT_QUOTES, 'UTF-8'); ?></span>
-		<span class="chip">&#128197; <?php echo htmlspecialchars(date('d-m-Y', strtotime($expiry_date)), ENT_QUOTES, 'UTF-8'); ?></span>
-	</div>
+	<nav class="quick-links" aria-label="<?php echo ($currentLanguage === 'english') ? 'Quick links' : 'விரைவு இணைப்புகள்'; ?>">
+		<a href="Jamakol_input.php"><i class="fa fa-th" aria-hidden="true"></i><?php echo htmlspecialchars(__('jamakol'), ENT_QUOTES, 'UTF-8'); ?></a>
+		<a href="Matching_input.php"><i class="fa fa-link" aria-hidden="true"></i><?php echo htmlspecialchars(__('marriage_matching'), ENT_QUOTES, 'UTF-8'); ?></a>
+		<a href="star_thaara_palan.php"><i class="fa fa-star-o" aria-hidden="true"></i><?php echo htmlspecialchars(__('tara_palan'), ENT_QUOTES, 'UTF-8'); ?></a>
+		<a href="raasi_kaaragam.php"><i class="fa fa-compass" aria-hidden="true"></i><?php echo ($currentLanguage === 'english') ? 'Rasi Kaaragam' : 'ராசி காரகம்'; ?></a>
+	</nav>
 
 	<?php if (!isFreeUser($_SESSION['user_type'])) { ?>
 	<div class="deck">
-		<a class="card hero" href="Jamakol_input.php"><img class="card-image" src="images/jamakol.jpg" alt="" loading="lazy" decoding="async"><span class="card-content"><span class="card-label"><?php echo htmlspecialchars(__('jamakol'), ENT_QUOTES, 'UTF-8'); ?></span><span class="card-sub"><?php echo htmlspecialchars($landingToolDescriptions[0], ENT_QUOTES, 'UTF-8'); ?></span></span></a>
+		<a class="card" href="Jamakol_input.php"><img class="card-image" src="images/jamakol.jpg" alt="" loading="lazy" decoding="async"><span class="card-content"><span class="card-label"><?php echo htmlspecialchars(__('jamakol'), ENT_QUOTES, 'UTF-8'); ?></span><span class="card-sub"><?php echo htmlspecialchars($landingToolDescriptions[0], ENT_QUOTES, 'UTF-8'); ?></span></span></a>
 		<a class="card" href="new_panchang.php"><img class="card-image" src="images/panchang.jpg" alt="" loading="lazy" decoding="async"><span class="card-content"><span class="card-label"><?php echo htmlspecialchars(__('panchangam'), ENT_QUOTES, 'UTF-8'); ?></span><span class="card-sub"><?php echo htmlspecialchars($landingToolDescriptions[1], ENT_QUOTES, 'UTF-8'); ?></span></span></a>
 		<a class="card" href="numerology.php"><img class="card-image" src="images/numerology.jpg" alt="" loading="lazy" decoding="async"><span class="card-content"><span class="card-label"><?php echo htmlspecialchars(__('numerology'), ENT_QUOTES, 'UTF-8'); ?></span><span class="card-sub"><?php echo htmlspecialchars($landingToolDescriptions[2], ENT_QUOTES, 'UTF-8'); ?></span></span></a>
 		<a class="card" href="Matching_input.php"><img class="card-image" src="images/matching.jpg" alt="" loading="lazy" decoding="async"><span class="card-content"><span class="card-label"><?php echo htmlspecialchars(__('marriage_matching'), ENT_QUOTES, 'UTF-8'); ?></span><span class="card-sub"><?php echo htmlspecialchars($landingToolDescriptions[3], ENT_QUOTES, 'UTF-8'); ?></span></span></a>
@@ -462,27 +600,273 @@ function handleSwipe(){
 		</div>
 	</section>
 	<?php } ?>
+	<nav class="bottom-nav" aria-label="<?php echo ($currentLanguage === 'english') ? 'Main navigation' : 'முதன்மை வழிசெலுத்தல்'; ?>">
+		<a href="new_panchang.php" aria-label="<?php echo ($currentLanguage === 'english') ? 'Panchangam' : 'பஞ்சாங்கம்'; ?>"><i class="fa fa-calendar" aria-hidden="true"></i></a>
+		<a href="star_thaara_palan.php" aria-label="<?php echo ($currentLanguage === 'english') ? 'Tara Balam' : 'தாரா பலன்'; ?>"><i class="fa fa-star-o" aria-hidden="true"></i></a>
+		<a href="hora.php" aria-label="<?php echo ($currentLanguage === 'english') ? 'Hora' : 'ஹோரை'; ?>"><i class="fa fa-clock-o" aria-hidden="true"></i></a>
+		<?php if (strcmp($_SESSION['user_type'], ADMIN) == 0 || strcmp($_SESSION['user_type'], SUPER) == 0) { ?>
+		<a href="admin.php" aria-label="<?php echo ($currentLanguage === 'english') ? 'Settings' : 'அமைப்புகள்'; ?>" title="<?php echo ($currentLanguage === 'english') ? 'Settings' : 'அமைப்புகள்'; ?>"><i class="fa fa-cog" aria-hidden="true"></i></a>
+		<?php } ?>
+	</nav>
+	<footer class="site-footer">Developed &amp; Maintained by PNK Astro Labs</footer>
 </main>
 
+<?php if (isset($_GET['profile_saved'])) { ?>
+<div class="profile-toast" id="profileToast" role="status" aria-live="polite"><?php echo ($currentLanguage === 'english') ? 'Your profile has been saved.' : 'உங்கள் சுயவிவரம் சேமிக்கப்பட்டது.'; ?></div>
+<?php } ?>
+
 <script>
-function toggleMenu(event) {
+function toggleProfilePanel(event) {
 	event.stopPropagation();
-	var panel = document.getElementById('menuPanel');
-	var button = event.currentTarget;
-	panel.classList.toggle('open');
-	button.setAttribute('aria-expanded', panel.classList.contains('open') ? 'true' : 'false');
+	var panel = document.getElementById('profilePanel');
+	var button = document.getElementById('profileTrigger');
+	panel.hidden = !panel.hidden;
+	button.setAttribute('aria-expanded', panel.hidden ? 'false' : 'true');
 }
+function toggleProfileEdit() {
+	var form = document.getElementById('profileLocationForm');
+	var button = document.getElementById('profileEditToggle');
+	form.hidden = !form.hidden;
+	button.setAttribute('aria-expanded', form.hidden ? 'false' : 'true');
+	var label = form.hidden ? button.getAttribute('data-edit-label') : button.getAttribute('data-cancel-label');
+	button.setAttribute('aria-label', label);
+	button.title = label;
+	button.querySelector('i').className = form.hidden ? 'fa fa-pencil' : 'fa fa-times';
+}
+function copyProfileKey(button) {
+	var key = document.getElementById('profileKeyValue');
+	if (!key) return;
+
+	function showCopyResult(success) {
+		var icon = button.querySelector('i');
+		var label = success ? button.getAttribute('data-copied-label') : button.getAttribute('data-failed-label');
+		icon.className = success ? 'fa fa-check' : 'fa fa-exclamation-triangle';
+		button.setAttribute('aria-label', label);
+		button.title = label;
+		window.setTimeout(function() {
+			icon.className = 'fa fa-copy';
+			label = button.getAttribute('data-copy-label');
+			button.setAttribute('aria-label', label);
+			button.title = label;
+		}, 1800);
+	}
+
+	function copyWithSelection() {
+		var input = document.createElement('textarea');
+		input.value = key.textContent;
+		input.setAttribute('readonly', '');
+		input.style.position = 'fixed';
+		input.style.opacity = '0';
+		document.body.appendChild(input);
+		input.select();
+		var copied = false;
+		try {
+			copied = document.execCommand('copy');
+		} catch (error) {
+			console.error(error);
+		}
+		document.body.removeChild(input);
+		return copied;
+	}
+
+	if (navigator.clipboard && navigator.clipboard.writeText) {
+		navigator.clipboard.writeText(key.textContent).then(function() {
+			showCopyResult(true);
+		}).catch(function(error) {
+			console.error(error);
+			showCopyResult(copyWithSelection());
+		});
+		return;
+	}
+
+	showCopyResult(copyWithSelection());
+}
+document.getElementById('profileTrigger').addEventListener('click', toggleProfilePanel);
 document.addEventListener('click', function(event) {
-	var panel = document.getElementById('menuPanel');
-	if (panel && !panel.contains(event.target)) {
-		panel.classList.remove('open');
-		var button = document.querySelector('.dock-btn[aria-label="Menu"]');
-		if (button) button.setAttribute('aria-expanded', 'false');
+	var profilePanel = document.getElementById('profilePanel');
+	var profileTrigger = document.getElementById('profileTrigger');
+	if (profilePanel && !profilePanel.hidden && !profilePanel.contains(event.target) && !profileTrigger.contains(event.target)) {
+		profilePanel.hidden = true;
+		profileTrigger.setAttribute('aria-expanded', 'false');
 	}
 });
 document.addEventListener('DOMContentLoaded', function() {
 	initStars();
+	loadLandingPanchang();
+	initProfileLocationForm();
+	var toast = document.getElementById('profileToast');
+	if (toast) {
+		toast.hidden = false;
+		window.requestAnimationFrame(function() {
+			toast.classList.add('is-visible');
+		});
+		window.setTimeout(function() {
+			toast.classList.remove('is-visible');
+			window.setTimeout(function() {
+				toast.hidden = true;
+			}, 200);
+		}, 3000);
+		var currentUrl = new URL(window.location.href);
+		currentUrl.searchParams.delete('profile_saved');
+		window.history.replaceState(null, document.title, currentUrl.pathname + currentUrl.search + currentUrl.hash);
+	}
 });
+function readJsonResponse(response) {
+	return response.text().then(function(body) {
+		var data;
+		try {
+			data = JSON.parse(body);
+		} catch (error) {
+			throw new Error('Expected JSON but received HTTP ' + response.status + ': ' + body.slice(0, 240));
+		}
+		if (!response.ok) {
+			throw new Error(data.error || 'Request failed with status ' + response.status);
+		}
+		return data;
+	});
+}
+function initProfileLocationForm() {
+	var form = document.getElementById('profileLocationForm');
+	if (!form) return;
+
+	var placeInput = document.getElementById('profilePlace');
+	var timezoneInput = document.getElementById('profileTimezone');
+	var results = document.getElementById('profilePlaceResults');
+	var searchTimer;
+	var latestSearch = 0;
+
+	placeInput.addEventListener('input', function() {
+		timezoneInput.value = '';
+		placeInput.setCustomValidity('');
+		results.textContent = '';
+		window.clearTimeout(searchTimer);
+		var searchId = ++latestSearch;
+		var term = placeInput.value.trim();
+		if (term.length < 3) return;
+
+		searchTimer = window.setTimeout(function() {
+			fetch('backend-search.php?format=json&term=' + encodeURIComponent(term), {
+				headers: { 'X-Requested-With': 'XMLHttpRequest' }
+			})
+				.then(readJsonResponse)
+				.then(function(places) {
+					if (searchId !== latestSearch) return;
+					if (!Array.isArray(places) || places.length === 0) {
+						results.textContent = <?php echo json_encode(($currentLanguage === 'english') ? 'No matching places found.' : 'பொருந்தும் இடங்கள் இல்லை.', JSON_UNESCAPED_UNICODE); ?>;
+						return;
+					}
+
+					places.forEach(function(place) {
+						var option = document.createElement('button');
+						option.type = 'button';
+						option.setAttribute('role', 'option');
+						option.textContent = place.place + ', ' + place.country + ' (' + place.timezone + ')';
+						option.addEventListener('click', function(event) {
+							event.stopPropagation();
+							placeInput.value = place.place;
+							timezoneInput.value = place.timezone;
+							placeInput.setCustomValidity('');
+							results.textContent = '';
+						});
+						results.appendChild(option);
+					});
+				})
+				.catch(function(error) {
+					if (searchId !== latestSearch) return;
+					results.textContent = <?php echo json_encode(($currentLanguage === 'english') ? 'Unable to search places. Please try again.' : 'இடங்களைத் தேட முடியவில்லை. மீண்டும் முயற்சிக்கவும்.', JSON_UNESCAPED_UNICODE); ?>;
+					console.error(error);
+				});
+		}, 250);
+	});
+
+	form.addEventListener('submit', function(event) {
+		if (!timezoneInput.value) {
+			event.preventDefault();
+			placeInput.setCustomValidity(<?php echo json_encode(($currentLanguage === 'english') ? 'Select a city from the suggestions.' : 'பரிந்துரைகளிலிருந்து நகரத்தைத் தேர்ந்தெடுக்கவும்.', JSON_UNESCAPED_UNICODE); ?>);
+			placeInput.reportValidity();
+			return;
+		}
+		placeInput.setCustomValidity('');
+	});
+}
+function loadLandingPanchang() {
+	var values = document.querySelectorAll('[data-panchang-value]');
+	var placeCookie = document.cookie.match(/(?:^|; )place=([^;]*)/);
+	var daybar = document.querySelector('.daybar');
+	var savedPlace = daybar ? daybar.getAttribute('data-panchang-place') : '';
+	var place = savedPlace || (placeCookie ? decodeURIComponent(placeCookie[1]) : 'Chennai|Asia/Kolkata');
+	var placeParts = place.split('|');
+	var timeZone = placeParts[1] || 'Asia/Kolkata';
+	place = placeParts[0] + '|' + timeZone;
+	var now = new Date();
+	var dateParts = {};
+	var timeParts = {};
+
+	try {
+		new Intl.DateTimeFormat('en', {
+			timeZone: timeZone,
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit'
+		}).formatToParts(now).forEach(function(part) {
+			dateParts[part.type] = part.value;
+		});
+		new Intl.DateTimeFormat('en', {
+			timeZone: timeZone,
+			hour: '2-digit',
+			minute: '2-digit',
+			second: '2-digit',
+			hourCycle: 'h23'
+		}).formatToParts(now).forEach(function(part) {
+			timeParts[part.type] = part.value;
+		});
+	} catch (error) {
+		dateParts = {
+			year: now.getFullYear(),
+			month: String(now.getMonth() + 1).padStart(2, '0'),
+			day: String(now.getDate()).padStart(2, '0')
+		};
+		timeParts = {
+			hour: String(now.getHours()).padStart(2, '0'),
+			minute: String(now.getMinutes()).padStart(2, '0'),
+			second: String(now.getSeconds()).padStart(2, '0')
+		};
+	}
+
+	var date = dateParts.year + '-' + dateParts.month + '-' + dateParts.day;
+	var time = timeParts.hour + ':' + timeParts.minute + ':' + timeParts.second;
+	var query = '?format=json&place=' + encodeURIComponent(place) +
+		'&date=' + encodeURIComponent(date) + '&time=' + encodeURIComponent(time);
+
+	fetch('new_panchang_api.php' + query, {
+		headers: { 'X-Requested-With': 'XMLHttpRequest' }
+	})
+		.then(readJsonResponse)
+		.then(function(data) {
+			values.forEach(function(element) {
+				if (Object.prototype.hasOwnProperty.call(data, element.getAttribute('data-panchang-value'))) {
+					element.textContent = data[element.getAttribute('data-panchang-value')];
+				}
+			});
+			var periodStatus = document.querySelector('.daybar-period-status');
+			if (periodStatus) {
+				periodStatus.className = 'daybar-period-status is-' + data.period_status_type;
+			}
+			document.querySelectorAll('.daybar-period').forEach(function(period) {
+				period.classList.remove('is-active', 'is-upcoming');
+				if (period.getAttribute('data-period-key') === data.highlighted_period) {
+					period.classList.add('is-' + data.period_status_type);
+				}
+			});
+		})
+		.catch(function(error) {
+			var unavailable = <?php echo json_encode(($currentLanguage === 'english') ? 'Unavailable' : 'கிடைக்கவில்லை', JSON_UNESCAPED_UNICODE); ?>;
+			values.forEach(function(element) {
+				element.textContent = unavailable;
+			});
+			console.error(error);
+		});
+}
 function initStars() {
 	var canvas = document.getElementById('stars');
 	var ctx = canvas.getContext('2d');

@@ -17,6 +17,8 @@ if(!isset($_SESSION['userinfo']) or (!strcmp($_SESSION['userinfo']['user_type'],
 	return;
 }
 
+$maintenanceSection = isset($_GET['section']) && $_GET['section'] === 'theme' ? 'theme' : 'users';
+
 function getUserDetails()
 {
 	global $conn,$userInfo, $page, $results_per_page, $start_from, $userTotalPages;
@@ -115,14 +117,36 @@ function getUserTotal(){
 	return $userTotalPages;
 }
 
-//timezone for one NY co-ordinate
+if ($maintenanceSection !== 'theme') {
+	//timezone for one NY co-ordinate
+	debug("<BR>TEST - " . get_nearest_timezone(-38.451931,145.238983));
+	// more faster and accurate if you can pass the country code
+	//echo get_nearest_timezone(40.772222, -74.164581, 'US') ;
+	debug("<BR>TEST - " . get_nearest_timezone(19.076090, 72.854118,'IN'));
+}
 
-debug("<BR>TEST - " . get_nearest_timezone(-38.451931,145.238983));
-// more faster and accurate if you can pass the country code 
-//echo get_nearest_timezone(40.772222, -74.164581, 'US') ;
-debug("<BR>TEST - " . get_nearest_timezone(19.076090, 72.854118,'IN'));
-
-getUserDetails();
+if ($maintenanceSection === 'theme') {
+	require_once __DIR__ . '/client_theme_admin_controller.php';
+	$themeState = clientThemeAdminState('maintenance.php?section=theme');
+	$themePresets = $themeState['presets'];
+	$themeConfig = $themeState['config'];
+	$themeErrorMessage = $themeState['error'];
+	$themeSaved = $themeState['saved'];
+	$themeCsrf = $themeState['csrf'];
+	$themeFormAction = $themeState['form_action'];
+	$themeBackUrl = $themeState['back_url'];
+	$themeCustomThemes = $themeState['custom_themes'];
+	$themeCustomSaved = $themeState['custom_saved'];
+	$themeDraft = $themeState['draft'];
+	$themeCustomName = $themeState['custom_name'];
+	$themeActiveCustomTheme = $themeState['active_custom_theme'];
+	$themeActiveConfig = $themeState['active_config'];
+	$themeActiveLabel = $themeState['active_theme_label'];
+	$themeActiveSource = $themeState['active_theme_source'];
+	$themeActiveLoaded = $themeState['active_theme_loaded'];
+} else {
+	getUserDetails();
+}
 
 
 ?>
@@ -134,12 +158,15 @@ getUserDetails();
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="canonical" href="https://html5-templates.com/" />
-    <title>PK Astro admin page</title>
+    <title><?php echo $maintenanceSection === 'theme' ? 'Client theme settings' : 'PK Astro admin page'; ?></title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
 	
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/client_theme_css.php">
+	<link rel="stylesheet" href="css/admin-modern.css?<?php echo date('ymdhis'); ?>">
+	<?php if ($maintenanceSection === 'theme') { ?><link rel="stylesheet" href="css/client-theme-admin.css?<?php echo date('ymdhis'); ?>"><?php } ?>
 	<link href='https://fonts.googleapis.com/css?family=Julius Sans One' rel='stylesheet'>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">    
@@ -194,21 +221,33 @@ function openUserInfo(rowid){
     </script>
 </head>
 
-<body onLoad="init();">
+<body class="admin-ui admin-ui-maintenance" onLoad="init();">
 
 <div class="title"></div>
-<div class="">
+<?php displayUserInfo($_SESSION['userinfo']); ?>
+<div class="admin-shell">
 	<div class="column-menu">
-	<?php displayUserInfo($_SESSION['userinfo']); ?>
+		<div class="admin-brand">
+			<span class="admin-brand-mark">DS</span>
+			<span class="admin-brand-copy"><strong>DSJV</strong><small>Maintenance console</small></span>
+		</div>
 		<div class='desktop'>
 			<button class="menu" onClick="window.open('index.php','_self')">Home</button>
 			<button class='menu' onClick="window.open('addPlace.php','_self')">Add place</button>
+			<button class='menu' onClick="window.open('maintenance.php?section=theme','_self')">Theme settings</button>
 		</div>
 		<div class='mobile'>
 			<?php include "maintainMenu_mobile.php"; ?>
 		</div>
 	</div>
 	<div class='column-body'>
+		<?php if ($maintenanceSection === 'theme') { ?>
+			<?php include __DIR__ . '/client_theme_admin_panel.php'; ?>
+		<?php } else { ?>
+			<header class="admin-page-heading">
+				<div><span class="admin-page-eyebrow">MAINTENANCE</span><h1>User management</h1><p>Review accounts, search users and manage registration status.</p></div>
+				<span class="admin-page-badge">Management workspace</span>
+			</header>
 			<center><div class="divTable blueTable" id="chart">
 					<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">User detail</P>
 			
@@ -277,6 +316,7 @@ function openUserInfo(rowid){
 			<P><A href='previous_expiry_report.html' style='color:blue;'>Expired report</A></P>
 				<BR><BR><BR><BR><BR><BR>
 			</div></center>
+		<?php } ?>
 	  </div>
 	</div>
 </div>

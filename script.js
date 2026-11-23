@@ -94,8 +94,82 @@ document.addEventListener('click', function(e){
 // Inject compact language links for mobile navbars (if not already present)
 // Modern mobile FAB language control
 document.addEventListener('DOMContentLoaded', function(){
+	var columnMenu = document.querySelector('.column-menu');
+	var appTopbar = columnMenu && columnMenu.querySelector('.app-topbar');
+	if (appTopbar && appTopbar.parentElement !== columnMenu) {
+		columnMenu.insertBefore(appTopbar, columnMenu.firstElementChild);
+	}
+
+	var pagePanel = document.querySelector('.app-page-panel');
+	var pagePath = window.location.pathname.split('/').pop().toLowerCase();
+	var currentLanguage = getCookie('language') || 'tamil';
+	var isEnglish = currentLanguage === 'english';
+	var isIndexPage = document.body.classList.contains('theme-index-preview')
+		|| pagePath === 'index.php'
+		|| pagePath === 'indexmobile.php';
+	if (!pagePanel && !isIndexPage && !document.getElementById('panchangBody')
+		&& document.querySelector('.column-menu, .column-body')) {
+		pagePanel = document.createElement('nav');
+		pagePanel.className = 'app-page-panel';
+		pagePanel.setAttribute('aria-label', isEnglish ? 'Page actions' : 'பக்க செயல்கள்');
+		var homeLink = document.createElement('a');
+		homeLink.className = 'app-panel-home';
+		homeLink.href = 'index.php';
+		homeLink.setAttribute('aria-label', isEnglish ? 'Home' : 'முகப்பு');
+		homeLink.title = isEnglish ? 'Home' : 'முகப்பு';
+		homeLink.innerHTML = '<i class="fa fa-home" aria-hidden="true"></i>';
+		pagePanel.appendChild(homeLink);
+		document.body.appendChild(pagePanel);
+	}
+
+	if (pagePanel) {
+		if (pagePanel.classList.contains('app-page-panel-clean-nav')) {
+			document.body.classList.add('app-overlay-navigation');
+		}
+		if (pagePanel.parentElement !== document.body) {
+			document.body.appendChild(pagePanel);
+		}
+		document.body.classList.add('has-app-page-panel');
+
+		var pdfTrigger = null;
+		var pdfCandidates = document.querySelectorAll('a, button, input[type="button"], input[type="submit"]');
+		for (var i = 0; i < pdfCandidates.length; i++) {
+			var candidate = pdfCandidates[i];
+			if (candidate.closest('.app-page-panel') || candidate.disabled) continue;
+			var description = [
+				candidate.id,
+				candidate.getAttribute('aria-label'),
+				candidate.getAttribute('title'),
+				candidate.value,
+				candidate.textContent,
+				candidate.getAttribute('onclick'),
+				candidate.getAttribute('href')
+			].join(' ');
+			if (/pdf|html2pdf|generatepdf/i.test(description)) {
+				pdfTrigger = candidate;
+				break;
+			}
+		}
+
+		if (pdfTrigger && !pagePanel.querySelector('.app-panel-download')) {
+			var downloadLabel = isEnglish ? 'Download PDF' : 'PDF பதிவிறக்கம்';
+			var downloadButton = document.createElement('button');
+			downloadButton.type = 'button';
+			downloadButton.className = 'app-panel-download';
+			downloadButton.setAttribute('aria-label', downloadLabel);
+			downloadButton.setAttribute('title', downloadLabel);
+			downloadButton.innerHTML = '<i class="fa fa-download" aria-hidden="true"></i>';
+			downloadButton.addEventListener('click', function(){
+				pdfTrigger.click();
+			});
+			pagePanel.appendChild(downloadButton);
+		}
+	}
+
 	if(document.querySelector('#menuPanel .lang-selector')) return;
+	if(document.getElementById('panchangBody')) return;
 	if(document.querySelector('#panchangDock .panchang-dock-language')) return;
+	if(document.querySelector('.app-topbar .language-switch')) return;
 
 	// Only add on small screens
 	if(window.innerWidth > 768) return;

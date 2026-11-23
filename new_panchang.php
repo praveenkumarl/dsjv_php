@@ -222,7 +222,6 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/birth_chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
-	<link rel="stylesheet" href="css/rose-gold-theme.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/landing-theme.css?<?php echo date('ymdhis'); ?>">
 	<style>
 		#mybody1 {
@@ -231,189 +230,65 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			background:var(--landing-background);
 			color:var(--theme-text);
 		}
-		#mybody1 .panchang-topbar {
-			position:relative;
-			z-index:2;
-			display:flex;
-			min-height:82px;
-			align-items:center;
-			justify-content:center;
-			gap:14px;
-			margin:0 0 18px;
-			padding:10px 70px 10px 18px;
-			border-bottom:1px solid rgba(245,197,66,.42);
-			background:var(--panchang-topbar-gradient,linear-gradient(120deg,rgba(20,20,46,.97),rgba(30,22,58,.95),rgba(54,27,50,.95)));
-			box-shadow:0 12px 34px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.1);
-			backdrop-filter:blur(20px);
-			-webkit-backdrop-filter:blur(20px);
+		#mybody1 > .app-topbar {
+			margin-top:env(safe-area-inset-top);
 		}
-		#mybody1.remedy-dialog-open .panchang-topbar {
+		#mybody1 .panchang-bottom-nav {
 			position:fixed;
-			top:0;
-			right:0;
-			left:0;
-			z-index:30001;
-			margin:0;
-		}
-		#mybody1 .panchang-topbar .brand img {
-			height:42px;
-			max-width:30vw;
-		}
-		#mybody1 .panchang-topbar .headline {
-			margin:0;
-			font-size:clamp(17px,4.2vw,25px);
-			text-align:center;
-		}
-		#mybody1 .panchang-topbar .home-icon {
-			position:absolute;
-			top:50%;
-			right:18px;
-			display:flex;
-			width:42px;
-			height:42px;
-			align-items:center;
-			justify-content:center;
-			transform:translateY(-50%);
-			border:1px solid rgba(245,197,66,.42);
-			border-radius:14px;
-			background:rgba(255,255,255,.08);
-			color:var(--landing-text-gold);
-			font-size:20px;
-			text-decoration:none;
-			transition:background .16s ease,transform .16s ease;
-		}
-		#mybody1 .panchang-topbar .home-icon:hover,
-		#mybody1 .panchang-topbar .home-icon:focus-visible {
-			background:rgba(245,197,66,.18);
-		}
-		#mybody1 .column-menu {
-			background:var(--theme-surface-menu)!important;
-			border-color:rgba(245,197,66,.28);
-			box-shadow:0 12px 32px rgba(4,4,15,.42),inset 0 1px rgba(255,255,255,.1);
-			color:var(--landing-text-light);
-			backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
-			-webkit-backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
-		}
-		#mybody1 .envWeb {
-			gap:6px;
-			padding:5px;
-			border-bottom:1px solid rgba(245,197,66,.24);
-			background:var(--theme-surface-toolbar)!important;
-			color:var(--landing-text-light);
-			backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
-			-webkit-backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
-		}
-		#mybody1 .userinfo, #mybody1 .userinfoMobile {
-			border:1px solid rgba(245,197,66,.3);
-			border-radius:12px;
-			background:rgba(255,255,255,.07)!important;
-			color:var(--landing-text-gold);
-			backdrop-filter:blur(12px);
-			-webkit-backdrop-filter:blur(12px);
-		}
-		#mybody1 .navbar {
-			border-bottom:1px solid rgba(245,197,66,.24);
-			background:var(--theme-surface-navbar)!important;
-			backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
-			-webkit-backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
-		}
-		#mybody1 .navbar a, #mybody1 .navbar .dropbtn {
-			color:var(--landing-text-gold);
-		}
-		#mybody1 .dropdown1-content a {
-			color:var(--landing-text-light)!important;
-		}
-		#mybody1 .navbar a:hover, #mybody1 .dropdown1:hover .dropbtn {
-			background:rgba(245,197,66,.14)!important;
-			color:var(--landing-text-gold);
-		}
-		#mybody1 .dropdown1-content {
-			border:1px solid rgba(185,140,255,.3);
-			border-radius:14px;
-			background:var(--theme-surface-dropdown)!important;
-			box-shadow:0 22px 60px rgba(4,4,15,.5),0 0 26px rgba(91,43,224,.16),inset 0 1px rgba(255,255,255,.12);
-			backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
-			-webkit-backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
-		}
-		#mybody1 #appMenu.dropdown-panel {
-			position:fixed;
-			bottom:84px;
-			left:50%;
-			z-index:101;
-			width:min(88vw,360px);
-			max-height:min(72vh,620px);
-			transform:translateX(-50%);
-			border:1px solid rgba(185,140,255,.3);
-			border-radius:var(--landing-panel-radius);
-			background:var(--landing-menu-gradient)!important;
-			box-shadow:0 22px 60px rgba(4,4,15,.68),0 0 26px rgba(91,43,224,.16),inset 0 1px rgba(255,255,255,.12);
-		}
-		#mybody1 #appMenu.dropdown-panel:not(.open) {
-			display:none!important;
-		}
-		#mybody1 #appMenu.dropdown-panel.open {
-			display:block!important;
-		}
-		#mybody1 #panchangDock .panchang-profile-toggle {
-			display:inline-flex;
-			width:50px;
-			height:50px;
-			align-items:center;
-			justify-content:center;
-			border:1px solid rgba(245,197,66,.42);
-			border-radius:50%;
-			background:rgba(255,255,255,.08);
-			color:var(--landing-text-gold);
-			cursor:pointer;
-			font-size:18px;
-		}
-		#mybody1 #panchangDock .panchang-profile-toggle:hover,
-		#mybody1 #panchangDock .panchang-profile-toggle[aria-expanded="true"] {
-			background:rgba(245,197,66,.18);
-		}
-		#mybody1 #panchangDock .panchang-profile-card {
-			position:absolute;
-			top:auto;
 			right:auto;
-			bottom:calc(100% + 12px);
+			bottom:calc(10px + env(safe-area-inset-bottom));
 			left:50%;
-			z-index:3;
-			display:none;
-			width:min(82vw,320px);
-			max-height:min(65vh,520px);
-			padding:14px;
-			overflow:auto;
-			border:1px solid rgba(245,197,66,.42);
-			border-radius:16px;
-			background:var(--theme-surface-panel-solid);
-			box-shadow:0 16px 38px rgba(4,4,15,.42);
-			color:var(--theme-text);
+			z-index:130;
+			display:flex;
+			gap:6px;
+			width:max-content;
+			max-width:calc(100vw - 24px);
+			margin:0;
+			padding:7px;
 			transform:translateX(-50%);
+			border:1px solid var(--theme-border-accent,rgba(255,214,230,.12));
+			border-radius:22px;
+			background:var(--theme-surface-panel-solid,rgba(42,22,64,.95));
+			box-shadow:0 8px 26px rgba(0,0,0,.32);
+			backdrop-filter:blur(14px);
+			-webkit-backdrop-filter:blur(14px);
 		}
-		#mybody1 #panchangDock .panchang-profile-card.open {
+		#mybody1 .panchang-bottom-nav a {
 			display:grid;
-			gap:8px;
+			width:46px;
+			height:42px;
+			place-items:center;
+			border-radius:15px;
+			color:var(--theme-text-secondary,#c4afd2);
+			font-size:17px;
+			text-decoration:none;
+			transition:background-color .18s ease,color .18s ease;
 		}
-		#mybody1 #panchangDock .panchang-profile-card h2 {
-			margin:0 0 2px;
-			color:var(--theme-text-heading);
-			font-size:16px;
-		}
-		#mybody1 #panchangDock .panchang-profile-row {
+		#mybody1 .panchang-bottom-nav button {
 			display:grid;
-			grid-template-columns:minmax(90px,.8fr) minmax(0,1.2fr);
-			gap:8px;
-			padding-bottom:6px;
-			border-bottom:1px solid var(--theme-border-subtle);
-			font-size:13px;
-			overflow-wrap:anywhere;
+			width:46px;
+			height:42px;
+			place-items:center;
+			padding:0;
+			border:0;
+			border-radius:15px;
+			background:transparent;
+			color:var(--theme-text-secondary,#c4afd2);
+			font-size:17px;
+			cursor:pointer;
+			transition:background-color .18s ease,color .18s ease;
 		}
-		#mybody1 #panchangDock .panchang-profile-row:last-child {
-			padding-bottom:0;
-			border-bottom:0;
+		#mybody1 .panchang-bottom-nav a.is-active {
+			background:var(--client-accent);
+			color:var(--client-on-accent);
 		}
-		#mybody1 #panchangDock .panchang-profile-row span:first-child {
-			color:var(--theme-text-secondary);
+		#mybody1 .panchang-bottom-nav a:focus-visible {
+			outline:2px solid var(--client-accent);
+			outline-offset:2px;
+		}
+		#mybody1 .panchang-bottom-nav button:focus-visible {
+			outline:2px solid var(--client-accent);
+			outline-offset:2px;
 		}
 		#mybody1 .column-body {
 			display:block;
@@ -422,10 +297,10 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			max-width:1080px;
 			margin:0 auto 20px;
 			padding:16px;
-			border:1px solid rgba(197,151,44,.3);
+			border:1px solid var(--theme-glass-border);
 			border-radius:24px;
-			background:rgba(255,255,255,.97)!important;
-			box-shadow:0 16px 42px rgba(38,27,54,.12),inset 0 1px rgba(255,255,255,.95);
+			background:var(--theme-surface-panel-solid)!important;
+			box-shadow:0 16px 42px var(--theme-shadow-panel),inset 0 1px var(--theme-glass-highlight);
 			color:var(--theme-text);
 		}
 		#divOrigContainer .divTable.blueTable {
@@ -905,6 +780,9 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			overflow-wrap:anywhere;
 		}
 		#transitChart .divTableCell {
+			border-color:var(--theme-chart-box-border,var(--theme-chart-border))!important;
+			background:var(--theme-chart-box-background,var(--theme-chart-background))!important;
+			color:var(--theme-chart-box-text,var(--theme-chart-text,var(--theme-text)))!important;
 			font-size:var(--transit-chart-cell-font-size,clamp(13px,3.8vw,18px));
 		}
 		#transitChart .divTableCenterCell {
@@ -1014,7 +892,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		}
 		#transitChart .thithi_soonyam {
 			background:var(--theme-danger-soft);
-			color:var(--theme-text-error-strong);
+			color:var(--theme-chart-box-error,var(--theme-text-error-strong));
 		}
 		#muhurthamDiv {
 			background:var(--theme-overlay)!important;
@@ -1243,8 +1121,6 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		#mybody1 .starDivition table thead tr {
 			background:var(--theme-accent-medium)!important;
 		}
-		#mybody1 .column-menu,
-		#mybody1 .dropdown1-content,
 		#panchangForm,
 		#divOrigContainer .divTable.blueTable:not(#transitChart),
 		#muhurthamDiv .table-container,
@@ -1312,19 +1188,6 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 				right:10px;
 				width:36px;
 				height:36px;
-			}
-			#mybody1 .panchang-topbar {
-				min-height:88px;
-				flex-direction:column;
-				gap:2px;
-				padding:8px 60px 8px 12px;
-			}
-			#mybody1 .panchang-topbar .brand img {
-				height:34px;
-				max-width:52vw;
-			}
-			#mybody1 .panchang-topbar .headline {
-				font-size:18px;
 			}
 			#mybody1 .column-body {
 				width:calc(100% - 16px);
@@ -2091,7 +1954,6 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		var param = '<?php echo $flag; ?>';
 		
 		if(param==1){ //Panchang details alone
-			document.getElementById('appMenu').style.display = 'none';
 			document.getElementById('panchangForm').style.display = 'none';
 			document.getElementById('panchangDetailsHeading').style.display = 'reset';
 			document.getElementById('panchangDetails').style.display = 'table';
@@ -2099,7 +1961,6 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			document.getElementById('transitChart').style.display = 'none';
 		}
 		else if(param==2){ //transit chart alone
-			document.getElementById('appMenu').style.display = 'none';
 			document.getElementById('panchangForm').style.display = 'none';
 			document.getElementById('panchangDetailsHeading').style.display = 'none';
 			document.getElementById('panchangDetails').style.display = 'none';
@@ -2809,7 +2670,7 @@ function closePushkaraTable() {
 	</script>
 </head>
 
-<body id='mybody1' class='theme-rose-gold theme-landing'>
+<body id='mybody1' class='theme-panchang-dark theme-landing'>
 <div class="karanamDiv" id="karanamDiv" onclick="hideKaranamDiv()"><!-- <img src='images/karanam.png' /> --></div>
 <!-- <div class="muhurthamDiv" id="muhurthamDiv" onclick="this.style.display='none'"></div> -->
 <div class="muhurthamDiv" id="muhurthamDiv"></div>
@@ -3590,42 +3451,6 @@ updateIndhuLagna();
 calculatePanchang();
 calculateBirthPanchang();
 
-$profileData = isset($_SESSION['userinfo']) && is_array($_SESSION['userinfo']) ? $_SESSION['userinfo'] : [];
-$profileLabels = $language === 'english'
-	? ['title' => 'Profile', 'name' => 'Name', 'phone' => 'Phone', 'imei' => 'IMEI', 'expiry' => 'Expiry', 'user_type' => 'User type', 'registered' => 'Registered', 'office' => 'Office', 'office_contact' => 'Office phone', 'last_login' => 'Last login', 'unavailable' => 'Not available']
-	: ['title' => 'பயனர் விவரம்', 'name' => 'பெயர்', 'phone' => 'கைபேசி', 'imei' => 'IMEI', 'expiry' => 'காலாவதி', 'user_type' => 'பயனர் வகை', 'registered' => 'பதிவு தேதி', 'office' => 'அலுவலகம்', 'office_contact' => 'அலுவலக தொலைபேசி', 'last_login' => 'கடைசி உள்நுழைவு', 'unavailable' => 'கிடைக்கவில்லை'];
-$expiryValue = isset($profileData['expiry_date']) ? trim((string)$profileData['expiry_date']) : '';
-$expiryTimestamp = $expiryValue !== '' ? strtotime($expiryValue) : false;
-if ($expiryTimestamp !== false) {
-	$expiryValue = date('d-m-Y', $expiryTimestamp);
-}
-$registeredValue = isset($profileData['registered_date']) ? trim((string)$profileData['registered_date']) : '';
-$registeredTimestamp = $registeredValue !== '' ? strtotime($registeredValue) : false;
-if ($registeredTimestamp !== false) {
-	$registeredValue = date('d-m-Y', $registeredTimestamp);
-}
-$lastLoginValue = isset($profileData['last_login']) ? trim((string)$profileData['last_login']) : '';
-$lastLoginTimestamp = $lastLoginValue !== '' ? strtotime($lastLoginValue) : false;
-if ($lastLoginTimestamp !== false) {
-	$lastLoginValue = date('d-m-Y H:i', $lastLoginTimestamp);
-}
-$profileFields = [
-	[$profileLabels['name'], isset($profileData['name']) ? trim((string)$profileData['name']) : ''],
-	[$profileLabels['phone'], isset($profileData['phone']) ? trim((string)$profileData['phone']) : ''],
-	[$profileLabels['imei'], isset($profileData['imei']) ? trim((string)$profileData['imei']) : ''],
-	[$profileLabels['expiry'], $expiryValue],
-	[$profileLabels['user_type'], isset($profileData['user_type']) ? trim((string)$profileData['user_type']) : ''],
-	[$profileLabels['registered'], $registeredValue],
-	[$profileLabels['office'], isset($profileData['office_name']) ? trim((string)$profileData['office_name']) : ''],
-	[$profileLabels['office_contact'], isset($profileData['office_contact']) ? trim((string)$profileData['office_contact']) : ''],
-	[$profileLabels['last_login'], $lastLoginValue]
-];
-$profileDetails = '';
-foreach ($profileFields as $profileField) {
-	$profileValue = $profileField[1] !== '' ? $profileField[1] : $profileLabels['unavailable'];
-	$profileDetails .= "<div class='panchang-profile-row'><span>" . htmlspecialchars($profileField[0], ENT_QUOTES, 'UTF-8') . "</span><span>" . htmlspecialchars($profileValue, ENT_QUOTES, 'UTF-8') . "</span></div>";
-}
-$profileTitle = htmlspecialchars($profileLabels['title'], ENT_QUOTES, 'UTF-8');
 $formDateLabel = htmlspecialchars(__('date'), ENT_QUOTES, 'UTF-8');
 $formTimeLabel = htmlspecialchars(__('time'), ENT_QUOTES, 'UTF-8');
 $formPlaceLabel = htmlspecialchars(__('place'), ENT_QUOTES, 'UTF-8');
@@ -3658,248 +3483,15 @@ for ($timelineOffset = -14; $timelineOffset <= 14; $timelineOffset++) {
 		. "<span class='panchang-timeline-month-marker'></span>"
 		. "</button>";
 }
-$summaryLanguageIndex = ($language === 'english') ? 0 : 1;
-$summaryTitle = htmlspecialchars(__('panchang_summary'), ENT_QUOTES, 'UTF-8');
-$summaryFullDetailsLabel = htmlspecialchars(__('view_full_details'), ENT_QUOTES, 'UTF-8');
-$summarySelectedDate = $chart_date;
-$summaryTamilDateRaw = getTamilDate();
-$chart_date = $summarySelectedDate;
-$summaryTamilDateParts = preg_split('/<br\s*\/?>/i', $summaryTamilDateRaw);
-$summaryTamilMonth = '';
-$summaryTamilDay = 0;
-if (isset($summaryTamilDateParts[1]) && preg_match('/^(.+?)\s+(\d+)$/u', trim(strip_tags($summaryTamilDateParts[1])), $summaryTamilDateMatch)) {
-	$summaryTamilMonth = trim($summaryTamilDateMatch[1]);
-	$summaryTamilDay = (int)$summaryTamilDateMatch[2];
-}
-$summaryTamilDate = htmlspecialchars(translate_tamil_text(trim(preg_replace('/\s+/', ' ', strip_tags(str_ireplace('<br>', ' ', $summaryTamilDateRaw))))), ENT_QUOTES, 'UTF-8');
-$summaryDate = htmlspecialchars(date('j M Y', strtotime($summarySelectedDate)), ENT_QUOTES, 'UTF-8');
-$summaryCalendarDay = htmlspecialchars(date('j', strtotime($summarySelectedDate)), ENT_QUOTES, 'UTF-8');
-$summaryCalendarMonthYear = htmlspecialchars(date('M Y', strtotime($summarySelectedDate)), ENT_QUOTES, 'UTF-8');
-$summaryTime = htmlspecialchars(date('g:i A', strtotime($chart_time)), ENT_QUOTES, 'UTF-8');
-$summaryWeekday = htmlspecialchars(explode('/', $panchang['vaaram'])[$summaryLanguageIndex], ENT_QUOTES, 'UTF-8');
-$summaryThithi = htmlspecialchars(explode('/', explode('[', $panchang['thithi'])[0])[$summaryLanguageIndex], ENT_QUOTES, 'UTF-8');
-$summaryNakshatra = htmlspecialchars(explode('/', $panchang['nak'])[$summaryLanguageIndex], ENT_QUOTES, 'UTF-8');
-$summaryYogam = htmlspecialchars(translate_tamil_text($panchang['yoga']), ENT_QUOTES, 'UTF-8');
-$summaryKaranam = htmlspecialchars(explode('/', $panchang['karan'])[$summaryLanguageIndex], ENT_QUOTES, 'UTF-8');
-$summaryCity = htmlspecialchars($city, ENT_QUOTES, 'UTF-8');
-$summaryRahuKaalam = getRahuKaalam();
-$summaryEmaKantam = getEmaKantam();
-$summaryKuligai = getKulikai();
-$summaryKariNaal = isset($g_kariNaal) && $g_kariNaal === 'கரி நாள்';
-$summaryThaniyaDates = [
-	'சித்திரை' => [3, 20], 'வைகாசி' => [9, 22], 'ஆனி' => [8, 22], 'ஆடி' => [7, 20],
-	'ஆவணி' => [7, 18], 'புரட்டாசி' => [9, 26], 'ஐப்பசி' => [8, 19], 'கார்த்திகை' => [8, 14],
-	'மார்கழி' => [8, 26], 'தை' => [8, 15], 'மாசி' => [15, 24], 'பங்குனி' => [18, 24]
-];
-$summaryIsThaniya = isset($summaryThaniyaDates[$summaryTamilMonth]) && in_array($summaryTamilDay, $summaryThaniyaDates[$summaryTamilMonth], true);
-$summaryIsCaution = $summaryKariNaal || $summaryIsThaniya || in_array((int)$g_thithi_idx, [7, 8], true);
-
-$summaryHoraCycle = ['சூரி', 'சுக்', 'புத', 'சந்', 'சனி', 'குரு', 'செ'];
-$summaryHoraDayLords = [0, 3, 6, 2, 5, 4, 1];
-$summaryHoraLordAt = function($weekday, $index) use ($summaryHoraCycle, $summaryHoraDayLords) {
-	return $summaryHoraCycle[($summaryHoraDayLords[$weekday] + $index) % count($summaryHoraCycle)];
-};
-$summaryReferenceTimestamp = time();
-$summaryHoraTimestamp = time();
-$summaryHoraDate = date('Y-m-d', $summaryHoraTimestamp);
-$summaryHoraNextDate = date('Y-m-d', strtotime('+1 day', $summaryHoraTimestamp));
-$summaryHoraPreviousDate = date('Y-m-d', strtotime('-1 day', $summaryHoraTimestamp));
-$summarySunriseTimestamp = strtotime($summaryHoraDate . ' ' . getSunrise(strtotime($summaryHoraDate), floatval($lat), floatval($lon)));
-$summarySunsetTimestamp = strtotime($summaryHoraDate . ' ' . getSunset(strtotime($summaryHoraDate), floatval($lat), floatval($lon)));
-$summaryTomorrowSunriseTimestamp = strtotime($summaryHoraNextDate . ' ' . getSunrise(strtotime($summaryHoraNextDate), floatval($lat), floatval($lon)));
-$summaryPreviousSunsetTimestamp = strtotime($summaryHoraPreviousDate . ' ' . getSunset(strtotime($summaryHoraPreviousDate), floatval($lat), floatval($lon)));
-$summaryHoraWeekday = $summaryHoraTimestamp !== false
-	? (int)date('w', $summaryHoraTimestamp)
-	: (int)date('w', strtotime($summarySelectedDate));
-$summaryHoraIndex = 0;
-$summaryHoraStartTimestamp = false;
-$summaryHoraEndTimestamp = false;
-$summaryHoraValid = false;
-if ($summaryHoraTimestamp !== false && $summarySunriseTimestamp !== false && $summarySunsetTimestamp !== false && $summaryTomorrowSunriseTimestamp !== false && $summaryPreviousSunsetTimestamp !== false) {
-	if ($summaryHoraTimestamp < $summarySunriseTimestamp) {
-		$summaryHoraWeekday = ($summaryHoraWeekday + 6) % 7;
-		$summaryHoraStartTimestamp = $summaryPreviousSunsetTimestamp;
-		$summaryHoraEndTimestamp = $summarySunriseTimestamp;
-		$summaryHoraIndex = 12;
-	} elseif ($summaryHoraTimestamp >= $summarySunsetTimestamp) {
-		$summaryHoraStartTimestamp = $summarySunsetTimestamp;
-		$summaryHoraEndTimestamp = $summaryTomorrowSunriseTimestamp;
-		$summaryHoraIndex = 12;
-	} else {
-		$summaryHoraStartTimestamp = $summarySunriseTimestamp;
-		$summaryHoraEndTimestamp = $summarySunsetTimestamp;
-	}
-
-	$summaryHoraDuration = ($summaryHoraEndTimestamp - $summaryHoraStartTimestamp) / 12;
-	if ($summaryHoraDuration > 0) {
-		$summaryHoraIndex += (int)floor(($summaryHoraTimestamp - $summaryHoraStartTimestamp) / $summaryHoraDuration);
-		$summaryHoraIndex = max(0, min(23, $summaryHoraIndex));
-		$summaryHoraValid = true;
-	}
-}
-
-$summaryCurrentHora = '';
-if ($summaryHoraValid) {
-	$summaryCurrentHora = $summaryHoraLordAt($summaryHoraWeekday, $summaryHoraIndex);
-	$summaryBeneficHoras = ['குரு', 'சுக்', 'புத', 'சந்'];
-}
-
-$summaryParseMeridianTime = function($timeValue) {
-	if (!preg_match('/^\s*(\d{1,2}):(\d{2})\s*(AM|PM)\s*$/i', $timeValue, $matches)) {
-		return null;
-	}
-	$hour = ((int)$matches[1]) % 12;
-	if (strtoupper($matches[3]) === 'PM') {
-		$hour += 12;
-	}
-	return $hour * 60 + (int)$matches[2];
-};
-$summaryChartHour = $summaryReferenceTimestamp !== false
-	? (int)date('H', $summaryReferenceTimestamp)
-	: (int)date('H', strtotime($chart_time));
-$summaryChartMinute = $summaryReferenceTimestamp !== false
-	? (int)date('i', $summaryReferenceTimestamp)
-	: (int)date('i', strtotime($chart_time));
-$summaryCurrentMinutes = $summaryChartHour * 60 + $summaryChartMinute;
-$summaryPeriods = [
-	['label' => __('ema_kantam'), 'value' => $summaryEmaKantam],
-	['label' => __('rahu_kaalam'), 'value' => $summaryRahuKaalam],
-	['label' => __('kuligai_time'), 'value' => $summaryKuligai]
-];
-$summaryActivePeriod = null;
-$summaryNextPeriod = null;
-foreach ($summaryPeriods as $summaryPeriodIndex => $summaryPeriod) {
-	$summaryRangeParts = preg_split('/\s*-\s*/', $summaryPeriod['value']);
-	if (count($summaryRangeParts) !== 2) {
-		continue;
-	}
-	$summaryPeriodStart = $summaryParseMeridianTime($summaryRangeParts[0]);
-	$summaryPeriodEnd = $summaryParseMeridianTime($summaryRangeParts[1]);
-	if ($summaryPeriodStart === null || $summaryPeriodEnd === null) {
-		continue;
-	}
-	$summaryPeriods[$summaryPeriodIndex]['start'] = trim($summaryRangeParts[0]);
-	$summaryPeriods[$summaryPeriodIndex]['end'] = trim($summaryRangeParts[1]);
-	if ($summaryCurrentMinutes >= $summaryPeriodStart && $summaryCurrentMinutes <= $summaryPeriodEnd) {
-		if ($summaryActivePeriod === null) {
-			$summaryActivePeriod = $summaryPeriods[$summaryPeriodIndex];
-		}
-	} elseif ($summaryPeriodStart > $summaryCurrentMinutes && ($summaryNextPeriod === null || $summaryPeriodStart < $summaryNextPeriod['start_minutes'])) {
-		$summaryPeriods[$summaryPeriodIndex]['start_minutes'] = $summaryPeriodStart;
-		$summaryNextPeriod = $summaryPeriods[$summaryPeriodIndex];
-	}
-}
-if ($summaryActivePeriod !== null) {
-	$summaryKaalStatus = $summaryActivePeriod['label'] . ' · ' . __('active_until') . ' ' . $summaryActivePeriod['end'];
-	$summaryKaalStatusClass = 'is-active';
-} elseif ($summaryNextPeriod !== null) {
-	$summaryKaalStatus = $summaryNextPeriod['label'] . ' · ' . __('next_period_at') . ' ' . $summaryNextPeriod['start'];
-	$summaryKaalStatusClass = 'is-upcoming';
-} else {
-	$summaryKaalStatus = __('periods_finished');
-	$summaryKaalStatusClass = 'is-clear';
-}
-
-$summaryItems = [
-	[__('thithi'), $summaryThithi, 'thithi'],
-	[__('nakshatra'), $summaryNakshatra, 'nakshatra'],
-	[__('yogam'), $summaryYogam, 'yogam'],
-	[__('karanam'), $summaryKaranam, 'karanam']
-];
-
-$summaryCoreItemsMarkup = '';
-foreach ($summaryItems as $summaryItem) {
-	$summaryLabel = htmlspecialchars($summaryItem[0], ENT_QUOTES, 'UTF-8');
-	$summaryValue = htmlspecialchars((string)$summaryItem[1], ENT_QUOTES, 'UTF-8');
-	$summaryTone = htmlspecialchars($summaryItem[2], ENT_QUOTES, 'UTF-8');
-	$summaryCoreItemsMarkup .= "<div class='panchang-summary-item tone-$summaryTone' role='listitem' aria-label='$summaryLabel: $summaryValue'><span>$summaryLabel</span><strong>$summaryValue</strong></div>";
-}
-$summaryDayMarksMarkup = '';
-if ($summaryKariNaal) {
-	$summaryDayMarksMarkup .= "<span class='panchang-summary-day-mark'>" . htmlspecialchars(__('kari_naal'), ENT_QUOTES, 'UTF-8') . "</span>";
-}
-if ($summaryIsThaniya) {
-	$summaryDayMarksMarkup .= "<span class='panchang-summary-day-mark'>" . htmlspecialchars(__('thaniya_day'), ENT_QUOTES, 'UTF-8') . "</span>";
-}
-if ($summaryDayMarksMarkup === '' && $summaryIsCaution) {
-	$summaryDayMarksMarkup = "<span class='panchang-summary-day-mark is-caution'>" . htmlspecialchars(__('caution_day'), ENT_QUOTES, 'UTF-8') . "</span>";
-}
-
-$summaryPeriodItemsMarkup = '';
-foreach ($summaryPeriods as $summaryPeriod) {
-	$summaryPeriodClass = '';
-	if ($summaryActivePeriod !== null && $summaryActivePeriod['label'] === $summaryPeriod['label']) {
-		$summaryPeriodClass = ' is-active';
-	} elseif ($summaryActivePeriod === null && $summaryNextPeriod !== null && $summaryNextPeriod['label'] === $summaryPeriod['label']) {
-		$summaryPeriodClass = ' is-upcoming';
-	}
-	$summaryPeriodLabel = htmlspecialchars($summaryPeriod['label'], ENT_QUOTES, 'UTF-8');
-	$summaryPeriodValue = htmlspecialchars($summaryPeriod['value'], ENT_QUOTES, 'UTF-8');
-	$summaryPeriodItemsMarkup .= "<div class='panchang-summary-period$summaryPeriodClass' role='listitem'><strong>$summaryPeriodLabel</strong><span>$summaryPeriodValue</span></div>";
-}
-$summaryInauspiciousLabel = htmlspecialchars(__('inauspicious_times'), ENT_QUOTES, 'UTF-8');
-$summaryHoraMarkup = '';
-if ($summaryHoraValid) {
-	$summaryHoraCurrentLabel = htmlspecialchars(translate_planet_abbr($summaryCurrentHora), ENT_QUOTES, 'UTF-8');
-	$summaryHoraCurrentText = htmlspecialchars(__('current_horai'), ENT_QUOTES, 'UTF-8');
-	$summaryHoraTime = htmlspecialchars(date('g:i A', $summaryHoraTimestamp), ENT_QUOTES, 'UTF-8');
-	$summaryHoraCategory = in_array($summaryCurrentHora, $summaryBeneficHoras, true)
-		? 'good'
-		: ($summaryCurrentHora === 'சூரி' ? 'mixed' : 'avoid');
-	$summaryHoraCategoryText = htmlspecialchars(__('hora_' . $summaryHoraCategory), ENT_QUOTES, 'UTF-8');
-	$summaryHoraAria = htmlspecialchars($summaryHoraCurrentText . ' · ' . $summaryHoraTime . ' · ' . $summaryHoraCurrentLabel . ' · ' . $summaryHoraCategoryText, ENT_QUOTES, 'UTF-8');
-	$summaryHoraMarkup = "<div class='panchang-hora-indicator is-$summaryHoraCategory' role='status' aria-label='$summaryHoraAria'>"
-		. "<i class='fa fa-clock-o' aria-hidden='true'></i><span>$summaryHoraCurrentText · $summaryHoraTime</span>"
-		. "<strong>$summaryHoraCurrentLabel</strong>"
-		. "<span class='panchang-hora-quality'>$summaryHoraCategoryText</span>"
-		. "</div>";
-}
-$summaryKaalStatusText = htmlspecialchars($summaryKaalStatus, ENT_QUOTES, 'UTF-8');
-$summaryKaalStatusClass = htmlspecialchars($summaryKaalStatusClass, ENT_QUOTES, 'UTF-8');
-$summaryCard = "<section class='panchang-summary-card' aria-labelledby='panchangSummaryTitle'>"
-	. "<div class='panchang-summary-header'><div class='panchang-summary-title-row'><h2 id='panchangSummaryTitle'>$summaryTitle</h2><div class='panchang-summary-header-actions'><div class='panchang-summary-location' aria-label='$summaryCity'><i class='fa fa-map-marker' aria-hidden='true'></i><span>$summaryCity</span></div><div class='panchang-summary-day-marks'>$summaryDayMarksMarkup</div></div></div>"
-	. "<div class='panchang-summary-context' role='list'>"
-	. "<div class='panchang-summary-calendar panchang-summary-calendar-date-tile panchang-summary-calendar-primary' role='listitem' aria-label='$summaryDate, $summaryWeekday, $summaryTamilDate, $summaryTime'>"
-	. "<div class='panchang-summary-calendar-date'><span>$summaryCalendarMonthYear</span><strong>$summaryCalendarDay</strong></div><div class='panchang-summary-primary-details'><strong class='panchang-summary-calendar-weekday'>$summaryWeekday</strong>" . ($summaryTamilDate !== '' ? "<span class='panchang-summary-tamil-date'>$summaryTamilDate</span>" : '') . "</div><strong class='panchang-summary-calendar-time'>$summaryTime</strong>"
-	. "</div>"
-	. "</div></div>"
-	. "<div class='panchang-summary-grid' role='list' aria-label='$summaryTitle'>$summaryCoreItemsMarkup</div>"
-	. "<div class='panchang-summary-time'>"
-	. "<div class='panchang-summary-time-heading'><strong>$summaryInauspiciousLabel</strong><span class='panchang-summary-status $summaryKaalStatusClass' role='status'>$summaryKaalStatusText</span></div>"
-	. "<div class='panchang-summary-periods' role='list' aria-label='$summaryInauspiciousLabel'>$summaryPeriodItemsMarkup</div>"
-	. "</div>"
-	. $summaryHoraMarkup
-	. "<div class='panchang-summary-footer'><a class='panchang-summary-link' href='#panchangDetails'>$summaryFullDetailsLabel&nbsp;→</a></div>"
-	. "</section>";
-$moduleName = htmlspecialchars(__('panchangam'), ENT_QUOTES, 'UTF-8');
-$brandHeader = "<header class='panchang-topbar'><a class='brand' href='index.php' aria-label='DSJV home'><img src='images/dsjv_title.png' alt='DSJV'></a><h1 class='headline'>$moduleName</h1><a class='home-icon' href='index.php' aria-label='Home' title='Home'><i class='fa fa-home' aria-hidden='true'></i></a></header>";
+ob_start();
+displayUserInfo($_SESSION['userinfo'], false);
+$pageHeader = ob_get_clean();
 
 echo <<<EOL
 	<div class="title" id='title'></div>
-		$brandHeader
-		<div class='column-menu dropdown-panel' id='appMenu' style='display:$home'>
-			<div class='desktop'>
-				
-EOL;
-				$hideIndexMenuLanguageToggle = true;
-				echo "<button class='menu' onClick=\"window.open('index.php','_self')\">Home</button>";
-				include "indexMenu.php";
-				unset($hideIndexMenuLanguageToggle);
-echo <<<EOL
-			</div>
-			<div class='mobile'>
-EOL;
-			
-					include "indexMenu_mobile.php";
-					//include "setDefaultHome.php";
-			
-
-echo <<<EOL
-			</div>
-		</div>
+		$pageHeader
 		<div class='column-body' id='panchangBody'>
 		<div id='divOrigContainer'>
-			$summaryCard
 			<form name='updatePanchang' id='panchangForm' action='new_panchang.php?debug=$DEBUG' method='post' onsubmit='preparePanchangTimeMode();'>
 				<input type='hidden' id='nPlace' name='nPlace' value='$place'>
 				<input type='hidden' id='place_flag' name='place_flag' value=0>
@@ -4671,80 +4263,13 @@ window.addEventListener('resize', fitTransitChartPlanetText);
 </script>
 
 <?php if ($flag == 0 && $home !== "none") { ?>
-<div class="dock" id="panchangDock">
-	<div class="menu-wrap">
-		<button class="dock-btn" type="button" onclick="togglePanchangMenu(event)" aria-label="Menu" aria-controls="appMenu" aria-expanded="false">
-			<i class="fa fa-bars" aria-hidden="true"></i>
-		</button>
-	</div>
-	<button class="dock-btn panchang-profile-toggle" type="button" onclick="togglePanchangProfile(event)" aria-label="<?php echo $profileTitle; ?>" title="<?php echo $profileTitle; ?>" aria-controls="panchangProfileCard" aria-expanded="false">
-		<i class="fa fa-user-circle" aria-hidden="true"></i>
-	</button>
-	<div class="panchang-profile-card" id="panchangProfileCard" role="region" aria-label="<?php echo $profileTitle; ?>">
-		<h2><?php echo $profileTitle; ?></h2>
-		<?php echo $profileDetails; ?>
-	</div>
-	<button class="dock-btn panchang-dock-language" type="button" onclick="toggleLanguage()" aria-label="Toggle language" title="Language / மொழி">
-		<i class="fa fa-language" aria-hidden="true"></i>
-	</button>
-	<?php if (strcmp($_SESSION['user_type'], ADMIN) == 0 || strcmp($_SESSION['user_type'], SUPER) == 0) { ?>
-	<a class="dock-btn" href="admin.php" aria-label="Settings"><i class="fa fa-cog" aria-hidden="true"></i></a>
-	<?php } ?>
-</div>
-<script>
-function togglePanchangMenu(event) {
-	event.stopPropagation();
-	var panel = document.getElementById('appMenu');
-	var button = event.currentTarget;
-	var isOpen = panel.classList.toggle('open');
-	if (isOpen) {
-		var profileCard = document.getElementById('panchangProfileCard');
-		var profileButton = document.querySelector('.panchang-profile-toggle');
-		if (profileCard) profileCard.classList.remove('open');
-		if (profileButton) profileButton.setAttribute('aria-expanded', 'false');
-	}
-	button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-}
-function togglePanchangProfile(event) {
-	event.stopPropagation();
-	var button = event.currentTarget;
-	var card = document.getElementById('panchangProfileCard');
-	var isOpen = card.classList.toggle('open');
-	if (isOpen) {
-		var panel = document.getElementById('appMenu');
-		var menuButton = document.querySelector('#panchangDock .dock-btn[aria-label="Menu"]');
-		if (panel) panel.classList.remove('open');
-		if (menuButton) menuButton.setAttribute('aria-expanded', 'false');
-	}
-	button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-}
-document.addEventListener('click', function(event) {
-	var panel = document.getElementById('appMenu');
-	if (panel && !panel.contains(event.target)) {
-		panel.classList.remove('open');
-		var button = document.querySelector('#panchangDock .dock-btn[aria-label="Menu"]');
-		if (button) button.setAttribute('aria-expanded', 'false');
-	}
-	var profileCard = document.getElementById('panchangProfileCard');
-	var profileButton = document.querySelector('.panchang-profile-toggle');
-	if (profileCard && profileButton && !profileCard.contains(event.target) && !profileButton.contains(event.target)) {
-		profileCard.classList.remove('open');
-		profileButton.setAttribute('aria-expanded', 'false');
-	}
-});
-document.addEventListener('keydown', function(event) {
-	if (event.key === 'Escape') {
-		var panel = document.getElementById('appMenu');
-		if (panel) panel.classList.remove('open');
-		var profileCard = document.getElementById('panchangProfileCard');
-		var profileButton = document.querySelector('.panchang-profile-toggle');
-		if (profileCard) profileCard.classList.remove('open');
-		if (profileButton) profileButton.setAttribute('aria-expanded', 'false');
-		var button = document.querySelector('#panchangDock .dock-btn[aria-label="Menu"]');
-		if (button) button.setAttribute('aria-expanded', 'false');
-	}
-});
-</script>
+<nav class="bottom-nav panchang-bottom-nav" aria-label="<?php echo ($language === 'english') ? 'Main navigation' : 'முதன்மை வழிசெலுத்தல்'; ?>">
+	<a href="index.php" aria-label="<?php echo ($language === 'english') ? 'Home' : 'முகப்பு'; ?>" title="<?php echo ($language === 'english') ? 'Home' : 'முகப்பு'; ?>"><i class="fa fa-home" aria-hidden="true"></i></a>
+	<a class="is-active" href="new_panchang.php" aria-label="<?php echo htmlspecialchars(__('panchangam'), ENT_QUOTES, 'UTF-8'); ?>" aria-current="page"><i class="fa fa-calendar" aria-hidden="true"></i></a>
+	<a href="star_thaara_palan.php" aria-label="<?php echo htmlspecialchars(__('tara_palan'), ENT_QUOTES, 'UTF-8'); ?>"><i class="fa fa-star-o" aria-hidden="true"></i></a>
+	<a href="hora.php" aria-label="<?php echo htmlspecialchars(__('horai'), ENT_QUOTES, 'UTF-8'); ?>"><i class="fa fa-clock-o" aria-hidden="true"></i></a>
+	<button type="button" aria-label="<?php echo ($language === 'english') ? 'Download PDF' : 'PDF பதிவிறக்கம்'; ?>" title="<?php echo ($language === 'english') ? 'Download PDF' : 'PDF பதிவிறக்கம்'; ?>" onclick="document.getElementById('onePageBtn').click();"><i class="fa fa-download" aria-hidden="true"></i></button>
+</nav>
 <?php } ?>
 
 </body>

@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <?php
 include "lib.php";
+include_once "lang/lang.php";
+
+$language = isset($_COOKIE['language']) && strtolower(trim($_COOKIE['language'])) === 'english' ? 'english' : 'tamil';
+init_language($language);
 
 $DEBUG= (int) isset($_GET['debug']) ? $_GET['debug'] : 0;
 
@@ -19,7 +23,6 @@ else{
 }
 
 
-$lang = isset($_POST["lang"]) ? $_POST["lang"] : "Tamil";
 debug("PLACE=".$place);
 $city=strtok($place,"|");
 $TZ=strtok("|");
@@ -185,33 +188,34 @@ function planetSort($inArray)
 function getTransitChart()
 {
 	global $sw_planet;
+	$displayPlanets = array_map('map_display_text', $sw_planet);
 	
 echo <<<EOL
 	<center><div class="divTable blueTable" id="transit_chart" style="width:300px;height:300px;">
 		<div class="divTableBody">
 			<div class="divTableRow">
-					<div class="divTableCell" id=12>$sw_planet[11]</div>
-					<div class="divTableCell" id='1'>$sw_planet[0]</span></div>
-					<div class="divTableCell" id=2>$sw_planet[1]</div>
-					<div class="divTableCell" id=3>$sw_planet[2]</div>
+					<div class="divTableCell" id=12>$displayPlanets[11]</div>
+					<div class="divTableCell" id='1'>$displayPlanets[0]</span></div>
+					<div class="divTableCell" id=2>$displayPlanets[1]</div>
+					<div class="divTableCell" id=3>$displayPlanets[2]</div>
 			</div>
 			<div class="divTableRow">
-					<div class="divTableCell" id=11>$sw_planet[10]</div>
+					<div class="divTableCell" id=11>$displayPlanets[10]</div>
 					<div class="divTableCenterCell" style='font-size:10px' id='chartName'></div>
 					<div class="divTableCenterCell"></div>
-					<div class="divTableCell" id=4>$sw_planet[3]</div>
+					<div class="divTableCell" id=4>$displayPlanets[3]</div>
 			</div>
 			<div class="divTableRow">
-					<div class="divTableCell" id=10>$sw_planet[9]</div>
+					<div class="divTableCell" id=10>$displayPlanets[9]</div>
 					<div class="divTableCenterCell"></div>
 					<div class="divTableCenterCell" style='font-size:10px'></div>
-					<div class="divTableCell" id=5>$sw_planet[4]</div>
+					<div class="divTableCell" id=5>$displayPlanets[4]</div>
 			</div>
 			<div class="divTableRow">
-					<div class="divTableCell" id=9>$sw_planet[8]</div>
-					<div class="divTableCell" id=8>$sw_planet[7]</div>
-					<div class="divTableCell" id=7>$sw_planet[6]</div>
-					<div class="divTableCell" id=6>$sw_planet[5]</div>
+					<div class="divTableCell" id=9>$displayPlanets[8]</div>
+					<div class="divTableCell" id=8>$displayPlanets[7]</div>
+					<div class="divTableCell" id=7>$displayPlanets[6]</div>
+					<div class="divTableCell" id=6>$displayPlanets[5]</div>
 			</div>
 		</div>	
 	</div>
@@ -424,28 +428,39 @@ $sw_planet = sortDegree($sw_planet);
 
 dbDisconnect($conn);
 
+function prasannamText($key){
+	return htmlspecialchars(__($key), ENT_QUOTES, 'UTF-8');
+}
+
 function lagnaPrasannam(){
 	global $place;
+	$title = prasannamText('prasannam_lagna_title');
+	$dateLabel = prasannamText('prasannam_date');
+	$timeLabel = prasannamText('prasannam_time');
+	$placeLabel = prasannamText('prasannam_place');
+	$placePlaceholder = prasannamText('search_place_placeholder');
+	$submitLabel = prasannamText('submit');
+	$newLabel = prasannamText('prasannam_new');
 	echo <<<EOL
 	<center>
-	<div class="divTable blueTable" id="d2" style='height:auto'>
+	<div class="divTable blueTable prasannam-form-card" id="d2" style='height:auto'>
 		<form name="prasannamForm" id="prasannamForm" action="#" method="post">
 			<input type="hidden" value=1>
 			<table style="width:100%; text-align: left">
 				<tr>
-					<td colspan=2><P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">லக்ன/கோட்சார பிரசன்னம்</P></td>
+					<td colspan=2><P class="prasannam-form-title">$title</P></td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
-					<td><div class="divBirthInputLable">பிரசன்ன தேதி</div></td>
+					<td><div class="divBirthInputLable">$dateLabel</div></td>
 					<td><input type="date" id="in_date" name="in_date" style="border:1px solid lightgray;font-weight:bold;background-color:lightgray" readonly></td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
-					<td><div class="divBirthInputLable">பிரசன்ன நேரம்</div></td>
+					<td><div class="divBirthInputLable">$timeLabel</div></td>
 					<td><input type="time" id="in_time" name="in_time" step="1" style="border:1px solid lightgray;font-weight:bold;background-color:lightgray" readonly></td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
-					<td><div class="divBirthInputLable">*பிரசன்ன இடம்</div></td>
-					<td><div class="search-box"><input type="text" name="prasannam_place" id="prasannam_place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur(this.form);" value='$place' /><div class="result"></div>
+					<td><div class="divBirthInputLable">$placeLabel</div></td>
+					<td><div class="search-box"><input type="text" name="prasannam_place" id="prasannam_place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="$placePlaceholder" onfocus=this.value='' onBlur="placeOnBlur(this.form);" value='$place' /><div class="result"></div>
 					</td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
@@ -453,10 +468,10 @@ function lagnaPrasannam(){
 				</tr>
 				<tr  style="background-color: #FFFFFF">
 					<td style="width:50%;text-align:right">
-						<input type="submit" value="Submit" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
+						<input type="submit" value="$submitLabel" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
 					</td>
 					<td style="width:50%;text-align:left">
-						<button value="New" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="window.reload();">New</button>
+						<button type="button" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="window.location.reload();">$newLabel</button>
 					</td>
 				</tr>					
 			</table>
@@ -468,26 +483,33 @@ EOL;
 
 function clockPrasannam(){
 	global $place;
+	$title = prasannamText('prasannam_clock_title');
+	$dateLabel = prasannamText('prasannam_date');
+	$timeLabel = prasannamText('prasannam_time');
+	$placeLabel = prasannamText('prasannam_place');
+	$placePlaceholder = prasannamText('search_place_placeholder');
+	$submitLabel = prasannamText('submit');
+	$newLabel = prasannamText('prasannam_new');
 	echo <<<EOL
 	<center>
-	<div class="divTable blueTable" id="clock" style='height:auto'>
+	<div class="divTable blueTable prasannam-form-card" id="clock" style='height:auto'>
 				
 		<form name="prasannamForm" id="prasannamForm" action="#" method="post">
 			<table style="width:100%; text-align: left">
 				<tr>
-					<td colspan=2><P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">கடிகார பிரசன்னம்</P></td>
+					<td colspan=2><P class="prasannam-form-title">$title</P></td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
-					<td><div class="divBirthInputLable">பிரசன்ன தேதி</div></td>
+					<td><div class="divBirthInputLable">$dateLabel</div></td>
 					<td><input type="date" id="in_date" name="in_date" style="border:1px solid lightgray;font-weight:bold;background-color:lightgray" readonly></td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
-					<td><div class="divBirthInputLable">பிரசன்ன நேரம்</div></td>
+					<td><div class="divBirthInputLable">$timeLabel</div></td>
 					<td><input type="time" id="in_time" name="in_time" step="1" style="border:1px solid lightgray;font-weight:bold;background-color:lightgray" readonly></td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
-					<td><div class="divBirthInputLable">*பிரசன்ன இடம்</div></td>
-					<td><div class="search-box"><input type="text" name="prasannam_place" id="prasannam_place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" value='$place' /><div class="result"></div>
+					<td><div class="divBirthInputLable">$placeLabel</div></td>
+					<td><div class="search-box"><input type="text" name="prasannam_place" id="prasannam_place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="$placePlaceholder" onfocus=this.value='' onBlur="placeOnBlur();" value='$place' /><div class="result"></div>
 					</td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
@@ -495,10 +517,10 @@ function clockPrasannam(){
 				</tr>
 				<tr  style="background-color: #FFFFFF">
 					<td style="width:50%;text-align:right">
-						<input type="submit" value="Submit" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
+						<input type="submit" value="$submitLabel" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
 					</td>
 					<td style="width:50%;text-align:left">
-						<button value="New" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="window.reload();">New</button>
+						<button type="button" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="window.location.reload();">$newLabel</button>
 					</td>
 				</tr>					
 			</table>
@@ -510,6 +532,15 @@ EOL;
 
 function rasiPrasannam(){
 	global $rasi,$rasiNo,$place ;
+	$title = prasannamText('prasannam_rasi_title');
+	$numberLabel = prasannamText('prasannam_rasi_number_label');
+	$numberHint = prasannamText('prasannam_rasi_number_hint');
+	$dateLabel = prasannamText('prasannam_date');
+	$timeLabel = prasannamText('prasannam_time');
+	$placeLabel = prasannamText('prasannam_place');
+	$placePlaceholder = prasannamText('search_place_placeholder');
+	$submitLabel = prasannamText('submit');
+	$newLabel = prasannamText('prasannam_new');
 	$selected = [null,null,null,null,null,null,null,null,null,null,null,null,null];
 	
 	if($rasi != 1){ //first time, so display random rasi
@@ -524,16 +555,16 @@ function rasiPrasannam(){
 	
 	echo <<<EOL
 	<center>
-	<div class="divTable blueTable" id="rasi" style='height:auto'>
+	<div class="divTable blueTable prasannam-form-card" id="rasi" style='height:auto'>
 				
 		<form name="prasannamForm" id="prasannamForm" action="#" method="post">
 			<input type='hidden' name='hiddenRasi' id='hiddenRasi' value=1 />
 			<table style="width:100%; text-align: left">
 				<tr>
-					<td colspan=2><P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">ராசி	பிரசன்னம்</P></td>
+					<td colspan=2><P class="prasannam-form-title">$title</P></td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
-					<td><div class="divBirthInputLable">*தேர்வு செய்த எண்</div></td>
+					<td><div class="divBirthInputLable">$numberLabel</div></td>
 					<td>
 						<select name='rasiNo' id='rasiNo'>
 							<option value='1' $selected[1]>1</option>
@@ -549,20 +580,20 @@ function rasiPrasannam(){
 							<option value='11' $selected[11]>11</option>
 							<option value='12' $selected[12]>12</option>
 						</select>
-						<BR><div style='font-size:12px;color:blue'>12க்குள் ஒரு நம்பர் தேர்வு செய்யவும்</div>
+						<BR><div style='font-size:12px;color:blue'>$numberHint</div>
 					</td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
-					<td><div class="divBirthInputLable">பிரசன்ன தேதி</div></td>
+					<td><div class="divBirthInputLable">$dateLabel</div></td>
 					<td><input type="date" id="in_date" name="in_date" style="border:1px solid lightgray;font-weight:bold;background-color:lightgray" readonly></td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
-					<td><div class="divBirthInputLable">பிரசன்ன நேரம்</div></td>
+					<td><div class="divBirthInputLable">$timeLabel</div></td>
 					<td><input type="time" id="in_time" name="in_time" step="1" style="border:1px solid lightgray;font-weight:bold;background-color:lightgray" readonly></td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
-					<td><div class="divBirthInputLable">*பிரசன்ன இடம்</div></td>
-					<td><div class="search-box"><input type="text" name="prasannam_place" id="prasannam_place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" value='$place' /><div class="result"></div>
+					<td><div class="divBirthInputLable">$placeLabel</div></td>
+					<td><div class="search-box"><input type="text" name="prasannam_place" id="prasannam_place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="$placePlaceholder" onfocus=this.value='' onBlur="placeOnBlur();" value='$place' /><div class="result"></div>
 					</td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
@@ -570,10 +601,10 @@ function rasiPrasannam(){
 				</tr>
 				<tr  style="background-color: #FFFFFF">
 					<td style="width:50%;text-align:right">
-						<input type="submit" value="Submit" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
+						<input type="submit" value="$submitLabel" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
 					</td>
 					<td style="width:50%;text-align:left">
-						<button value="New" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="newPrasannam(3);return false;">New</button>
+						<button type="button" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="newPrasannam(3);return false;">$newLabel</button>
 					</td>
 				</tr>				
 			</table>
@@ -585,6 +616,15 @@ EOL;
 
 function paadhaPrasannam(){
 	global $paadham,$paadhamNo,$place ;
+	$title = prasannamText('prasannam_paadha_title');
+	$paadhaLabel = prasannamText('prasannam_paadha_label');
+	$paadhaHint = prasannamText('prasannam_paadha_hint');
+	$dateLabel = prasannamText('prasannam_date');
+	$timeLabel = prasannamText('prasannam_time');
+	$placeLabel = prasannamText('prasannam_place');
+	$placePlaceholder = prasannamText('search_place_placeholder');
+	$submitLabel = prasannamText('submit');
+	$newLabel = prasannamText('prasannam_new');
 	
 	if($paadham != 1){ //first time, so display random paadham
 		mt_srand();
@@ -593,30 +633,30 @@ function paadhaPrasannam(){
 	
 	echo <<<EOL
 	<center>
-	<div class="divTable blueTable" id="paadham" style='height:auto'>
+	<div class="divTable blueTable prasannam-form-card" id="paadham" style='height:auto'>
 				
 		<form name="prasannamForm" id="prasannamForm" action="#" method="post">
 			<input type='hidden' name='hiddenPaadham' id='hiddenPaadham' value=1 />
 			<table style="width:100%; text-align: left">
 				<tr>
-					<td colspan=2><P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">பாத	பிரசன்னம்</P></td>
+					<td colspan=2><P class="prasannam-form-title">$title</P></td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
-					<td><div class="divBirthInputLable">*நக்ஷ். பாதம்:</div></td>
+					<td><div class="divBirthInputLable">$paadhaLabel</div></td>
 					<td><input type="number" name="paadhamNo" id="paadhamNo" autocomplete="off" style="width:60px;text-align:center;background:#ffffff;font-weight:bold" min="1" max="108" onfocusout='validateNumber();' value='$paadhamNo' />
-					<BR><div style='font-size:12px;color:blue'>108க்குள் ஒரு நம்பர் தேர்வு செய்யவும்</div></td>
+					<BR><div style='font-size:12px;color:blue'>$paadhaHint</div></td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
-					<td><div class="divBirthInputLable">பிரசன்ன தேதி</div></td>
+					<td><div class="divBirthInputLable">$dateLabel</div></td>
 					<td><input type="date" id="in_date" name="in_date" style="border:1px solid lightgray;font-weight:bold;background-color:lightgray" readonly></td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
-					<td><div class="divBirthInputLable">பிரசன்ன நேரம்</div></td>
+					<td><div class="divBirthInputLable">$timeLabel</div></td>
 					<td><input type="time" id="in_time" name="in_time" step="1" style="border:1px solid lightgray;font-weight:bold;background-color:lightgray" readonly></td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
-					<td><div class="divBirthInputLable">*பிரசன்ன இடம்</div></td>
-					<td><div class="search-box"><input type="text" name="prasannam_place" id="prasannam_place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" value='$place' /><div class="result"></div>
+					<td><div class="divBirthInputLable">$placeLabel</div></td>
+					<td><div class="search-box"><input type="text" name="prasannam_place" id="prasannam_place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="$placePlaceholder" onfocus=this.value='' onBlur="placeOnBlur();" value='$place' /><div class="result"></div>
 					</td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
@@ -624,10 +664,10 @@ function paadhaPrasannam(){
 				</tr>
 				<tr  style="background-color: #FFFFFF">
 					<td style="width:50%;text-align:right">
-						<input type="submit" value="Submit" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
+						<input type="submit" value="$submitLabel" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
 					</td>
 					<td style="width:50%;text-align:left">
-						<button value="New" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="newPrasannam(4);return false;">New</button>
+						<button type="button" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="newPrasannam(4);return false;">$newLabel</button>
 					</td>
 				</tr>				
 			</table>
@@ -639,27 +679,34 @@ EOL;
 
 function horaiPrasannam(){
 	global $place;
+	$title = prasannamText('prasannam_horai_title');
+	$dateLabel = prasannamText('prasannam_date');
+	$timeLabel = prasannamText('prasannam_time');
+	$placeLabel = prasannamText('prasannam_place');
+	$placePlaceholder = prasannamText('search_place_placeholder');
+	$submitLabel = prasannamText('submit');
+	$newLabel = prasannamText('prasannam_new');
 	echo <<<EOL
 	<center>
-	<div class="divTable blueTable" id="horai" style='height:auto'>
+	<div class="divTable blueTable prasannam-form-card" id="horai" style='height:auto'>
 				
 		<form name="prasannamForm" id="prasannamForm" action="#" method="post">
 			<input type='hidden' name='hiddenHorai' value=1 />
 			<table style="width:100%; text-align: left">
 				<tr>
-					<td colspan=2><P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">ஹோரை	பிரசன்னம்</P></td>
+					<td colspan=2><P class="prasannam-form-title">$title</P></td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
-					<td><div class="divBirthInputLable">பிரசன்ன தேதி</div></td>
+					<td><div class="divBirthInputLable">$dateLabel</div></td>
 					<td><input type="date" id="in_date" name="in_date" style="border:1px solid lightgray;font-weight:bold;background-color:lightgray" readonly></td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
-					<td><div class="divBirthInputLable">பிரசன்ன நேரம்</div></td>
+					<td><div class="divBirthInputLable">$timeLabel</div></td>
 					<td><input type="time" id="in_time" name="in_time" step="1" style="border:1px solid lightgray;font-weight:bold;background-color:lightgray" readonly></td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
-					<td><div class="divBirthInputLable">*பிரசன்ன இடம்</div></td>
-					<td><div class="search-box"><input type="text" name="prasannam_place" id="prasannam_place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="Search place..." onfocus=this.value='' onBlur="placeOnBlur();" value='$place' /><div class="result"></div>
+					<td><div class="divBirthInputLable">$placeLabel</div></td>
+					<td><div class="search-box"><input type="text" name="prasannam_place" id="prasannam_place" autocomplete="off" style="background:#ffffff;font-weight:bold" placeholder="$placePlaceholder" onfocus=this.value='' onBlur="placeOnBlur();" value='$place' /><div class="result"></div>
 					</td>
 				</tr>
 				<tr style="background-color: #FFFFFF">
@@ -667,10 +714,10 @@ function horaiPrasannam(){
 				</tr>
 				<tr  style="background-color: #FFFFFF">
 					<td style="width:50%;text-align:right">
-						<input type="submit" value="Submit" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
+						<input type="submit" value="$submitLabel" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="return validateForm();">
 					</td>
 					<td style="width:50%;text-align:left">
-						<button value="New" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="window.reload();">New</button>
+						<button type="button" class="actionBtn" style="text-align:center; font-weight:bold; background:var(--menu-background)" onclick="window.location.reload();">$newLabel</button>
 					</td>
 				</tr>				
 			</table>
@@ -683,18 +730,21 @@ EOL;
 ?>
 
 
-<html lang="en" class="no-js">
+<html lang="<?php echo $language === 'english' ? 'en' : 'ta'; ?>" class="no-js">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="canonical" href="https://html5-templates.com/" />
-    <title>PK Astro admin page</title>
+    <title>PK Astro - <?php echo htmlspecialchars(__('prasannam'), ENT_QUOTES, 'UTF-8'); ?></title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
 	
+    <link href="https://fonts.googleapis.com/css2?family=Catamaran:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600&family=Noto+Serif+Tamil:wght@600;700&family=Noto+Sans:wght@400;500&family=Noto+Serif:wght@600&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/birth_chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/prasannam.css?<?php echo date('ymdhis'); ?>">
 	<link href='https://fonts.googleapis.com/css?family=Julius Sans One' rel='stylesheet'>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">    
@@ -762,15 +812,15 @@ EOL;
 	  
 	  p = document.getElementById("prasannam_place").value;
 	  if (p == "") {
-		alert('பிறந்த இடம் கொடுல்லவில்லை');
-		document.getElementById("error").innerHTML = "பிறந்த இடம் கொடுல்லவில்லை";
+		alert(<?php echo json_encode(__('prasannam_place_required')); ?>);
+		document.getElementById("error").innerHTML = <?php echo json_encode(__('prasannam_place_required')); ?>;
 		document.getElementById('prasannam_place').style.borderColor = "red";
 		return false;
 	  }
 	  
 	  if (p.includes("|")==false || p.includes("/")==false || p.length<10){
-		  alert('நீங்கள் இடத்தை கீழ் வரும் பட்டியலில் தேர்ந்தெடுக்கவில்லை');
-		  document.getElementById("error").innerHTML = "நீங்கள் இடத்தை கீழ் வரும் பட்டியலில் தேர்ந்தெடுக்கவில்லை";
+		  alert(<?php echo json_encode(__('prasannam_place_select_hint')); ?>);
+		  document.getElementById("error").innerHTML = <?php echo json_encode(__('prasannam_place_select_hint')); ?>;
 		  document.getElementById('prasannam_place').style.borderColor = "red";
 		  return false;
 	  }
@@ -787,6 +837,10 @@ EOL;
 	
 
 	function updateNow() {
+	  var dateInput = document.getElementById('in_date');
+	  var timeInput = document.getElementById('in_time');
+	  if (!dateInput || !timeInput) return;
+
 	  const date = new Date();
 	  
 	  var dd = date.getDate();
@@ -823,17 +877,20 @@ EOL;
 	  } 
 	  var time = H+':'+M+':'+S;
 
-	  document.getElementById('in_date').value= today ; 
-	  document.getElementById('in_time').value= time ; 
+	  dateInput.value = today;
+	  timeInput.value = time;
 	}
 	
 	function updateUdhayaLagna(){
 		type = <?php echo $type; ?>;
+		var lagnaToken = <?php echo json_encode(map_display_text('லக்')); ?>;
+		var udayaMarker = <?php echo json_encode(__('udaya_lagna_marker')); ?>;
+		var arudhaMarker = <?php echo json_encode(__('arudha_marker')); ?>;
 		switch(type){
 			case 1: //kotchar prasannam
 				for (i = 1; i <= 12; i++) {
 					var text = document.getElementById(i).innerHTML;
-				  if(text.includes("லக்")){
+				  if(text.includes(lagnaToken)){
 					document.getElementById(i).style.backgroundColor = "Orange";
 				  }
 				}
@@ -847,22 +904,22 @@ EOL;
 				
 				for (i = 1; i <= 12; i++) {
 					var text = document.getElementById(i).innerHTML;
-					if(text.includes("லக்")){
+					if(text.includes(lagnaToken)){
 						document.getElementById(i).style.backgroundColor = "Orange";
 						//document.getElementById(i).innerHTML = document.getElementById(i).innerHTML.replace("லக்","உத");
-						document.getElementById(i).innerHTML = document.getElementById(i).innerHTML + " <span style='color:black;background-color:white;'>உத</span>";
+						document.getElementById(i).innerHTML = document.getElementById(i).innerHTML + " <span style='color:black;background-color:white;'>" + udayaMarker + "</span>";
 					}
 				}
 				
 				document.getElementById(target_house).style.backgroundColor = "Orange";
-				document.getElementById(target_house).innerHTML = document.getElementById(target_house).innerHTML + " <span style='color:black;background-color:white;'>ஆரு</span>";
+				document.getElementById(target_house).innerHTML = document.getElementById(target_house).innerHTML + " <span style='color:black;background-color:white;'>" + arudhaMarker + "</span>";
 				
 				break;
 			case 3: //rasi prasannam
 				var rasi = document.getElementById('rasiNo').value;
 				
 				document.getElementById(rasi).style.backgroundColor = "Orange";
-				document.getElementById(rasi).innerHTML = document.getElementById(rasi).innerHTML + " <span style='color:black;background-color:white;'>உத</span>";
+				document.getElementById(rasi).innerHTML = document.getElementById(rasi).innerHTML + " <span style='color:black;background-color:white;'>" + udayaMarker + "</span>";
 				
 				break;
 			case 4: //paadha prasannam
@@ -871,7 +928,7 @@ EOL;
 				var rasi = Math.ceil(paadham/9);
 				
 				document.getElementById(rasi).style.backgroundColor = "Orange";
-				document.getElementById(rasi).innerHTML = document.getElementById(rasi).innerHTML + " <span style='color:black;background-color:white;'>உத</span>";
+				document.getElementById(rasi).innerHTML = document.getElementById(rasi).innerHTML + " <span style='color:black;background-color:white;'>" + udayaMarker + "</span>";
 				
 				break;
 			case 5: //horai prasannam
@@ -891,7 +948,7 @@ EOL;
 								var text = el.innerHTML || '';
 								if (text.includes(horaLord)) {
 									el.style.backgroundColor = 'Orange';
-									el.innerHTML = el.innerHTML + " <span style='color:black;background-color:white;'>உத</span>";
+									el.innerHTML = el.innerHTML + " <span style='color:black;background-color:white;'>" + udayaMarker + "</span>";
 								}
 							}
 						} else {
@@ -926,7 +983,7 @@ EOL;
 	function validateNumber(){
 		var value = parseInt(document.getElementById('paadhamNo').value);
 		if(value < 0 || value >108){
-			alert('108க்குள் ஒரு நம்பர் தேர்வு செய்யவும்');
+			alert(<?php echo json_encode(__('prasannam_paadha_hint')); ?>);
 			document.getElementById('paadhamNo').style.borderColor = 'red';
 			//document.getElementById('paadhamNo').focus();
 			return false;
@@ -963,15 +1020,15 @@ EOL;
 		case 1:
 		case 2:
 		case 5:
-			window.reload();
+			window.location.reload();
 			break;
 		case 3: //raasi prasannam
 			document.getElementById('hiddenRasi').value=-1;
-			window.reload();
+			window.location.reload();
 			break;
 		case 4: //paadha prasannam
 			document.getElementById('hiddenPaadham').value=-1;
-			window.reload();
+			window.location.reload();
 			break;
 		default:
 			break;
@@ -980,22 +1037,22 @@ EOL;
 
 	</script>
 	
-<body onLoad='init();'>
+<body class="prasannam-page prasannam-detail-page" onLoad='init();'>
 
 <div class="title"></div>
 	<div class='column-menu'>
 		<?php displayUserInfo($_SESSION['userinfo']);?>
 		<div class='desktop'>	
 			 
-			<button class="menu" onClick="window.open('prasannam_home.php','_self')">Prasannam Home</button>
+			<button class="menu" onClick="window.open('prasannam_home.php','_self')"><?php echo htmlspecialchars(__('prasannam_home'), ENT_QUOTES, 'UTF-8'); ?></button>
 		</div>
 		<div class='mobile'>
-			<?php include "prasannamMenu_mobile.php"; ?>
+			<?php ob_start(); include "prasannamMenu_mobile.php"; echo translate_menu_html(ob_get_clean()); ?>
 		</div>
 	</div>
 	<div class='column-body'>
-	<div class="grid-container" style='height:auto'>
-	  <div class="grid-item" onClick="window.open('prasannam_home.php','_self')" style="cursor:pointer;height:auto">மற்ற பிரசன்னங்கள்</div>
+	<div class="prasannam-subpage-header">
+		<a class="prasannam-back-link" href="prasannam_home.php"><i class="fa fa-arrow-left" aria-hidden="true"></i><?php echo htmlspecialchars(__('prasannam_home'), ENT_QUOTES, 'UTF-8'); ?></a>
 	</div>
 	
 <?php
@@ -1014,11 +1071,11 @@ switch($type){
 		break;
 	case 5:
 		horaiPrasannam();
-		echo "<center><div class='hora' style='margin-bottom:20px' id='hora'>will be filled from hora.php</div></center>";
+		echo "<center><div class='hora' style='margin-bottom:20px' id='hora'>".htmlspecialchars(__('horai_loading'), ENT_QUOTES, 'UTF-8')."</div></center>";
 		//echo "<script>getSubHora();</script>";
 		break;
 	default:
-		echo "Wrong option";
+		echo htmlspecialchars(__('invalid_option'), ENT_QUOTES, 'UTF-8');
 }
 
 getTransitChart();

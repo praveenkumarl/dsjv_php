@@ -14,9 +14,10 @@ $userinfo = isset($_SESSION['userinfo']) ? $_SESSION['userinfo'] : ['name'=>'Fre
     <title>DSJV Freeuser msg</title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
 	
-	<link rel="stylesheet" href="css/main.css">
+	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/chart_style.css">
 	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="css/client_theme_css.php">
  
 <body>
 

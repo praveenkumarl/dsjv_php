@@ -1,4 +1,5 @@
-<?php 
+<?php
+require_once __DIR__ . '/webview_only.php';
 session_start(); 
 
 $place="";

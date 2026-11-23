@@ -1,58 +1,33 @@
 <?php
 /**
  * WebView Restriction Checker
- * Ensures that if the request comes from a mobile browser, it is blocked
- * unless it is the official Android WebView application.
+ * Restricts hosted requests to the Android WebView application.
  */
 
-function isMobileDeviceForWebViewCheck() {
-    $ua = isset($_SERVER['HTTP_USER_AGENT']) ? strtolower($_SERVER['HTTP_USER_AGENT']) : '';
-    // Check if the user agent indicates a mobile device
-    return (strpos($ua, 'mobile') !== false || strpos($ua, 'android') !== false || strpos($ua, 'iphone') !== false || strpos($ua, 'ipad') !== false);
-}
-
 function isAndroidWebView() {
-    $ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
-    
-    // 1. Check for standard Android WebView token "wv" in User Agent
-    if (strpos($ua, '; wv)') !== false || strpos($ua, ' wv ') !== false || strpos($ua, ' wv)') !== false) {
-        return true;
-    }
-    
-    // 2. Check for "Version/" and "Chrome/" in User Agent on Android 
-    // (Older WebView versions or custom WebViews might not contain "wv" but contain "Version/X.X Chrome/X.X")
-    if (strpos($ua, 'Android') !== false && strpos($ua, 'Version/') !== false && strpos($ua, 'Chrome/') !== false) {
-        return true;
-    }
-    
-    // 3. Check X-Requested-With header
-    if (isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-        $requestedWith = $_SERVER['HTTP_X_REQUESTED_WITH'];
-        // Ignore XMLHttpRequest sent by AJAX libraries (e.g. jQuery)
-        if (strtolower($requestedWith) !== 'xmlhttprequest') {
-            return true;
-        }
-    }
-    
-    return false;
+    $ua = isset($_SERVER['HTTP_USER_AGENT']) ? strtolower($_SERVER['HTTP_USER_AGENT']) : '';
+
+    return strpos($ua, 'android') !== false && strpos($ua, '; wv)') !== false;
 }
 
-// Perform checking only on mobile devices
-if (isMobileDeviceForWebViewCheck()) {
-    if (!isAndroidWebView()) {
-        // If it is an AJAX request, return a clean HTTP 403 response
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-            header('HTTP/1.0 403 Forbidden');
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode(['error' => 'Access Restricted: Please use the official Android application.']);
-            exit();
-        }
+$webviewHost = isset($_SERVER['HTTP_HOST']) ? strtolower(trim($_SERVER['HTTP_HOST'])) : '';
+$webviewHost = preg_replace('/:\d+$/', '', $webviewHost);
+$webviewRemoteAddress = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
+$isLocalMachineRequest = in_array($webviewHost, array('localhost', '127.0.0.1', '::1', '[::1]'), true)
+    && in_array($webviewRemoteAddress, array('127.0.0.1', '::1', '::ffff:127.0.0.1'), true);
 
-        // Set HTTP Forbidden status code (commented out to allow WebView to render our custom HTML debug page)
-        // header('HTTP/1.0 403 Forbidden');
+// Keep local development usable; hosted requests must use Android WebView.
+if (!$isLocalMachineRequest && !isAndroidWebView()) {
+    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+        http_response_code(403);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['error' => 'Access Restricted: Please use the official Android application.']);
+        exit();
+    }
+
+    http_response_code(403);
         
-        // Render a premium, beautiful access restricted page
-        ?>
+    ?>
         <!DOCTYPE html>
         <html lang="en">
         <head>
@@ -227,5 +202,4 @@ if (isMobileDeviceForWebViewCheck()) {
         </html>
         <?php
         exit();
-    }
 }

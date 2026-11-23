@@ -244,7 +244,7 @@ dbDisconnect($conn);
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	 
     <script src="script.js"></script>
-	<script src="panchang.js"></script>
+	<script src="panchang.js?<?php echo date('ymdhis'); ?>"></script>
 	<script src="my_panchang.js"></script>
     <script type="text/javascript">
 		
@@ -277,7 +277,7 @@ dbDisconnect($conn);
 			var objSelect = document.getElementById("star");
 			//Set selected
 			setSelectedValue(objSelect,panchang.Nakshatra.name);
-		});
+		}, timezone);
 	}
 	
 	function setSelectedValue(selectObj, valueToSet) {
