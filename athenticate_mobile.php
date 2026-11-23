@@ -54,26 +54,25 @@ function athenticate_mobile()
 					}
 					
 					if(strcmp($user_type,"FREE")==0){  //________FREE user
+						http_response_code(201);
 						echo $name . "|" . $phone  . "|" . $user_type;
-						header("HTTP/1.0 201");
 					}
 					else{ 								//________PAID/ADMIN user
+						http_response_code(200);
 						echo $name . "|" . $phone  . "|" . $user_type;
-						header("HTTP/1.0 200");
-						
 					}
 				}elseif($count==0) {									//________New user, register
+					http_response_code(202);
 					echo "<BR>INFO: Please register your account";
-					header("HTTP/1.0 202");
 				}
 				else{
+					http_response_code(500);
 					echo "<BR>ERROR: Multiple records, please contact admin";
-					header("HTTP/1.0 500");
 				}
 		} else{											//________System error
+				http_response_code(500);
 				echo "<BR>ERROR: please contact admin";
 				echo "<BR>ERROR: Could not able to execute $sql. " . mysqli_error($conn);
-				header("HTTP/1.0 500");
 		}
 		
 		/* If code reaches this point without errors then commit the data in the database */

@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/webview_only.php'; ?>
 <!doctype html>
 <html lang="ta">
 <head>
