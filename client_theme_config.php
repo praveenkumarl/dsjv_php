@@ -3,6 +3,7 @@
 function clientThemePresets()
 {
 	return array(
+		// ============ EXISTING (contrast-fixed) ============
 		'rose_purple' => array(
 			'label' => 'Rose + Purple',
 			'colors' => array(
@@ -75,7 +76,7 @@ function clientThemePresets()
 				'surface_alt' => '#eee7f5',
 				'primary' => '#6440a2',
 				'secondary' => '#9a4769',
-				'accent' => '#a14970',
+				'accent' => '#8f3d60',
 				'text' => '#30243c',
 				'muted' => '#6d6078',
 				'on_accent' => '#ffffff',
@@ -91,7 +92,7 @@ function clientThemePresets()
 				'surface_alt' => '#f1ead8',
 				'primary' => '#604397',
 				'secondary' => '#805d30',
-				'accent' => '#896219',
+				'accent' => '#6e4e12',
 				'text' => '#302b3d',
 				'muted' => '#6c6470',
 				'on_accent' => '#ffffff',
@@ -107,7 +108,7 @@ function clientThemePresets()
 				'surface_alt' => '#e8eff8',
 				'primary' => '#315b91',
 				'secondary' => '#536a87',
-				'accent' => '#88631b',
+				'accent' => '#6b4c12',
 				'text' => '#1d2b40',
 				'muted' => '#5d6b7f',
 				'on_accent' => '#ffffff',
@@ -123,12 +124,254 @@ function clientThemePresets()
 				'surface_alt' => '#e7f0e9',
 				'primary' => '#286b55',
 				'secondary' => '#456b60',
-				'accent' => '#81621e',
+				'accent' => '#654b13',
 				'text' => '#20372e',
 				'muted' => '#566b60',
 				'on_accent' => '#ffffff',
 				'chart_box' => '#e4be6a',
 				'chart_text' => '#173027'
+			)
+		),
+
+		// ============ CREATIVE PRESETS (from previous turn) ============
+		'cyberpunk_neon' => array(
+			'label' => 'Cyberpunk Neon',
+			'colors' => array(
+				'page' => '#0a0618',
+				'surface' => '#150d2e',
+				'surface_alt' => '#1f1442',
+				'primary' => '#7b2ff7',
+				'secondary' => '#ff2e88',
+				'accent' => '#3ff5e0',
+				'text' => '#f0eaff',
+				'muted' => '#a89cc8',
+				'on_accent' => '#0a0618',
+				'chart_box' => '#3ff5e0',
+				'chart_text' => '#0a0618'
+			)
+		),
+		'sunset_desert' => array(
+			'label' => 'Sunset Desert',
+			'colors' => array(
+				'page' => '#2b1320',
+				'surface' => '#3d1c2c',
+				'surface_alt' => '#4e2439',
+				'primary' => '#c1443b',
+				'secondary' => '#e07a3f',
+				'accent' => '#ffd08a',
+				'text' => '#fff2e8',
+				'muted' => '#d4b3b8',
+				'on_accent' => '#2b1320',
+				'chart_box' => '#ffd08a',
+				'chart_text' => '#2b1320'
+			)
+		),
+		'arctic_aurora' => array(
+			'label' => 'Arctic Aurora',
+			'colors' => array(
+				'page' => '#08171c',
+				'surface' => '#0f2530',
+				'surface_alt' => '#16323f',
+				'primary' => '#1f8a7a',
+				'secondary' => '#3a7bd5',
+				'accent' => '#7af5c8',
+				'text' => '#e8f7f4',
+				'muted' => '#9fc4c4',
+				'on_accent' => '#08171c',
+				'chart_box' => '#7af5c8',
+				'chart_text' => '#08171c'
+			)
+		),
+		'midnight_plum' => array(
+			'label' => 'Midnight Plum',
+			'colors' => array(
+				'page' => '#140a17',
+				'surface' => '#211128',
+				'surface_alt' => '#2e1836',
+				'primary' => '#8a2f8f',
+				'secondary' => '#b8436a',
+				'accent' => '#f0b8a0',
+				'text' => '#fbeef8',
+				'muted' => '#c9a8c4',
+				'on_accent' => '#140a17',
+				'chart_box' => '#f0b8a0',
+				'chart_text' => '#140a17'
+			)
+		),
+		'light_sage_copper' => array(
+			'label' => 'Light Sage + Copper',
+			'colors' => array(
+				'page' => '#f4f7f2',
+				'surface' => '#ffffff',
+				'surface_alt' => '#e9f0e5',
+				'primary' => '#3f6b4a',
+				'secondary' => '#6b4f3a',
+				'accent' => '#6e3a1f',
+				'text' => '#243028',
+				'muted' => '#56685c',
+				'on_accent' => '#ffffff',
+				'chart_box' => '#e8c07a',
+				'chart_text' => '#2a1640'
+			)
+		),
+		'electric_lime' => array(
+			'label' => 'Electric Lime',
+			'colors' => array(
+				'page' => '#0d0d0d',
+				'surface' => '#1a1a1a',
+				'surface_alt' => '#262626',
+				'primary' => '#3d7a3d',
+				'secondary' => '#6a4a9a',
+				'accent' => '#c8f53c',
+				'text' => '#f5f5f5',
+				'muted' => '#b8b8b8',
+				'on_accent' => '#0d0d0d',
+				'chart_box' => '#c8f53c',
+				'chart_text' => '#0d0d0d'
+			)
+		),
+
+		// ============ NEW METALLIC: GOLD ============
+		// Dark: rich champagne gold on espresso/charcoal base
+		'obsidian_gold' => array(
+			'label' => 'Obsidian + Gold',
+			'colors' => array(
+				'page' => '#141210',
+				'surface' => '#211d19',
+				'surface_alt' => '#2e2822',
+				'primary' => '#8a6a1f',
+				'secondary' => '#5c4a2a',
+				'accent' => '#e8c07a',
+				'text' => '#faf3e6',
+				'muted' => '#c8b896',
+				'on_accent' => '#141210',
+				'chart_box' => '#e8c07a',
+				'chart_text' => '#141210'
+			)
+		),
+		// Light: antique gold accent (darkened to clear AA on cream page)
+		'ivory_gold' => array(
+			'label' => 'Ivory + Gold',
+			'colors' => array(
+				'page' => '#faf6ec',
+				'surface' => '#ffffff',
+				'surface_alt' => '#f0e8d4',
+				'primary' => '#6b5210',
+				'secondary' => '#7a5c2e',
+				'accent' => '#63490e',
+				'text' => '#2c2416',
+				'muted' => '#6a5c42',
+				'on_accent' => '#ffffff',
+				'chart_box' => '#e8c07a',
+				'chart_text' => '#2a1640'
+			)
+		),
+
+		// ============ NEW METALLIC: SILVER ============
+		// Dark: cool platinum silver on graphite/slate base
+		'graphite_silver' => array(
+			'label' => 'Graphite + Silver',
+			'colors' => array(
+				'page' => '#101216',
+				'surface' => '#1b1f26',
+				'surface_alt' => '#272d36',
+				'primary' => '#4a5a72',
+				'secondary' => '#3a4a5c',
+				'accent' => '#d4dde8',
+				'text' => '#f4f7fb',
+				'muted' => '#b0bccb',
+				'on_accent' => '#101216',
+				'chart_box' => '#d4dde8',
+				'chart_text' => '#101216'
+			)
+		),
+		// Light: steel silver accent (darkened so it reads on white)
+		'pearl_silver' => array(
+			'label' => 'Pearl + Silver',
+			'colors' => array(
+				'page' => '#f6f8fa',
+				'surface' => '#ffffff',
+				'surface_alt' => '#e9edf2',
+				'primary' => '#4a5a72',
+				'secondary' => '#5d6b7c',
+				'accent' => '#3f4d5e',
+				'text' => '#1e2530',
+				'muted' => '#586472',
+				'on_accent' => '#ffffff',
+				'chart_box' => '#d4dde8',
+				'chart_text' => '#101216'
+			)
+		),
+
+		// ============ NEW METALLIC: COPPER ============
+		// Dark: burnished copper on deep mahogany/espresso
+		'umber_copper' => array(
+			'label' => 'Umber + Copper',
+			'colors' => array(
+				'page' => '#1a0f0a',
+				'surface' => '#28180f',
+				'surface_alt' => '#372216',
+				'primary' => '#a04a1e',
+				'secondary' => '#7a3a1c',
+				'accent' => '#e09660',
+				'text' => '#fbeee2',
+				'muted' => '#cbaa92',
+				'on_accent' => '#1a0f0a',
+				'chart_box' => '#e09660',
+				'chart_text' => '#1a0f0a'
+			)
+		),
+		// Light: deep copper accent (darkened for AA)
+		'linen_copper' => array(
+			'label' => 'Linen + Copper',
+			'colors' => array(
+				'page' => '#faf4ee',
+				'surface' => '#ffffff',
+				'surface_alt' => '#f0e2d4',
+				'primary' => '#8a3f16',
+				'secondary' => '#6e4a2e',
+				'accent' => '#6e3413',
+				'text' => '#2e2018',
+				'muted' => '#6e5a48',
+				'on_accent' => '#ffffff',
+				'chart_box' => '#e09660',
+				'chart_text' => '#1a0f0a'
+			)
+		),
+
+		// ============ NEW METALLIC: ROSE GOLD ============
+		// Dark: luminous rose gold on deep wine-plum
+		'wine_rosegold' => array(
+			'label' => 'Wine + Rose Gold',
+			'colors' => array(
+				'page' => '#1c0d14',
+				'surface' => '#2b1420',
+				'surface_alt' => '#3a1c2b',
+				'primary' => '#9a5a6e',
+				'secondary' => '#7a3a50',
+				'accent' => '#f0b8a8',
+				'text' => '#fbeef0',
+				'muted' => '#d0b0b8',
+				'on_accent' => '#1c0d14',
+				'chart_box' => '#f0b8a8',
+				'chart_text' => '#1c0d14'
+			)
+		),
+		// Light: dusty rose-gold accent (darkened for AA)
+		'blush_rosegold' => array(
+			'label' => 'Blush + Rose Gold',
+			'colors' => array(
+				'page' => '#faf2f1',
+				'surface' => '#ffffff',
+				'surface_alt' => '#f2e2e0',
+				'primary' => '#8a4a58',
+				'secondary' => '#7a5a52',
+				'accent' => '#6e3a44',
+				'text' => '#2e1e22',
+				'muted' => '#6e5458',
+				'on_accent' => '#ffffff',
+				'chart_box' => '#f0b8a8',
+				'chart_text' => '#1c0d14'
 			)
 		)
 	);
