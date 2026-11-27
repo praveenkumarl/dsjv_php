@@ -4,31 +4,20 @@ include_once "lib.php";
 include_once "lang/lang.php";
 
 $DEBUG= (int) isset($_GET['debug']) ? $_GET['debug'] : 0;
+$allowPanchangPdfAnyTime = isset($_GET['pdf_any_time']) && $_GET['pdf_any_time'] === '1';
+$panchangFormAction = 'new_panchang.php?debug=' . $DEBUG;
+if ($allowPanchangPdfAnyTime) {
+	$panchangFormAction .= '&pdf_any_time=1';
+}
 $phone = isset($_COOKIE["phone"]) ? $_COOKIE["phone"] : 1;
 
 $home = isset($_GET['home'])? "none" : "";
 $flag = (int)isset($_GET['flag']) ? $_GET['flag'] : 0;
 
-if(isset($_POST['place'])){
-	$cookie_name = "panchang_place";
-	$cookie_value = $_POST['place'];
-	setcookie($cookie_name, $cookie_value, time() + (86400 * 365), "/"); // 86400 = 1 day
-}
-
-//$place = isset($_COOKIE['panchang_place']) ? $_COOKIE['panchang_place'] : "Chennai|Asia/Kolkata";
-
-if (isset($_POST['place'])) {
-    if (!isset($_COOKIE['panchang_place']) || strcmp($_COOKIE['panchang_place'], $_POST['place']) !== 0) {
-        setcookie('panchang_place', $_POST['place'], time() + 86400, "/"); // Cookie valid for 1 day
-    }
-    $place = $_POST['place'];
-} else {
-    if (isset($_COOKIE['panchang_place'])) {
-        $place = $_COOKIE['panchang_place'];
-    } else {
-        $place = "Chennai|Asia/Kolkata";
-        setcookie('panchang_place', $place, time() + 86400, "/"); // Set cookie on first run
-    }
+$place = isset($_POST['place']) ? $_POST['place'] : getUserProfilePlace('Chennai|Asia/Kolkata');
+$placeJs = json_encode($place, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+if (isset($_POST['place']) || !isset($_COOKIE['panchang_place'])) {
+	setcookie('panchang_place', $place, time() + (86400 * 365), "/");
 }
 
 // Handle language selection
@@ -62,6 +51,33 @@ $lang = isset($_POST["lang"]) ? $_POST["lang"] : "tamil";
 
 // Initialize the language system
 init_language($language);
+
+$panchangProfile = isset($_SESSION['userinfo']) && is_array($_SESSION['userinfo'])
+	? $_SESSION['userinfo']
+	: array();
+$panchangOfficeName = isset($panchangProfile['office_name']) ? trim((string)$panchangProfile['office_name']) : '';
+$panchangOfficeContact = isset($panchangProfile['office_contact']) ? trim((string)$panchangProfile['office_contact']) : '';
+$panchangOfficeNameEscaped = htmlspecialchars($panchangOfficeName, ENT_QUOTES, 'UTF-8');
+$panchangOfficeContactEscaped = htmlspecialchars($panchangOfficeContact, ENT_QUOTES, 'UTF-8');
+$panchangOfficeHeader = '';
+if ($panchangOfficeName !== '') {
+	$panchangOfficeHeader .= '<div class="panchang-report-office-name">' . htmlspecialchars($panchangOfficeName, ENT_QUOTES, 'UTF-8') . '</div>';
+}
+if ($panchangOfficeContact !== '') {
+	$panchangOfficeHeader .= '<div class="panchang-report-office-contact">' . htmlspecialchars($panchangOfficeContact, ENT_QUOTES, 'UTF-8') . '</div>';
+}
+$panchangReportTitle = htmlspecialchars(__('panchangam'), ENT_QUOTES, 'UTF-8');
+$panchangReportLang = $language === 'english' ? 'en' : 'ta';
+$panchangPrintOverviewTitle = htmlspecialchars($language === 'english' ? 'Panchanga overview' : 'பஞ்சாங்க விவரங்கள்', ENT_QUOTES, 'UTF-8');
+$panchangPrintDailyTitle = htmlspecialchars($language === 'english' ? 'Daily indicators and timings' : 'தினசரி குறிப்புகள் மற்றும் நேரங்கள்', ENT_QUOTES, 'UTF-8');
+$panchangPrintTimelineTitle = htmlspecialchars($language === 'english' ? 'Day timeline' : 'நேர வரைபடம்', ENT_QUOTES, 'UTF-8');
+$panchangPrintPlanetaryTitle = htmlspecialchars($language === 'english' ? 'Planetary details' : 'கிரக விவரங்கள்', ENT_QUOTES, 'UTF-8');
+$panchangPrintVivahaTitle = htmlspecialchars($language === 'english' ? 'Vivaha Chakra' : 'விவாஹ சக்ரம்', ENT_QUOTES, 'UTF-8');
+$panchangPrintTransitTitle = htmlspecialchars(__('current_transit'), ENT_QUOTES, 'UTF-8');
+$panchangPrintGrahaTitle = htmlspecialchars($language === 'english' ? 'Graha Saaram' : 'கிரக சாரம்', ENT_QUOTES, 'UTF-8');
+$panchangPrintDateLabel = htmlspecialchars($language === 'english' ? 'DATE' : 'தேதி', ENT_QUOTES, 'UTF-8');
+$panchangPrintTimeLabel = htmlspecialchars($language === 'english' ? 'TIME' : 'நேரம்', ENT_QUOTES, 'UTF-8');
+$panchangPrintPlaceLabel = htmlspecialchars($language === 'english' ? 'LOCATION' : 'இடம்', ENT_QUOTES, 'UTF-8');
 
 debug("PLACE=".$place);
 
@@ -223,6 +239,13 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 	<link rel="stylesheet" href="css/birth_chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/landing-theme.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/panchang-pdf.css?<?php echo date('ymdhis'); ?>">
+	<script src="html2pdf.bundle.min.js" type="text/javascript"></script>
+	<script>
+		var PDF_FILENAME = <?php echo json_encode('panchang_' . date('Ymd', strtotime($chart_date)) . '.pdf'); ?>;
+		var PANCHANG_PDF_ERROR = <?php echo json_encode($language === 'english' ? 'Unable to download the Panchang PDF. Please try again.' : 'பஞ்சாங்கம் PDF பதிவிறக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.'); ?>;
+	</script>
+	<script src="pdf_bridge.js?v=1" type="text/javascript"></script>
 	<style>
 		#mybody1 {
 			min-height:100vh;
@@ -232,6 +255,21 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		}
 		#mybody1 > .app-topbar {
 			margin-top:env(safe-area-inset-top);
+		}
+		#mybody1 .app-topbar .welcome,
+		#mybody1 .app-topbar .subscription-details {
+			color:var(--theme-button-text)!important;
+		}
+		#mybody1 .app-topbar .profile-trigger {
+			border-color:var(--theme-border-accent)!important;
+			background:var(--theme-button-gradient)!important;
+			color:var(--theme-button-text)!important;
+		}
+		#mybody1 .panchang-form-navigation .actionBtn,
+		#mybody1 .panchang-form-navigation .actionBtnSmall {
+			border-color:var(--theme-border-accent)!important;
+			background:var(--theme-button-gradient)!important;
+			color:var(--theme-button-text)!important;
 		}
 		#mybody1 .panchang-bottom-nav {
 			position:fixed;
@@ -262,7 +300,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			color:var(--theme-text-secondary,#c4afd2);
 			font-size:17px;
 			text-decoration:none;
-			transition:background-color .18s ease,color .18s ease;
+			transition:background .18s ease,color .18s ease;
 		}
 		#mybody1 .panchang-bottom-nav button {
 			display:grid;
@@ -270,13 +308,16 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			height:42px;
 			place-items:center;
 			padding:0;
-			border:0;
+			border:1px solid var(--theme-border-accent);
 			border-radius:15px;
-			background:transparent;
-			color:var(--theme-text-secondary,#c4afd2);
+			background:var(--theme-button-gradient);
+			color:var(--theme-button-text)!important;
 			font-size:17px;
 			cursor:pointer;
-			transition:background-color .18s ease,color .18s ease;
+			transition:background .18s ease,color .18s ease;
+		}
+		#mybody1 .panchang-bottom-nav button:hover {
+			background:var(--theme-button-gradient-hover);
 		}
 		#mybody1 .panchang-bottom-nav a.is-active {
 			background:var(--client-accent);
@@ -329,11 +370,30 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			border:0;
 			background:transparent!important;
 		}
-		#panchangDetailsHeading h6, #transitChartHeading h6 {
+		#panchangDetailsHeading h6 {
 			margin:2px;
 			color:var(--theme-text-accent)!important;
 			font-size:clamp(19px,4vw,24px);
 			font-weight:800;
+		}
+		#divOrigContainer #transitChartHeading {
+			display:block;
+			width:min(100%,420px);
+			margin:18px auto 12px;
+			padding:12px 16px;
+			border:1px solid var(--theme-border)!important;
+			border-radius:16px;
+			background:var(--theme-surface-panel-solid)!important;
+			box-shadow:0 12px 28px var(--theme-shadow-panel);
+			color:var(--theme-text-heading)!important;
+			font-size:clamp(19px,4vw,24px);
+			font-weight:800;
+			line-height:1.3;
+			text-align:center;
+		}
+		#divOrigContainer .divPanchang[onclick] {
+			color:var(--theme-text-accent-strong)!important;
+			cursor:pointer;
 		}
 		#vivahaChakram {
 			display:block!important;
@@ -662,8 +722,8 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			box-shadow:inset 3px 0 var(--theme-text-accent);
 		}
 		#starlordBodyMutable .divTableRow:first-child > .divTableCell:first-child {
-			background:var(--theme-text-accent-strong)!important;
-			color:#fff!important;
+			background:var(--theme-button-gradient)!important;
+			color:var(--theme-button-text)!important;
 		}
 		#starlordBodyMutable .divTableRow > .divPanchangSmall:last-child {
 			white-space:nowrap;
@@ -711,8 +771,8 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			white-space:nowrap;
 		}
 		.transit-chart-legend .legend-symbol-mandhi {
-			background:#b52f45;
-			color:#fff;
+			background:var(--theme-danger-soft);
+			color:var(--theme-text-error-strong);
 		}
 		.transit-chart-legend .legend-symbol-indhu {
 			background:var(--theme-success-soft);
@@ -810,6 +870,9 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			font-weight:800;
 			white-space:nowrap;
 		}
+		#transitChart .retro {
+			color:inherit!important;
+		}
 		#transitChart[data-language="english"] .retro::after {
 			content:"(R)";
 		}
@@ -870,17 +933,31 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			white-space:nowrap;
 		}
 		#transitChart .mandhi {
-			background-color:red!important;
-			color:white!important;
+			background-color:var(--theme-chart-box-background,var(--theme-surface-chart-center))!important;
+			color:var(--theme-chart-box-text,#4a3b18)!important;
+			border-color:var(--theme-chart-box-border,var(--theme-border-accent))!important;
 		}
 		#transitChart .moon {
-			background-color:#00ffff!important;
-			border:1px solid rgba(0,0,0,.14);
+			background-color:var(--theme-surface-chart-center)!important;
+			border:1px solid var(--theme-border-accent);
 			border-radius:999px;
-			color:#111!important;
+			color:var(--theme-text-heading)!important;
 		}
-		#transitChart .is-lagna-house {
-			background-image:linear-gradient(135deg,transparent 48.8%,rgba(153,93,42,.58) 49.6%,rgba(153,93,42,.58) 50.4%,transparent 51.2%)!important;
+		#transitChart .divTableCell.is-lagna-house {
+			position:relative;
+		}
+		#transitChart .divTableCell.is-lagna-house::before {
+			content:"";
+			position:absolute;
+			top:0;
+			left:0;
+			border-top:clamp(12px,4vw,18px) solid #8b5a2b;
+			border-right:clamp(12px,4vw,18px) solid transparent;
+			pointer-events:none;
+		}
+		#transitChart .transit-planet-entry.is-mandhi-entry {
+			font-size:10px!important;
+			line-height:1!important;
 		}
 		#transitChart .divTableCenterCell {
 			border:0!important;
@@ -894,67 +971,448 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			background:var(--theme-danger-soft);
 			color:var(--theme-chart-box-error,var(--theme-text-error-strong));
 		}
+		#divOrigContainer #transitChart {
+			border-color:#d6ad36!important;
+			background:#fff6d8!important;
+		}
+		#divOrigContainer #transitChart .divTableCell,
+		#divOrigContainer #transitChart .divTableCenterCell {
+			border-color:#c49b24!important;
+			color:#4a3b18!important;
+		}
+		#divOrigContainer #transitChart .divTableCell {
+			background:#ffe44d!important;
+		}
+		#divOrigContainer #transitChart .divTableCenterCell {
+			background:#fff2c2!important;
+		}
 		#muhurthamDiv {
 			background:var(--theme-overlay)!important;
 			backdrop-filter:blur(8px);
 			-webkit-backdrop-filter:blur(8px);
 		}
-		#muhurthamDiv .table-container {
-			position:fixed;
-			top:50%;
-			left:50%;
-			width:min(94vw,900px);
-			height:min(82vh,720px);
+		#mybody1 .panchang-modal-overlay {
+			position:fixed!important;
+			top:var(--panchang-overlay-top,76px)!important;
+			right:0!important;
+			bottom:0!important;
+			left:0!important;
+			z-index:1800!important;
+			display:none;
+			align-items:center;
+			justify-content:center;
+			width:auto!important;
+			height:auto!important;
+			max-height:none!important;
+			padding:clamp(12px,3vw,24px)!important;
+			overflow:hidden;
+			background:var(--theme-overlay)!important;
+			color:var(--theme-text);
+			backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
+			-webkit-backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
+			box-sizing:border-box;
+		}
+		body.panchang-modal-open {
+			overflow:hidden;
+		}
+		#mybody1 .panchang-modal-dialog {
+			position:relative;
+			display:flex;
+			flex-direction:column;
+			width:min(820px,100%);
+			max-height:100%;
+			min-height:0;
+			overflow:hidden;
+			border:1px solid var(--theme-glass-border);
+			border-radius:20px;
+			background:var(--theme-surface-panel-solid);
+			box-shadow:0 24px 70px var(--theme-shadow-strong),0 0 0 1px var(--theme-accent-soft);
+			color:var(--theme-text);
+		}
+		#mybody1 .panchang-modal-dialog.panchang-actions-dialog {
+			width:min(520px,100%);
+		}
+		#mybody1 .panchang-modal-header {
+			position:relative;
+			display:flex;
+			flex:0 0 auto;
+			align-items:center;
+			justify-content:space-between;
+			gap:14px;
+			min-height:60px;
+			padding:12px 68px 12px 18px;
+			border-bottom:1px solid var(--theme-border);
+			background:var(--theme-surface-toolbar);
+		}
+		#mybody1 .panchang-modal-header h2 {
 			margin:0;
-			padding:24px 12px 12px;
-			transform:translate(-50%,-50%);
+			color:var(--theme-text-heading);
+			font-size:clamp(17px,4vw,21px);
+			font-weight:800;
+			line-height:1.3;
+			overflow-wrap:anywhere;
+		}
+		#mybody1 .panchang-modal-close {
+			position:absolute;
+			top:50%;
+			right:14px;
+			display:grid;
+			width:38px;
+			height:38px;
+			place-items:center;
+			padding:0;
+			transform:translateY(-50%);
+			border:1px solid var(--theme-border);
+			border-radius:12px;
+			background:var(--theme-surface-field);
+			color:var(--theme-text-secondary);
+			font-size:17px;
+			cursor:pointer;
+		}
+		#mybody1 .panchang-modal-close:hover,
+		#mybody1 .panchang-modal-close:focus-visible {
+			border-color:var(--theme-border-focus);
+			background:var(--theme-accent-soft);
+			color:var(--theme-text-heading);
+			outline:2px solid var(--theme-border-focus);
+			outline-offset:2px;
+		}
+		#mybody1 .panchang-modal-body {
+			min-height:0;
+			padding:16px;
+			overflow:auto;
+			overscroll-behavior:contain;
+		}
+		#mybody1 .panchang-modal-table-wrap {
+			overflow:auto;
+			border:1px solid var(--theme-border);
+			border-radius:12px;
+		}
+		#mybody1 .panchang-modal-table {
+			width:100%;
+			border-collapse:collapse;
+			color:var(--theme-text);
+		}
+		#mybody1 .panchang-modal-table th,
+		#mybody1 .panchang-modal-table td {
+			padding:10px 12px;
+			border-bottom:1px solid var(--theme-border-soft);
+			background:var(--theme-surface-table);
+			color:var(--theme-text);
+			font-size:13px;
+			text-align:left;
+		}
+		#mybody1 .panchang-modal-table th {
+			position:sticky;
+			top:0;
+			z-index:1;
+			background:var(--theme-accent-medium);
+			color:var(--theme-text-heading);
+			font-weight:800;
+		}
+		#mybody1 .panchang-modal-table tbody tr:nth-child(even) td {
+			background:var(--theme-surface-cell);
+		}
+		#mybody1 .panchang-modal-table tbody tr:last-child td {
+			border-bottom:0;
+		}
+		#mybody1 .panchang-data-dialog {
+			width:min(900px,100%);
+		}
+		#mybody1 .panchang-pushkara-content .panchang-pushkara-heading {
+			margin:0 0 12px;
+			padding:12px 14px;
+			border:1px solid var(--theme-border-soft);
+			border-radius:12px;
+			background:var(--theme-surface-table-light);
+		}
+		#mybody1 .panchang-pushkara-content .panchang-pushkara-heading h3 {
+			margin:0;
+			color:var(--theme-text-heading)!important;
+			font-size:15px;
+			font-weight:800;
+		}
+		#mybody1 .panchang-pushkara-content .panchang-empty-state {
+			margin:0;
+			padding:14px;
+			border:1px solid var(--theme-border-soft);
+			border-radius:12px;
+			background:var(--theme-surface-table);
+			color:var(--theme-text-heading);
+			text-align:center;
+		}
+		#mybody1 .panchang-pushkara-content .panchang-modal-table {
+			table-layout:fixed;
+		}
+		#mybody1 .panchang-pushkara-content .panchang-modal-table th:nth-child(1),
+		#mybody1 .panchang-pushkara-content .panchang-modal-table th:nth-child(2) {
+			width:30%;
+		}
+		#mybody1 .panchang-pushkara-content .panchang-modal-table th:nth-child(3) {
+			width:40%;
+		}
+		#mybody1 .panchang-pushkara-content .panchang-modal-table th,
+		#mybody1 .panchang-pushkara-content .panchang-modal-table td {
+			padding:10px 8px;
+			color:var(--theme-text-heading);
+			text-align:center;
+		}
+		#mybody1 .panchang-pushkara-content .panchang-modal-table td:last-child {
+			font-weight:700;
+			text-align:left;
+			overflow-wrap:anywhere;
+		}
+		#mybody1 .panchang-pushkara-content .panchang-modal-table time {
+			font-size:11px;
+			font-variant-numeric:tabular-nums;
+		}
+		.panchang-table-date,
+		.panchang-table-time {
+			display:block;
+			white-space:nowrap;
+		}
+		#monthlyPanchangOverlay {
+			position:fixed;
+			top:var(--panchang-overlay-top,76px);
+			right:0;
+			bottom:0;
+			left:0;
+			z-index:1600;
+			display:none;
+			align-items:center;
+			justify-content:center;
+			padding:16px;
+			background:var(--theme-overlay)!important;
+			backdrop-filter:blur(8px);
+			-webkit-backdrop-filter:blur(8px);
+		}
+		body.monthly-panchang-overlay-open {
+			overflow:hidden;
+		}
+		#monthlyPanchangDialog {
+			position:relative;
+			width:min(100%,480px);
+			max-height:100%;
+			overflow:auto;
+			padding:24px;
 			border:1px solid var(--theme-border-strong);
 			border-radius:22px;
 			background:var(--theme-surface-panel-solid);
 			box-shadow:0 24px 70px var(--theme-shadow-strong),0 0 30px var(--theme-accent-soft);
-		}
-		#muhurthamDiv .scrollable-table {
-			height:100%;
-			padding:0 0 56px;
-			overflow:auto;
-		}
-		#muhurthamDiv .divTable.blueTable {
-			width:100%!important;
-			height:auto!important;
-			margin:0 auto;
-			border:0;
-			background:transparent;
-		}
-		#muhurthamDiv .divMuhurtHeading {
-			border:1px solid var(--theme-border-strong);
-			background:var(--theme-accent-medium);
-			color:var(--theme-text-heading);
-		}
-		#muhurthamDiv .divMurtaRed,
-		#muhurthamDiv .divMurtaBrightGreen,
-		#muhurthamDiv .divMurtaGreen {
-			border:1px solid var(--theme-border-soft);
 			color:var(--theme-text);
 		}
-		#muhurthamDiv .divMurtaRed {
-			background:var(--theme-danger-soft);
-			color:var(--theme-text-error);
+		#monthlyPanchangTitle {
+			margin:0 48px 20px 0;
+			color:var(--theme-text-heading);
+			font-size:clamp(20px,5vw,25px);
+			font-weight:800;
+			line-height:1.3;
 		}
-		#muhurthamDiv .divMurtaBrightGreen {
-			background:var(--theme-success-soft);
-			color:var(--theme-text-success);
-		}
-		#muhurthamDiv .divMurtaGreen {
-			background:var(--theme-success-soft);
-			color:var(--theme-text-success);
-		}
-		#muhurthamDiv .close-btn {
+		#monthlyPanchangDialog .monthly-panchang-close {
+			position:absolute;
+			top:14px;
+			right:14px;
+			display:grid;
 			width:40px;
 			height:40px;
-			border:1px solid var(--theme-border-on-accent);
+			place-items:center;
+			padding:0;
+			border:1px solid var(--theme-border-accent);
 			border-radius:12px;
 			background:var(--theme-button-gradient-close);
-			opacity:1;
+			color:var(--theme-button-text);
+			font-size:18px;
+			cursor:pointer;
+		}
+		#monthlyPanchangForm {
+			display:grid;
+			gap:14px;
+		}
+		#monthlyPanchangForm label {
+			display:grid;
+			gap:7px;
+			color:var(--theme-text-heading);
+			font-size:14px;
+			font-weight:700;
+			text-align:left;
+		}
+		#monthlyPanchangForm input,
+		#monthlyPanchangForm select {
+			box-sizing:border-box;
+			width:100%;
+			min-height:46px;
+			padding:10px 12px;
+			border:1px solid var(--theme-border-input);
+			border-radius:12px;
+			background:var(--theme-surface-field);
+			color:var(--theme-text);
+			font-size:15px;
+			font-weight:500;
+		}
+		#monthlyPanchangForm .monthly-panchang-place-search {
+			position:relative;
+		}
+		#monthlyPanchangPlaceResults:not(:empty) {
+			position:absolute;
+			top:calc(100% + 4px);
+			left:0;
+			right:0;
+			z-index:2;
+			max-height:220px;
+			overflow:auto;
+			padding:5px;
+			border:1px solid var(--theme-border);
+			border-radius:12px;
+			background:var(--theme-surface-panel-solid);
+			box-shadow:0 12px 28px var(--theme-shadow-panel);
+		}
+		#monthlyPanchangPlaceResults .monthly-panchang-place-option {
+			display:block;
+			width:100%;
+			padding:10px;
+			border:0;
+			border-radius:8px;
+			background:transparent;
+			color:var(--theme-text);
+			font:inherit;
+			text-align:left;
+			cursor:pointer;
+		}
+		#monthlyPanchangPlaceResults .monthly-panchang-place-option:hover,
+		#monthlyPanchangPlaceResults .monthly-panchang-place-option:focus-visible {
+			background:var(--theme-accent-soft);
+			outline:2px solid var(--theme-border-focus);
+		}
+		#monthlyPanchangForm .monthly-panchang-form-actions {
+			display:flex;
+			justify-content:flex-end;
+			gap:10px;
+			margin-top:6px;
+		}
+		#monthlyPanchangForm .monthly-panchang-form-actions button {
+			min-height:42px;
+			padding:9px 16px;
+			border:1px solid var(--theme-border-accent);
+			border-radius:12px;
+			font:inherit;
+			font-weight:700;
+			cursor:pointer;
+		}
+		#monthlyPanchangForm .monthly-panchang-cancel {
+			background:var(--theme-surface-field);
+			color:var(--theme-text-heading);
+		}
+		#monthlyPanchangForm .monthly-panchang-submit {
+			background:var(--theme-button-gradient);
+			color:var(--theme-button-text);
+		}
+		#monthlyPanchangForm .monthly-panchang-submit:disabled {
+			cursor:wait;
+			opacity:.72;
+		}
+		body.monthly-panchang-modal-open {
+			overflow:hidden;
+		}
+		@media (max-width:480px) {
+			#monthlyPanchangDialog {
+				padding:20px 16px;
+			}
+		}
+		#muhurthamDiv .table-container {
+			position:relative;
+			top:auto;
+			left:auto;
+			width:min(900px,100%);
+			height:min(100%,760px);
+			max-height:100%;
+			margin:0;
+			padding:0;
+			transform:none;
+			display:flex;
+			flex-direction:column;
+			overflow:hidden;
+			border:1px solid var(--theme-border-strong);
+			border-radius:20px;
+			background:var(--theme-surface-panel-solid);
+			box-shadow:0 24px 70px var(--theme-shadow-strong),0 0 30px var(--theme-accent-soft);
+		}
+		#muhurthamDiv .scrollable-table {
+			min-height:0;
+			padding:12px;
+			overflow:auto;
+			overscroll-behavior:contain;
+		}
+		#muhurthamDiv .panchang-muhurtham-table-wrap {
+			width:100%;
+			overflow:auto;
+			border:1px solid var(--theme-border);
+			border-radius:12px;
+		}
+		#muhurthamDiv .panchang-muhurtham-table {
+			width:100%;
+			table-layout:fixed;
+		}
+		#muhurthamDiv .panchang-muhurtham-table th:nth-child(1),
+		#muhurthamDiv .panchang-muhurtham-table th:nth-child(2) {
+			width:22%;
+		}
+		#muhurthamDiv .panchang-muhurtham-table th:nth-child(3) {
+			width:24%;
+		}
+		#muhurthamDiv .panchang-muhurtham-table th:nth-child(4) {
+			width:32%;
+		}
+		#muhurthamDiv .panchang-muhurtham-table th,
+		#muhurthamDiv .panchang-muhurtham-table td {
+			padding:10px 8px;
+			border-bottom:1px solid var(--theme-border-soft);
+			color:var(--theme-text-heading);
+			font-size:13px;
+			line-height:1.4;
+			text-align:left;
+			vertical-align:top;
+			overflow-wrap:anywhere;
+		}
+		#muhurthamDiv .panchang-muhurtham-table th {
+			position:sticky;
+			top:0;
+			z-index:1;
+			background:var(--theme-accent-medium);
+			font-weight:800;
+		}
+		#muhurthamDiv .panchang-muhurtham-table tbody tr:nth-child(even) td {
+			background:var(--theme-surface-cell);
+		}
+		#muhurthamDiv .panchang-muhurtham-table tbody tr:last-child td {
+			border-bottom:0;
+		}
+		#muhurthamDiv .panchang-muhurtham-table tbody tr.is-inauspicious td {
+			background:var(--theme-danger-soft);
+		}
+		#muhurthamDiv .panchang-muhurtham-table tbody tr.is-auspicious td,
+		#muhurthamDiv .panchang-muhurtham-table tbody tr.is-very-auspicious td {
+			background:var(--theme-success-soft);
+		}
+		#muhurthamDiv .panchang-muhurtham-table tbody tr.is-inauspicious td:first-child {
+			border-left:3px solid var(--theme-text-error);
+		}
+		#muhurthamDiv .panchang-muhurtham-table tbody tr.is-auspicious td:first-child,
+		#muhurthamDiv .panchang-muhurtham-table tbody tr.is-very-auspicious td:first-child {
+			border-left:3px solid var(--theme-text-success);
+		}
+		#muhurthamDiv .panchang-muhurtham-table time span {
+			display:block;
+		}
+		#muhurthamDiv .panchang-muhurtham-table time {
+			display:block;
+			font-variant-numeric:tabular-nums;
+		}
+		#muhurthamDiv .close-btn {
+			position:absolute;
+			top:11px;
+			right:12px;
+			z-index:2;
+			transform:none;
 		}
 		#mybody1 #thithiDetailsDiv,
 		#mybody1 #karanaDetailsDiv,
@@ -1095,36 +1553,9 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			max-height:calc(100vh - 114px);
 			max-height:calc(100dvh - 114px);
 		}
-		#mybody1 .starDivition {
-			border-color:var(--theme-border-strong);
-			background:var(--theme-surface-panel-solid);
-			box-shadow:0 12px 34px var(--theme-shadow-strong);
-			color:var(--theme-text);
-		}
-		#mybody1 .starDivition .close-btn {
-			border:1px solid var(--theme-border-on-accent);
-			border-radius:12px;
-			background:var(--theme-button-gradient-close);
-			color:var(--theme-button-text);
-			opacity:1;
-		}
-		#mybody1 .starDivition table th,
-		#mybody1 .starDivition table td {
-			border:1px solid var(--theme-border)!important;
-			background:var(--theme-surface-table)!important;
-			color:var(--theme-text);
-			padding:5px;
-		}
-		#mybody1 .starDivition table tbody td:first-child {
-			text-align:center;
-		}
-		#mybody1 .starDivition table thead tr {
-			background:var(--theme-accent-medium)!important;
-		}
 		#panchangForm,
 		#divOrigContainer .divTable.blueTable:not(#transitChart),
-		#muhurthamDiv .table-container,
-		#mybody1 .starDivition {
+		#muhurthamDiv .table-container {
 			border-color:var(--theme-glass-border)!important;
 			box-shadow:0 18px 48px var(--theme-glass-shadow),0 0 0 1px rgba(212,175,55,.16),inset 0 1px var(--theme-glass-highlight),inset 0 -1px var(--theme-glass-edge);
 			backdrop-filter:blur(var(--theme-glass-blur)) saturate(var(--theme-glass-saturation));
@@ -1142,6 +1573,24 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			-webkit-backdrop-filter:blur(10px);
 		}
 		@media (max-width:600px) {
+			#mybody1 .panchang-modal-overlay {
+				padding:10px!important;
+			}
+			#mybody1 .panchang-modal-dialog {
+				border-radius:16px;
+			}
+			#mybody1 .panchang-modal-header {
+				min-height:54px;
+				padding:10px 60px 10px 14px;
+			}
+			#mybody1 .panchang-modal-close {
+				right:10px;
+				width:36px;
+				height:36px;
+			}
+			#mybody1 .panchang-modal-body {
+				padding:10px;
+			}
 			#mybody1 #thithiDetailsDiv,
 			#mybody1 #karanaDetailsDiv,
 			#mybody1 #yogiDetailsDiv,
@@ -1204,9 +1653,80 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 				padding:9px 8px;
 			}
 			#muhurthamDiv .table-container {
-				width:96vw;
-				height:86vh;
-				padding:22px 8px 8px;
+				width:100%;
+				height:100%;
+				max-height:100%;
+				padding:0;
+			}
+			#muhurthamDiv .scrollable-table {
+				padding:10px;
+			}
+			#muhurthamDiv .panchang-muhurtham-table-wrap {
+				overflow:visible;
+				border:0;
+			}
+			#muhurthamDiv .panchang-muhurtham-table,
+			#muhurthamDiv .panchang-muhurtham-table tbody {
+				display:block;
+				width:100%;
+			}
+			#muhurthamDiv .panchang-muhurtham-table thead {
+				position:absolute;
+				width:1px;
+				height:1px;
+				margin:-1px;
+				padding:0;
+				overflow:hidden;
+				clip:rect(0,0,0,0);
+				white-space:nowrap;
+				border:0;
+			}
+			#muhurthamDiv .panchang-muhurtham-table tbody {
+				display:grid;
+				gap:9px;
+			}
+			#muhurthamDiv .panchang-muhurtham-table tbody tr {
+				display:grid;
+				grid-template-columns:repeat(2,minmax(0,1fr));
+				gap:7px;
+				padding:8px;
+				border:1px solid var(--theme-border-soft);
+				border-radius:12px;
+				background:var(--theme-surface-table);
+			}
+			#muhurthamDiv .panchang-muhurtham-table tbody tr.is-inauspicious {
+				border-left:3px solid var(--theme-text-error);
+			}
+			#muhurthamDiv .panchang-muhurtham-table tbody tr.is-auspicious,
+			#muhurthamDiv .panchang-muhurtham-table tbody tr.is-very-auspicious {
+				border-left:3px solid var(--theme-text-success);
+			}
+			#muhurthamDiv .panchang-muhurtham-table tbody td {
+				display:block;
+				min-width:0;
+				padding:8px;
+				border:1px solid var(--theme-border-soft);
+				border-radius:8px;
+				background:var(--theme-surface-panel-solid)!important;
+				color:var(--theme-text-heading);
+				font-size:12px;
+			}
+			#muhurthamDiv .panchang-muhurtham-table tbody td::before {
+				display:block;
+				margin-bottom:4px;
+				color:var(--theme-text-secondary);
+				content:attr(data-label);
+				font-size:10px;
+				font-weight:800;
+				line-height:1.2;
+				text-transform:uppercase;
+			}
+			#muhurthamDiv .panchang-muhurtham-table tbody tr.is-inauspicious td:first-child {
+				border-left:3px solid var(--theme-text-error);
+			}
+			#muhurthamDiv .panchang-muhurtham-table tbody tr.is-auspicious td:first-child,
+			#muhurthamDiv .panchang-muhurtham-table tbody tr.is-very-auspicious td:first-child {
+				border-left:3px solid var(--theme-text-success);
 			}
 			#panchangDetails .divPanchang[onclick]::after {
 				content:"\f25a";
@@ -1292,14 +1812,25 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 
 	function formatTithiName(text) {
 		var translated = translateDynamic(text);
-		if (currentLanguage !== 'english' || typeof translated !== 'string') return translated;
-		return translated.replace(/\s*(wax|wan)$/i, ' ($1)');
+		if (typeof translated !== 'string') return translated;
+
+		var pakshamLabel = '';
+		var normalized = translated.replace(/\s*\(?\s*(krish(?:na)?|shukla|sukla|wax(?:ing)?|wan(?:ing)?|தேய்|வளர்)(?:\s*paksha)?\s*\)?/ig, function(match, paksham) {
+			var isWaning = /^(?:krish|wan|தேய்)/i.test(paksham);
+			pakshamLabel = currentLanguage === 'english'
+				? (isWaning ? 'Wan' : 'Wax')
+				: (isWaning ? 'தேய்' : 'வளர்');
+			return ' ';
+		}).replace(/\s+/g, ' ').trim();
+
+		return pakshamLabel ? normalized + ' (' + pakshamLabel + ')' : translated;
 	}
 	
 	// Language handled server-side; client-side translation removed
 	
 	const panchangTime = "<?php echo $defaultPanchangTime; ?>";
 	const panchangDate = "<?php echo date('Y-m-d'); ?>";
+	const allowPanchangPdfAnyTime = <?php echo $allowPanchangPdfAnyTime ? 'true' : 'false'; ?>;
 	
 	function init(){
 			if(getCookie(focus)=='date'){
@@ -1312,7 +1843,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			
 			delete_cookie(focus);
 			
-			document.getElementById('place').value = '<?php echo $place; ?>';
+			document.getElementById('place').value = <?php echo $placeJs; ?>;
 			
 			document.getElementById("starlordHeadMutable").style.display = 'table';
 			document.getElementById("starlordBodyMutable").style.display = 'table';
@@ -1441,7 +1972,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		}
 		
 		$(document).ready(function(){
-			$('.search-box input[type="text"]').on("keyup input", function(){
+			$('#panchangForm .search-box input[type="text"]').on("keyup input", function(){
 				/* Get input value on change */
 				//var inputVal = $(this).val();
 				var inputVal = $(this).val().trim();
@@ -1458,7 +1989,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			});
 			
 			 // Set search input value on click of result item
-			$(document).on("click", ".result div", function(){
+			$(document).on("click", "#panchangForm .result div", function(){
 				$(this).parents(".search-box").find('input[type="text"]').val($(this).text());
 				$(this).parent(".result").empty();
 				$(this).parent("#lplace").hide();
@@ -1467,14 +1998,85 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 					document.forms["updatePanchang"].submit();
 				}
 			});
+
+			$('#monthlyPanchangPlace').on('input', function() {
+				var placeInput = this;
+				var searchTerm = placeInput.value.trim();
+				var resultList = document.getElementById('monthlyPanchangPlaceResults');
+				document.getElementById('monthlyPanchangPlaceValue').value = '';
+				window.clearTimeout(monthlyPlaceSearchTimer);
+				if (monthlyPlaceSearchRequest && monthlyPlaceSearchRequest.readyState !== 4) {
+					monthlyPlaceSearchRequest.abort();
+				}
+				resultList.innerHTML = '';
+				if (searchTerm.length < 3) return;
+
+				monthlyPlaceSearchTimer = window.setTimeout(function() {
+					monthlyPlaceSearchRequest = $.getJSON('backend-search.php', {
+						format: 'json',
+						term: searchTerm
+					}).done(function(data) {
+						if (placeInput.value.trim() !== searchTerm) return;
+						resultList.innerHTML = '';
+						if (!Array.isArray(data)) {
+							resultList.textContent = monthlyPlaceSearchError;
+							return;
+						}
+						if (data.length === 0) {
+							resultList.textContent = monthlyPlaceNoResultsMessage;
+							return;
+						}
+
+						data.forEach(function(location) {
+							if (!location || !location.place || !location.timezone || !location.country) return;
+							var option = document.createElement('button');
+							option.type = 'button';
+							option.className = 'monthly-panchang-place-option';
+							option.setAttribute('role', 'option');
+							option.setAttribute('data-place', [
+								location.place,
+								location.timezone,
+								location.country
+							].join('|'));
+							option.setAttribute('data-label', location.place + ', ' + location.country);
+							option.textContent = location.place + ', ' + location.country;
+							resultList.appendChild(option);
+						});
+						if (!resultList.childElementCount) {
+							resultList.textContent = monthlyPlaceNoResultsMessage;
+						}
+					}).fail(function(xhr, status) {
+						if (status === 'abort' || placeInput.value.trim() !== searchTerm) return;
+						console.error('Monthly Panchang place search failed.', xhr.status);
+						resultList.textContent = monthlyPlaceSearchError;
+					});
+				}, 250);
+			});
+
+			$(document).on('click', '#monthlyPanchangPlaceResults .monthly-panchang-place-option', function() {
+				document.getElementById('monthlyPanchangPlaceValue').value = this.getAttribute('data-place');
+				document.getElementById('monthlyPanchangPlace').value = this.getAttribute('data-label');
+				document.getElementById('monthlyPanchangPlaceResults').innerHTML = '';
+				document.getElementById('monthlyPanchangPlace').focus();
+			});
+
+			$('#monthlyPanchangClose, #monthlyPanchangCancel').on('click', closeMonthlyPanchangOverlay);
+			$('#monthlyPanchangOverlay').on('click', function(event) {
+				if (event.target === this) closeMonthlyPanchangOverlay();
+			});
+			$(document).on('keydown', function(event) {
+				if ((event.key === 'Escape' || event.keyCode === 27) &&
+					document.getElementById('monthlyPanchangOverlay').getAttribute('aria-hidden') === 'false') {
+					closeMonthlyPanchangOverlay();
+				}
+			});
 		});
 		
 		function placeOnBlur() {
 			let place = document.getElementById("place").value;
 			
 			if(place==""){
-				/*document.getElementById('place').value = '<?php echo $place; ?>';*/
-				document.getElementById('place').value = '<?php echo $place; ?>';
+				document.getElementById('place').value = <?php echo $placeJs; ?>;
 			}
 		}
 		
@@ -1629,6 +2231,12 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		}*/
 		
 		document.onreadystatechange = function() {
+			const pdfButton = document.getElementById('onePagePanchangDownload');
+			if (pdfButton) {
+				const selectedTime = document.getElementById('nTime');
+				pdfButton.disabled = !allowPanchangPdfAnyTime &&
+					(!selectedTime || selectedTime.value !== panchangTime);
+			}
 		
 			if(document.getElementById('dummy') != null){	//chart not loaded
 				if(document.getElementById('loader'))
@@ -1643,22 +2251,6 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			//handleLongPress();
 			//handleSwipe();
 			
-			const button = document.getElementById("onePageBtn");
-			const timeElement = document.getElementById("nTime");
-
-			if (!timeElement) {
-				console.error("Element with ID 'nTime' not found.");
-				return;
-			}
-
-			const timeText = timeElement.value; // Get time
-		
-			// Enable the button only when time matches the selected date's sunrise.
-			if (timeText !== panchangTime) {
-				button.disabled = true;
-			} else {
-				button.disabled = false;
-			}
 		};
 	
 	function handleSwipe(){
@@ -1695,12 +2287,69 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		});
 	}
 	
-	function genPanchang(place){
-			var url = "gen_panchang_form.php"+"?place="+encodeURIComponent(place);
-			//window.open("gen_panchang_form.php","_self");
-			window.open(url,"_self");
+	var monthlyPanchangOpener = null;
+	var monthlyPlaceSearchTimer = null;
+	var monthlyPlaceSearchRequest = null;
+	var monthlyPleaseFillMessage = <?php echo json_encode(__('please_fill_all_fields'), JSON_UNESCAPED_UNICODE); ?>;
+	var monthlyPlaceSearchError = <?php echo json_encode($language === 'english' ? 'Place search is unavailable. Please try again.' : 'இடத் தேடல் கிடைக்கவில்லை. மீண்டும் முயற்சிக்கவும்.', JSON_UNESCAPED_UNICODE); ?>;
+	var monthlyPlaceNoResultsMessage = <?php echo json_encode($language === 'english' ? 'No matching places found.' : 'பொருந்தக்கூடிய இடங்கள் எதுவும் இல்லை.', JSON_UNESCAPED_UNICODE); ?>;
+
+	function genPanchang(place) {
+		var overlay = document.getElementById('monthlyPanchangOverlay');
+		var placeInput = document.getElementById('monthlyPanchangPlace');
+		var placeValueInput = document.getElementById('monthlyPanchangPlaceValue');
+		if (!overlay || !placeInput || !placeValueInput) {
+			console.error('Monthly Panchang overlay is unavailable.');
 			return false;
 		}
+
+		monthlyPanchangOpener = document.activeElement;
+		var placeValue = typeof place === 'string' ? place : '';
+		var placeParts = placeValue.split('|');
+		placeValueInput.value = placeValue;
+		placeInput.value = placeParts[0] || '';
+		if (placeParts.length > 2) {
+			placeInput.value += ', ' + placeParts[placeParts.length - 1];
+		}
+		positionPanchangOverlay(overlay);
+		overlay.style.display = 'flex';
+		overlay.setAttribute('aria-hidden', 'false');
+		document.body.classList.add('panchang-modal-open');
+		document.body.classList.add('monthly-panchang-overlay-open');
+		window.setTimeout(function() {
+			placeInput.focus();
+			placeInput.select();
+		}, 0);
+		return false;
+	}
+
+	function closeMonthlyPanchangOverlay() {
+		var overlay = document.getElementById('monthlyPanchangOverlay');
+		if (!overlay) return;
+
+		overlay.style.display = 'none';
+		overlay.setAttribute('aria-hidden', 'true');
+		document.body.classList.remove('panchang-modal-open');
+		document.body.classList.remove('monthly-panchang-overlay-open');
+		window.clearTimeout(monthlyPlaceSearchTimer);
+		if (monthlyPlaceSearchRequest && monthlyPlaceSearchRequest.readyState !== 4) {
+			monthlyPlaceSearchRequest.abort();
+		}
+		document.getElementById('monthlyPanchangPlaceResults').innerHTML = '';
+		if (monthlyPanchangOpener && typeof monthlyPanchangOpener.focus === 'function') {
+			monthlyPanchangOpener.focus();
+		}
+	}
+
+	function handleMonthlyPanchangSubmit(event) {
+		var form = event.currentTarget;
+		if (!form.month.value || !form.year.value || !form.place.value.trim()) {
+			event.preventDefault();
+			alert(monthlyPleaseFillMessage);
+			return false;
+		}
+		return true;
+	}
 		
 	function validateForm() {
 		  p = document.getElementById("place").value;
@@ -1819,6 +2468,68 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 	});
 	
 	
+	var panchangModalCloseLabel = <?php echo json_encode(__('close'), JSON_UNESCAPED_UNICODE); ?>;
+
+	function positionPanchangOverlay(overlay) {
+		var topbar = document.querySelector('#mybody1 .app-topbar');
+		var overlayTop = topbar ? Math.ceil(topbar.getBoundingClientRect().bottom + 8) : 76;
+		overlay.style.setProperty('--panchang-overlay-top', Math.max(64, overlayTop) + 'px');
+	}
+
+	function openPanchangModal(overlay, dialog) {
+		if (!overlay) return;
+		positionPanchangOverlay(overlay);
+		if (overlay.getAttribute('data-modal-bound') !== 'true') {
+			overlay.addEventListener('click', function(event) {
+				if (event.target === overlay) closePanchangModal(overlay);
+			});
+			overlay.setAttribute('data-modal-bound', 'true');
+		}
+		overlay.style.display = 'flex';
+		overlay.setAttribute('aria-hidden', 'false');
+		document.body.classList.add('panchang-modal-open');
+		var closeButton = dialog ? dialog.querySelector('.panchang-modal-close') : null;
+		if (closeButton) closeButton.focus();
+	}
+
+	function closePanchangModal(overlay) {
+		if (!overlay) return;
+		overlay.style.display = 'none';
+		overlay.setAttribute('aria-hidden', 'true');
+		if (overlay.id === 'muhurthamDiv') {
+			overlay.innerHTML = '';
+		} else if (overlay.id !== 'panchangActionsOverlay') {
+			overlay.remove();
+		}
+		if (!document.querySelector('.panchang-modal-overlay[aria-hidden="false"]')) {
+			document.body.classList.remove('panchang-modal-open');
+		}
+		var trigger = document.getElementById('panchangActionsTrigger');
+		if (trigger) trigger.focus();
+	}
+
+	function openPanchangActionsOverlay() {
+		var overlay = document.getElementById('panchangActionsOverlay');
+		openPanchangModal(overlay, document.getElementById('panchangActionsDialog'));
+	}
+
+	function closePanchangActionsOverlay() {
+		closePanchangModal(document.getElementById('panchangActionsOverlay'));
+	}
+
+	document.addEventListener('keydown', function(event) {
+		if (event.key !== 'Escape') return;
+		var overlay = document.querySelector('.panchang-modal-overlay[aria-hidden="false"]');
+		if (overlay) closePanchangModal(overlay);
+	});
+
+	window.addEventListener('resize', function() {
+		var overlays = document.querySelectorAll('.panchang-modal-overlay[aria-hidden="false"], #monthlyPanchangOverlay[aria-hidden="false"]');
+		for (var i = 0; i < overlays.length; i++) {
+			positionPanchangOverlay(overlays[i]);
+		}
+	});
+
 	function displayNakshatraDivisions(startStr, endStr, startNakshatra) {
 		const nakshatras_en = [
 		"Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashirsha", "Ardra", "Punarvasu",
@@ -1859,25 +2570,38 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 	}
 
 	const existing = document.getElementById("nakshatraOverlay");
-	if (existing) existing.remove();
+	if (existing) closePanchangModal(existing);
 
 	const overlay = document.createElement("div");
 	overlay.id = "nakshatraOverlay";
-	overlay.className = "starDivition";  // 👈 apply CSS class
+	overlay.className = "panchang-modal-overlay";
+	overlay.setAttribute("aria-hidden", "true");
 
+	const dialog = document.createElement("section");
+	dialog.className = "panchang-modal-dialog panchang-data-dialog";
+	dialog.setAttribute("role", "dialog");
+	dialog.setAttribute("aria-modal", "true");
+	dialog.setAttribute("aria-labelledby", "nakshatraOverlayTitle");
+
+	const header = document.createElement("header");
+	header.className = "panchang-modal-header";
+	const title = document.createElement("h2");
+	title.id = "nakshatraOverlayTitle";
+	title.textContent = <?php echo json_encode(__('nakshatra_division'), JSON_UNESCAPED_UNICODE); ?> + " (" + displayArray[startIndex] + ")";
 	const closeBtn = document.createElement("button");
-	closeBtn.innerText = "✖";
-	//closeBtn.style.cssText = "position:absolute;top:5px;right:5px;background:red;color:white;border:none;padding:5px 10px;cursor:pointer;border-radius:5px;font-weight:bold;text-box-trim: trim-both;";
-	closeBtn.className = "close-btn";
-	closeBtn.onclick = () => overlay.remove();
-	overlay.appendChild(closeBtn);
-
-	const title = `<DIV class="divTableCell"><?php echo addslashes(__('nakshatra_division')); ?><br><small style="font-weight:normal;">(${displayArray[startIndex]})</small></DIV>`;
-	let outputHTML = title;
+	closeBtn.type = "button";
+	closeBtn.className = "panchang-modal-close";
+	closeBtn.setAttribute("aria-label", panchangModalCloseLabel);
+	closeBtn.innerHTML = '<i class="fa fa-times" aria-hidden="true"></i>';
+	closeBtn.addEventListener("click", function() { closePanchangModal(overlay); });
+	header.appendChild(title);
+	header.appendChild(closeBtn);
+	dialog.appendChild(header);
 
 	// Start Table
-	outputHTML += `
-		<table style="width:100%;border-collapse:collapse;margin-top:10px;">
+	let outputHTML = `
+		<div class="panchang-modal-table-wrap">
+		<table class="panchang-modal-table">
 			<thead>
 				<tr class="nakshatra-table-header">
 					<th>#</th>
@@ -1906,10 +2630,12 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 	}
 
 	const contentDiv = document.createElement("div");
-	contentDiv.style.padding = "20px"; // Add padding around the table
-	contentDiv.innerHTML = outputHTML;
-	overlay.appendChild(contentDiv);
+	contentDiv.className = "panchang-modal-body";
+	contentDiv.innerHTML = outputHTML + "</tbody></table></div>";
+	dialog.appendChild(contentDiv);
+	overlay.appendChild(dialog);
 	document.body.appendChild(overlay);
+	openPanchangModal(overlay, dialog);
 
 	// Helper function to format time as hh:mm
 	function formatTime(date) {
@@ -1943,7 +2669,7 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		updatePanchangData();
 		date='<?php echo $chart_date; ?>';
 		time='<?php echo $chart_time; ?>';
-		place='<?php echo $place; ?>';
+		place=<?php echo $placeJs; ?>;
 
 		url = 'hora.php?date='+date+'&time='+time+'&place='+place;
 
@@ -1955,7 +2681,6 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 		
 		if(param==1){ //Panchang details alone
 			document.getElementById('panchangForm').style.display = 'none';
-			document.getElementById('panchangDetailsHeading').style.display = 'reset';
 			document.getElementById('panchangDetails').style.display = 'table';
 			document.getElementById('transitChartHeading').style.display = 'none';
 			document.getElementById('transitChart').style.display = 'none';
@@ -1964,8 +2689,8 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
 			document.getElementById('panchangForm').style.display = 'none';
 			document.getElementById('panchangDetailsHeading').style.display = 'none';
 			document.getElementById('panchangDetails').style.display = 'none';
-			document.getElementById('transitChartHeading').style.display = 'reset';
-		document.getElementById('transitChart').style.display = 'reset';
+			document.getElementById('transitChartHeading').style.display = '';
+			document.getElementById('transitChart').style.display = '';
 	}
 	
 	// Language is now handled server-side via PHP, no client-side translation needed
@@ -2015,44 +2740,71 @@ $previous_day=date("Y-m-d",strtotime($chart_date. ' - 1 days'));
      }
 	
 function generateMuhurtam_default() {
-	var count = 0; // using server-provided `mukurt_arr` variable (language-aware)
+	var labels = [
+		<?php echo json_encode(__('start'), JSON_UNESCAPED_UNICODE); ?>,
+		<?php echo json_encode(__('end'), JSON_UNESCAPED_UNICODE); ?>,
+		<?php echo json_encode(__('muhurtham'), JSON_UNESCAPED_UNICODE); ?>,
+		<?php echo json_encode(__('result'), JSON_UNESCAPED_UNICODE); ?>
+	];
+	function escapeMuhurthamText(value) {
+		return String(value).replace(/[&<>"']/g, function(character) {
+			return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character];
+		});
+	}
+	function formatMuhurthamTime(date) {
+		var dateText = String(date.getDate()).padStart(2, '0') + '-' +
+			String(date.getMonth() + 1).padStart(2, '0') + '-' + date.getFullYear();
+		var timeText = String(date.getHours()).padStart(2, '0') + ':' +
+			String(date.getMinutes()).padStart(2, '0');
+		var machineDateTime = date.getFullYear() + '-' +
+			String(date.getMonth() + 1).padStart(2, '0') + '-' +
+			String(date.getDate()).padStart(2, '0') + 'T' + timeText;
+		return '<time datetime="' + machineDateTime + '"><span class="panchang-table-date">' +
+			dateText + '</span><span class="panchang-table-time">' + timeText + '</span></time>';
+	}
 
-    var html_str = '<div class="table-container">';
-    html_str += '<button class="close-btn" onclick="closeTable()">X</button>';
-    html_str += '<div class="scrollable-table">';
-    html_str += '<center><div class="divTable blueTable" style="width:100%;height:100%">';
+	var html_str = '<section class="table-container panchang-modal-dialog panchang-data-dialog" role="dialog" aria-modal="true" aria-labelledby="muhurthamOverlayTitle">';
+	html_str += '<header class="panchang-modal-header"><h2 id="muhurthamOverlayTitle">' + <?php echo json_encode(__('muhurtham'), JSON_UNESCAPED_UNICODE); ?> + '</h2>';
+	html_str += '<button type="button" class="panchang-modal-close close-btn" aria-label="' + escapeMuhurthamText(panchangModalCloseLabel) + '" onclick="closeTable()"><i class="fa fa-times" aria-hidden="true"></i></button></header>';
+	html_str += '<div class="scrollable-table"><div class="panchang-muhurtham-table-wrap">';
+	html_str += '<table class="panchang-modal-table panchang-muhurtham-table"><thead><tr>';
+	for (var headerIndex = 0; headerIndex < labels.length; headerIndex++) {
+		html_str += '<th scope="col">' + escapeMuhurthamText(labels[headerIndex]) + '</th>';
+	}
+	html_str += '</tr></thead><tbody>';
 
-    // this is to negate sunrise calculation
-    today_sunrise = '<?php echo $chart_date; ?>' + ' 06:00:00';
-    tomm_sunrise = '<?php echo $next_day; ?>' + ' 06:00:00';
-    todaysunrise = new Date(today_sunrise);
-    tommsunrise = new Date(tomm_sunrise);
-    muhurt_time = (tommsunrise.getTime() - todaysunrise.getTime()) / (1000 * 60) / 30;
-    start_time = new Date(todaysunrise.getTime());
-	html_str = html_str + '<div class="divTableRow"><div class="divMuhurtHeading"><?php _e("start"); ?></div><div class="divMuhurtHeading"><?php _e("end"); ?></div><div class="divMuhurtHeading"><?php _e("muhurtham"); ?></div><div class="divMuhurtHeading"><?php _e("result"); ?></div></div>';
+	var todaySunrise = new Date('<?php echo $chart_date; ?>' + ' 06:00:00');
+	var tomorrowSunrise = new Date('<?php echo $next_day; ?>' + ' 06:00:00');
+	var muhurtTime = (tomorrowSunrise.getTime() - todaySunrise.getTime()) / (1000 * 60) / 30;
+	var startTime = new Date(todaySunrise.getTime());
 
-    for (var i = 0; i < 30; i++) {
-        end_time = new Date((start_time.getTime() + muhurt_time * 60000));
-        stime = String(start_time.getDate()).padStart(2, '0') + '-' + String(start_time.getMonth() + 1).padStart(2, '0') + '-' + start_time.getFullYear() + ' ' + String(start_time.getHours()).padStart(2, '0') + ':' + String(start_time.getMinutes()).padStart(2, '0');
-        etime = String(end_time.getDate()).padStart(2, '0') + '-' + String(end_time.getMonth() + 1).padStart(2, '0') + '-' + end_time.getFullYear() + ' ' + String(end_time.getHours()).padStart(2, '0') + ':' + String(end_time.getMinutes()).padStart(2, '0');
-
-		if ((mukurt_arr[i][1]).indexOf("அசுபமானது") != -1 || (mukurt_arr[i][1]).indexOf("Inauspicious") != -1) {
-			html_str = html_str + '<div class="divTableRow"><div class="divMurtaRed">' + stime + '</div><div class="divMurtaRed">' + etime + '</div><div class="divMurtaRed">' + mapIfEnglish(mukurt_arr[i][0]) + '</div><div class="divMurtaRed">' + mapIfEnglish(mukurt_arr[i][1]) + '</div></div>';
-		} else if ((mukurt_arr[i][1]).indexOf("மங்களகரமானது") != -1 || (mukurt_arr[i][1]).indexOf("Auspicious") != -1 || (mukurt_arr[i][1]).indexOf("Very Auspicious") != -1) {
-			html_str = html_str + '<div class="divTableRow"><div class="divMurtaBrightGreen">' + stime + '</div><div class="divMurtaBrightGreen">' + etime + '</div><div class="divMurtaBrightGreen">' + mapIfEnglish(mukurt_arr[i][0]) + '</div><div class="divMurtaBrightGreen">' + mapIfEnglish(mukurt_arr[i][1]) + '</div></div>';
-		} else {
-			html_str = html_str + '<div class="divTableRow"><div class="divMurtaGreen">' + stime + '</div><div class="divMurtaGreen">' + etime + '</div><div class="divMurtaGreen">' + mapIfEnglish(mukurt_arr[i][0]) + '</div><div class="divMurtaGreen">' + mapIfEnglish(mukurt_arr[i][1]) + '</div></div>';
+	for (var i = 0; i < 30; i++) {
+		var endTime = new Date(startTime.getTime() + muhurtTime * 60000);
+		var resultText = String(mukurt_arr[i][1]);
+		var statusClass = 'is-auspicious';
+		if (resultText.indexOf('அசுபமானது') !== -1 || resultText.indexOf('Inauspicious') !== -1) {
+			statusClass = 'is-inauspicious';
+		} else if (resultText.indexOf('Very Auspicious') !== -1) {
+			statusClass = 'is-very-auspicious';
 		}
-        start_time = end_time;
-    }
 
-    html_str = html_str + "</div></div></div>";
-    document.getElementById('muhurthamDiv').innerHTML = html_str;
-    document.getElementById('muhurthamDiv').style.display = 'block';
+		html_str += '<tr class="' + statusClass + '">' +
+			'<td data-label="' + escapeMuhurthamText(labels[0]) + '">' + formatMuhurthamTime(startTime) + '</td>' +
+			'<td data-label="' + escapeMuhurthamText(labels[1]) + '">' + formatMuhurthamTime(endTime) + '</td>' +
+			'<td data-label="' + escapeMuhurthamText(labels[2]) + '">' + escapeMuhurthamText(mapIfEnglish(mukurt_arr[i][0])) + '</td>' +
+			'<td data-label="' + escapeMuhurthamText(labels[3]) + '">' + escapeMuhurthamText(mapIfEnglish(mukurt_arr[i][1])) + '</td>' +
+			'</tr>';
+		startTime = endTime;
+	}
+
+	html_str += '</tbody></table></div></div></section>';
+	var overlay = document.getElementById('muhurthamDiv');
+	overlay.innerHTML = html_str;
+	openPanchangModal(overlay, overlay.querySelector('.table-container'));
 }
 
 function closeTable() {
-    document.getElementById('muhurthamDiv').style.display = 'none';
+    closePanchangModal(document.getElementById('muhurthamDiv'));
 }
 
 function showPushkaraTimes() {
@@ -2061,30 +2813,47 @@ function showPushkaraTimes() {
         return;
     }
 	var existing = document.getElementById('pushkaraOverlay');
-	if (existing) existing.remove();
+	if (existing) closePanchangModal(existing);
 
 	var pushkaraContent = document.getElementById('pushkara-container').innerHTML;
 	var overlay = document.createElement('div');
 	overlay.id = 'pushkaraOverlay';
-	overlay.className = 'starDivition';
+	overlay.className = 'panchang-modal-overlay';
+	overlay.setAttribute('aria-hidden', 'true');
 
+	var dialog = document.createElement('section');
+	dialog.className = 'panchang-modal-dialog panchang-data-dialog';
+	dialog.setAttribute('role', 'dialog');
+	dialog.setAttribute('aria-modal', 'true');
+	dialog.setAttribute('aria-labelledby', 'pushkaraOverlayTitle');
+
+	var header = document.createElement('header');
+	header.className = 'panchang-modal-header';
+	var title = document.createElement('h2');
+	title.id = 'pushkaraOverlayTitle';
+	title.textContent = <?php echo json_encode(__('pushkara'), JSON_UNESCAPED_UNICODE); ?>;
 	var closeBtn = document.createElement('button');
-	closeBtn.className = 'close-btn';
-	closeBtn.innerText = '✖';
-	closeBtn.onclick = function() { overlay.remove(); };
-	overlay.appendChild(closeBtn);
+	closeBtn.type = 'button';
+	closeBtn.className = 'panchang-modal-close';
+	closeBtn.setAttribute('aria-label', panchangModalCloseLabel);
+	closeBtn.innerHTML = '<i class="fa fa-times" aria-hidden="true"></i>';
+	closeBtn.onclick = function() { closePanchangModal(overlay); };
+	header.appendChild(title);
+	header.appendChild(closeBtn);
+	dialog.appendChild(header);
 
 	var contentDiv = document.createElement('div');
-	contentDiv.style.padding = '20px';
+	contentDiv.className = 'panchang-modal-body panchang-pushkara-content';
 	contentDiv.innerHTML = pushkaraContent;
-	overlay.appendChild(contentDiv);
-
+	dialog.appendChild(contentDiv);
+	overlay.appendChild(dialog);
 	document.body.appendChild(overlay);
+	openPanchangModal(overlay, dialog);
 }
 
 function closePushkaraTable() {
 	var existing = document.getElementById('pushkaraOverlay');
-	if (existing) existing.remove();
+	if (existing) closePanchangModal(existing);
 }
 
 
@@ -2291,7 +3060,7 @@ function closePushkaraTable() {
 	}
 
 		
-	function displayOnePagePanchang() {
+	function displayOnePagePanchangLegacy() {
 		// Ensure snapshot collected (if not yet) and delay until dynamic fields ready
 		const ensureReady = () => {
 			// If snapshot exists and key dynamic fields populated, proceed; else retry shortly
@@ -2533,74 +3302,559 @@ function closePushkaraTable() {
 		}).then(() => {
 			logStatus('✓✓✓ All images captured successfully! ✓✓✓');
 			
-			// Update footer with current date/time before saving
-			updateFooter();
-			
-			// Save content to localStorage and redirect to display page
 			setTimeout(() => {
-				saveContent();
+				downloadPreparedPanchangPdf();
 			}, 1000);
 			
-			logStatus('Content saved. Redirecting to display page...');
+			logStatus('Preparing Panchang PDF download...');
 		}).catch(error => {
 			logStatus(`ERROR: ${error}`, true);
 			alert('Error capturing images. Please try again.');
 		});
 	}
 	
-	function saveContent() {
-		const content = document.getElementById('divContainer').innerHTML;
-		localStorage.setItem('divContent', content);
-		// Redirect to the display page
-		window.location.href = 'pdfs/onePagePanchang_pdf.html';
+	function displayOnePagePanchang() {
+		const snap = window.panchangSnapshot || {};
+		const needed = ['hora', 'thithi', 'nak', 'karanam', 'yogam'];
+		if (!needed.every(key => (snap[key] || '').trim())) {
+			capturePanchangValues().then(() => setTimeout(displayOnePagePanchang, 200)).catch(error => {
+				console.error('Unable to prepare Panchang data:', error);
+				alert(PANCHANG_PDF_ERROR);
+			});
+			return;
+		}
+
+		try {
+			const sourceText = sourceId => {
+				const source = document.getElementById(sourceId);
+				return source ? source.innerText.trim() : '';
+			};
+			const sourceHeading = sourceId => {
+				const source = document.getElementById(sourceId);
+				const heading = source && source.parentElement
+					? source.parentElement.querySelector('.divPanchangHeading, .divPanchangHeadingRed')
+					: null;
+				return heading ? heading.innerText.trim() : '';
+			};
+			const report = document.getElementById('divContainer');
+			if (!report) {
+				throw new Error('Missing Panchang print report container.');
+			}
+			const language = report.getAttribute('lang') || 'ta';
+			report.classList.remove('theme-panchang-light', 'theme-panchang-dark');
+			report.classList.add('theme-panchang-light');
+
+			const create = (tagName, className, text) => {
+				const node = document.createElement(tagName);
+				if (className) {
+					node.className = className;
+				}
+				if (text !== undefined) {
+					node.textContent = text;
+				}
+				return node;
+			};
+			const clear = node => {
+				while (node.firstChild) {
+					node.removeChild(node.firstChild);
+				}
+			};
+			const setText = (id, value) => {
+				const node = document.getElementById(id);
+				if (!node) {
+					throw new Error('Missing Panchang print field: ' + id);
+				}
+				node.textContent = value || '';
+				node.hidden = !node.textContent.trim();
+				return node;
+			};
+			const compactLines = value => String(value || '').split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+			const date = sourceText('edate') || snap.date || '';
+			const weekday = sourceText('day') || snap.day_local || '';
+			const time = sourceText('etime');
+			const place = sourceText('placename') || snap.localPlace || '';
+			const dateParts = date.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+			setText('pkDateNumber', dateParts ? dateParts[1] : date);
+			setText('pkFullDate', date);
+			setText('pkCurrentTime', time);
+			setText('pkWeekday', weekday);
+			setText('pkSunTitle', language === 'en' ? 'Sun' : 'சூரியன்');
+			setText('pkLocationLabel', sourceHeading('placename'));
+			setText('pkSunriseLabel', sourceHeading('sunrise'));
+			setText('pkSunsetLabel', sourceHeading('sunset'));
+			setText('pkSunrise', sourceText('sunrise'));
+			setText('pkSunset', sourceText('sunset'));
+
+			const placeMatch = place.match(/\((-?\d+(?:\.\d+)?)°,\s*(-?\d+(?:\.\d+)?)°\)/);
+			const placeLines = compactLines(place);
+			setText('pkLocationCity', placeLines[0] || '');
+			setText('pkLatitude', placeMatch ? Math.abs(Number(placeMatch[1])) + '° ' + (Number(placeMatch[1]) < 0 ? 'S' : 'N') : '');
+			setText('pkLongitude', placeMatch ? Math.abs(Number(placeMatch[2])) + '° ' + (Number(placeMatch[2]) < 0 ? 'W' : 'E') : '');
+
+			const parseClockMinutes = value => {
+				const match = String(value || '').match(/(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)?/i);
+				if (!match) {
+					return null;
+				}
+				let hour = Number(match[1]);
+				const minute = Number(match[2]);
+				if (match[3]) {
+					hour = hour % 12 + (match[3].toUpperCase() === 'PM' ? 12 : 0);
+				}
+				return hour * 60 + minute;
+			};
+			const sunriseMinutes = parseClockMinutes(sourceText('sunrise'));
+			let sunsetMinutes = parseClockMinutes(sourceText('sunset'));
+			if (sunsetMinutes !== null && sunriseMinutes !== null && sunsetMinutes < sunriseMinutes) {
+				sunsetMinutes += 24 * 60;
+			}
+			if (sunriseMinutes !== null && sunsetMinutes !== null) {
+				const daylight = sunsetMinutes - sunriseMinutes;
+				const daylightHours = Math.floor(daylight / 60);
+				const daylightRemainder = String(daylight % 60).padStart(2, '0');
+				setText('pkDaylight', (language === 'en' ? 'Daylight ' : 'பகல் ') + daylightHours + ':' + daylightRemainder + (language === 'en' ? ' hrs' : ' மணி'));
+			}
+
+			const iconMarkup = {
+				moon: '<path d="M15.9 2.8a7.5 7.5 0 1 0 1.3 14.3A8 8 0 0 1 15.9 2.8Z"></path>',
+				star: '<path d="m10 1.7 2.4 5 5.5.8-4 3.9.9 5.5-4.8-2.6-4.9 2.6.9-5.5-4-3.9 5.5-.8L10 1.7Z"></path>',
+				sun: '<circle cx="10" cy="10" r="3.3"></circle><path d="M10 1v2M10 17v2M1 10h2m14 0h2M3.6 3.6 5 5m10 10 1.4 1.4m0-12.8L15 5M5 15l-1.4 1.4"></path>',
+				karanam: '<path d="M3 16.8a8 8 0 0 1 14 0H3Z"></path><path d="M10 2v3m-6 2 2 2m10-2-2 2"></path>'
+			};
+			const makeIcon = kind => {
+				const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+				svg.setAttribute('viewBox', '0 0 20 20');
+				svg.setAttribute('class', 'pk-icon pk-icon-' + kind);
+				svg.setAttribute('aria-hidden', 'true');
+				const template = document.createElement('template');
+				template.innerHTML = iconMarkup[kind];
+				svg.appendChild(template.content.firstElementChild);
+				while (template.content.firstChild) {
+					svg.appendChild(template.content.firstChild);
+				}
+				return svg;
+			};
+			const splitTimeLabel = value => {
+				const match = value.match(/^(.*?)\s+(முதல்|வரை|From|till)$/i);
+				return match ? { time: match[1], label: match[2] } : { time: value, label: '' };
+			};
+			const limbData = [
+				{ id: 'thithi', icon: 'moon' },
+				{ id: 'nak', icon: 'star' },
+				{ id: 'yogam', icon: 'sun' },
+				{ id: 'karanam', icon: 'karanam' }
+			];
+			const limbs = document.getElementById('pkLimbs');
+			clear(limbs);
+			limbData.forEach(item => {
+				const card = create('article', 'pk-card pk-limb');
+				const heading = create('h3', 'pk-limb-title');
+				heading.appendChild(makeIcon(item.icon));
+				heading.appendChild(create('span', '', sourceHeading(item.id)));
+				card.appendChild(heading);
+				const lines = compactLines(sourceText(item.id) || snap[item.id]);
+				for (let index = 0; index < lines.length; index += 3) {
+					const entry = create('div', 'pk-limb-entry');
+					entry.appendChild(create('strong', 'pk-limb-name', lines[index]));
+					for (let rowIndex = index + 1; rowIndex < Math.min(index + 3, lines.length); rowIndex++) {
+						const timing = splitTimeLabel(lines[rowIndex]);
+						const row = create('div', 'pk-limb-time');
+						row.appendChild(create('span', 'pk-limb-time-label', timing.label));
+						row.appendChild(create('span', 'pk-limb-time-value', timing.time));
+						entry.appendChild(row);
+					}
+					card.appendChild(entry);
+					if (index + 3 < lines.length) {
+						card.appendChild(create('span', 'pk-limb-divider', '▼'));
+					}
+				}
+				if (lines.length) {
+					limbs.appendChild(card);
+				}
+			});
+
+			const parseTimeRange = value => {
+				const match = String(value || '').match(/(\d{1,2}):(\d{2})\s*(AM|PM)\s*-\s*(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+				if (!match) {
+					return null;
+				}
+				const toMinutes = (hourText, minuteText, meridiem) => {
+					let hour = Number(hourText) % 12;
+					if (meridiem.toUpperCase() === 'PM') {
+						hour += 12;
+					}
+					return hour * 60 + Number(minuteText);
+				};
+				return {
+					start: toMinutes(match[1], match[2], match[3]),
+					end: toMinutes(match[4], match[5], match[6])
+				};
+			};
+			const timeToPercent = (hour, minute) => ((hour * 60 + minute - 360) / 720) * 100;
+			const timeItems = [
+				{ id: 'rahu_kaalam', kind: 'bad' },
+				{ id: 'ema_kantam', kind: 'bad' },
+				{ id: 'kuligai', kind: 'bad' },
+				{ id: 'abhijith', kind: 'good' }
+			].map(item => ({
+				label: sourceHeading(item.id),
+				value: sourceText(item.id) || snap[item.id] || '',
+				kind: item.kind
+			})).filter(item => item.label && item.value && parseTimeRange(item.value));
+			const bands = document.getElementById('pkTimelineBands');
+			const chips = document.getElementById('pkTimelineChips');
+			clear(bands);
+			clear(chips);
+			const renderBands = items => {
+				items.forEach(item => {
+					const range = parseTimeRange(item.value);
+					if (!range) {
+						return;
+					}
+					let endMinutes = range.end;
+					if (endMinutes < range.start) {
+						endMinutes += 24 * 60;
+					}
+					const left = Math.max(0, Math.min(100, timeToPercent(Math.floor(range.start / 60), range.start % 60)));
+					const right = Math.max(0, Math.min(100, timeToPercent(Math.floor(endMinutes / 60), endMinutes % 60)));
+					if (right <= left) {
+						return;
+					}
+					const band = create('span', 'pk-band pk-band-' + item.kind);
+					band.style.left = left + '%';
+					band.style.width = (right - left) + '%';
+					band.setAttribute('aria-label', item.label + ': ' + item.value);
+					bands.appendChild(band);
+
+					const chip = create('div', 'pk-chip pk-chip-' + item.kind);
+					chip.appendChild(create('span', 'pk-chip-dot'));
+					const chipCopy = create('span', 'pk-chip-copy');
+					chipCopy.appendChild(create('span', 'pk-chip-label', item.label));
+					chipCopy.appendChild(create('strong', 'pk-chip-time', item.value.replace(/\s*-\s*/, ' – ')));
+					chip.appendChild(chipCopy);
+					chips.appendChild(chip);
+				});
+			};
+			renderBands(timeItems);
+			const ticks = document.getElementById('pkTimelineTicks');
+			clear(ticks);
+			for (let hour = 6; hour <= 18; hour += 2) {
+				const label = hour === 12 ? '12 PM' : hour < 12 ? hour + ' AM' : (hour - 12) + ' PM';
+				ticks.appendChild(create('span', '', label));
+			}
+
+			const dailyItems = [
+				'hora', 'pakshi', 'amirtha_yogam', 'nethram',
+				'jeevan', 'nokku', 'lagnam', 'raasi',
+				'avayogi', 'thithi_soonyam', 'soolai', 'chandraashtamam'
+			];
+			const dailyGrid = document.getElementById('pkDailyGrid');
+			clear(dailyGrid);
+			dailyItems.forEach(id => {
+				const valueLines = compactLines(sourceText(id) || snap[id]);
+				if (!valueLines.length) {
+					return;
+				}
+				const card = create('article', 'pk-dc');
+				card.appendChild(create('span', 'pk-dc-label', sourceHeading(id)));
+				card.appendChild(create('strong', 'pk-dc-value', valueLines[0]));
+				valueLines.slice(1).forEach(line => card.appendChild(create('small', 'pk-dc-subvalue', line)));
+				dailyGrid.appendChild(card);
+			});
+
+			const sunNak = compactLines(sourceText('vivSunNak'));
+			const moonNak = compactLines(sourceText('vivMooNak'));
+			const vivahaResult = sourceText('vivahaRes');
+			setText('pkSunNakLabel', sunNak.length ? sunNak[0] : '');
+			setText('pkSunNak', sunNak.slice(1).join(' '));
+			setText('pkMoonNakLabel', moonNak.length ? moonNak[0] : '');
+			setText('pkMoonNak', moonNak.slice(1).join(' '));
+			setText('pkVivahaResult', vivahaResult);
+			const vivaha = document.getElementById('pkVivaha');
+			vivaha.classList.remove('pk-vivaha-bad', 'pk-vivaha-good');
+			vivaha.classList.add(/நன்றாக இல்லை|not good/i.test(vivahaResult) ? 'pk-vivaha-bad' : 'pk-vivaha-good');
+			vivaha.hidden = !(sunNak.length || moonNak.length || vivahaResult);
+
+			const grahaRows = Array.from(document.querySelectorAll('#starlordBodyMutable .divTableRow'))
+				.map(row => Array.from(row.children).map(cell => cell.innerText.trim()))
+				.filter(row => row.some(Boolean));
+			if (!grahaRows.length) {
+				throw new Error('Missing Panchang Graha Saaram rows.');
+			}
+			const normalizePlanet = value => value.replace(/\s*\((?:வ|R)\)\s*/gi, '').trim();
+			const degreeMap = {};
+			grahaRows.slice(1).forEach(row => {
+				if (row.length < 5) {
+					return;
+				}
+				const inSignDegree = row[4].match(/\(([^)]+)\)/);
+				if (inSignDegree) {
+					degreeMap[normalizePlanet(row[0])] = inSignDegree[1];
+				}
+			});
+			const planetTokens = {
+				'ரா': 'rahu',
+				'கே': 'ketu',
+				'சுக்': 'venus',
+				'குரு': 'jupiter',
+				'செ': 'mars',
+				'லக்': 'lagna',
+				'சூரி': 'sun',
+				'சனி': 'saturn',
+				'சந்': 'moon',
+				'மா': 'maandi',
+				'புத': 'mercury'
+			};
+			const chartSource = document.getElementById('transitChart');
+			if (!chartSource) {
+				throw new Error('Missing Panchang transit chart.');
+			}
+			const chartCells = Array.from(chartSource.querySelectorAll('.divTableCell:not(.divTableDummyCell)'));
+			const signIndexes = [11, 0, 1, 2, 10, 3, 9, 4, 8, 7, 6, 5];
+			const planets = [];
+			const soonyamSigns = [];
+			let lagnaSign = -1;
+			chartCells.forEach((cell, cellIndex) => {
+				const signIndex = signIndexes[cellIndex];
+				if (signIndex === undefined) {
+					return;
+				}
+				if (cell.classList.contains('is-lagna-house')) {
+					lagnaSign = signIndex;
+				}
+				cell.querySelectorAll('.transit-planet-entry').forEach(entry => {
+					const labelNode = entry.querySelector('.retro, .moon, .mandhi, .lagna, .indhu');
+					const fullText = entry.textContent.replace(/\s+/g, '').trim();
+					const abbreviation = (labelNode ? labelNode.textContent : fullText.split('-')[0]).trim();
+					const normalized = normalizePlanet(abbreviation);
+					const token = planetTokens[normalized] || '';
+					const tableDegree = degreeMap[normalized] || '';
+					const sourceDegree = fullText.match(/-(\d+°(?:\d+')?)/);
+					const degree = normalized === 'இந்' ? '' : (tableDegree || (sourceDegree ? sourceDegree[1] : ''));
+					const retro = entry.querySelector('.retro');
+					const retroSuffix = retro ? (language === 'en' ? ' (R)' : ' (வ)') : '';
+					planets.push({
+						signIndex: signIndex,
+						abbreviation: abbreviation,
+						token: token,
+						degree: degree,
+						retroSuffix: retroSuffix,
+						auxiliary: normalized === 'இந்' || token === 'maandi'
+					});
+				});
+				if (cell.querySelector('.thithi_soonyam, .thithi_soonyam_main')) {
+					soonyamSigns.push(signIndex);
+				}
+			});
+
+			const svgNamespace = 'http://www.w3.org/2000/svg';
+			const makeSvg = (name, attributes, text) => {
+				const node = document.createElementNS(svgNamespace, name);
+				Object.keys(attributes || {}).forEach(key => node.setAttribute(key, attributes[key]));
+				if (text !== undefined) {
+					node.textContent = text;
+				}
+				return node;
+			};
+			const inlineSvgStyles = svg => {
+				const properties = [
+					'fill', 'fill-opacity', 'stroke', 'stroke-width', 'stroke-dasharray',
+					'stroke-linecap', 'stroke-linejoin', 'stroke-opacity', 'opacity',
+					'stop-color', 'stop-opacity', 'font-family', 'font-size',
+					'font-weight', 'text-anchor'
+				];
+				[svg].concat(Array.from(svg.querySelectorAll('*'))).forEach(node => {
+					const computed = window.getComputedStyle(node);
+					properties.forEach(property => {
+						const value = computed.getPropertyValue(property);
+						if (value) {
+							node.style.setProperty(property, value);
+						}
+					});
+				});
+			};
+			const chartElement = document.getElementById('pkChartSvg');
+			const centerCells = Array.from(chartSource.querySelectorAll('.divTableCenterCell')).map(cell => cell.innerText.trim()).filter(Boolean);
+			const originalChartHeading = document.getElementById('transitChartHeading');
+			const soonyamMark = document.querySelector('#transitChart .thithi_soonyam_main, #transitChart .thithi_soonyam');
+			const soonyamText = soonyamMark ? soonyamMark.textContent.trim() : '';
+			const renderChart = (planetData, lagna, emptySigns) => {
+				clear(chartElement);
+				chartElement.setAttribute('aria-label', originalChartHeading ? originalChartHeading.innerText.trim() : '');
+				const positions = [
+					[1, 0], [2, 0], [3, 0], [3, 1],
+					[3, 2], [3, 3], [2, 3], [1, 3],
+					[0, 3], [0, 2], [0, 1], [0, 0]
+				];
+				if (lagna >= 0) {
+					const position = positions[lagna];
+					chartElement.appendChild(makeSvg('rect', {
+						x: position[0] * 96,
+						y: position[1] * 96,
+						width: 96,
+						height: 96,
+						class: 'pk-chart-lagna-fill'
+					}));
+					chartElement.appendChild(makeSvg('path', {
+						d: 'M' + (position[0] * 96) + ' ' + (position[1] * 96) + 'h18l-18 18z',
+						class: 'pk-chart-lagna-marker'
+					}));
+				}
+				chartElement.appendChild(makeSvg('rect', { x: 1, y: 1, width: 382, height: 382, rx: 14, class: 'pk-chart-outline' }));
+				[
+					{ x1: 96, y1: 1, x2: 96, y2: 383 },
+					{ x1: 192, y1: 1, x2: 192, y2: 96 },
+					{ x1: 192, y1: 288, x2: 192, y2: 383 },
+					{ x1: 288, y1: 1, x2: 288, y2: 383 },
+					{ x1: 1, y1: 96, x2: 383, y2: 96 },
+					{ x1: 1, y1: 192, x2: 96, y2: 192 },
+					{ x1: 288, y1: 192, x2: 383, y2: 192 },
+					{ x1: 1, y1: 288, x2: 383, y2: 288 }
+				].forEach(line => {
+					chartElement.appendChild(makeSvg('line', Object.assign({}, line, { class: 'pk-chart-gridline' })));
+				});
+				chartElement.appendChild(makeSvg('circle', { cx: 192, cy: 192, r: 68, class: 'pk-chart-center-ring' }));
+				chartElement.appendChild(makeSvg('circle', { cx: 192, cy: 192, r: 48, class: 'pk-chart-center-ring pk-chart-center-ring-inner' }));
+				chartElement.appendChild(makeSvg('text', { x: 192, y: 200, class: 'pk-chart-rasi-title' }, centerCells[0] || ''));
+
+				const planetTopInset = 12;
+				const getPlanetFooterSpace = hasSoonyam => {
+					return hasSoonyam ? 16 : 8;
+				};
+				let tightestPlanetStep = 22;
+				for (let signIndex = 0; signIndex < 12; signIndex++) {
+					const signPlanets = planetData.filter(planet => planet.signIndex === signIndex);
+					const labelCount = signPlanets.filter(planet => !planet.auxiliary).length
+						+ (signPlanets.some(planet => planet.auxiliary) ? 1 : 0);
+					if (labelCount < 2) continue;
+					const hasSoonyam = emptySigns.indexOf(signIndex) >= 0;
+					const availableHeight = 96 - planetTopInset - getPlanetFooterSpace(hasSoonyam);
+					tightestPlanetStep = Math.min(tightestPlanetStep, availableHeight / (labelCount - 1));
+				}
+				const planetFontSize = Math.max(5, Math.min(11.5, tightestPlanetStep * 0.78));
+
+				for (let signIndex = 0; signIndex < 12; signIndex++) {
+					const position = positions[signIndex];
+					const centerX = position[0] * 96 + 48;
+					const topY = position[1] * 96;
+					const signPlanets = planetData.filter(planet => planet.signIndex === signIndex);
+					const primaryPlanets = signPlanets.filter(planet => !planet.auxiliary);
+					const auxiliaryPlanets = signPlanets.filter(planet => planet.auxiliary);
+					const hasSoonyam = emptySigns.indexOf(signIndex) >= 0;
+					const availablePlanetHeight = 96 - planetTopInset - getPlanetFooterSpace(hasSoonyam);
+					const auxiliaryText = auxiliaryPlanets.map(planet =>
+						planet.abbreviation + planet.retroSuffix + (planet.degree ? '-' + planet.degree : '')
+					).join(' · ');
+					const planetLabels = primaryPlanets.map(planet => ({
+						text: planet.abbreviation + planet.retroSuffix + (planet.degree ? '-' + planet.degree : ''),
+						className: 'pk-chart-planet' + (planet.token ? ' pk-planet-' + planet.token : ''),
+						fontSize: planetFontSize
+					}));
+					if (auxiliaryText) {
+						planetLabels.push({
+							text: auxiliaryText,
+							className: 'pk-chart-auxiliary',
+							fontSize: 7
+						});
+					}
+					const planetStep = planetLabels.length > 1
+						? Math.min(22, availablePlanetHeight / (planetLabels.length - 1))
+						: 22;
+					const planetStackHeight = planetStep * Math.max(0, planetLabels.length - 1);
+					const planetStartY = topY + planetTopInset + (availablePlanetHeight - planetStackHeight) / 2;
+					planetLabels.forEach((planet, planetIndex) => {
+						chartElement.appendChild(makeSvg('text', {
+							x: centerX,
+							y: planetStartY + planetIndex * planetStep,
+							class: planet.className,
+							style: 'font-size: ' + planet.fontSize + 'px'
+						}, planet.text));
+					});
+					if (hasSoonyam) {
+						chartElement.appendChild(makeSvg('text', {
+							x: centerX,
+							y: topY + 88,
+							class: 'pk-chart-soonyam'
+						}, soonyamText));
+					}
+				}
+			};
+			renderChart(planets, lagnaSign, soonyamSigns);
+			Array.from(report.querySelectorAll('svg')).forEach(inlineSvgStyles);
+
+			setText('pkSoonyamMark', soonyamMark ? soonyamMark.textContent.trim() : '');
+			setText('pkSoonyamLegend', sourceHeading('thithi_soonyam'));
+			setText('pkLagnaLegend', sourceHeading('lagnam'));
+
+			const tableContainer = document.getElementById('pkGrahaTable');
+			clear(tableContainer);
+			const table = create('table', 'pk-graha-table');
+			const thead = document.createElement('thead');
+			const headerRow = document.createElement('tr');
+			grahaRows[0].forEach(label => headerRow.appendChild(create('th', '', label)));
+			thead.appendChild(headerRow);
+			table.appendChild(thead);
+			const tbody = document.createElement('tbody');
+			grahaRows.slice(1).forEach(row => {
+				if (row.length < 5) {
+					return;
+				}
+				const rowElement = document.createElement('tr');
+				row.forEach((value, cellIndex) => {
+					const cell = document.createElement('td');
+					if (cellIndex === 0) {
+						const planetToken = planetTokens[normalizePlanet(value)] || '';
+						const dot = create('span', 'pk-planet-dot' + (planetToken ? ' pk-planet-' + planetToken : ''));
+						dot.setAttribute('aria-hidden', 'true');
+						cell.appendChild(dot);
+						cell.appendChild(create('span', 'pk-planet-name', value));
+					} else if (cellIndex === 4) {
+						const degreeMatch = value.match(/^(.*?)\s+\(([^()]*)\)$/);
+						cell.appendChild(create('span', 'pk-degree-main', degreeMatch ? degreeMatch[1] : value));
+						if (degreeMatch) {
+							cell.appendChild(create('small', 'pk-degree-sign', '(' + degreeMatch[2] + ')'));
+						}
+					} else {
+						cell.textContent = value;
+						if (value.indexOf('ப.') === 0 || value.indexOf('சமு.') === 0) {
+							cell.classList.add('pk-planet-flag');
+						}
+					}
+					rowElement.appendChild(cell);
+				});
+				tbody.appendChild(rowElement);
+			});
+			table.appendChild(tbody);
+			tableContainer.appendChild(table);
+
+			setText('pkFooterCity', placeLines[0] || '');
+			setText('pkFooterDate', date);
+			setText('pkFooterDay', weekday);
+
+			downloadPreparedPanchangPdf();
+		} catch (error) {
+			console.error('Unable to prepare Panchang report:', error);
+			alert(PANCHANG_PDF_ERROR);
+		}
 	}
-	
-	function updateFooter() {
-		const footerText = document.getElementById('footerText');
-		if (!footerText) return;
-		
-		const now = new Date();
-		const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-		const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-		
-		const dayName = days[now.getDay()];
-		const day = now.getDate();
-		const month = months[now.getMonth()];
-		const year = now.getFullYear();
-		
-		let hours = now.getHours();
-		const minutes = String(now.getMinutes()).padStart(2, '0');
-		const seconds = String(now.getSeconds()).padStart(2, '0');
-		const ampm = hours >= 12 ? 'pm' : 'am';
-		hours = hours % 12 || 12;
-		
-		const timeStr = `${String(hours).padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
-		
-		// Tamil text + English text
-		const tamilText = currentLanguage === 'tamil' ? 'தமிழ் சங்கவள்ளி தேவசேநா - விதியாவயார்' : 'Tamil Sangavalli Thevasena - Vithiyaavayaar';
-		footerText.textContent = `${tamilText} & Periyanayaki Astro Solutions | ${dayName} ${day} ${month}, ${year} at ${timeStr}`;
+
+	function saveContent() {
+		displayOnePagePanchang();
 	}
 	
 	function displayOrigPanchang() {
 		const container = document.getElementById('divContainer');
 		const originalContainer = document.getElementById('divOrigContainer');
-		const onePageBtn = document.getElementById('onePageBtn');
 		const titleBar = document.getElementById('title');
 		
 		container.style.display = 'none';
 		originalContainer.style.display = 'block';
-		onePageBtn.style.display = 'initial';
 		titleBar.style.display = 'initial';
 		
-		// TEMPORARILY DISABLED FOR DEBUGGING - check console first
-		setTimeout(() => { saveContent(); }, 1000);
-		// console.log('Auto-redirect disabled. Check console output above. Uncomment saveContent() to re-enable.');
+		setTimeout(() => { displayOnePagePanchang(); }, 1000);
 	}
 	function saveContent() {
-		const content = document.getElementById('divContainer').innerHTML;
-		localStorage.setItem('divContent', content);
-		// Redirect to the destination page
-		window.location.href = 'onePagePanchang_pdf.html';
+		displayOnePagePanchang();
 	}
 	
 	function printDialog(){
@@ -2615,15 +3869,110 @@ function closePushkaraTable() {
 	}
 	
 	function printPDF() {
-	  const element = document.getElementById("divContainer");
-	  html2pdf()
-		.from(element)
-		.set({
-		  margin: 5,
-		  filename: 'panchang.pdf',
-		  jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-		})
-		.save();
+		displayOnePagePanchang();
+	}
+
+	async function rasterizePanchangSvgs(container) {
+		const replacements = [];
+		const restore = () => {
+			replacements.forEach(item => {
+				if (item.canvas.parentNode) {
+					item.canvas.replaceWith(item.svg);
+				}
+			});
+		};
+
+		try {
+			for (const svg of Array.from(container.querySelectorAll('svg'))) {
+				const bounds = svg.getBoundingClientRect();
+				if (!bounds.width || !bounds.height) {
+					continue;
+				}
+
+				const imageSvg = svg.cloneNode(true);
+				imageSvg.setAttribute('width', bounds.width + 'px');
+				imageSvg.setAttribute('height', bounds.height + 'px');
+				imageSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+				const image = new Image();
+				image.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(imageSvg));
+				await image.decode();
+
+				const canvas = document.createElement('canvas');
+				const scale = 2;
+				canvas.width = Math.ceil(bounds.width * scale);
+				canvas.height = Math.ceil(bounds.height * scale);
+				const context = canvas.getContext('2d');
+				if (!context) {
+					throw new Error('Unable to prepare Panchang SVG for PDF export.');
+				}
+				context.drawImage(image, 0, 0, canvas.width, canvas.height);
+				canvas.className = svg.getAttribute('class') || '';
+				canvas.id = svg.id;
+				['role', 'aria-label', 'aria-hidden'].forEach(attribute => {
+					if (svg.hasAttribute(attribute)) {
+						canvas.setAttribute(attribute, svg.getAttribute(attribute));
+					}
+				});
+				const computed = window.getComputedStyle(svg);
+				[
+					'display', 'position', 'top', 'right', 'bottom', 'left', 'z-index',
+					'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height',
+					'flex', 'flex-grow', 'flex-shrink', 'flex-basis', 'align-self',
+					'overflow', 'opacity', 'pointer-events'
+				].forEach(property => canvas.style.setProperty(property, computed.getPropertyValue(property)));
+				canvas.style.width = bounds.width + 'px';
+				canvas.style.height = bounds.height + 'px';
+				replacements.push({ svg: svg, canvas: canvas });
+				svg.replaceWith(canvas);
+			}
+			return restore;
+		} catch (error) {
+			restore();
+			throw error;
+		}
+	}
+
+	async function downloadPreparedPanchangPdf() {
+		const container = document.getElementById('divContainer');
+		const progress = document.getElementById('panchangPdfProgress');
+		if (!container || !progress || typeof generateAppPdf !== 'function') {
+			console.error('Panchang PDF export is not ready.');
+			alert(PANCHANG_PDF_ERROR);
+			return;
+		}
+
+		const originalId = container.id;
+		const reportTheme = container.classList.contains('theme-panchang-dark') ? 'theme-panchang-dark' : 'theme-panchang-light';
+		progress.hidden = false;
+		progress.classList.add('is-visible');
+		progress.classList.remove('theme-panchang-light', 'theme-panchang-dark');
+		progress.classList.add(reportTheme);
+		container.id = 'onepage';
+		container.classList.add('panchang-pdf-exporting');
+		let restoreSvgs = () => {};
+
+		try {
+			await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+			if (document.fonts && document.fonts.load) {
+				await document.fonts.load('8pt "Noto Sans Tamil"', 'தமிழ்');
+				await document.fonts.ready;
+			}
+			restoreSvgs = await rasterizePanchangSvgs(container);
+			const generated = await generateAppPdf(PDF_FILENAME);
+			if (!generated) {
+				throw new Error('PDF generation failed.');
+			}
+		} catch (error) {
+			console.error('Panchang PDF download failed:', error);
+			alert(PANCHANG_PDF_ERROR);
+		} finally {
+			restoreSvgs();
+			container.classList.remove('panchang-pdf-exporting');
+			container.id = originalId;
+			progress.classList.remove('is-visible');
+			progress.classList.remove('theme-panchang-light', 'theme-panchang-dark');
+			progress.hidden = true;
+		}
 	}
 
 
@@ -2632,13 +3981,11 @@ function closePushkaraTable() {
 		const originalContainer = document.getElementById('divOrigContainer');
 		const backBtn = document.getElementById('backBtn');
 		const container = document.getElementById('divContainer');
-		const onePageBtn = document.getElementById('onePageBtn');
 		
 		// reset again
 		originalContainer.style.display = 'initial';
 		backBtn.style.display = 'none';
 		container.style.display = 'none';
-		onePageBtn.style.display = 'initial';
 	}
 	
 	function translateLanguage(language) {
@@ -2673,7 +4020,7 @@ function closePushkaraTable() {
 <body id='mybody1' class='theme-panchang-dark theme-landing'>
 <div class="karanamDiv" id="karanamDiv" onclick="hideKaranamDiv()"><!-- <img src='images/karanam.png' /> --></div>
 <!-- <div class="muhurthamDiv" id="muhurthamDiv" onclick="this.style.display='none'"></div> -->
-<div class="muhurthamDiv" id="muhurthamDiv"></div>
+<div class="muhurthamDiv panchang-modal-overlay" id="muhurthamDiv" aria-hidden="true"></div>
 <div class="pushkaraDiv" id="pushkaraDiv"></div>
 <div id="loader" class="center"></div>
 
@@ -2977,7 +4324,7 @@ function displayHoroDetails()
 		
 	echo "<div class='divTableRow'>";
 		echo "<div class='divPanchangHeading'>" . __('thithi') . "</div>";
-			echo "<div class='divPanchang' id='thithi' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'></div>";
+			echo "<div class='divPanchang' id='thithi' OnClick='showDetailsDiv(event,1)'></div>";
 		$g_thithi = explode('/',explode('[',$panchang['thithi'])[0])[$lang_index];			if(strpos($panchang['thithi'],"Amavasya/அமாவாசை")===0 || strpos($panchang['thithi'],"Poornima/பௌர்ணமி")===0){
 				$g_paksham = "";
 				//echo "<div class='divPanchang' id='thithi' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'>".$g_thithi . $g_paksham . "<BR>". "</div>";
@@ -2987,7 +4334,7 @@ function displayHoroDetails()
 				if ($lang_index == 0 && strpos($g_paksham, '/') !== false) {
 					$g_paksham = explode('/', $g_paksham)[0];
 				}
-				//echo "<div class='divPanchang' id='thithi' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'>".$g_thithi ." [". $g_paksham . "]" . "</div>";
+				//echo "<div class='divPanchang' id='thithi' OnClick='showDetailsDiv(event,1)' style='color:blue;cursor:pointer'>".$g_thithi ." (". $g_paksham . ")" . "</div>";
 			}
 		echo "</div>";
 		
@@ -3003,14 +4350,14 @@ function displayHoroDetails()
 			array_pop($nak_parts); // Remove the padham number
 			$nak_name = implode(' ', $nak_parts); // Get nakshatra name without padham
 			$nak_name = translate_tamil_text($nak_name); // Translate nakshatra name using mapping file
-			echo "<div class='divPanchang'  id='nak' OnClick='showDetailsDiv(event,5)' style='color:blue;cursor:pointer' data-nak-name='" . htmlspecialchars($nak_name) . "'> (".($g_padham).")</div>";
+			echo "<div class='divPanchang' id='nak' OnClick='showDetailsDiv(event,5)' data-nak-name='" . htmlspecialchars($nak_name) . "'> (".($g_padham).")</div>";
 		echo "</div>";
 		displayDetailsDiv('nak',ceil($nak_pad_idx)/4);
 		
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>" . __('yogam') . "</div>";
 			//echo "<div class='divPanchang' id='yogam'>".$panchang['yoga']."</div>";
-			echo "<div class='divPanchang' id='yogam'  OnClick='showDetailsDiv(event, 3)' style='color:blue;cursor:pointer'></div>";
+			echo "<div class='divPanchang' id='yogam' OnClick='showDetailsDiv(event, 3)'></div>";
 		echo "</div>";
 		displayDetailsDiv('yogi',$g_yoga_idx);
 		
@@ -3018,13 +4365,13 @@ function displayHoroDetails()
 			echo "<div class='divPanchangHeading'>" . __('karanam') . "</div>";
 			$karan = explode('/',$panchang['karan'])[$lang_index];
 			//echo "<div class='divPanchang' id='karanam' OnClick='showDetailsDiv(event,2)' style='color:blue;cursor:pointer'>".$karan."(".getKaranaPlanet($karan).")</div>";
-			echo "<div class='divPanchang' id='karanam' OnClick='showDetailsDiv(event,2)' style='color:blue;cursor:pointer'></div>";
+			echo "<div class='divPanchang' id='karanam' OnClick='showDetailsDiv(event,2)'></div>";
 		echo "</div>";
 		displayDetailsDiv('kar',$karan);
 		$yogi_arr = getYogi($panchang['yoga']);
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>" . __('yogi') . "</div>";
-			echo "<div class='divPanchang' id='yogi' OnClick='showDetailsDiv(event, 3)' style='color:blue;cursor:pointer'>".translate_tamil_text($yogi_arr[1])." (".translate_tamil_text($yogi_arr[0]).")</div>";
+			echo "<div class='divPanchang' id='yogi' OnClick='showDetailsDiv(event, 3)'>".translate_tamil_text($yogi_arr[1])." (".translate_tamil_text($yogi_arr[0]).")</div>";
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>" . __('current_horai') . "</div>";
@@ -3063,7 +4410,7 @@ function displayHoroDetails()
 		$g_rasi = getRasi($moon_house-1);
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeading'>" . __('rasi') . "</div>";
-			echo "<div class='divPanchang' id='raasi'   OnClick='showDetailsDiv(event, 6)' style='color:blue;cursor:pointer'>" . translate_tamil_text($g_rasi) . "</div>";
+			echo "<div class='divPanchang' id='raasi' OnClick='showDetailsDiv(event, 6)'>" . translate_tamil_text($g_rasi) . "</div>";
 		echo "</div>";
 		displayDetailsDiv('rasi',"");
 		echo "<div class='divTableRow'>";
@@ -3072,7 +4419,7 @@ function displayHoroDetails()
 		echo "</div>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divPanchangHeadingRed'>" . __('avayogi') . "</div>";
-			echo "<div class='divPanchang' id='avayogi' OnClick='showDetailsDiv(event, 4)' style='color:blue;cursor:pointer'>".translate_tamil_text($yogi_arr[3])." (".translate_tamil_text($yogi_arr[2]).")</div>";
+			echo "<div class='divPanchang' id='avayogi' OnClick='showDetailsDiv(event, 4)'>".translate_tamil_text($yogi_arr[3])." (".translate_tamil_text($yogi_arr[2]).")</div>";
 		echo "</div>";
 		displayDetailsDiv('ayogi',$g_yoga_idx);
 		echo "<div class='divTableRow'>";
@@ -3171,14 +4518,7 @@ function displayTransitChart()
 		}
 	}
 
-	echo "<BR>";
-	echo "<div class='divTable blueTable' style='height:40px;'>";
-		echo "<div class='divTableRow' style='background-color:rgba(0,0,0,0)' id='transitChartHeading'>";
-				echo "<div class='divPanchangHeading' colspan='3'>";
-					echo "<H6 style='font-weight:bold;color:black'>" . __('current_transit') . "</H6>";
-				echo "</div>";
-			echo "</div>";
-	echo "</div>";
+	echo "<h2 id='transitChartHeading'>" . __('current_transit') . "</h2>";
 	
 echo <<<EOL
 	<div class="divTable blueTable" id="transitChart" data-language="$transit_language">
@@ -3471,6 +4811,24 @@ $timelinePrevMonthLabel = htmlspecialchars(__('previous_month'), ENT_QUOTES, 'UT
 $timelineNextMonthLabel = htmlspecialchars(__('next_month_full'), ENT_QUOTES, 'UTF-8');
 $timelineNextYearLabel = htmlspecialchars(__('next_year_full'), ENT_QUOTES, 'UTF-8');
 $timelineLocale = ($language === 'tamil') ? 'ta-IN' : 'en-IN';
+$monthlyPanchangTitle = htmlspecialchars(__('panchang_input'), ENT_QUOTES, 'UTF-8');
+$monthlyMonthLabel = htmlspecialchars(__('month'), ENT_QUOTES, 'UTF-8');
+$monthlyYearLabel = htmlspecialchars(__('year'), ENT_QUOTES, 'UTF-8');
+$monthlyPlaceLabel = htmlspecialchars(__('place'), ENT_QUOTES, 'UTF-8');
+$monthlyCloseLabel = htmlspecialchars($language === 'english' ? 'Close' : 'மூடு', ENT_QUOTES, 'UTF-8');
+$monthlySubmitLabel = htmlspecialchars(__('submit'), ENT_QUOTES, 'UTF-8');
+$monthlyPlacePlaceholder = htmlspecialchars(__('search_place_placeholder'), ENT_QUOTES, 'UTF-8');
+$monthlyPlaceValue = htmlspecialchars((string)$place, ENT_QUOTES, 'UTF-8');
+$monthlyPlaceDisplayValue = htmlspecialchars($placeDisplayValue, ENT_QUOTES, 'UTF-8');
+$monthlyPanchangTimestamp = strtotime($chart_date);
+$monthlyPanchangMonth = (int)date('n', $monthlyPanchangTimestamp);
+$monthlyPanchangYear = (int)date('Y', $monthlyPanchangTimestamp);
+$monthlyMonthOptions = '';
+for ($monthNumber = 1; $monthNumber <= 12; $monthNumber++) {
+	$monthLabel = htmlspecialchars(__('greg_month_' . $monthNumber), ENT_QUOTES, 'UTF-8');
+	$selectedMonth = ($monthNumber === $monthlyPanchangMonth) ? ' selected' : '';
+	$monthlyMonthOptions .= "<option value='$monthNumber'$selectedMonth>$monthLabel</option>";
+}
 $timelineDateItemsMarkup = '';
 $timelineSelectedTimestamp = strtotime($chart_date);
 for ($timelineOffset = -14; $timelineOffset <= 14; $timelineOffset++) {
@@ -3492,7 +4850,7 @@ echo <<<EOL
 		$pageHeader
 		<div class='column-body' id='panchangBody'>
 		<div id='divOrigContainer'>
-			<form name='updatePanchang' id='panchangForm' action='new_panchang.php?debug=$DEBUG' method='post' onsubmit='preparePanchangTimeMode();'>
+			<form name='updatePanchang' id='panchangForm' action='$panchangFormAction' method='post' onsubmit='preparePanchangTimeMode();'>
 				<input type='hidden' id='nPlace' name='nPlace' value='$place'>
 				<input type='hidden' id='place_flag' name='place_flag' value=0>
 				<input type='hidden' id='time_mode' name='time_mode' value='$timeMode'>
@@ -3542,18 +4900,13 @@ echo <<<EOL
 							</div>
 						</div>
 					</section>
-					<details class='panchang-advanced-options'>
-						<summary><i class='fa fa-cog' aria-hidden='true'></i><span>$formAdvancedOptionsLabel</span></summary>
-						<div class='button-container'>
-EOL;
-					echo "<input type='button' id='downloadPanchang' class='actionBtn' value='" . __("monthly") . "' onClick=\"genPanchang('$place');\" />";
-					echo "<input type='button' class='actionBtn' id='onePageBtn' onclick=\"displayOnePagePanchang()\" value=\"" . __('download') . "\" />";
-					echo "<input type='button' class=\"actionBtn\" id=\"showNakshatraBtn\" value='" . __("nakshatra_division") . "' />";
-					echo "<input type='button' class=\"actionBtn\" id=\"showPushkaraBtn\" value='" . __("pushkara") . "' onclick=\"showPushkaraTimes()\" />";
-					echo "<input type='button' class=\"actionBtn\" id=\"showMuhurtamBtn\" value='" . __("muhurtham") . "' onclick=\"generateMuhurtam_default()\" />";
-echo <<<EOL
-						</div>
-					</details>
+					<div class='panchang-advanced-options'>
+						<button type='button' class='panchang-advanced-trigger' id='panchangActionsTrigger' aria-haspopup='dialog' aria-controls='panchangActionsOverlay' onclick='openPanchangActionsOverlay()'>
+							<i class='fa fa-sliders' aria-hidden='true'></i>
+							<span>$formAdvancedOptionsLabel</span>
+							<i class='fa fa-angle-right panchang-advanced-trigger-arrow' aria-hidden='true'></i>
+						</button>
+					</div>
 				</div>
 			</form>
 			<script>
@@ -3655,89 +5008,139 @@ EOL;
 echo <<<EOL
 					<BR><BR><BR>
 			</div>
-			<div class="divOnePagePanchangContainer" id="divContainer" style='display:none;'>
-			
-				<table>
-					<tr>
-						<td style='vertical-align: bottom;'><img src='images/dsjv_title.png' width='200px' height="35px" style='display:inline;'></td>
-						<td style='vertical-align: bottom;'>&#3059; &#2384; &#21328; &#10017<br><img src="images/panchangam_heading.png" alt="Panchangam" width='150px' style='display:inline;'></td>
-						<td style='vertical-align: bottom;'><img src='images/periyanayaki_astro_solutions.png' height="35px" style='display:inline;'></div></td>
-					</tr>
-					<tr>
-						<td colspan=5 style='text-align: center;'>
-							<div class="onepage_panchang_date" id="date">date</div>
-							<div class="onepage_panchang_day" id="day_local">day</div>
-							<div class="onepage_panchang_place" id="localPlace">place</div>
-							<!-- <img id="day_local" src="" alt="Captured Image" width='150px'' style='display:inline;'> -->
-						</td>
-						
-					</tr>
-					<tr>
-						<td style='padding:unset; text-align: center;' colspan='5'>
-							<div class="image-with-caption">
-								<div class="imgcaption_small" id="cap_thithi"></div>
-								<img id="thithi_local" src="" alt="Captured Image" width='150px' style='filter: grayscale(100%); display:inline; border:1px solid black'>
+			<div class="divOnePagePanchangContainer pk-page theme-panchang-light" id="divContainer" style="display:none;" lang="$panchangReportLang">
+				<svg class="pk-zodiac-ring" viewBox="0 0 170 170" aria-hidden="true">
+					<circle cx="85" cy="85" r="72"></circle>
+					<circle cx="85" cy="85" r="54"></circle>
+					<g>
+						<line x1="85" y1="13" x2="85" y2="157"></line>
+						<line x1="85" y1="13" x2="85" y2="157" transform="rotate(30 85 85)"></line>
+						<line x1="85" y1="13" x2="85" y2="157" transform="rotate(60 85 85)"></line>
+						<line x1="85" y1="13" x2="85" y2="157" transform="rotate(90 85 85)"></line>
+						<line x1="85" y1="13" x2="85" y2="157" transform="rotate(120 85 85)"></line>
+						<line x1="85" y1="13" x2="85" y2="157" transform="rotate(150 85 85)"></line>
+						<line x1="85" y1="13" x2="85" y2="157" transform="rotate(180 85 85)"></line>
+						<line x1="85" y1="13" x2="85" y2="157" transform="rotate(210 85 85)"></line>
+						<line x1="85" y1="13" x2="85" y2="157" transform="rotate(240 85 85)"></line>
+						<line x1="85" y1="13" x2="85" y2="157" transform="rotate(270 85 85)"></line>
+						<line x1="85" y1="13" x2="85" y2="157" transform="rotate(300 85 85)"></line>
+						<line x1="85" y1="13" x2="85" y2="157" transform="rotate(330 85 85)"></line>
+					</g>
+				</svg>
+				<div class="pk-stars" aria-hidden="true"></div>
+				<div class="pk-content">
+					<header class="pk-hdr">
+						<div class="pk-hdr-title">
+							<h1 class="pk-title">$panchangReportTitle</h1>
+							<p class="pk-subtitle"><span class="pk-subtitle-en">DAILY PANCHANG</span><span class="pk-subtitle-separator"> · </span><span class="pk-subtitle-ta">தினசரி பஞ்சாங்கம்</span></p>
+						</div>
+						<div class="pk-brand">
+							<div class="pk-brand-name"><span>PNK</span> <span class="pk-brand-accent">ASTRO</span></div>
+							<div class="pk-brand-office">$panchangOfficeNameEscaped</div>
+							<div class="pk-brand-contact">$panchangOfficeContactEscaped</div>
+						</div>
+					</header>
+
+					<section class="pk-hero">
+						<article class="pk-card pk-date-card">
+							<div class="pk-date-number" id="pkDateNumber"></div>
+							<div class="pk-date-copy">
+								<span class="pk-eyebrow">$panchangPrintDateLabel</span>
+								<strong id="pkFullDate"></strong>
+								<span class="pk-date-time"><span>$panchangPrintTimeLabel</span><strong id="pkCurrentTime"></strong></span>
 							</div>
-							<div class="image-with-caption">
-								<div class="imgcaption_small" id="cap_nak"></div>
-								<img id="nak_local" src="" alt="Captured Image" width='150px' style='filter: grayscale(100%);display:inline; border:1px solid black'>
+							<span class="pk-weekday-pill" id="pkWeekday"></span>
+						</article>
+
+						<article class="pk-card pk-sun-card">
+							<div class="pk-sun-card-head">
+								<h2 id="pkSunTitle"></h2>
 							</div>
-							<div class="image-with-caption">
-								<div class="imgcaption_small" id="cap_yogam"></div>
-								<img id="yogam_local" src="" alt="Captured Image" width='150px' style='filter: grayscale(100%);display:inline; border:1px solid black'>
+							<svg class="pk-sun-svg" viewBox="0 0 300 80" aria-hidden="true">
+								<defs>
+									<linearGradient id="pkSunGradient" x1="0" x2="1">
+										<stop offset="0" stop-color="var(--theme-sun-warm)"></stop>
+										<stop offset=".5" stop-color="var(--theme-sun-gold)"></stop>
+										<stop offset="1" stop-color="var(--theme-sun-rose)"></stop>
+									</linearGradient>
+								</defs>
+								<path class="pk-sun-arc" d="M20 68 Q150 -34 280 68"></path>
+								<line class="pk-sun-horizon" x1="20" y1="68" x2="280" y2="68"></line>
+								<circle class="pk-sun-glow" cx="150" cy="17" r="17"></circle>
+								<circle class="pk-sun-disc" cx="150" cy="17" r="8"></circle>
+								<circle class="pk-sun-point" cx="20" cy="68" r="3"></circle>
+								<circle class="pk-sun-point" cx="280" cy="68" r="3"></circle>
+							</svg>
+							<span class="pk-daylight" id="pkDaylight"></span>
+							<div class="pk-sun-times">
+								<div><span id="pkSunriseLabel"></span><strong id="pkSunrise"></strong></div>
+								<div><span id="pkSunsetLabel"></span><strong id="pkSunset"></strong></div>
 							</div>
-							<div class="image-with-caption">
-								<div class="imgcaption_small" id="cap_karanam"></div>
-								<img id="kara_local" src="" alt="Captured Image" width='150px' style='filter: grayscale(100%);display:inline; border:1px solid black'>
+						</article>
+
+						<article class="pk-card pk-location-card">
+							<span class="pk-eyebrow" id="pkLocationLabel"></span>
+							<strong class="pk-location-city" id="pkLocationCity"></strong>
+							<div class="pk-coordinates">
+								<span id="pkLatitude"></span>
+								<span id="pkLongitude"></span>
 							</div>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="4" style='text-align: center;'>
-							<div class="panchangTextInline" id="lHorai" data-label="<?php echo __('horai'); ?>"><div class="panchangTextInlineBold"><?php echo __('horai'); ?></div></div>,
-							<div class="panchangTextInline" id="lPakshi" data-label="<?php echo __('pancha_pakshi'); ?>"><div class="panchangTextInlineBold"><?php echo __('pancha_pakshi'); ?>	</div></div>,
-							<div class="panchangTextInline" id="lAmirYogam" data-label="<?php echo __('amirthathi'); ?> <?php echo __('yogam'); ?>"><div class="panchangTextInlineBold"><?php echo __('amirthathi'); ?> <?php echo __('yogam'); ?></div></div>,
-							
-							<div class="panchangTextInline" id="lNethram" data-label="<?php echo __('nethram'); ?>"><div class="panchangTextInlineBold"><?php echo __('nethram'); ?></div></div>,
-							<div class="panchangTextInline" id="lJeevan" data-label="<?php echo __('jeevan'); ?>"><div class="panchangTextInlineBold"><?php echo __('jeevan'); ?></div></div>,
-							<div class="panchangTextInline" id="lNokku" data-label="<?php echo __('day_aspect'); ?>"><div class="panchangTextInlineBold"><?php echo __('day_aspect'); ?></div></div>,
-							
-							<div class="panchangTextInline" id="lLagnam" data-label="<?php echo __('lagna'); ?>"><div class="panchangTextInlineBold"><?php echo __('lagna'); ?></div></div>,
-							<div class="panchangTextInline" id="lRaasi" data-label="<?php echo __('rasi'); ?>"><div class="panchangTextInlineBold"><?php echo __('rasi'); ?></div></div>,
-							<div class="panchangTextInline" id="lAbhijith" data-label="<?php echo __('abhijith'); ?>"><div class="panchangTextInlineBold"><?php echo __('abhijith'); ?></div></div>,
-							
-							<div class="panchangTextInline" id="lAvayogi" data-label="<?php echo __('avayogi'); ?>"><div class="panchangTextInlineBold"><?php echo __('avayogi'); ?></div></div>,
-							<div class="panchangTextInline" id="lThithi_soonyam" data-label="<?php echo __('thithi_soonyam'); ?>"><div class="panchangTextInlineBold"><?php echo __('thithi_soonyam'); ?></div></div>,
-							<div class="panchangTextInline" id="lRahu_kaalam" data-label="<?php echo __('rahu_kaalam'); ?>"><div class="panchangTextInlineBold"><?php echo __('rahu_kaalam'); ?></div></div>,
-							
-							<div class="panchangTextInline" id="lEma_kantam" data-label="<?php echo __('ema_kantam'); ?>"><div class="panchangTextInlineBold"><?php echo __('ema_kantam'); ?></div></div>,
-							<div class="panchangTextInline" id="lKuligai" data-label="<?php echo __('kulika'); ?>"><div class="panchangTextInlineBold"><?php echo __('kulika'); ?></div></div>,
-							<div class="panchangTextInline" id="lSoolai" data-label="<?php echo __('vaara_soolai'); ?>"><div class="panchangTextInlineBold"><?php echo __('vaara_soolai'); ?></div></div>,
-							
-							<div class="panchangTextInline" id="lChandraashtamam" data-label="<?php echo __('chandraashtamam'); ?>"><div class="panchangTextInlineBold"><?php echo __('chandraashtamam'); ?></div></div>,
-							<div class="panchangTextInline" id="lSunrise" data-label="<?php echo __('sunrise'); ?>"><div class="panchangTextInlineBold"><?php echo __('sunrise'); ?></div></div>,
-							<div class="panchangTextInline" id="lSunset" data-label="<?php echo __('sunset'); ?>"><div class="panchangTextInlineBold"><?php echo __('sunset'); ?></div></div>
-							<BR>
-							<div class="panchangTextInline" id="lviv_chakram"><div class="panchangTextInlineBold" id="cap_vivaha"></div></div>
-						</td>
-					</tr>
-					<tr>
-						<td style='padding:unset' colspan=1>
-							<div class="imgcaption" id="cap_current_transit"></div><img id="chart" src="" alt="Captured Image" width='280px'>
-						</td>
-						<td style='padding:unset;align-content:center'><img id="ganesha" src="images/panchang_ganesha.png" alt="Image" width='180px'>
-						<td style='padding:unset;align-content:center'><div class="imgcaption" id="cap_graha_saaram"></div><img id="starlord" src="" alt="Captured Image" width='220px'></td>
-						
-						 <!-- <td style='padding:unset;align-content:center'><div class="imgcaption">விவாஹ சக்ரம்</div><img id="vivaha" src="" alt="Captured Image" width='220px'></td> -->
-						<!-- <td style='padding:unset;align-content:center'><div class="imgcaption">கிரக சாரம்</div><img id="starlord" src="" alt="Captured Image" width='250px'></td> -->
-					</tr>
-					<!-- <tr>
-						<td style='padding:unset;align-content:center'><div class="imgcaption">கிரக சாரம்</div><img id="starlord" src="" alt="Captured Image" width='220px'></td>
-						<td style='padding:unset;align-content:center'><div class="imgcaption">விவாஹ சக்ரம்</div><img id="vivaha" src="" alt="Captured Image" width='220px'></td> 
-					</tr> -->
-				</table>
-			<!-- Add more divs as needed -->
-			<!-- <button class='actionBtn' id='backBtn' onclick="displayOrigPanchang()" style='display:none'>Back</button> -->
+						</article>
+					</section>
+
+					<section class="pk-section">
+						<h2 class="pk-st">$panchangPrintOverviewTitle</h2>
+						<div class="pk-limbs" id="pkLimbs"></div>
+					</section>
+
+					<section class="pk-section">
+						<h2 class="pk-st">$panchangPrintTimelineTitle</h2>
+						<div class="pk-card pk-timeline-card">
+							<div class="pk-track" id="pkTimelineTrack">
+								<div class="pk-track-bands" id="pkTimelineBands"></div>
+							</div>
+							<div class="pk-ticks" id="pkTimelineTicks"></div>
+							<div class="pk-timeline-chips" id="pkTimelineChips"></div>
+						</div>
+					</section>
+
+					<section class="pk-section">
+						<h2 class="pk-st">$panchangPrintDailyTitle</h2>
+						<div class="pk-dgrid" id="pkDailyGrid"></div>
+					</section>
+
+					<section class="pk-card pk-vivaha" id="pkVivaha">
+						<h2 class="pk-vivaha-title">$panchangPrintVivahaTitle</h2>
+						<div class="pk-vivaha-stars">
+							<div><span id="pkSunNakLabel"></span><strong id="pkSunNak"></strong></div>
+							<div><span id="pkMoonNakLabel"></span><strong id="pkMoonNak"></strong></div>
+						</div>
+						<strong class="pk-vivaha-result" id="pkVivahaResult"></strong>
+					</section>
+
+					<section class="pk-section pk-graha-section">
+						<h2 class="pk-st">$panchangPrintPlanetaryTitle</h2>
+						<div class="pk-grahas">
+							<article class="pk-card pk-chart-card">
+								<h3 class="pk-card-title">$panchangPrintTransitTitle</h3>
+								<svg class="pk-chart-svg" id="pkChartSvg" viewBox="0 0 384 384" role="img"></svg>
+								<div class="pk-chart-legend">
+									<span><b id="pkSoonyamMark"></b><span id="pkSoonyamLegend"></span></span>
+									<span><b class="pk-lagna-symbol">◤</b><span id="pkLagnaLegend"></span></span>
+								</div>
+							</article>
+							<article class="pk-card pk-table-card">
+								<h3 class="pk-card-title">$panchangPrintGrahaTitle</h3>
+								<div class="pk-table-wrap" id="pkGrahaTable"></div>
+							</article>
+						</div>
+					</section>
+
+					<footer class="pk-foot">
+						<span><strong>PNK ASTRO</strong><span class="pk-foot-separator"> · </span><span id="pkFooterCity"></span></span>
+						<span><span id="pkFooterDate"></span><span class="pk-foot-separator"> · </span><span id="pkFooterDay"></span></span>
+					</footer>
+				</div>
 			</div>
 EOL;
 
@@ -3758,6 +5161,9 @@ unset($_SESSION['menu_clicked']);
 
 ?>
 <div id='dummy'></div>
+<div id="panchangPdfProgress" class="panchang-pdf-progress" role="status" aria-live="polite" data-html2canvas-ignore="true" hidden>
+	<span><?php echo ($language === 'english') ? 'Preparing Panchang PDF...' : 'பஞ்சாங்கம் PDF தயாராகிறது...'; ?></span>
+</div>
 
 <!-- Pushkara Navamsha Times - Load asynchronously (hidden container) -->
 <div id="pushkara-container" style="display: none;">
@@ -3801,9 +5207,10 @@ unset($_SESSION['menu_clicked']);
 .panchang-timeline {
     min-width: 0;
     padding: 8px;
-    border: 1px solid rgba(255, 255, 255, .1);
+    border: 1px solid var(--theme-border);
     border-radius: 14px;
-    background: var(--panchang-topbar-gradient, linear-gradient(120deg, rgba(20,20,46,.97), rgba(30,22,58,.95), rgba(54,27,50,.95)));
+    background: var(--theme-surface-panel-solid);
+    box-shadow: 0 8px 20px var(--theme-shadow-panel);
 }
 
 .panchang-timeline-header,
@@ -3822,7 +5229,7 @@ unset($_SESSION['menu_clicked']);
 }
 
 .panchang-timeline-month {
-    color: #fff4e8;
+    color: var(--theme-text-heading);
     min-width: 0;
     font-size: 12px;
     font-weight: 700;
@@ -3841,7 +5248,7 @@ unset($_SESSION['menu_clicked']);
     border-radius: 0;
     background: transparent !important;
     box-shadow: none !important;
-    color: #c3a9dc !important;
+    color: var(--theme-text-accent-strong) !important;
     cursor: pointer;
     line-height: 1;
 }
@@ -3849,11 +5256,11 @@ unset($_SESSION['menu_clicked']);
 .panchang-timeline-shortcuts .actionBtnSmall {
     min-height: 26px !important;
     padding: 4px 10px !important;
-    border: 1px solid rgba(255, 255, 255, .1) !important;
+    border: 1px solid var(--theme-border-accent) !important;
     border-radius: 999px !important;
-    background: #332e3e !important;
+    background: var(--theme-button-gradient) !important;
     box-shadow: none !important;
-    color: #fff4e8 !important;
+    color: var(--theme-button-text) !important;
     font-size: 11px !important;
 }
 
@@ -3880,24 +5287,24 @@ unset($_SESSION['menu_clicked']);
     align-items: center;
     justify-content: center;
     gap: 2px;
-    border: 1px solid rgba(255, 255, 255, .1);
+    border: 1px solid var(--theme-border);
     border-radius: 11px;
-    background: #2b2635;
-    color: #fff4e8 !important;
+    background: var(--theme-surface-field);
+    color: var(--theme-text) !important;
     cursor: pointer;
     scroll-snap-align: center;
     transition: background .16s ease, border-color .16s ease, transform .16s ease;
 }
 
 .panchang-timeline-date:hover {
-    border-color: rgba(181, 126, 255, .7);
+    border-color: var(--theme-border-hover);
 }
 
 .panchang-timeline-date[aria-current="date"] {
-    border-color: #a76bff;
-    background: linear-gradient(145deg, #a14dff, #7027d9);
-    box-shadow: 0 5px 16px rgba(126, 53, 223, .34);
-    color: #fff !important;
+    border-color: var(--theme-border-accent);
+    background: var(--theme-button-gradient);
+    box-shadow: 0 5px 16px var(--theme-shadow-panel);
+    color: var(--theme-button-text) !important;
 }
 
 .panchang-timeline-weekday {
@@ -3927,52 +5334,9 @@ unset($_SESSION['menu_clicked']);
 }
 
 .panchang-advanced-options {
-    margin-top: 6px;
+    margin-top: 8px;
     border: 0;
     background: transparent;
-}
-
-.panchang-advanced-options > summary {
-    display: inline-flex;
-    min-height: 0;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 0;
-    border-radius: 4px;
-    color: var(--theme-text-accent-strong, #402276) !important;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 700;
-    list-style: none;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-}
-
-.panchang-advanced-options > summary:hover {
-    color: var(--theme-text-accent, #563092) !important;
-}
-
-.panchang-advanced-options > summary:focus-visible {
-    outline: 2px solid var(--theme-border-focus, #5b2be0);
-    outline-offset: 3px;
-}
-
-.panchang-advanced-options > summary::-webkit-details-marker {
-    display: none;
-}
-
-.panchang-advanced-options > summary::after {
-    content: "+";
-    font-size: 14px;
-    font-weight: 800;
-}
-
-.panchang-advanced-options[open] > summary::after {
-    content: "−";
-}
-
-.panchang-advanced-options > .button-container {
-    padding: 0 12px 12px;
 }
 
 /* Hide mobile dropdown by default */
@@ -4181,8 +5545,8 @@ function updateHoraiInline(){
 	const lHorai = document.getElementById('lHorai');
 	if(!lHorai || lHorai.dataset.done) return;
 	const labelEl = lHorai.querySelector('.panchangTextInlineBold');
-	const labelHTML = labelEl ? labelEl.outerHTML : lHorai.innerHTML;
-	lHorai.innerHTML = labelHTML + ' - ' + horaTxt;
+	if(!labelEl) return;
+	lHorai.innerHTML = labelEl.outerHTML + ' - ' + horaTxt;
 	lHorai.dataset.done = '1';
 }
 
@@ -4231,6 +5595,9 @@ function fitTransitChartPlanetText() {
 		if (!label) return;
 
 		var entries = Array.from(label.querySelectorAll('.transit-planet-entry'));
+		entries.forEach(function(entry) {
+			entry.classList.toggle('is-mandhi-entry', Boolean(entry.querySelector('.mandhi')));
+		});
 		var planetCount = entries.length;
 		var cellWidth = cell.getBoundingClientRect().width;
 		var twoColumns = planetCount >= 8 || (planetCount >= 4 && cellWidth >= 96);
@@ -4268,9 +5635,65 @@ window.addEventListener('resize', fitTransitChartPlanetText);
 	<a class="is-active" href="new_panchang.php" aria-label="<?php echo htmlspecialchars(__('panchangam'), ENT_QUOTES, 'UTF-8'); ?>" aria-current="page"><i class="fa fa-calendar" aria-hidden="true"></i></a>
 	<a href="star_thaara_palan.php" aria-label="<?php echo htmlspecialchars(__('tara_palan'), ENT_QUOTES, 'UTF-8'); ?>"><i class="fa fa-star-o" aria-hidden="true"></i></a>
 	<a href="hora.php" aria-label="<?php echo htmlspecialchars(__('horai'), ENT_QUOTES, 'UTF-8'); ?>"><i class="fa fa-clock-o" aria-hidden="true"></i></a>
-	<button type="button" aria-label="<?php echo ($language === 'english') ? 'Download PDF' : 'PDF பதிவிறக்கம்'; ?>" title="<?php echo ($language === 'english') ? 'Download PDF' : 'PDF பதிவிறக்கம்'; ?>" onclick="document.getElementById('onePageBtn').click();"><i class="fa fa-download" aria-hidden="true"></i></button>
+	<button type="button" id="onePagePanchangDownload" aria-label="<?php echo ($language === 'english') ? 'Download PDF' : 'PDF பதிவிறக்கம்'; ?>" title="<?php echo ($language === 'english') ? 'Download PDF' : 'PDF பதிவிறக்கம்'; ?>" onclick="displayOnePagePanchang()"><span class="app-pdf-download-icon" aria-hidden="true"><i class="fa fa-file-pdf-o app-pdf-download-file"></i><i class="fa fa-download app-pdf-download-arrow"></i></span></button>
 </nav>
 <?php } ?>
+
+<div id="panchangActionsOverlay" class="panchang-modal-overlay panchang-actions-overlay" aria-hidden="true">
+	<section id="panchangActionsDialog" class="panchang-modal-dialog panchang-actions-dialog" role="dialog" aria-modal="true" aria-labelledby="panchangActionsTitle">
+		<header class="panchang-modal-header">
+			<h2 id="panchangActionsTitle"><?php echo $formAdvancedOptionsLabel; ?></h2>
+			<button type="button" class="panchang-modal-close" aria-label="<?php echo htmlspecialchars(__('close'), ENT_QUOTES, 'UTF-8'); ?>" onclick="closePanchangActionsOverlay()">
+				<i class="fa fa-times" aria-hidden="true"></i>
+			</button>
+		</header>
+		<div class="panchang-action-grid">
+			<button type="button" id="monthlyPanchangAction" class="panchang-action-button" onclick="closePanchangActionsOverlay();genPanchang(document.getElementById('place').value);">
+				<i class="fa fa-calendar" aria-hidden="true"></i><span><?php echo htmlspecialchars(__('monthly'), ENT_QUOTES, 'UTF-8'); ?></span>
+			</button>
+			<button type="button" class="panchang-action-button" id="showNakshatraBtn" onclick="closePanchangActionsOverlay()">
+				<i class="fa fa-star-o" aria-hidden="true"></i><span><?php echo htmlspecialchars(__('nakshatra_division'), ENT_QUOTES, 'UTF-8'); ?></span>
+			</button>
+			<button type="button" class="panchang-action-button" id="showPushkaraBtn" onclick="closePanchangActionsOverlay();showPushkaraTimes()">
+				<i class="fa fa-th-large" aria-hidden="true"></i><span><?php echo htmlspecialchars(__('pushkara'), ENT_QUOTES, 'UTF-8'); ?></span>
+			</button>
+			<button type="button" class="panchang-action-button" id="showMuhurtamBtn" onclick="closePanchangActionsOverlay();generateMuhurtam_default()">
+				<i class="fa fa-clock-o" aria-hidden="true"></i><span><?php echo htmlspecialchars(__('muhurtham'), ENT_QUOTES, 'UTF-8'); ?></span>
+			</button>
+		</div>
+	</section>
+</div>
+
+<div id="monthlyPanchangOverlay" aria-hidden="true">
+	<section id="monthlyPanchangDialog" role="dialog" aria-modal="true" aria-labelledby="monthlyPanchangTitle">
+		<button type="button" class="monthly-panchang-close" id="monthlyPanchangClose" aria-label="<?php echo $monthlyCloseLabel; ?>">
+			<i class="fa fa-times" aria-hidden="true"></i>
+		</button>
+		<h2 id="monthlyPanchangTitle"><?php echo $monthlyPanchangTitle; ?></h2>
+		<form id="monthlyPanchangForm" action="gen_panchang_pdf.php" method="post" onsubmit="return handleMonthlyPanchangSubmit(event);">
+			<input type="hidden" name="lang" value="<?php echo htmlspecialchars($language, ENT_QUOTES, 'UTF-8'); ?>">
+			<input type="hidden" id="monthlyPanchangPlaceValue" name="place" value="<?php echo $monthlyPlaceValue; ?>">
+			<label for="monthlyPanchangMonth"><?php echo $monthlyMonthLabel; ?>
+				<select id="monthlyPanchangMonth" name="month" required>
+					<?php echo $monthlyMonthOptions; ?>
+				</select>
+			</label>
+			<label for="monthlyPanchangYear"><?php echo $monthlyYearLabel; ?>
+				<input id="monthlyPanchangYear" type="number" name="year" min="1" max="9999" value="<?php echo $monthlyPanchangYear; ?>" required>
+			</label>
+			<label for="monthlyPanchangPlace"><?php echo $monthlyPlaceLabel; ?>
+				<div class="monthly-panchang-place-search">
+					<input id="monthlyPanchangPlace" type="text" value="<?php echo $monthlyPlaceDisplayValue; ?>" placeholder="<?php echo $monthlyPlacePlaceholder; ?>" autocomplete="off" autocapitalize="words" aria-autocomplete="list" aria-controls="monthlyPanchangPlaceResults" required>
+					<div id="monthlyPanchangPlaceResults" role="listbox" aria-label="<?php echo $monthlyPlaceLabel; ?>" aria-live="polite"></div>
+				</div>
+			</label>
+			<div class="monthly-panchang-form-actions">
+				<button type="button" class="monthly-panchang-cancel" id="monthlyPanchangCancel"><?php echo $monthlyCloseLabel; ?></button>
+				<button type="submit" class="monthly-panchang-submit" id="monthlyPanchangSubmit"><?php echo $monthlySubmitLabel; ?></button>
+			</div>
+		</form>
+	</section>
+</div>
 
 </body>
 </html>

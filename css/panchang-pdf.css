@@ -1,0 +1,1160 @@
+@font-face {
+	font-family: "Noto Sans Tamil";
+	src: url("../NotoSansTamil-Regular.ttf") format("truetype");
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+}
+
+@page {
+	size: A4;
+	margin: 0;
+}
+
+.theme-panchang-light {
+	--theme-bg-1: #fffaf0;
+	--theme-bg-2: #f6f1ff;
+	--theme-bg-3: #eef6fb;
+	--theme-glow-warm: rgba(255, 170, 110, .30);
+	--theme-glow-cool: rgba(150, 130, 255, .20);
+	--theme-glow-teal: rgba(60, 200, 220, .16);
+	--theme-card: rgba(255, 255, 255, .78);
+	--theme-card-border: rgba(160, 115, 40, .30);
+	--theme-card-shadow: 0 1px 6px rgba(80, 60, 120, .10);
+	--theme-gold: #b8791f;
+	--theme-gold-strong: #8a5a10;
+	--theme-title: #9a5b0f;
+	--theme-text: #1d1b4b;
+	--theme-text-2: #4a4e7a;
+	--theme-muted: #6b6f93;
+	--theme-bad: #d64545;
+	--theme-bad-strong: #b52f35;
+	--theme-bad-bg: rgba(255, 122, 122, .13);
+	--theme-good: #16a06a;
+	--theme-good-strong: #0c7a4b;
+	--theme-good-bg: rgba(110, 231, 168, .20);
+	--theme-accent: #e0663a;
+	--theme-row-alt: rgba(184, 121, 31, .06);
+	--theme-planet-rahu: #6b57e0;
+	--theme-planet-ketu: #8a55d8;
+	--theme-planet-venus: #d6458f;
+	--theme-planet-jupiter: #d99200;
+	--theme-planet-mars: #d63a3a;
+	--theme-planet-lagna: #0a9db0;
+	--theme-planet-sun: #e06a00;
+	--theme-planet-saturn: #3b63d9;
+	--theme-planet-moon: #5b6280;
+	--theme-planet-maandi: #7b8197;
+	--theme-planet-mercury: #14a06a;
+	--theme-planet-rahu-text: #6b57e0;
+	--theme-planet-ketu-text: #8a55d8;
+	--theme-planet-venus-text: #b12868;
+	--theme-planet-jupiter-text: #926000;
+	--theme-planet-mars-text: #d63a3a;
+	--theme-planet-lagna-text: #00717f;
+	--theme-planet-sun-text: #a64400;
+	--theme-planet-saturn-text: #3b63d9;
+	--theme-planet-moon-text: #5b6280;
+	--theme-planet-maandi-text: #626a7f;
+	--theme-planet-mercury-text: #087546;
+	--theme-sun-warm: #ff9a6b;
+	--theme-sun-gold: #ffd166;
+	--theme-sun-rose: #ff7a8a;
+	--theme-star: rgba(255, 255, 255, .72);
+	--theme-clear: transparent;
+	--theme-page-gradient: linear-gradient(170deg, var(--theme-bg-1) 0%, var(--theme-bg-2) 55%, var(--theme-bg-3) 100%);
+	--theme-date-gradient: linear-gradient(140deg, rgba(255, 242, 211, .98), rgba(255, 255, 255, .72));
+	--theme-sun-track: linear-gradient(90deg, rgba(255, 122, 122, .14), rgba(255, 209, 102, .18), rgba(255, 122, 122, .14));
+	--theme-vivaha-bad-gradient: linear-gradient(100deg, var(--theme-bad-bg), var(--theme-card));
+	--theme-vivaha-good-gradient: linear-gradient(100deg, var(--theme-good-bg), var(--theme-card));
+	--theme-line: rgba(160, 115, 40, .26);
+	--theme-chart-line: rgba(160, 115, 40, .45);
+	--theme-chart-center: rgba(255, 255, 255, .32);
+	--theme-pill-text: #1d1b4b;
+}
+
+.theme-panchang-dark {
+	--theme-bg-1: #0a0b26;
+	--theme-bg-2: #141042;
+	--theme-bg-3: #0b1233;
+	--theme-glow-warm: rgba(255, 138, 91, .28);
+	--theme-glow-cool: rgba(110, 80, 255, .30);
+	--theme-glow-teal: rgba(40, 200, 220, .18);
+	--theme-card: rgba(255, 255, 255, .055);
+	--theme-card-border: rgba(232, 193, 112, .22);
+	--theme-card-shadow: none;
+	--theme-gold: #e8c170;
+	--theme-gold-strong: #ffe3a3;
+	--theme-title: #f6d98f;
+	--theme-text: #eef0ff;
+	--theme-text-2: #d6dbf5;
+	--theme-muted: #9ea6cf;
+	--theme-bad: #ff7a7a;
+	--theme-bad-strong: #ff7a7a;
+	--theme-bad-bg: rgba(255, 122, 122, .10);
+	--theme-good: #6ee7a8;
+	--theme-good-strong: #6ee7a8;
+	--theme-good-bg: rgba(110, 231, 168, .10);
+	--theme-accent: #ff9a6b;
+	--theme-row-alt: rgba(255, 255, 255, .03);
+	--theme-planet-rahu: #9b8cff;
+	--theme-planet-ketu: #b08cff;
+	--theme-planet-venus: #ff9ecb;
+	--theme-planet-jupiter: #ffd166;
+	--theme-planet-mars: #ff6b6b;
+	--theme-planet-lagna: #5ce1e6;
+	--theme-planet-sun: #ff9a3c;
+	--theme-planet-saturn: #7aa2ff;
+	--theme-planet-moon: #e8eefc;
+	--theme-planet-maandi: #c0c6d4;
+	--theme-planet-mercury: #6ee7a8;
+	--theme-planet-rahu-text: #9b8cff;
+	--theme-planet-ketu-text: #b08cff;
+	--theme-planet-venus-text: #ff9ecb;
+	--theme-planet-jupiter-text: #ffd166;
+	--theme-planet-mars-text: #ff6b6b;
+	--theme-planet-lagna-text: #5ce1e6;
+	--theme-planet-sun-text: #ff9a3c;
+	--theme-planet-saturn-text: #7aa2ff;
+	--theme-planet-moon-text: #e8eefc;
+	--theme-planet-maandi-text: #c0c6d4;
+	--theme-planet-mercury-text: #6ee7a8;
+	--theme-sun-warm: #ff9a6b;
+	--theme-sun-gold: #ffd166;
+	--theme-sun-rose: #ff7a8a;
+	--theme-star: rgba(255, 255, 255, .78);
+	--theme-clear: transparent;
+	--theme-page-gradient: linear-gradient(170deg, var(--theme-bg-1) 0%, var(--theme-bg-2) 55%, var(--theme-bg-3) 100%);
+	--theme-date-gradient: linear-gradient(140deg, rgba(232, 193, 112, .18), rgba(255, 255, 255, .04));
+	--theme-sun-track: linear-gradient(90deg, rgba(255, 122, 122, .16), rgba(255, 209, 102, .14), rgba(255, 122, 122, .16));
+	--theme-vivaha-bad-gradient: linear-gradient(100deg, var(--theme-bad-bg), var(--theme-card));
+	--theme-vivaha-good-gradient: linear-gradient(100deg, var(--theme-good-bg), var(--theme-card));
+	--theme-line: rgba(232, 193, 112, .18);
+	--theme-chart-line: rgba(232, 193, 112, .42);
+	--theme-chart-center: rgba(255, 255, 255, .025);
+	--theme-pill-text: #0a0b26;
+}
+
+html.panchang-pdf-view,
+body.panchang-pdf-view {
+	width: 210mm;
+	height: 297mm;
+	margin: 0;
+	padding: 0;
+	-webkit-print-color-adjust: exact;
+	print-color-adjust: exact;
+}
+
+.pk-page {
+	position: relative;
+	isolation: isolate;
+	display: block;
+	width: 210mm;
+	height: 297mm;
+	box-sizing: border-box;
+	overflow: hidden;
+	padding: 7mm 9mm 5mm;
+	background:
+		radial-gradient(800px 500px at 88% -6%, var(--theme-glow-warm), var(--theme-clear) 60%),
+		radial-gradient(700px 560px at -8% 32%, var(--theme-glow-cool), var(--theme-clear) 60%),
+		radial-gradient(700px 500px at 100% 96%, var(--theme-glow-teal), var(--theme-clear) 60%),
+		var(--theme-page-gradient);
+	color: var(--theme-text);
+	font-family: "Noto Sans Tamil", "Mukta Malar", system-ui, sans-serif;
+	font-size: 14px;
+	-webkit-print-color-adjust: exact;
+	print-color-adjust: exact;
+}
+
+#onepage.panchang-pdf-exporting.pk-page {
+	position: relative !important;
+	top: 0 !important;
+	left: 0 !important;
+	z-index: 9000 !important;
+	display: block !important;
+	width: 202mm !important;
+	height: 289mm !important;
+	min-height: 0 !important;
+	max-width: none !important;
+	margin: 0 !important;
+	padding: 7mm 9mm 5mm !important;
+	overflow: hidden !important;
+	background:
+		radial-gradient(800px 500px at 88% -6%, var(--theme-glow-warm), var(--theme-clear) 60%),
+		radial-gradient(700px 560px at -8% 32%, var(--theme-glow-cool), var(--theme-clear) 60%),
+		radial-gradient(700px 500px at 100% 96%, var(--theme-glow-teal), var(--theme-clear) 60%),
+		var(--theme-page-gradient) !important;
+	color: var(--theme-text) !important;
+	font-size: 8.6pt;
+}
+
+.pk-zodiac-ring {
+	position: absolute;
+	top: -62mm;
+	right: -60mm;
+	z-index: 0;
+	width: 170mm;
+	height: 170mm;
+	pointer-events: none;
+	opacity: .45;
+}
+
+.pk-zodiac-ring circle,
+.pk-zodiac-ring line {
+	fill: none;
+	stroke: var(--theme-gold);
+	stroke-width: .4;
+}
+
+.pk-stars {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	display: none;
+	background-image: radial-gradient(circle, var(--theme-star) .55px, var(--theme-clear) .95px);
+	background-position: 0 0;
+	background-size: 21mm 31mm;
+	opacity: .7;
+	pointer-events: none;
+}
+
+.theme-panchang-dark .pk-stars {
+	display: block;
+}
+
+.pk-content {
+	position: relative;
+	z-index: 2;
+	display: flex;
+	height: 100%;
+	flex-direction: column;
+	gap: 2.4mm;
+}
+
+.pk-hdr {
+	display: flex;
+	min-height: 15mm;
+	align-items: center;
+	justify-content: space-between;
+	gap: 4mm;
+	padding-bottom: 1.8mm;
+	border-bottom: .45mm solid var(--theme-card-border);
+}
+
+.pk-hdr-title {
+	min-width: 0;
+}
+
+.pk-title {
+	margin: 0;
+	color: var(--theme-title);
+	font-size: 24pt;
+	font-weight: 800;
+	line-height: 1.35;
+}
+
+.pk-subtitle {
+	display: flex;
+	align-items: center;
+	gap: 1mm;
+	margin: .6mm 0 0;
+	color: var(--theme-muted);
+	font-size: 6.2pt;
+	font-weight: 700;
+	line-height: 1.5;
+}
+
+.pk-subtitle-en {
+	letter-spacing: .12em;
+}
+
+.pk-subtitle-separator {
+	color: var(--theme-accent);
+}
+
+.pk-subtitle-ta {
+	letter-spacing: normal;
+}
+
+.pk-brand {
+	flex: 0 0 auto;
+	text-align: right;
+}
+
+.pk-brand-name {
+	color: var(--theme-gold-strong);
+	font-family: system-ui, sans-serif;
+	font-size: 10pt;
+	font-weight: 800;
+	letter-spacing: .14em;
+}
+
+.pk-brand-accent {
+	color: var(--theme-accent);
+}
+
+.pk-brand-office,
+.pk-brand-contact {
+	color: var(--theme-muted);
+	font-size: 6.4pt;
+	line-height: 1.35;
+}
+
+.pk-brand-office:empty,
+.pk-brand-contact:empty {
+	display: none;
+}
+
+.pk-hero {
+	display: grid;
+	grid-template-columns: 1.05fr 1.5fr 1fr;
+	gap: 3mm;
+	min-height: 31mm;
+}
+
+.pk-card {
+	min-width: 0;
+	border: .3mm solid var(--theme-card-border);
+	border-radius: 3.4mm;
+	background: var(--theme-card);
+	box-shadow: var(--theme-card-shadow);
+}
+
+.pk-date-card {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	grid-template-rows: 1fr auto;
+	align-items: center;
+	gap: 0 2mm;
+	padding: 2mm 2.5mm;
+	border-color: var(--theme-gold);
+	background: var(--theme-date-gradient);
+}
+
+.pk-date-number {
+	grid-row: 1 / 3;
+	color: var(--theme-title);
+	font-size: 34pt;
+	font-weight: 800;
+	line-height: 1;
+}
+
+.pk-date-copy {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: .4mm;
+}
+
+.pk-eyebrow {
+	color: var(--theme-muted);
+	font-size: 6.8pt;
+	font-weight: 700;
+}
+
+.pk-date-copy > strong {
+	color: var(--theme-text);
+	font-size: 9pt;
+	font-weight: 800;
+}
+
+.pk-date-time {
+	display: flex;
+	gap: 1mm;
+	color: var(--theme-muted);
+	font-size: 6.2pt;
+}
+
+.pk-date-time strong {
+	color: var(--theme-text);
+	font-weight: 700;
+}
+
+.pk-weekday-pill {
+	grid-column: 2;
+	justify-self: start;
+	margin-top: 1mm;
+	padding: .7mm 2.2mm;
+	border-radius: 20mm;
+	background: var(--theme-gold);
+	color: var(--theme-pill-text);
+	font-size: 6.5pt;
+	font-weight: 800;
+}
+
+.pk-sun-card {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 1.7mm 2.5mm 1.5mm;
+}
+
+.pk-sun-card-head,
+.pk-sun-times {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 2mm;
+}
+
+.pk-sun-card-head {
+	justify-content: flex-start;
+}
+
+.pk-daylight {
+	margin-top: -1mm;
+	color: var(--theme-muted);
+	font-size: 6.2pt;
+	text-align: center;
+}
+
+.pk-sun-card-head h2 {
+	margin: 0;
+	color: var(--theme-gold-strong);
+	font-size: 8pt;
+	font-weight: 800;
+}
+
+.pk-daylight {
+	color: var(--theme-muted);
+	font-size: 6.2pt;
+	font-weight: 700;
+}
+
+.pk-sun-svg {
+	display: block;
+	width: 100%;
+	height: 13mm;
+	overflow: visible;
+}
+
+.pk-sun-arc {
+	fill: none;
+	stroke: url(#pkSunGradient);
+	stroke-dasharray: 2.5 2;
+	stroke-width: 1.2;
+}
+
+.pk-sun-horizon {
+	stroke: var(--theme-line);
+	stroke-width: .8;
+}
+
+.pk-sun-glow {
+	fill: var(--theme-sun-gold);
+	opacity: .22;
+}
+
+.pk-sun-disc {
+	fill: var(--theme-sun-gold);
+}
+
+.pk-sun-point {
+	fill: var(--theme-accent);
+}
+
+.pk-sun-times > div {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: .3mm;
+}
+
+.pk-sun-times > div:last-child {
+	text-align: right;
+}
+
+.pk-sun-times span {
+	color: var(--theme-muted);
+	font-size: 6.2pt;
+}
+
+.pk-sun-times strong {
+	color: var(--theme-gold-strong);
+	font-size: 8.5pt;
+	font-weight: 800;
+}
+
+.pk-location-card {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 1mm;
+	padding: 2mm 2.5mm;
+}
+
+.pk-location-city {
+	color: var(--theme-gold-strong);
+	font-size: 15pt;
+	font-weight: 800;
+	line-height: 1.2;
+}
+
+.pk-coordinates {
+	display: flex;
+	flex-direction: column;
+	gap: .5mm;
+	color: var(--theme-text-2);
+	font-size: 7pt;
+	font-weight: 600;
+}
+
+.pk-section {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: 1.2mm;
+}
+
+.pk-st {
+	display: flex;
+	min-height: 4.4mm;
+	align-items: center;
+	gap: 2mm;
+	margin: 0;
+	color: var(--theme-gold-strong);
+	font-size: 11pt;
+	font-weight: 800;
+	line-height: 1.2;
+}
+
+.pk-st::before {
+	width: 1.2mm;
+	height: 4.4mm;
+	border-radius: 1mm;
+	background: linear-gradient(180deg, var(--theme-gold), var(--theme-accent));
+	content: "";
+}
+
+.pk-st::after {
+	height: .25mm;
+	flex: 1;
+	background: linear-gradient(90deg, var(--theme-card-border), var(--theme-clear));
+	content: "";
+}
+
+.pk-limbs {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 2.6mm;
+}
+
+.pk-limb {
+	display: flex;
+	min-height: 0;
+	flex-direction: column;
+	gap: .7mm;
+	padding: 1.6mm 1.8mm;
+	break-inside: avoid;
+	page-break-inside: avoid;
+}
+
+.pk-limb-title {
+	display: flex;
+	align-items: center;
+	gap: 1.2mm;
+	margin: 0;
+	color: var(--theme-gold-strong);
+	font-size: 7.3pt;
+	font-weight: 800;
+}
+
+.pk-icon {
+	width: 4.2mm;
+	height: 4.2mm;
+	flex: 0 0 auto;
+	fill: none;
+	stroke: var(--theme-gold);
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-width: 1.25;
+}
+
+.pk-limb-entry {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: .4mm;
+}
+
+.pk-limb-name {
+	overflow: hidden;
+	color: var(--theme-text);
+	font-size: 8.3pt;
+	font-weight: 800;
+	line-height: 1.25;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.pk-limb-time {
+	display: grid;
+	grid-template-columns: 7mm minmax(0, 1fr);
+	gap: 1mm;
+	color: var(--theme-muted);
+	font-size: 6.2pt;
+	line-height: 1.25;
+}
+
+.pk-limb-time-label {
+	font-weight: 700;
+}
+
+.pk-limb-time-value {
+	color: var(--theme-text-2);
+	overflow-wrap: anywhere;
+}
+
+.pk-limb-divider {
+	align-self: center;
+	color: var(--theme-gold);
+	font-size: 5.5pt;
+	line-height: 1;
+}
+
+.pk-timeline-card {
+	display: flex;
+	flex-direction: column;
+	gap: 1.1mm;
+	padding: 1.7mm 2.5mm;
+}
+
+.pk-track {
+	position: relative;
+	height: 5.5mm;
+	overflow: hidden;
+	border: .25mm solid var(--theme-card-border);
+	border-radius: 20mm;
+	background: var(--theme-sun-track);
+}
+
+.pk-track-bands {
+	position: absolute;
+	inset: 0;
+}
+
+.pk-band {
+	position: absolute;
+	top: 0;
+	height: 100%;
+	border-radius: 20mm;
+}
+
+.pk-band-bad {
+	background: var(--theme-bad-bg);
+	border-inline: .35mm solid var(--theme-bad);
+}
+
+.pk-band-good {
+	background: var(--theme-good-bg);
+	border-inline: .35mm solid var(--theme-good);
+}
+
+.pk-ticks {
+	display: grid;
+	grid-template-columns: repeat(7, minmax(0, 1fr));
+	color: var(--theme-muted);
+	font-size: 6.2pt;
+}
+
+.pk-ticks span {
+	text-align: center;
+}
+
+.pk-ticks span:first-child {
+	text-align: left;
+}
+
+.pk-ticks span:last-child {
+	text-align: right;
+}
+
+.pk-timeline-chips {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 1.4mm;
+}
+
+.pk-chip {
+	display: flex;
+	min-width: 0;
+	align-items: center;
+	gap: 1.2mm;
+	padding: .9mm 1.5mm;
+	border: .25mm solid var(--theme-card-border);
+	border-radius: 2.4mm;
+}
+
+.pk-chip-bad {
+	border-color: var(--theme-bad);
+	background: var(--theme-bad-bg);
+}
+
+.pk-chip-good {
+	border-color: var(--theme-good);
+	background: var(--theme-good-bg);
+}
+
+.pk-chip-dot {
+	width: 1.6mm;
+	height: 1.6mm;
+	flex: 0 0 auto;
+	border-radius: 50%;
+	background: var(--theme-muted);
+}
+
+.pk-chip-bad .pk-chip-dot {
+	background: var(--theme-bad);
+}
+
+.pk-chip-good .pk-chip-dot {
+	background: var(--theme-good);
+}
+
+.pk-chip-copy {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+	gap: .2mm;
+}
+
+.pk-chip-label {
+	overflow: hidden;
+	color: var(--theme-muted);
+	font-size: 6.1pt;
+	font-weight: 700;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.pk-chip-time {
+	color: var(--theme-text);
+	font-size: 6.2pt;
+	font-weight: 800;
+	white-space: nowrap;
+}
+
+.pk-dgrid {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 1.2mm;
+}
+
+.pk-dc {
+	display: flex;
+	min-width: 0;
+	min-height: 0;
+	flex-direction: column;
+	justify-content: center;
+	gap: .45mm;
+	padding: 1.2mm 2.8mm;
+	border: .25mm solid var(--theme-card-border);
+	border-left: .55mm solid var(--theme-gold);
+	border-radius: 2.4mm;
+	background: var(--theme-card);
+	break-inside: avoid;
+	page-break-inside: avoid;
+}
+
+.pk-dc-label {
+	color: var(--theme-muted);
+	font-size: 6.5pt;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.pk-dc-value {
+	color: var(--theme-text);
+	font-size: 8.1pt;
+	font-weight: 800;
+	line-height: 1.2;
+	overflow-wrap: anywhere;
+}
+
+.pk-dc-subvalue {
+	color: var(--theme-text-2);
+	font-size: 6.5pt;
+	line-height: 1.2;
+}
+
+.pk-vivaha {
+	display: grid;
+	grid-template-columns: 28mm minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 2.5mm;
+	padding: 1.5mm 2.5mm;
+	break-inside: avoid;
+	page-break-inside: avoid;
+}
+
+.pk-vivaha-bad {
+	border-color: var(--theme-bad);
+	background: var(--theme-vivaha-bad-gradient);
+}
+
+.pk-vivaha-good {
+	border-color: var(--theme-good);
+	background: var(--theme-vivaha-good-gradient);
+}
+
+.pk-vivaha-title {
+	margin: 0;
+	color: var(--theme-gold-strong);
+	font-size: 8pt;
+	font-weight: 800;
+}
+
+.pk-vivaha-stars {
+	display: flex;
+	flex-direction: column;
+	gap: .6mm;
+	color: var(--theme-text-2);
+	font-size: 6.5pt;
+}
+
+.pk-vivaha-stars > div {
+	display: flex;
+	gap: 1mm;
+}
+
+.pk-vivaha-stars strong {
+	color: var(--theme-text);
+}
+
+.pk-vivaha-result {
+	max-width: 57mm;
+	padding: 1mm 2.5mm;
+	border: .3mm solid var(--theme-bad);
+	border-radius: 20mm;
+	background: var(--theme-bad-bg);
+	color: var(--theme-bad-strong);
+	font-size: 6.5pt;
+	font-weight: 800;
+	text-align: center;
+}
+
+.pk-vivaha-good .pk-vivaha-result {
+	border-color: var(--theme-good);
+	background: var(--theme-good-bg);
+	color: var(--theme-good-strong);
+}
+
+.pk-graha-section {
+	min-height: 0;
+	flex: 1 1 auto;
+}
+
+.pk-grahas {
+	display: grid;
+	min-height: 0;
+	flex: 1 1 auto;
+	grid-template-columns: 70mm minmax(0, 1fr);
+	gap: 3mm;
+}
+
+.pk-chart-card,
+.pk-table-card {
+	display: flex;
+	min-height: 0;
+	flex-direction: column;
+	gap: 1mm;
+	padding: 1.7mm;
+	break-inside: avoid;
+	page-break-inside: avoid;
+}
+
+.pk-card-title {
+	margin: 0;
+	color: var(--theme-gold-strong);
+	font-size: 7.6pt;
+	font-weight: 800;
+}
+
+.pk-chart-svg {
+	display: block;
+	width: 100%;
+	max-height: 70mm;
+	flex: 1 1 auto;
+	overflow: visible;
+}
+
+.pk-chart-outline {
+	fill: var(--theme-chart-center);
+	stroke: var(--theme-chart-line);
+	stroke-width: 2;
+}
+
+.pk-chart-gridline {
+	stroke: var(--theme-chart-line);
+	stroke-width: 1.3;
+}
+
+.pk-chart-center-ring {
+	fill: none;
+	stroke: var(--theme-gold);
+	stroke-dasharray: 3 3;
+	stroke-width: 1.2;
+	opacity: .55;
+}
+
+.pk-chart-center-ring-inner {
+	stroke-dasharray: none;
+	opacity: .35;
+}
+
+.pk-chart-lagna-fill {
+	fill: var(--theme-planet-lagna);
+	opacity: .1;
+}
+
+.pk-chart-lagna-marker {
+	fill: var(--theme-planet-lagna);
+	opacity: .8;
+}
+
+.pk-chart-planet {
+	fill: var(--theme-text);
+	font-size: 11.5px;
+	font-weight: 700;
+	text-anchor: middle;
+}
+
+.pk-chart-auxiliary {
+	fill: var(--theme-muted);
+	font-size: 7px;
+	font-weight: 700;
+	text-anchor: middle;
+}
+
+.pk-chart-rasi-title {
+	fill: var(--theme-gold-strong);
+	font-size: 24px;
+	font-weight: 800;
+	text-anchor: middle;
+}
+
+.pk-chart-soonyam {
+	fill: var(--theme-bad-strong);
+	font-size: 7px;
+	font-weight: 800;
+	text-anchor: middle;
+}
+
+.pk-chart-planet.pk-planet-rahu { fill: var(--theme-planet-rahu-text); }
+.pk-chart-planet.pk-planet-ketu { fill: var(--theme-planet-ketu-text); }
+.pk-chart-planet.pk-planet-venus { fill: var(--theme-planet-venus-text); }
+.pk-chart-planet.pk-planet-jupiter { fill: var(--theme-planet-jupiter-text); }
+.pk-chart-planet.pk-planet-mars { fill: var(--theme-planet-mars-text); }
+.pk-chart-planet.pk-planet-lagna { fill: var(--theme-planet-lagna-text); }
+.pk-chart-planet.pk-planet-sun { fill: var(--theme-planet-sun-text); }
+.pk-chart-planet.pk-planet-saturn { fill: var(--theme-planet-saturn-text); }
+.pk-chart-planet.pk-planet-moon { fill: var(--theme-planet-moon-text); }
+.pk-chart-planet.pk-planet-maandi { fill: var(--theme-planet-maandi-text); }
+.pk-chart-planet.pk-planet-mercury { fill: var(--theme-planet-mercury-text); }
+
+.pk-chart-legend {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 1mm 2mm;
+	color: var(--theme-muted);
+	font-size: 6.2pt;
+}
+
+.pk-chart-legend > span {
+	display: inline-flex;
+	align-items: center;
+	gap: 1mm;
+}
+
+.pk-chart-legend b {
+	color: var(--theme-bad-strong);
+}
+
+.pk-chart-legend .pk-lagna-symbol {
+	color: var(--theme-planet-lagna-text);
+}
+
+.pk-table-wrap {
+	display: flex;
+	min-height: 0;
+	flex: 1 1 auto;
+}
+
+.pk-graha-table {
+	width: 100%;
+	height: 100%;
+	table-layout: fixed;
+	border-collapse: collapse;
+	color: var(--theme-text);
+	font-size: 6.2pt;
+}
+
+.pk-page .pk-graha-table {
+	margin: 0;
+	border: 0;
+	background: var(--theme-clear);
+}
+
+.pk-page .pk-graha-table th,
+.pk-page .pk-graha-table td {
+	background-color: var(--theme-clear);
+}
+
+.pk-page .pk-graha-table tbody tr {
+	background-color: var(--theme-clear);
+}
+
+.pk-graha-table th {
+	padding: .8mm .6mm;
+	border-bottom: .35mm solid var(--theme-gold);
+	color: var(--theme-gold-strong);
+	font-size: 6.8pt;
+	font-weight: 800;
+	text-align: left;
+	vertical-align: bottom;
+}
+
+.pk-graha-table td {
+	padding: .55mm .6mm;
+	border-bottom: .2mm solid var(--theme-line);
+	color: var(--theme-text-2);
+	font-size: 6.2pt;
+	font-weight: 600;
+	line-height: 1.15;
+	overflow-wrap: anywhere;
+	vertical-align: middle;
+}
+
+.pk-graha-table tbody tr:nth-child(even) td {
+	background: var(--theme-row-alt);
+}
+
+.pk-graha-table th:nth-child(1) { width: 15%; }
+.pk-graha-table th:nth-child(2) { width: 24%; }
+.pk-graha-table th:nth-child(3) { width: 16%; }
+.pk-graha-table th:nth-child(4) { width: 23%; }
+.pk-graha-table th:nth-child(5) { width: 22%; }
+
+.pk-graha-table td:first-child {
+	color: var(--theme-text);
+	font-weight: 800;
+	white-space: nowrap;
+}
+
+.pk-planet-dot {
+	display: inline-block;
+	width: 1.6mm;
+	height: 1.6mm;
+	flex: 0 0 auto;
+	border-radius: 50%;
+	background: var(--theme-muted);
+	vertical-align: middle;
+}
+
+.pk-planet-dot.pk-planet-rahu { background: var(--theme-planet-rahu); }
+.pk-planet-dot.pk-planet-ketu { background: var(--theme-planet-ketu); }
+.pk-planet-dot.pk-planet-venus { background: var(--theme-planet-venus); }
+.pk-planet-dot.pk-planet-jupiter { background: var(--theme-planet-jupiter); }
+.pk-planet-dot.pk-planet-mars { background: var(--theme-planet-mars); }
+.pk-planet-dot.pk-planet-lagna { background: var(--theme-planet-lagna); }
+.pk-planet-dot.pk-planet-sun { background: var(--theme-planet-sun); }
+.pk-planet-dot.pk-planet-saturn { background: var(--theme-planet-saturn); }
+.pk-planet-dot.pk-planet-moon { background: var(--theme-planet-moon); }
+.pk-planet-dot.pk-planet-maandi { background: var(--theme-planet-maandi); }
+.pk-planet-dot.pk-planet-mercury { background: var(--theme-planet-mercury); }
+
+.pk-planet-name {
+	display: inline-block;
+	max-width: calc(100% - 3mm);
+	margin-left: 1mm;
+	overflow-wrap: anywhere;
+	vertical-align: middle;
+}
+
+.pk-planet-flag {
+	color: var(--theme-title) !important;
+	font-weight: 800 !important;
+}
+
+.pk-degree-main {
+	display: block;
+	color: var(--theme-text);
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.pk-degree-sign {
+	display: block;
+	color: var(--theme-muted);
+	font-size: 5.8pt;
+	white-space: nowrap;
+}
+
+.pk-foot {
+	display: flex;
+	justify-content: space-between;
+	gap: 2mm;
+	margin-top: auto;
+	padding-top: 1mm;
+	border-top: .2mm solid var(--theme-card-border);
+	color: var(--theme-muted);
+	font-size: 6.6pt;
+	line-height: 1.2;
+}
+
+.pk-foot strong {
+	color: var(--theme-gold-strong);
+	letter-spacing: .08em;
+}
+
+.pk-foot-separator {
+	color: var(--theme-accent);
+}
+
+.pk-page [hidden] {
+	display: none !important;
+}
+
+.panchang-pdf-progress {
+	position: fixed;
+	inset: 0;
+	z-index: 10000;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	background: var(--theme-bg-1);
+	color: var(--theme-text);
+	font: 14px/1.5 system-ui, sans-serif;
+	text-align: center;
+}
+
+.panchang-pdf-progress.is-visible {
+	display: flex;
+}
+
+@media print {
+	html,
+	body {
+		width: 210mm;
+		height: 297mm;
+	}
+
+	body {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
+
+	.pk-page {
+		width: 210mm;
+		height: 297mm;
+		overflow: hidden;
+		break-inside: avoid;
+		page-break-inside: avoid;
+	}
+
+	.panchang-pdf-progress {
+		display: none !important;
+	}
+}
