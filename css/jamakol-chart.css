@@ -1,0 +1,463 @@
+body.module-jamakol-chart {
+	min-height: 100vh;
+	background: var(--app-page-gradient) fixed !important;
+}
+
+body.module-jamakol-chart .column-body {
+	width: min(calc(100% - 24px), 900px) !important;
+}
+
+body.module-jamakol-chart .jamakol-title {
+	margin: 0 auto 14px;
+	color: var(--theme-text-heading, var(--client-text, #26364a));
+	font-size: clamp(20px, 3vw, 26px);
+	font-weight: 750;
+	line-height: 1.3;
+	text-align: center;
+}
+
+body.module-jamakol-chart .jamakol-controls,
+body.module-jamakol-chart .jamakol-analysis-panel {
+	display: block !important;
+	width: min(100%, 760px) !important;
+	max-width: 100%;
+	height: auto !important;
+	margin: 0 auto 18px;
+	padding: clamp(14px, 3vw, 22px) !important;
+	overflow: visible;
+	border: 1px solid var(--theme-border, #d6e1eb) !important;
+	border-radius: 20px;
+	background: var(--theme-surface-panel-solid, #fff) !important;
+	box-shadow: 0 14px 34px var(--theme-shadow-panel, rgba(28, 48, 68, .14));
+	box-sizing: border-box;
+}
+
+body.module-jamakol-chart .jamakol-question-label {
+	display: block;
+	margin: 0 0 6px;
+	color: var(--theme-text-heading, var(--client-text, #26364a));
+	font-size: 14px;
+	font-weight: 700;
+	text-align: left;
+}
+
+body.module-jamakol-chart .jamakol-question-input,
+body.module-jamakol-chart .jamakol-analysis-input {
+	display: block;
+	width: 100% !important;
+	max-width: 100%;
+	height: auto !important;
+	min-height: 64px;
+	margin: 0 0 10px;
+	padding: 12px 14px !important;
+	border: 1px solid var(--theme-border-input, #c8d8e6) !important;
+	border-radius: 14px !important;
+	background: var(--theme-surface-field, #f8fbff) !important;
+	color: var(--theme-text-field, #24364a) !important;
+	font: inherit;
+	font-size: 15px !important;
+	line-height: 1.5;
+	box-shadow: inset 0 1px 2px rgba(20, 38, 56, .05);
+	box-sizing: border-box;
+	resize: vertical;
+}
+
+body.module-jamakol-chart #updateChart {
+	display: grid;
+	width: 100%;
+	margin: 0;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+}
+
+body.module-jamakol-chart #updateChart br {
+	display: none;
+}
+
+body.module-jamakol-chart #updateChart .jamakol-date-control {
+	width: auto !important;
+	max-width: none;
+	min-height: 46px;
+	padding: 10px 12px !important;
+	border: 1px solid var(--theme-border-input, #c8d8e6) !important;
+	border-radius: 12px !important;
+	background: var(--theme-surface-field, #f8fbff) !important;
+	color: var(--theme-text-field, #24364a) !important;
+	font: inherit;
+	font-size: 14px !important;
+	font-weight: 650;
+	box-sizing: border-box;
+}
+
+body.module-jamakol-chart #updateChart input[type="button"] {
+	width: auto !important;
+	max-width: none;
+	margin: 0 !important;
+}
+
+body.module-jamakol-chart .jamakol-data-tabs {
+	display: flex;
+	width: min(100%, 820px);
+	margin: 8px auto 16px;
+	justify-content: center;
+	gap: 6px;
+	padding: 5px;
+	border: 1px solid #d5e0e9;
+	border-radius: 15px;
+	background: var(--theme-surface-panel-solid, #fff);
+	box-shadow: 0 8px 20px rgba(31, 54, 75, .1);
+	box-sizing: border-box;
+}
+
+body.module-jamakol-chart .jamakol-data-tabs button {
+	flex: 1 1 0;
+	min-width: 0;
+	min-height: 46px !important;
+	margin: 0 !important;
+	padding: 9px 10px !important;
+	border: 1px solid transparent !important;
+	border-radius: 11px !important;
+	background: transparent !important;
+	box-shadow: none !important;
+	color: var(--theme-text, #26364a) !important;
+	font-size: clamp(11px, 2.8vw, 14px);
+	font-weight: 700;
+	line-height: 1.2;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+body.module-jamakol-chart .jamakol-data-tabs button[data-tab="panchang"] {
+	flex-grow: 1.5;
+}
+
+body.module-jamakol-chart .jamakol-data-tabs button[aria-selected="true"] {
+	border-color: #c4d9e8 !important;
+	background: #e8f4fc !important;
+	color: #20394c !important;
+	box-shadow: 0 3px 8px rgba(34, 65, 92, .1) !important;
+}
+
+body.module-jamakol-chart #chart {
+	display: block !important;
+	width: min(100%, 560px) !important;
+	max-width: 100%;
+	height: auto !important;
+	aspect-ratio: 1;
+	margin: 12px auto 18px;
+	padding: 0 !important;
+	overflow: hidden;
+	border: 1px solid rgba(255, 255, 255, .9) !important;
+	border-radius: 3px;
+	background: transparent !important;
+	box-shadow: none;
+	box-sizing: border-box;
+}
+
+body.module-jamakol-chart #chart .divTableBody {
+	display: grid !important;
+	width: 100%;
+	aspect-ratio: 1;
+	grid-template-columns: minmax(0, .65fr) repeat(4, minmax(0, 1fr)) minmax(0, .65fr);
+	grid-template-rows: minmax(0, .65fr) repeat(4, minmax(0, 1fr)) minmax(0, .65fr);
+}
+
+body.module-jamakol-chart #chart .divTableRow {
+	display: contents !important;
+}
+
+body.module-jamakol-chart #chart .divTableCell,
+body.module-jamakol-chart #chart .divTableOuterCell,
+body.module-jamakol-chart #chart .divTableDummyCell,
+body.module-jamakol-chart #chart .divTableCenterCell,
+body.module-jamakol-chart #chart .divTableCenterCell1,
+body.module-jamakol-chart #chart .divTableCenterCell2,
+body.module-jamakol-chart #chart .divTableCenterCell3,
+body.module-jamakol-chart #chart .divTableCenterCell4 {
+	display: flex !important;
+	width: auto !important;
+	height: auto !important;
+	min-width: 0;
+	min-height: 0;
+	padding: clamp(2px, 1.2vw, 8px) !important;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	gap: 2px;
+	border: 1px solid #c8dce9 !important;
+	font-size: clamp(9px, 2.5vw, 14px);
+	line-height: 1.2;
+	text-align: center;
+	overflow-wrap: anywhere;
+	box-sizing: border-box;
+}
+
+body.module-jamakol-chart #chart .jamakol-planet-entry {
+	display: inline-flex;
+	max-width: 100%;
+	align-items: center;
+	justify-content: center;
+	white-space: nowrap;
+}
+
+body.module-jamakol-chart #chart .divTableCell {
+	background: #e1eff9 !important;
+	color: #20394c !important;
+}
+
+body.module-jamakol-chart #chart .divTableOuterCell {
+	border-color: #e7c7d4 !important;
+	background: #f9e4ed !important;
+	color: #493440 !important;
+}
+
+body.module-jamakol-chart #chart .divTableDummyCell {
+	border: 0 !important;
+	background: transparent !important;
+	color: #33475b !important;
+}
+
+body.module-jamakol-chart #chart .divTableCenterCell,
+body.module-jamakol-chart #chart .divTableCenterCell1,
+body.module-jamakol-chart #chart .divTableCenterCell2,
+body.module-jamakol-chart #chart .divTableCenterCell3,
+body.module-jamakol-chart #chart .divTableCenterCell4 {
+	border-color: #d7dce5 !important;
+	background: #fffaf0 !important;
+	color: #26364a !important;
+	font-size: clamp(8px, 2.2vw, 12px);
+}
+
+body.module-jamakol-chart #chart .divTableCenterCell1 {
+	grid-row: 3;
+	grid-column: 3;
+	border-right: 0 !important;
+	border-bottom: 0 !important;
+	border-radius: 12px 0 0 0;
+	font-size: clamp(7px, 2.1vw, 11px);
+	font-weight: 700;
+	white-space: nowrap;
+	overflow-wrap: normal;
+}
+
+body.module-jamakol-chart #chart .divTableCenterCell2 {
+	grid-row: 3;
+	grid-column: 4;
+	border-bottom: 0 !important;
+	border-left: 0 !important;
+	border-radius: 0 12px 0 0;
+	font-size: clamp(7px, 2.1vw, 11px);
+	font-weight: 700;
+	white-space: nowrap;
+	overflow-wrap: normal;
+}
+
+body.module-jamakol-chart #chart .divTableCenterCell3 {
+	grid-row: 4;
+	grid-column: 3 / span 2;
+	border-top: 0 !important;
+	border-radius: 0 0 12px 12px;
+	font-weight: 650;
+}
+
+body.module-jamakol-chart #chart .divTableCenterCell4 {
+	grid-row: 4;
+	grid-column: 4;
+	visibility: hidden;
+	border: 0 !important;
+	padding: 0 !important;
+}
+
+body.module-jamakol-chart #starlordHeadMutable,
+body.module-jamakol-chart #starlordHeadMutable_jama,
+body.module-jamakol-chart #starlordBodyMutable,
+body.module-jamakol-chart #starlordBodyMutable_jama {
+	width: min(100%, 820px) !important;
+	max-width: 100% !important;
+	height: auto !important;
+	margin: 0 auto;
+	border: 1px solid #d5e0e9 !important;
+	background: var(--theme-surface-panel-solid, #fff) !important;
+	box-shadow: 0 12px 28px rgba(31, 54, 75, .12);
+	box-sizing: border-box;
+}
+
+body.module-jamakol-chart #starlordHeadMutable,
+body.module-jamakol-chart #starlordHeadMutable_jama {
+	margin-top: 8px;
+	border-radius: 16px 16px 0 0;
+}
+
+body.module-jamakol-chart #starlordBodyMutable,
+body.module-jamakol-chart #starlordBodyMutable_jama {
+	margin-bottom: 20px;
+	overflow: hidden;
+	border-top: 0 !important;
+	border-radius: 0 0 16px 16px;
+}
+
+body.module-jamakol-chart #starlordHeadMutable .divTableRow,
+body.module-jamakol-chart #starlordHeadMutable_jama .divTableRow {
+	display: block !important;
+}
+
+body.module-jamakol-chart #starlordHeadMutable > br {
+	display: none;
+}
+
+body.module-jamakol-chart #starlordHeadMutable .divTableCell,
+body.module-jamakol-chart #starlordHeadMutable_jama .divTableCell {
+	display: block !important;
+	width: 100% !important;
+	height: auto !important;
+	margin: 0;
+	padding: 10px 12px !important;
+	border: 0 !important;
+	background: #fcebf2 !important;
+	color: #493440 !important;
+	font-size: 16px;
+	font-weight: 750;
+}
+
+body.module-jamakol-chart #starlordHeadMutable h6,
+body.module-jamakol-chart #starlordHeadMutable_jama h6 {
+	margin: 0;
+}
+
+body.module-jamakol-chart #starlordBodyMutable .divTableRow {
+	display: grid !important;
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+body.module-jamakol-chart #starlordBodyMutable_jama .divTableRow {
+	display: grid !important;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+body.module-jamakol-chart #starlordBodyMutable .divTableRow > div,
+body.module-jamakol-chart #starlordBodyMutable_jama .divTableRow > div {
+	display: flex !important;
+	width: auto !important;
+	min-width: 0;
+	min-height: 42px;
+	padding: 9px 6px !important;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid #e1e8ee !important;
+	background: #fff !important;
+	color: #25384a !important;
+	font-size: clamp(10px, 2.6vw, 13px) !important;
+	font-weight: 550;
+	line-height: 1.35 !important;
+	text-align: center;
+	overflow-wrap: anywhere;
+	box-sizing: border-box;
+}
+
+body.module-jamakol-chart #starlordBodyMutable .divTableRow:nth-child(odd) > div,
+body.module-jamakol-chart #starlordBodyMutable_jama .divTableRow:nth-child(odd) > div {
+	background: #f6f9fc !important;
+}
+
+body.module-jamakol-chart #starlordBodyMutable .divTableRow > .divPanchangSmallGreen,
+body.module-jamakol-chart #starlordBodyMutable_jama .divTableRow > .divPanchangSmallGreen {
+	background: #eaf6ed !important;
+	color: #28613b !important;
+	font-weight: 700;
+}
+
+body.module-jamakol-chart #starlordBodyMutable .divTableRow:first-child > .divTableCell {
+	background: #e5f1f8 !important;
+	color: #263f54 !important;
+	font-weight: 750;
+}
+
+body.module-jamakol-chart #starlordBodyMutable_jama .divTableRow:first-child > .divPanchangHeadingSmall {
+	background: #e5f1f8 !important;
+	color: #263f54 !important;
+	font-weight: 750;
+}
+
+body.module-jamakol-chart #panchangBody {
+	display: none;
+	width: min(100%, 560px) !important;
+	max-width: 100%;
+	height: auto !important;
+	margin: 0 auto 18px;
+	padding: 10px !important;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 7px;
+	border: 1px solid #d5e0e9 !important;
+	border-radius: 16px;
+	background: var(--theme-surface-panel-solid, #fff) !important;
+	box-shadow: 0 12px 28px rgba(31, 54, 75, .12);
+	box-sizing: border-box;
+}
+
+body.module-jamakol-chart #panchangBody .divTableRow {
+	display: grid !important;
+	grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+	overflow: hidden;
+	border: 1px solid #e1e8ee;
+	border-radius: 10px;
+}
+
+body.module-jamakol-chart #panchangBody .divPanchangHeading,
+body.module-jamakol-chart #panchangBody .divPanchang {
+	display: flex !important;
+	width: auto !important;
+	height: auto !important;
+	min-width: 0;
+	margin: 0;
+	padding: 9px 11px !important;
+	align-items: center;
+	border: 0 !important;
+	font-size: 13px !important;
+	line-height: 1.4 !important;
+	overflow-wrap: anywhere;
+	box-sizing: border-box;
+}
+
+body.module-jamakol-chart #panchangBody .divPanchangHeading {
+	background: #e8f4fc !important;
+	color: #263f54 !important;
+	font-weight: 700;
+	justify-content: flex-start;
+	text-align: left !important;
+}
+
+body.module-jamakol-chart #panchangBody .divPanchang {
+	background: #fff !important;
+	color: #25384a !important;
+	justify-content: flex-end;
+	text-align: right !important;
+}
+
+@media (max-width: 480px) {
+	body.module-jamakol-chart .column-body {
+		width: calc(100% - 16px) !important;
+	}
+
+	body.module-jamakol-chart .jamakol-controls,
+	body.module-jamakol-chart .jamakol-analysis-panel {
+		padding: 12px !important;
+		border-radius: 16px;
+	}
+
+	body.module-jamakol-chart .jamakol-data-tabs {
+		gap: 3px;
+		padding: 4px;
+	}
+
+	body.module-jamakol-chart .jamakol-data-tabs button {
+		padding: 7px 4px !important;
+		font-size: clamp(10px, 2.8vw, 12px);
+	}
+
+	body.module-jamakol-chart #starlordBodyMutable .divTableRow > div,
+	body.module-jamakol-chart #starlordBodyMutable_jama .divTableRow > div {
+		min-height: 38px;
+		padding: 7px 3px !important;
+		font-size: 10px !important;
+	}
+}

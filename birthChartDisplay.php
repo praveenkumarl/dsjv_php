@@ -65,7 +65,7 @@ function displayHistory()
 	getChartDetails();
 	
 echo <<<EOL
-	<center><div class="divTable blueTable" id="chart">
+	<center><div class="divTable blueTable history-panel" id="chart">
 
 		<!-- (SHOW CHART) HIDDEN HTML FORM -->
 		<form id="hiddenViewBirthChart" action="Birth_Chart.php" method="post" style="display:none;" target="_top">
@@ -87,7 +87,7 @@ echo <<<EOL
 		</form>
 	
 		<BR>
-			<P style="color:#660000;font-weight:bold; font-size:20px; text-align:center">சேமிக்கப்பட்ட ஜாதகங்கள்</P>
+			<P class="history-title">சேமிக்கப்பட்ட ஜாதகங்கள்</P>
 			<!-- <input type='button' class='actionBtn' id='Download' value='download' onClick='exportBirthCharts();'> -->
 		<BR><BR>
 EOL;
@@ -99,19 +99,20 @@ EOL;
 		
 			echo '<button class="actionBtn" id="prevButton">Prev</button>';
 			echo '<button class="actionBtn" id="nextButton">Next</button>';
-			echo "<div class='divTable blueTable' id='chart_table' style='height:auto'>";
+			echo "<div class='divTable blueTable chart-history-table' id='chart_table' style='height:auto'>";
 				echo "<div class='divTableRow'>";
 						echo "<div class='divChartHistoryHeading'>#</div>";
-						echo "<div class='divChartHistoryHeading'>பெ</div>";
-						echo "<div class='divChartHistoryHeading'>பாலி</div>";
-						echo "<div class='divChartHistoryHeading'>இட</div>";
-						echo "<div class='divChartHistoryHeading'>தே</div>";
-						echo "<div class='divChartHistoryHeading'>நே</div>";
+						echo "<div class='divChartHistoryHeading'>பெயர்</div>";
+						echo "<div class='divChartHistoryHeading'>பாலினம்</div>";
+						echo "<div class='divChartHistoryHeading'>இடம்</div>";
+						echo "<div class='divChartHistoryHeading'>தேதி</div>";
+						echo "<div class='divChartHistoryHeading'>நேரம்</div>";
 		
 						// Only show NUM column header for PAID, ADMIN, SUPER users
 						if($usertype == PAID || $usertype == ADMIN || $usertype == SUPER) {
-							echo "<div class='divChartHistoryHeading'>*</div>";
+							echo "<div class='divChartHistoryHeading'>எண் கணிதம்</div>";
 						}
+						echo "<div class='divChartHistoryHeading'>செயல்</div>";
 				echo "</div>";
 				
 				if(isset($chartInfo['rowid'])){
@@ -121,31 +122,31 @@ EOL;
 						
 						$place = $chartInfo['place'][$i];
 						
-						echo "<div class='divTableRow' id='row$x' onClick='showChart($x,\"$place\")' OnMouseOver='highlightRow($x);' OnMouseOut='removeHighlightRow($x);'>";
-							echo "<div class='divChartHistory' id='col1$x'>".$chartInfo['rowid'][$i]."</div>";
-							echo "<div class='divChartHistory' id='col3$x'>".$chartInfo['name'][$i]."</div>";
-							echo "<div class='divChartHistory' id='col31$x'>".$chartInfo['sex'][$i]."</div>";
+						echo "<div class='divTableRow' id='row$x' onClick='showChart($x,\"$place\")'>";
+							echo "<div class='divChartHistory' data-label='#' id='col1$x'>".$chartInfo['rowid'][$i]."</div>";
+							echo "<div class='divChartHistory' data-label='பெயர்' id='col3$x'>".$chartInfo['name'][$i]."</div>";
+							echo "<div class='divChartHistory' data-label='பாலினம்' id='col31$x'>".$chartInfo['sex'][$i]."</div>";
 							$city = explode('|',$chartInfo['place'][$i])[0];
-							echo "<div class='divChartHistory' id='col4$x'>".$city."</div>";
-						echo "<div class='divChartHistory' id='col5$x'>".$chartInfo['birth_date'][$i]."</div>";
-						echo "<div class='divChartHistory' id='col6$x'>".$chartInfo['birth_time'][$i]."</div>";
+							echo "<div class='divChartHistory' data-label='இடம்' id='col4$x'>".$city."</div>";
+						echo "<div class='divChartHistory' data-label='தேதி' id='col5$x'>".$chartInfo['birth_date'][$i]."</div>";
+						echo "<div class='divChartHistory' data-label='நேரம்' id='col6$x'>".$chartInfo['birth_time'][$i]."</div>";
 						echo "<div class='divHidden' id='col61$x'>".$chartInfo['notes'][$i]."</div>";
 						
 						// Only show numerology button for PAID, ADMIN, SUPER users
 						if($usertype == PAID || $usertype == ADMIN || $usertype == SUPER) {
-							echo "<div class='divChartHistory' id='col8$x'><input type='button' id='numButton' onClick='openNumerology($x)' value='NUM' style='color:red;font-size:10px;font-weight:bold;background-color:#ffffff;border:solid 1px black'></div>";
+							echo "<div class='divChartHistory history-action' data-label='எண் கணிதம்' id='col8$x'><input type='button' id='numButton' onClick='openNumerology($x)' value='NUM' style='color:red;font-size:10px;font-weight:bold;background-color:#ffffff;border:solid 1px black'></div>";
 						}
 						
-						echo "<div class='divChartHistory' id='col7$x'><input type='button' id='delButton' onClick='deleteRecord($x)' style='color:black;font-size:10px;font-weight:bold;width:40px;background: url(images/delete.png);background-size:60%;background-repeat: no-repeat;background-position: center;color:#660000;background-color:#ffffff;'></div>";
+						echo "<div class='divChartHistory history-action' data-label='செயல்' id='col7$x'><input type='button' id='delButton' onClick='deleteRecord($x)' style='color:black;font-size:10px;font-weight:bold;width:40px;background: url(images/delete.png);background-size:60%;background-repeat: no-repeat;background-position: center;color:#660000;background-color:#ffffff;'></div>";
 						echo "</div>";
 					}
 					
 					echo "</div>";
-					echo "<BR><P style='font-weight:bold; font-size:12px; text-align:center; width:100%'>மொத்தம் " . "<span id='total'>" . $totalRecs . "</span>" . " ஜாதகங்கள்<BR>(திறக்க அதை தொடவும்/கிளிக் செய்யவும்)</P>";
+					echo "<BR><P class='history-summary'>மொத்தம் " . "<span id='total'>" . $totalRecs . "</span>" . " ஜாதகங்கள்<BR>(திறக்க அதை தொடவும்/கிளிக் செய்யவும்)</P>";
 				}
 				else{
 					echo "</div>";
-					echo "<BR><P style='color:#660000;font-weight:bold; font-size:14px; text-align:center; width:100%'>ஜாதகங்கள் இல்லை</P>";
+					echo "<BR><P class='history-empty'>ஜாதகங்கள் இல்லை</P>";
 				}
 	echo "</div></center>";
 }
@@ -165,6 +166,7 @@ EOL;
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/birth_chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/module-landing.css?<?php echo date('ymdhis'); ?>">
 	<link href='https://fonts.googleapis.com/css?family=Julius Sans One' rel='stylesheet'>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -176,28 +178,6 @@ EOL;
     <script src="script.js"></script>
     <script type="text/javascript">
 
-	function highlightRow(rownum)
-	{
-		document.getElementById("col1"+rownum).style.backgroundColor="#fff4b3";
-		document.getElementById("col3"+rownum).style.backgroundColor="#fff4b3";
-		document.getElementById("col31"+rownum).style.backgroundColor="#fff4b3";
-		document.getElementById("col4"+rownum).style.backgroundColor="#fff4b3";
-		document.getElementById("col5"+rownum).style.backgroundColor="#fff4b3";
-		document.getElementById("col6"+rownum).style.backgroundColor="#fff4b3";
-		
-		document.getElementById("row"+rownum).style.cursor = 'pointer';
-	}
-	
-	function removeHighlightRow(rownum)
-	{
-		document.getElementById("col1"+rownum).style.backgroundColor="#ffffff";
-		document.getElementById("col3"+rownum).style.backgroundColor="#ffffff";
-		document.getElementById("col31"+rownum).style.backgroundColor="#ffffff";
-		document.getElementById("col4"+rownum).style.backgroundColor="#ffffff";
-		document.getElementById("col5"+rownum).style.backgroundColor="#ffffff";
-		document.getElementById("col6"+rownum).style.backgroundColor="#ffffff";
-	}
-	
 	function showChart(rownum,place)
 	{	
 		event.stopPropagation();
@@ -318,9 +298,9 @@ EOL;
 				var nameCell = $(this).find(".divChartHistory:eq(1)"); // Assuming name is the second column (index 1)
 				var nameText = nameCell.text().toLowerCase().normalize('NFC');
 				if (nameText.includes(value)) {
-					$(this).show(); // Display matching rows
+					this.style.display = '';
 				} else {
-					$(this).hide(); // Hide non-matching rows
+					this.style.display = 'none';
 				}
 			});
 		});
@@ -352,7 +332,7 @@ EOL;
             // Show rows for the current page
             for (let i = startIndex; i < endIndex; i++) {
                 if (rows[i]) {
-                    rows[i].style.display = 'table-row';
+                    rows[i].style.display = '';
                 }
             }
 
@@ -399,7 +379,7 @@ EOL;
     </script>
 </head>
 
-<body>
+<body class="module-landing module-history module-birth-history">
 <div id="loader" class="center"></div>
 
 <div class="title"></div>
@@ -417,7 +397,7 @@ EOL;
 	
 	<?php
 	
-	echo '<center><BR><div class="divPanchangHeading">Search by Name: <input type="text" id="name-filter" placeholder="Enter name" style="display:inline;font-size: 14px; width: auto;"></div></center>';
+	echo '<center><BR><div class="divPanchangHeading history-search">Search by Name: <input type="text" id="name-filter" placeholder="Enter name" style="display:inline;font-size: 14px; width: auto;"></div></center>';
 	
 	displayHistory(); 
 	?>

@@ -1,19 +1,5 @@
 function generatePDF() {
-		// Choose the element that our invoice is rendered in.
-		const element = document.getElementById('onepage');
-		
-		const pdfname = 'panchang.pdf'
-		
-		var opt = {
-		  margin:       0,
-		  filename:     pdfname,
-		  image:        { type: 'png', quality: 1.0 },
-		  html2canvas:  { scale: 1 },
-		  jsPDF:        { unit: 'in', format: 'A4', orientation: 'portrait' }
-		};
-		
-		// Choose the element and save the PDF for our user.
-		html2pdf().from(element).set(opt).save();
+		generateAppPdf(typeof PDF_FILENAME !== 'undefined' ? PDF_FILENAME : 'panchang.pdf');
 	}
 	
 	function getFirstDayOfMonth(month, year) {

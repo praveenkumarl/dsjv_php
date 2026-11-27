@@ -238,6 +238,7 @@ dbDisconnect($conn);
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/module-landing.css?<?php echo date('ymdhis'); ?>">
 	<link href='https://fonts.googleapis.com/css?family=Julius Sans One' rel='stylesheet'>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -297,7 +298,7 @@ dbDisconnect($conn);
     </script>
 </head>
 
-<body onLoad="init();">
+<body class="module-landing module-thaara" onLoad="init();">
 
 	
 <div class="title"></div>

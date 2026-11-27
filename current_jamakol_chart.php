@@ -129,6 +129,7 @@ $_SESSION['debug'] = 0;
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/module-landing.css?<?php echo date('ymdhis'); ?>">
     
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script> -->
@@ -162,7 +163,7 @@ $_SESSION['debug'] = 0;
 	}
     </script>
 </head>
-<body onLoad="init();">
+<body class="module-landing" onLoad="init();">
 
 <div class='column-menu'>
 <?php displayUserInfo($_SESSION['userinfo']);?>

@@ -99,18 +99,7 @@ $helpInfo_arr = ["device-id" => $key,
 
 <body onLoad="init();">
 
-	
-<div class="title"></div>
-
-<div class='column-menu'>
-<?php displayUserInfo($userInfo);?>
-	<div class='desktop'>
-		<button class="menu" onClick="window.open('index.php','_self')">Home</button>
-	</div>
-	<div class='mobile'>
-		<?php include "helpMenu_mobile.php"; ?>
-	</div>
-</div>
+<?php displayUserInfo($userInfo); ?>
 <div class='column-body'>
 	<?php displayHelpInfo($helpInfo_arr); ?>
 	<BR><div = class="help_heading">Installation/setup procedure </div>

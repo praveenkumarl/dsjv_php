@@ -3,7 +3,7 @@
 function clientThemePresets()
 {
 	return array(
-		// ============ EXISTING (contrast-fixed) ============
+		// ============ EXISTING (contrast-fixed, incl. primary/secondary fills) ============
 		'rose_purple' => array(
 			'label' => 'Rose + Purple',
 			'colors' => array(
@@ -141,7 +141,7 @@ function clientThemePresets()
 				'surface' => '#150d2e',
 				'surface_alt' => '#1f1442',
 				'primary' => '#7b2ff7',
-				'secondary' => '#ff2e88',
+				'secondary' => '#e00061',
 				'accent' => '#3ff5e0',
 				'text' => '#f0eaff',
 				'muted' => '#a89cc8',
@@ -157,7 +157,7 @@ function clientThemePresets()
 				'surface' => '#3d1c2c',
 				'surface_alt' => '#4e2439',
 				'primary' => '#c1443b',
-				'secondary' => '#e07a3f',
+				'secondary' => '#b7561e',
 				'accent' => '#ffd08a',
 				'text' => '#fff2e8',
 				'muted' => '#d4b3b8',
@@ -172,8 +172,8 @@ function clientThemePresets()
 				'page' => '#08171c',
 				'surface' => '#0f2530',
 				'surface_alt' => '#16323f',
-				'primary' => '#1f8a7a',
-				'secondary' => '#3a7bd5',
+				'primary' => '#1c7e6f',
+				'secondary' => '#2c70cf',
 				'accent' => '#7af5c8',
 				'text' => '#e8f7f4',
 				'muted' => '#9fc4c4',
@@ -373,6 +373,127 @@ function clientThemePresets()
 				'chart_box' => '#f0b8a8',
 				'chart_text' => '#1c0d14'
 			)
+		),
+
+		// ============ NEW MODERN THEMES ============
+		// Deep-space indigo with a soft starlight-periwinkle accent
+		'cosmic_indigo' => array(
+			'label' => 'Cosmic Indigo + Starlight',
+			'colors' => array(
+				'page' => '#0b0e24',
+				'surface' => '#141a3a',
+				'surface_alt' => '#1d2550',
+				'primary' => '#4338ca',
+				'secondary' => '#6d28d9',
+				'accent' => '#a5b4fc',
+				'text' => '#eef0ff',
+				'muted' => '#aab3dd',
+				'on_accent' => '#0b0e24',
+				'chart_box' => '#a5b4fc',
+				'chart_text' => '#0b0e24'
+			)
+		),
+		// Traditional Vedic saffron over deep maroon
+		'saffron_maroon' => array(
+			'label' => 'Saffron + Maroon',
+			'colors' => array(
+				'page' => '#1f0a0b',
+				'surface' => '#331314',
+				'surface_alt' => '#461b1c',
+				'primary' => '#9b2c2c',
+				'secondary' => '#b45309',
+				'accent' => '#ffb347',
+				'text' => '#fff4e6',
+				'muted' => '#dfbca8',
+				'on_accent' => '#1f0a0b',
+				'chart_box' => '#ffb347',
+				'chart_text' => '#1f0a0b'
+			)
+		),
+		// Calm deep-sea blues with a luminous cyan accent
+		'twilight_ocean' => array(
+			'label' => 'Twilight Ocean',
+			'colors' => array(
+				'page' => '#061a2b',
+				'surface' => '#0c2a42',
+				'surface_alt' => '#123a58',
+				'primary' => '#0369a1',
+				'secondary' => '#0e7490',
+				'accent' => '#67e8f9',
+				'text' => '#ecfbff',
+				'muted' => '#9fc6d6',
+				'on_accent' => '#061a2b',
+				'chart_box' => '#67e8f9',
+				'chart_text' => '#061a2b'
+			)
+		),
+		// True-black base for OLED phones, violet glow
+		'amoled_violet' => array(
+			'label' => 'AMOLED Violet',
+			'colors' => array(
+				'page' => '#000000',
+				'surface' => '#0c0b12',
+				'surface_alt' => '#16141f',
+				'primary' => '#6d28d9',
+				'secondary' => '#0e7490',
+				'accent' => '#c4b5fd',
+				'text' => '#f5f3ff',
+				'muted' => '#b4aecb',
+				'on_accent' => '#000000',
+				'chart_box' => '#c4b5fd',
+				'chart_text' => '#000000'
+			)
+		),
+		// Airy lavender with crisp indigo
+		'lavender_mist' => array(
+			'label' => 'Lavender Mist + Indigo',
+			'colors' => array(
+				'page' => '#f5f3ff',
+				'surface' => '#ffffff',
+				'surface_alt' => '#ebe7fb',
+				'primary' => '#4338ca',
+				'secondary' => '#6d28d9',
+				'accent' => '#5b21b6',
+				'text' => '#1e1b3a',
+				'muted' => '#55527a',
+				'on_accent' => '#ffffff',
+				'chart_box' => '#c4b5fd',
+				'chart_text' => '#1e1b3a'
+			)
+		),
+		// Warm sunrise cream with saffron and terracotta
+		'saffron_dawn' => array(
+			'label' => 'Saffron Dawn',
+			'colors' => array(
+				'page' => '#fff8ee',
+				'surface' => '#ffffff',
+				'surface_alt' => '#ffecd2',
+				'primary' => '#b45309',
+				'secondary' => '#9a3412',
+				'accent' => '#9a3412',
+				'text' => '#2b1a0e',
+				'muted' => '#6b5440',
+				'on_accent' => '#ffffff',
+				'chart_box' => '#ffb347',
+				'chart_text' => '#2b1a0e'
+			)
+		),
+		// Fresh sky blue with deep teal
+		'sky_lotus' => array(
+			'label' => 'Sky + Lotus',
+			'colors' => array(
+				'page' => '#f0f9ff',
+				'surface' => '#ffffff',
+				'surface_alt' => '#e0f2fe',
+				'primary' => '#0369a1',
+				'secondary' => '#0e7490',
+				'accent' => '#075985',
+				'text' => '#0c2233',
+				'muted' => '#476071',
+				'on_accent' => '#ffffff',
+				'chart_box' => '#67e8f9',
+				'chart_text' => '#0c2233'
+			)
 		)
 	);
 }
@@ -516,6 +637,17 @@ function clientThemeContrastIssues($config)
 		);
 		if ($ratio < 4.5) {
 			$issues[] = $pair['label'] . ' (' . number_format($ratio, 2) . ':1; needs 4.5:1)';
+		}
+	}
+
+	// Buttons, menus and headers sit on the primary/secondary fills, so the
+	// automatic white/black label colour must also be readable on each of them.
+	foreach (array('primary' => 'Button text on primary', 'secondary' => 'Button text on secondary') as $key => $label) {
+		$fill = $config['colors'][$key];
+		$labelColor = clientThemeContrastTextColor(array($fill));
+		$ratio = clientThemeContrastRatio($labelColor, $fill);
+		if ($ratio < 4.5) {
+			$issues[] = $label . ' (' . number_format($ratio, 2) . ':1; needs 4.5:1)';
 		}
 	}
 	return $issues;

@@ -49,11 +49,16 @@ date_default_timezone_set($TZ);
     <link rel="canonical" href="https://html5-templates.com/" />
     <title>PK Astro Birth Chart</title>
     <meta name="description" content="One stop website for Astrology">
+	<meta name="pdf-exportable" content="true">
 	
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/onepage_panchang_style.css">
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
    <script src="html2pdf.bundle.min.js" type="text/javascript"></script>
+	<script>
+		var PDF_FILENAME = <?php echo json_encode('panchang_' . $month . '_' . $year . '.pdf'); ?>;
+	</script>
+	<script src="pdf_bridge.js?v=1" type="text/javascript"></script>
 	<script src="panchang.js"></script>
 </head>
 <body>
@@ -90,21 +95,7 @@ date_default_timezone_set($TZ);
 	generatePanchang();
 
   function generatePDF() {
-		// Choose the element that our invoice is rendered in.
-		const element = document.getElementById('onepage');
-		
-		const pdfname = 'panchang.pdf'
-		
-		var opt = {
-		  margin:       0,
-		  filename:     pdfname,
-		  image:        { type: 'png', quality: 1.0 },
-		  html2canvas:  { scale: 1 },
-		  jsPDF:        { unit: 'in', format: 'A4', orientation: 'portrait' }
-		};
-		
-		// Choose the element and save the PDF for our user.
-		html2pdf().from(element).set(opt).save();
+		generateAppPdf(typeof PDF_FILENAME !== 'undefined' ? PDF_FILENAME : 'panchang.pdf');
 	}
 	
 	function getFirstDayOfMonth(month, year) {

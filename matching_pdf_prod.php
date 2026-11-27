@@ -154,6 +154,7 @@ $dayofweek = date('w', strtotime($chart_date));
     <link rel="canonical" href="https://html5-templates.com/" />
     <title>PK Astro</title>
     <meta name="description" content="One stop website for Jamakol Prasannam">
+	<meta name="pdf-exportable" content="true">
 	
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/onepage_matching_style.css?<?php echo date('ymdhis'); ?>">
@@ -162,6 +163,11 @@ $dayofweek = date('w', strtotime($chart_date));
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="script.js"></script>
+	<script src="html2pdf.bundle.min.js" type="text/javascript"></script>
+	<script>
+		var PDF_FILENAME = 'matching_chart.pdf';
+	</script>
+	<script src="pdf_bridge.js?v=1" type="text/javascript"></script>
     <script type="text/javascript">
 /******** this code is to take screenshot of the chart **************	
 		var dataURL = {};  
@@ -341,27 +347,7 @@ $dayofweek = date('w', strtotime($chart_date));
 		
 		
 		function generatePDF() {
-			// hide unncessary elements
-			//var ele = document.getElementById('menu');
-			//ele.style.display = 'none';
-			
-			//displayAll();
-			
-			// Choose the element to print.
-			const element = document.getElementById('onepage');
-			
-			var opt = {
-			  margin:       .25,
-			  filename:     'matching.pdf',
-			  image:        { type: 'png', quality: 1.0 },
-			  html2canvas:  { scale: 1 },
-			  jsPDF:        { unit: 'in', format: 'A3', orientation: 'portrait' }
-			};
-			
-			// Choose the element and save the PDF for our user.
-			html2pdf().from(element).set(opt).save();
-			
-			//ele.style.display = 'block';
+			generateAppPdf(typeof PDF_FILENAME !== 'undefined' ? PDF_FILENAME : 'chart.pdf');
 		}
 
 				

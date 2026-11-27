@@ -81,34 +81,13 @@ getChartDetails($page);
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/module-landing.css?<?php echo date('ymdhis'); ?>">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <script src="script.js"></script>
     <script type="text/javascript">
 
-	function highlightRow(rownum)
-	{
-		document.getElementById("col1"+rownum).style.backgroundColor="#fff4b3";
-		document.getElementById("col3"+rownum).style.backgroundColor="#fff4b3";
-		document.getElementById("col31"+rownum).style.backgroundColor="#fff4b3";
-		document.getElementById("col4"+rownum).style.backgroundColor="#fff4b3";
-		document.getElementById("col5"+rownum).style.backgroundColor="#fff4b3";
-		document.getElementById("col6"+rownum).style.backgroundColor="#fff4b3";
-		
-		document.getElementById("row"+rownum).style.cursor = 'pointer';
-	}
-	
-	function removeHighlightRow(rownum)
-	{
-		document.getElementById("col1"+rownum).style.backgroundColor="#ffffff";
-		document.getElementById("col3"+rownum).style.backgroundColor="#ffffff";
-		document.getElementById("col31"+rownum).style.backgroundColor="#ffffff";
-		document.getElementById("col4"+rownum).style.backgroundColor="#ffffff";
-		document.getElementById("col5"+rownum).style.backgroundColor="#ffffff";
-		document.getElementById("col6"+rownum).style.backgroundColor="#ffffff";
-	}
-	
 	function showChart(rownum, place)
 	{	
 		//document.getElementById("place").value = document.getElementById("col4"+rownum).innerHTML;
@@ -171,9 +150,9 @@ getChartDetails($page);
 				var nameCell = $(this).find(".divChartHistory:eq(1)"); // Assuming name is the second column (index 1)
 				var nameText = nameCell.text().toLowerCase().normalize('NFC');
 				if (nameText.includes(value)) {
-					$(this).show(); // Display matching rows
+					this.style.display = '';
 				} else {
-					$(this).hide(); // Hide non-matching rows
+					this.style.display = 'none';
 				}
 			});
 		});
@@ -182,7 +161,7 @@ getChartDetails($page);
     </script>
 </head>
 
-<body>
+<body class="module-landing module-history module-jama-history">
 <div id="loader" class="center"></div>
 
 <div class="title"></div>
@@ -199,7 +178,7 @@ getChartDetails($page);
 	</div>
 	<div class='column-body'>
 			
-			<center>
+			<center class="history-panel">
 
 				<!-- (A) HIDDEN HTML FORM -->
 				<form id="hiddenViewJamaChart" action="Jamakol_Chart.php" method="post" style="display:none;">
@@ -218,12 +197,12 @@ getChartDetails($page);
 				  <input type="hidden" id="charttype" name="charttype" required/>
 				</form>
 		
-					<P style="color:#660000;font-weight:bold; font-size:14px; text-align:center">சேமிக்கப்பட்ட ஜாமக்கோள் ஜாதகங்கள்</P>
+					<P class="history-title">சேமிக்கப்பட்ட ஜாமக்கோள் ஜாதகங்கள்</P>
 					 <!-- <input type='button' class='actionBtn' id='Download' value='download' onClick='exportJamaCharts();'>  -->
 					
 				
 <?php
-					echo '<center><BR><div class="divPanchangHeading">Search by Name: <input type="text" id="name-filter" placeholder="Enter name" style="display:inline;font-size: 14px; width: auto;"></div></center>';
+					echo '<center><BR><div class="divPanchangHeading history-search">Search by Name: <input type="text" id="name-filter" placeholder="Enter name" style="display:inline;font-size: 14px; width: auto;"></div></center>';
 					echo '<Br>';
 					
 					// Display pagination buttons
@@ -236,15 +215,15 @@ getChartDetails($page);
 					}
 					echo "</div>";
 					
-					echo "<div class='divTable blueTable' id='chart_table' style='height:40px;'>";
+					echo "<div class='divTable blueTable chart-history-table' id='chart_table' style='height:40px;'>";
 						echo "<div class='divTableRow'>";
 								echo "<div class='divChartHistoryHeading'>#</div>";
-								echo "<div class='divChartHistoryHeading'>கே</div>";
-								echo "<div class='divChartHistoryHeading'>கணி</div>";
-								echo "<div class='divChartHistoryHeading'>இட</div>";
-								echo "<div class='divChartHistoryHeading'>தே</div>";
-								echo "<div class='divChartHistoryHeading'>நே</div>";
-								echo "<div class='divChartHistoryHeading'>*</div>";
+								echo "<div class='divChartHistoryHeading'>கேள்வி</div>";
+								echo "<div class='divChartHistoryHeading'>கணிப்பு</div>";
+								echo "<div class='divChartHistoryHeading'>இடம்</div>";
+								echo "<div class='divChartHistoryHeading'>தேதி</div>";
+								echo "<div class='divChartHistoryHeading'>நேரம்</div>";
+								echo "<div class='divChartHistoryHeading'>செயல்</div>";
 						echo "</div>";
 						
 						if(isset($chartInfo['rowid'])){
@@ -252,25 +231,25 @@ getChartDetails($page);
 								$x=$chartInfo['rowid'][$i];
 								$place = $chartInfo['place'][$i];
 								
-								echo "<div class='divTableRow' id='row$x' onClick='showChart($x,\"$place\")' OnMouseOver='highlightRow($x);' OnMouseOut='removeHighlightRow($x);'>";
-									echo "<div class='divChartHistory' id='col1$x'>".$chartInfo['rowid'][$i]."</div>";
-									echo "<div class='divChartHistory' id='col3$x'>".$chartInfo['question'][$i]."</div>";
-									echo "<div class='divChartHistory' id='col31$x'>".$chartInfo['analysis'][$i]."</div>";
+								echo "<div class='divTableRow' id='row$x' onClick='showChart($x,\"$place\")'>";
+									echo "<div class='divChartHistory' data-label='#' id='col1$x'>".$chartInfo['rowid'][$i]."</div>";
+									echo "<div class='divChartHistory' data-label='கேள்வி' id='col3$x'>".$chartInfo['question'][$i]."</div>";
+									echo "<div class='divChartHistory' data-label='கணிப்பு' id='col31$x'>".$chartInfo['analysis'][$i]."</div>";
 									$city = explode('|',$chartInfo['place'][$i])[0];
-									echo "<div class='divChartHistory' id='col4$x'>".$city."</div>";
-									echo "<div class='divChartHistory' id='col5$x'>".$chartInfo['birth_date'][$i]."</div>";
-									echo "<div class='divChartHistory' id='col6$x'>".$chartInfo['birth_time'][$i]."</div>";
-									echo "<div class='divChartHistory' id='col7$x'><input type='button' id='delButton' onClick='deleteRecord($x)' style='color:black;font-size:10px;font-weight:bold;width:40px;background: url(images/delete.png);background-size:60%;background-repeat: no-repeat;background-position: center;color:#660000;background-color:#ffffff;'></div>";
+									echo "<div class='divChartHistory' data-label='இடம்' id='col4$x'>".$city."</div>";
+									echo "<div class='divChartHistory' data-label='தேதி' id='col5$x'>".$chartInfo['birth_date'][$i]."</div>";
+									echo "<div class='divChartHistory' data-label='நேரம்' id='col6$x'>".$chartInfo['birth_time'][$i]."</div>";
+									echo "<div class='divChartHistory history-action' data-label='செயல்' id='col7$x'><input type='button' id='delButton' onClick='deleteRecord($x)' style='color:black;font-size:10px;font-weight:bold;width:40px;background: url(images/delete.png);background-size:60%;background-repeat: no-repeat;background-position: center;color:#660000;background-color:#ffffff;'></div>";
 								echo "</div>";
 							}
 
 
 							echo "</div>";
-							echo "<BR><P style='color:#660000;font-weight:bold; font-size:12px; text-align:center'>மொத்தம் ".$total_records." ஜாதகங்கள்<BR>(திறக்க அதை கிளிக் செய்யவும்)</P>";
+							echo "<BR><P class='history-summary'>மொத்தம் ".$total_records." ஜாதகங்கள்<BR>(திறக்க அதை கிளிக் செய்யவும்)</P>";
 						}
 						else{
 							echo "</div>";
-							echo "<BR><P style='color:#660000;font-weight:bold; font-size:14px; text-align:center; width:100%'>ஜாதகங்கள் இல்லை</P>";
+							echo "<BR><P class='history-empty'>ஜாதகங்கள் இல்லை</P>";
 						}
 ?>
 				

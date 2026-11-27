@@ -17,6 +17,7 @@ session_start();
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	 
@@ -41,27 +42,11 @@ function init(){
 
 <body onLoad="init();">
 
-	
-<div class="title"></div>
+<div class='column-body'>
 
-<div class="row">
-	<div class="column-menu">
-		<div class='desktop'>
-			<button class="menu" onClick="window.open('index.php','_self')">Home</button>
-		</div>
-		<div class='mobile'>
-			<div class="menu-container">
-				<div class='menuBtn' onClick="window.open('index.php','_self')">Home</div>
-			</div> 
-		</div>
-	</div>
-	<div class='column-body'>
-
-		<div class="intro">
-			<div class="body">
-				<img src="images/page_uc.png" alt="Page Under Construction - Page" width="75%" height="75%">
-				
-			</div>
+	<div class="intro">
+		<div class="body">
+			<img src="images/page_uc.png" alt="Page Under Construction - Page" width="75%" height="75%">
 		</div>
 	</div>
 </div>

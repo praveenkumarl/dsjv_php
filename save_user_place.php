@@ -10,7 +10,31 @@ function redirectProfileLocation($result) {
 		ob_end_clean();
 	}
 
-	header('Location: index.php?profile_' . $result . '=1', true, 303);
+	$path = 'index.php';
+	$query = array();
+	if (isset($_POST['return_to']) && is_string($_POST['return_to'])) {
+		$returnTo = trim($_POST['return_to']);
+		$returnParts = parse_url($returnTo);
+		if ($returnParts !== false
+			&& !isset($returnParts['scheme'])
+			&& !isset($returnParts['host'])
+			&& isset($returnParts['path'])
+			&& strpos($returnParts['path'], '/') === 0
+			&& strpos($returnParts['path'], '//') !== 0
+			&& strpos($returnParts['path'], '\\') === false
+			&& preg_match('/\.php$/i', $returnParts['path'])
+			&& basename($returnParts['path']) !== 'save_user_place.php'
+			&& !preg_match('/[\x00-\x1F\x7F]/', $returnTo)) {
+			$path = $returnParts['path'];
+			if (isset($returnParts['query'])) {
+				parse_str($returnParts['query'], $query);
+			}
+		}
+	}
+	unset($query['profile_saved'], $query['profile_error']);
+	$query['profile_' . $result] = '1';
+
+	header('Location: ' . $path . '?' . http_build_query($query), true, 303);
 	exit;
 }
 

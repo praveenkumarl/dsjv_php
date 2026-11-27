@@ -1,7 +1,9 @@
 :root {
-    --girl-chart-background: #ffe6f2;
-	--boy-chart-background: #ccffff;
+    --girl-chart-background: var(--theme-surface-chart, #ffe6f2);
+	--boy-chart-background: var(--theme-surface-chart-center, #ccffff);
 	--girl-chart-font-size: 14px;
+	--chart-border-color: var(--theme-chart-border, var(--client-accent, #660000));
+	--chart-text-color: var(--theme-chart-text, var(--client-chart-text, #660000));
 	
 	--chart-inner-font-size: clamp(11px, 2vw, 14px);
 	--chart-outer-font-size: clamp(10px, 2vw, 12px);
@@ -470,6 +472,70 @@ div.blueTable {
 	padding:5px;
 }
 
+div.blueTable {
+	border-color: var(--chart-border-color);
+}
+
+.divTable {
+	background-color: var(--theme-surface-panel-solid, #FFFFFF);
+}
+
+.divTableCell,
+.divTableHead,
+.divTableDegreeCell,
+.divGirlPanchangHeading,
+.divGirlPanchang,
+.divBoyPanchangHeading,
+.divBoyPanchang {
+	border-color: var(--chart-border-color);
+	color: var(--chart-text-color);
+}
+
+.divTableOuterCell,
+.divTableOuterCellLeftTop,
+.divTableOuterCellRightTop,
+.divTableOuterCellLeftBottom,
+.divTableOuterCellRightBottom {
+	border-color: var(--chart-border-color);
+	color: var(--chart-text-color);
+}
+
+.divTableDummyCell,
+.divTableCenterCell,
+.divTableCenterCell1,
+.divTableCenterCell2,
+.divTableCenterCell3,
+.divTableCenterCell4 {
+	background-color: var(--theme-surface-panel-solid, #FFFFFF);
+	color: var(--chart-text-color);
+}
+
+.divGirlPanchang {
+	background-color: var(--theme-surface-panel-solid, #FFFFFF);
+}
+
+.divBoyPanchang {
+	background-color: var(--theme-surface-field, #F3EFE6);
+}
+
+.overlay,
+.overlay1,
+.overlay2 {
+	border-color: var(--chart-border-color);
+	background-color: var(--theme-surface-panel-solid, #FFFFFF);
+	color: var(--chart-text-color);
+}
+
+.header,
+.footer {
+	color: var(--chart-text-color);
+}
+
+#section0,
+#section1 {
+	background: var(--theme-page-background, var(--client-page, #F2F4F4));
+}
+
 .divTableCenterCell1
 { 
 	display: table-cell; 
@@ -582,8 +648,8 @@ div.blueTable {
 }
 
 .actionBtnDefault{
-	background-color: #660000 !important;
-	color:#FFFFFF;
+	background-color: var(--theme-button-background, var(--client-primary, #660000)) !important;
+	color:var(--theme-button-text, var(--client-on-accent, #FFFFFF)) !important;
 	font-weight:bold;
 	font-size:10px;
 	width:100px;
@@ -592,7 +658,7 @@ div.blueTable {
 
 .actionBtnGirl{
 	background-color: var(--girl-chart-background) !important;
-	color:black;
+	color:var(--chart-text-color);
 	font-weight:bold;
 	font-size:10px;
 	width:100px;
@@ -601,7 +667,7 @@ div.blueTable {
 
 .actionBtnBoy{
 	background-color: var(--boy-chart-background) !important;
-	color:black;
+	color:var(--chart-text-color);
 	font-weight:bold;
 	font-size:10px;
 	width:100px;
@@ -697,4 +763,12 @@ div.blueTable {
 	width: 120px;
 	height: 20%;
 	padding:5px;
+}
+
+.divTableCenterCell1,
+.divTableCenterCell2,
+.divTableCenterCell3,
+.divTableCenterCell4 {
+	background-color: var(--theme-surface-panel-solid, #FFFFFF);
+	color: var(--chart-text-color);
 }

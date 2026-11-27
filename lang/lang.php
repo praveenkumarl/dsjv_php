@@ -301,3 +301,19 @@ function map_display_text($text) {
 
     return $text;
 }
+
+function format_paksham_display($paksham) {
+    $paksham = trim((string)$paksham, " \t\n\r\0\x0B[]()");
+    if ($paksham === '') {
+        return '';
+    }
+
+    $is_waning = preg_match('/(?:krish|wan|தேய்|கிரு)/iu', $paksham);
+    $is_waxing = preg_match('/(?:shuk|suk|wax|வளர்|சுக்)/iu', $paksham);
+
+    if (is_english()) {
+        return $is_waning ? 'Wan' : ($is_waxing ? 'Wax' : map_display_text($paksham));
+    }
+
+    return $is_waning ? 'தேய்' : ($is_waxing ? 'வளர்' : $paksham);
+}

@@ -96,11 +96,6 @@ else{
 	$g_rowid = isset($_POST["rowid"]) ? $_POST["rowid"] : "Not saved";
 }
 
-//disabling this place cookie. This interferes with Jamakol place whenever we generate birth chart
-$cookie_name = "place";
-$cookie_value = $in_place;
-setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
-
 $DEBUG= (int) isset($_SESSION['debug']) ? $_SESSION['debug'] : 0;
 
 $conn="";
@@ -239,6 +234,7 @@ if((isset($_SERVER['HTTP_REFERER']) && strstr($_SERVER['HTTP_REFERER'],'Birth_in
 	<link rel="stylesheet" href="css/main.css?v=<?php echo asset_version('css/main.css'); ?>">
 	<link rel="stylesheet" href="css/birth_chart_style.css?v=<?php echo asset_version('css/birth_chart_style.css'); ?>">
 	<link rel="stylesheet" href="style.css?v=<?php echo asset_version('style.css'); ?>">
+	<link rel="stylesheet" href="css/module-landing.css?v=<?php echo asset_version('css/module-landing.css'); ?>">
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -1952,7 +1948,7 @@ $onePageURL="onepage_form.php?place=".$in_place."&name=".$in_name."&sex=".$in_se
     <button class='actionBtn' id="lang-toggle" onclick="toggleLanguage()">ENG</button>
 </div> -->
 
-<body onLoad="init();">
+<body class="module-landing" onLoad="init();">
 <div id="karanamDiv" onclick="hide ()"><img src='images/karanam.png' width='100%' /></div>
 <div class="anthramDiv" id="anthramDiv"></div>
 <div class="sookshmaDiv" id="sookshmaDiv"></div>

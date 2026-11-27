@@ -139,11 +139,16 @@ function parseTimezoneOffsetHours($offsetText) {
     <link rel="canonical" href="https://html5-templates.com/" />
     <title>PK Astro Birth Chart</title>
     <meta name="description" content="One stop website for Astrology">
+	<meta name="pdf-exportable" content="true">
 	
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/onepage_birth_style.css?<?php echo date('ymdhis'); ?>">
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
    <script src="html2pdf.bundle.min.js" type="text/javascript"></script>
+	<script>
+		var PDF_FILENAME = <?php echo json_encode('birth_chart_' . preg_replace('/[^a-zA-Z0-9_-]/', '_', (string)$in_name) . '.pdf'); ?>;
+	</script>
+	<script src="pdf_bridge.js?v=1" type="text/javascript"></script>
 	<script>
 		
 		/*window.addEventListener('load', function () {
@@ -1842,7 +1847,7 @@ else{
 			</div>
 		</div>	
 			
-		<div class="divTable blueTable" id="onepage">
+		<div class="divTable blueTable">
 				<div class="divTableRow">
 					<div class="divHoroDetailCell" style="border:none; padding:5px"><?php displayChart1(); ?></div>
 					<div class="divHoroDetailCell" style="border:none; padding:5px"><?php displayNavamsam(); ?></div>

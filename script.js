@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function(){
 			downloadButton.className = 'app-panel-download';
 			downloadButton.setAttribute('aria-label', downloadLabel);
 			downloadButton.setAttribute('title', downloadLabel);
-			downloadButton.innerHTML = '<i class="fa fa-download" aria-hidden="true"></i>';
+			downloadButton.innerHTML = '<span class="app-pdf-download-icon" aria-hidden="true"><i class="fa fa-file-pdf-o app-pdf-download-file"></i><i class="fa fa-download app-pdf-download-arrow"></i></span>';
 			downloadButton.addEventListener('click', function(){
 				pdfTrigger.click();
 			});

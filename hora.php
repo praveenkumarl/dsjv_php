@@ -478,11 +478,24 @@ function calculateHoraPrevDay($lat,$lon)
 function displayHoraTable($hora_data)
 {
 	global $current_hora;
+
+	$horaCell = function($class, $label, $content, $id = '') {
+		$idAttribute = $id === '' ? '' : " id='".htmlspecialchars($id, ENT_QUOTES, 'UTF-8')."'";
+		return "<div class='hora-cell ".$class."' data-label='".htmlspecialchars($label, ENT_QUOTES, 'UTF-8')."'".$idAttribute.">".$content."</div>";
+	};
+	$isGoodHora = strpos($current_hora[3],"குரு")===0 || strpos($current_hora[3],"சுக்")===0 || strpos($current_hora[3],"புத")===0 || strpos($current_hora[3],"சந்")===0;
+	$currentHoraClass = $isGoodHora ? 'divThaaraPalanGreen' : 'divThaaraPalanRed';
+	$currentHoraStatus = $isGoodHora ? 'hora-favorable' : 'hora-unfavorable';
 	
 	echo "<center><div class='divTable blueTable' style='height:40px;margin-left:5px' id='currentHoraHeading'>";
 		echo "<div class='divTableRow'>";
 			echo "<div class='divTableCell' colspan=4>".__('current_horai')."</div>";
 		echo "</div>";
+	echo "</div>";
+
+	echo "<div class='hora-status-legend' role='note'>";
+		echo "<span class='hora-status-key hora-status-good'><span aria-hidden='true'></span>".htmlspecialchars(__('hora_favorable'), ENT_QUOTES, 'UTF-8')."</span>";
+		echo "<span class='hora-status-key hora-status-bad'><span aria-hidden='true'></span>".htmlspecialchars(__('hora_unfavorable'), ENT_QUOTES, 'UTF-8')."</span>";
 	echo "</div>";
 	
 	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px' id='currentHoraTable'>";
@@ -492,31 +505,11 @@ function displayHoraTable($hora_data)
 				echo "<div class='divThaaraPalanHeading'>".__('horai')."</div>";
 				echo "<div class='divThaaraPalanHeading'>".__('sub_horai')."</div>";
 		echo "</div>";
-		echo "<div class='divTableRow'>";
-			//Condition is to mark current hora in green color for good horas
-			if(strpos($current_hora[3],"குரு")===0 or strpos($current_hora[3],"சுக்")===0 or strpos($current_hora[3],"புத")===0 or strpos($current_hora[3],"சந்")===0){  //== will not differenciate between 0 and false, so should use ===
-				echo "<div class='divThaaraPalanGreen'>".date("h:i A",strtotime($current_hora[1]))."</div>";
-				echo "<div class='divThaaraPalanGreen'>".date("h:i A",strtotime($current_hora[2]))."</div>";	
-				echo "<div class='divThaaraPalanGreen' id='horaLord'><div id='horaLordTxt'>".map_display_text($current_hora[3])."</div></div>";
-				if(strpos($current_hora[3],"குரு")===0 or strpos($current_hora[3],"சுக்")===0 or strpos($current_hora[3],"புத")===0 or strpos($current_hora[3],"சந்")===0){  //== will not differenciate between 0 and false, so should use ===
-					echo "<div class='divThaaraPalanGreen' id='horaSubLord'>".map_display_text($current_hora[5])."</div>";
-				}
-				else{
-					echo "<div class='divThaaraPalanRed' id='horaSubLord'>".map_display_text($current_hora[5])."</div>";
-				}
-			}
-			else{ //Condition is to mark current hora in red color for bad horas
-				
-				echo "<div class='divThaaraPalanRed'>".date("h:i A",strtotime($current_hora[1]))."</div>";
-				echo "<div class='divThaaraPalanRed'>".date("h:i A",strtotime($current_hora[2]))."</div>";	
-				echo "<div class='divThaaraPalanRed' id='horaLord'><div id='horaLordTxt'>".map_display_text($current_hora[3])."</div></div>";
-				if(strpos($current_hora[3],"குரு")===0 or strpos($current_hora[3],"சுக்")===0 or strpos($current_hora[3],"புத")===0 or strpos($current_hora[3],"சந்")===0){  //== will not differenciate between 0 and false, so should use ===
-					echo "<div class='divThaaraPalanGreen' id='horaSubLord'>".map_display_text($current_hora[5])."</div>";
-				}
-				else{
-					echo "<div class='divThaaraPalanRed' id='horaSubLord'>".map_display_text($current_hora[5])."</div>";
-				}
-			}
+		echo "<div class='divTableRow ".$currentHoraStatus."'>";
+			echo $horaCell($currentHoraClass, __('start'), date("h:i A",strtotime($current_hora[1])));
+			echo $horaCell($currentHoraClass, __('end'), date("h:i A",strtotime($current_hora[2])));
+			echo $horaCell($currentHoraClass, __('horai'), "<div id='horaLordTxt'>".map_display_text($current_hora[3])."</div>", 'horaLord');
+			echo $horaCell($currentHoraClass, __('sub_horai'), map_display_text($current_hora[5]), 'horaSubLord');
 		echo "</div>";
 	echo "</div><center>";
 	
@@ -524,48 +517,36 @@ function displayHoraTable($hora_data)
 	
 	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px' id='fullHoraHeading'>";
 		echo "<div class='divTableRow'>";
-			echo "<div class='divTableCell' colspan=4>".__('horai_table')."</div>";
+			echo "<div class='divTableCell' colspan=3>".__('horai_table')."</div>";
 		echo "</div>";
 	echo "</div>";
 	
+	$firstHoraDate = $hora_data[1][0];
+	$lastHoraDate = $hora_data[24][0];
+	$scheduleDate = $firstHoraDate === $lastHoraDate
+		? $firstHoraDate
+		: $firstHoraDate." - ".$lastHoraDate;
+	echo "<div class='hora-date-range' role='note'>".htmlspecialchars(__('horai_table_date').": ".$scheduleDate, ENT_QUOTES, 'UTF-8')."</div>";
+
 	echo "<div class='divTable blueTable' style='height:40px;margin-left:5px' id='fullHoraTable'>";
 	echo "<div class='divTableRow'>";
-			echo "<div class='divThaaraPalanHeading'>".__('horai_table_date')."</div>";
 			echo "<div class='divThaaraPalanHeading'>".__('start')."</div>";
 			echo "<div class='divThaaraPalanHeading'>".__('end')."</div>";
 			echo "<div class='divThaaraPalanHeading'>".__('planet')."</div>";
 	echo "</div>";
 	
-	echo array_search("current hora",$hora_data);
-	
 	for($count = 1; $count <= 24; $count++)
 	{
 		$data = $hora_data[$count];
-		
-		echo "<div class='divTableRow'>";
-			//if(isset($data[4])){
-				//Condition is to mark current hora in green color for good horas
-				if(strpos($data[3],"குரு")===0 or strpos($data[3],"சுக்")===0 or strpos($data[3],"புத")===0 or strpos($data[3],"சந்")===0){  //== will not differenciate between 0 and false, so should use ===
-					echo "<div class='divThaaraPalanGreen'>".$data[0]."</div>";
-					echo "<div class='divThaaraPalanGreen'>".date("h:i A",strtotime($data[1]))."</div>";
-					echo "<div class='divThaaraPalanGreen'>".date("h:i A",strtotime($data[2]))."</div>";	
-					//echo "<div class='divThaaraPalanGreen'>".$data[3]."<div class='divSubHora'>".$data[5]."</div></div>";
-					echo "<div class='divThaaraPalanGreen'>".map_display_text($data[3])."</div>";
-				}
-				else{ //Condition is to mark current hora in red color for bad horas
-					echo "<div class='divThaaraPalanRed'>".$data[0]."</div>";
-					echo "<div class='divThaaraPalanRed'>".date("h:i A",strtotime($data[1]))."</div>";
-					echo "<div class='divThaaraPalanRed'>".date("h:i A",strtotime($data[2]))."</div>";	
-					//echo "<div class='divThaaraPalanRed'>".$data[3]."<div class='divSubHora'>".$data[5]."</div></div>";
-					echo "<div class='divThaaraPalanRed'>".map_display_text($data[3])."</div>";
-				}
-			/*}
-			else{
-				echo "<div class='divThaaraPalanWhite'>".$data[0]."</div>";
-				echo "<div class='divThaaraPalanWhite'>".date("h:i A",strtotime($data[1]))."</div>";
-				echo "<div class='divThaaraPalanWhite'>".date("h:i A",strtotime($data[2]))."</div>";	
-				echo "<div class='divThaaraPalanWhite'>".map_display_text($data[3])."</div>";
-			}*/
+
+		$isGoodHora = strpos($data[3],"குரு")===0 || strpos($data[3],"சுக்")===0 || strpos($data[3],"புத")===0 || strpos($data[3],"சந்")===0;
+		$horaClass = $isGoodHora ? 'divThaaraPalanGreen' : 'divThaaraPalanRed';
+		$horaStatus = $isGoodHora ? 'hora-favorable' : 'hora-unfavorable';
+
+		echo "<div class='divTableRow ".$horaStatus."'>";
+			echo $horaCell($horaClass, __('start'), date("h:i A",strtotime($data[1])));
+			echo $horaCell($horaClass, __('end'), date("h:i A",strtotime($data[2])));
+			echo $horaCell($horaClass, __('planet'), map_display_text($data[3]));
 		echo "</div>";
 	}
 	
@@ -630,6 +611,7 @@ if (isset($place_from_post) && $place_from_post) {
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>" id='chartstyle'>
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/module-landing.css?<?php echo date('ymdhis'); ?>">
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
     
@@ -756,7 +738,7 @@ $(document).ready(function(){
     </script>
 </head>
 
-<body onLoad="init();"  id='bdy'>
+<body class="module-landing module-hora" onLoad="init();" id='bdy'>
 
 	
 <div class="title"></div>

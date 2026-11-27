@@ -5995,6 +5995,44 @@ parigaraDiv{
 		cursor: pointer;
 	}
 
+	body .app-page-panel button.app-panel-download {
+		border: 1px solid var(--theme-border-accent);
+		background: var(--theme-button-gradient);
+		color: var(--theme-button-text) !important;
+	}
+
+	body .app-page-panel button.app-panel-download:hover {
+		background: var(--theme-button-gradient-hover);
+	}
+
+	.app-pdf-download-icon {
+		position: relative;
+		display: inline-grid;
+		width: 25px;
+		height: 25px;
+		place-items: center;
+	}
+
+	.app-pdf-download-icon .app-pdf-download-file {
+		font-size: 21px;
+	}
+
+	.app-pdf-download-icon .app-pdf-download-arrow {
+		position: absolute;
+		right: -6px;
+		bottom: -4px;
+		display: grid;
+		width: 14px;
+		height: 14px;
+		place-items: center;
+		border: 1px solid var(--theme-border-accent);
+		border-radius: 50%;
+		background: var(--theme-surface-panel-solid);
+		color: var(--theme-text-heading);
+		font-size: 8px;
+		line-height: 1;
+	}
+
 	body .app-page-panel a:focus-visible,
 	body .app-page-panel button:focus-visible {
 		outline: 2px solid var(--client-accent, #e8c07a);
@@ -6185,7 +6223,144 @@ parigaraDiv{
 	}
 
 	body .app-topbar .profile-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
 		margin-bottom: 12px;
+	}
+
+	body .app-topbar .profile-edit-toggle,
+	body .app-topbar .profile-copy-key {
+		display: grid;
+		flex: 0 0 auto;
+		width: 30px;
+		height: 30px;
+		place-items: center;
+		padding: 0;
+		border: 1px solid var(--theme-border-accent, rgba(245,197,66,.42));
+		border-radius: 7px;
+		background: var(--theme-accent-soft, rgba(245,197,66,.1));
+		color: var(--client-accent, var(--theme-text-gold, #f5c542));
+		font-size: 13px;
+		cursor: pointer;
+	}
+
+	body .app-topbar .profile-edit-toggle:hover,
+	body .app-topbar .profile-copy-key:hover {
+		background: var(--theme-accent-medium, rgba(245,197,66,.18));
+	}
+
+	body .app-topbar .profile-key-value {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	body .app-topbar .profile-key-value span {
+		min-width: 0;
+		overflow-wrap: anywhere;
+		user-select: text;
+	}
+
+	body .app-topbar .profile-copy-key {
+		width: 27px;
+		height: 27px;
+		font-size: 12px;
+	}
+
+	body .app-topbar .profile-location-prompt {
+		margin: 12px 0;
+		color: var(--client-accent, var(--theme-text-gold, #f5c542));
+		font-size: 12px;
+		line-height: 1.45;
+	}
+
+	body .app-topbar .profile-message {
+		margin: 10px 0;
+		color: var(--client-text, var(--theme-text, #f7effa));
+		font-size: 12px;
+		line-height: 1.45;
+	}
+
+	body .app-topbar .profile-message.is-error {
+		color: var(--theme-danger, #ff8a8a);
+	}
+
+	body .app-topbar .profile-location-form {
+		display: grid;
+		gap: 7px;
+		margin-top: 12px;
+	}
+
+	body .app-topbar .profile-location-form[hidden] {
+		display: none;
+	}
+
+	body .app-topbar .profile-location-form label {
+		margin-top: 5px;
+		color: var(--client-muted, var(--theme-text-muted, rgba(247,239,250,.72)));
+		font-size: 12px;
+	}
+
+	body .app-topbar .profile-location-form input {
+		box-sizing: border-box;
+		width: 100%;
+		min-height: 40px;
+		padding: 8px 10px;
+		border: 1px solid var(--theme-border-input, rgba(255,255,255,.2));
+		border-radius: 8px;
+		background: var(--theme-surface-field, rgba(255,255,255,.08));
+		color: var(--client-text, var(--theme-text, #fff));
+		font: inherit;
+		font-size: 13px;
+	}
+
+	body .app-topbar .profile-location-form input::placeholder {
+		color: var(--theme-text-muted, rgba(247,239,250,.48));
+	}
+
+	body .app-topbar .profile-place-results {
+		display: grid;
+		gap: 4px;
+		max-height: 180px;
+		overflow-y: auto;
+	}
+
+	body .app-topbar .profile-place-results:empty {
+		display: none;
+	}
+
+	body .app-topbar .profile-place-results button {
+		padding: 8px 10px;
+		border: 1px solid var(--theme-border, rgba(255,255,255,.1));
+		border-radius: 7px;
+		background: var(--theme-surface-field, rgba(255,255,255,.07));
+		color: var(--client-text, var(--theme-text, #f7effa));
+		font: inherit;
+		text-align: left;
+		cursor: pointer;
+	}
+
+	body .app-topbar .profile-place-results button:hover,
+	body .app-topbar .profile-place-results button:focus-visible {
+		background: var(--theme-accent-soft, rgba(245,197,66,.1));
+		outline: 2px solid var(--theme-border-focus, rgba(245,197,66,.55));
+	}
+
+	body .app-topbar .profile-location-form > button {
+		display: grid;
+		width: 32px;
+		height: 32px;
+		place-items: center;
+		margin-top: 7px;
+		padding: 0;
+		border: 0;
+		border-radius: 7px;
+		background: var(--theme-button-gradient, linear-gradient(135deg,#f5c542,#d99722));
+		color: var(--theme-button-text, #271d36);
+		font-size: 14px;
+		cursor: pointer;
 	}
 
 	body .app-topbar .profile-details {

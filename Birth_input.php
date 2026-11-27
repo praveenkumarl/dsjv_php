@@ -3,6 +3,8 @@
 require_once "lib.php";
 require_once "lang/lang.php";
 
+$isNumerologyEmbed = isset($_GET['numerology_embed']) && $_GET['numerology_embed'] === '1';
+
 // Determine if language is set via session, cookie, or default to english
 if(!isset($language)){
 	$language = isset($_SESSION['language']) ? $_SESSION['language'] : (isset($_COOKIE['language']) ? $_COOKIE['language'] : 'english');
@@ -11,11 +13,9 @@ if(!isset($language)){
 // Initialize the language system
 init_language($language);
 
-$place="";
+$place = getUserProfilePlace();
+$placeJs = json_encode($place, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
 $name="";
-if(isset($_COOKIE["place"])) {
-  $place = $_COOKIE["place"];
-}
   
 $_SESSION['debug']=isset($_GET['debug']) ? (int)$_GET['debug'] : 0;
 $chart_data = isset($_SESSION['chart']) ? $_SESSION['chart'] : "";
@@ -95,6 +95,7 @@ function getChartDetails()
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/birth_chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/module-landing.css?<?php echo date('ymdhis'); ?>">
 
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -149,7 +150,7 @@ function openBirthHistory(){
 }
 
 function init(){
-	document.getElementById('place').value = '<?php echo $place; ?>'; 
+	document.getElementById('place').value = <?php echo $placeJs; ?>;
 	updateNow();
 }
 
@@ -190,7 +191,7 @@ function placeOnBlur() {
 	let place = document.getElementById("place").value;
 	
 	if(place==""){
-		document.getElementById('place').value = '<?php echo $place; ?>';
+		document.getElementById('place').value = <?php echo $placeJs; ?>;
 	}
 }
 
@@ -252,7 +253,7 @@ function updateNow() {
     </script>
 </head>
 
-<body onLoad="init()">
+<body class="module-landing module-form-page<?php echo $isNumerologyEmbed ? ' module-numerology-embed' : ''; ?>" onLoad="init()">
 <div id="loader" class="center" style="display: none;"></div>
 
 <div class="title"></div>

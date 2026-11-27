@@ -15,6 +15,8 @@ return [
     'planet_indicator' => 'Planet Characteristics',
     'rasi_kaaragam' => 'Rasi Characteristics',
     'horai' => 'Hora',
+    'hora_favorable' => 'Favorable Hora',
+    'hora_unfavorable' => 'Unfavorable Hora',
     'star_result' => 'Star Result',
     'prasannam' => 'Prasannam',
     'prasannam_choose_method' => 'Choose a method to continue',

@@ -49,13 +49,11 @@ for ($i = 1; $i <= 12; $i++) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="script.js?<?php echo date('ymdhis'); ?>" defer></script>
 
     <script type="text/javascript">
     // Translation strings for JS
     var MSG_PLEASE_FILL = <?php echo json_encode(__('please_fill_all_fields')); ?>;
-    var MSG_GENERATING = <?php echo json_encode(__('generating')); ?>;
-    var MSG_PDF_GENERATED = <?php echo json_encode('PDF generated! Download will start shortly.'); ?>;
-    var MSG_PDF_FAILED = <?php echo json_encode('PDF generation failed. Please try again.'); ?>;
 
     function init(){
         var currentYear = new Date().getFullYear();
@@ -93,61 +91,10 @@ for ($i = 1; $i <= 12; $i++) {
         window.open('new_panchang.php','_self');
     }
 
-    function isAndroidWebView() {
-        var ua = navigator.userAgent.toLowerCase();
-        return ua.indexOf('android') > -1;
-    }
-
     function handleFormSubmit(event) {
-        if (isAndroidWebView()) {
-            event.preventDefault();
-
-            var form = document.panchangForm;
-            var month = form.month.value;
-            var year = form.year.value;
-            var place = form.place.value;
-
-            if (!month || !year || !place) {
-                alert(MSG_PLEASE_FILL);
-                return false;
-            }
-
-            var submitBtn = document.getElementById('submit');
-            if (submitBtn) {
-                submitBtn.value = MSG_GENERATING;
-                submitBtn.disabled = true;
-            }
-
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'gen_panchang_pdf.php?generate_pdf=1&api=1&month=' + encodeURIComponent(month) +
-                     '&year=' + encodeURIComponent(year) + '&place=' + encodeURIComponent(place), true);
-
-            xhr.onload = function() {
-                if (submitBtn) { submitBtn.value = '<?php echo addslashes(__('submit')); ?>'; submitBtn.disabled = false; }
-
-                if (xhr.status === 200) {
-                    try {
-                        var response = JSON.parse(xhr.responseText);
-                        if (response.success && response.download_url) {
-                            window.open(response.download_url, '_blank');
-                            alert(MSG_PDF_GENERATED);
-                        } else {
-                            alert(MSG_PDF_FAILED);
-                        }
-                    } catch (e) {
-                        alert('Error processing response');
-                    }
-                } else {
-                    alert('PDF generation failed. Status: ' + xhr.status);
-                }
-            };
-
-            xhr.onerror = function() {
-                if (submitBtn) { submitBtn.value = '<?php echo addslashes(__('submit')); ?>'; submitBtn.disabled = false; }
-                alert('Network error. Please check your connection.');
-            };
-
-            xhr.send();
+        var form = document.panchangForm;
+        if (!form.month.value || !form.year.value || !form.place.value) {
+            alert(MSG_PLEASE_FILL);
             return false;
         }
         return true;
@@ -157,17 +104,7 @@ for ($i = 1; $i <= 12; $i++) {
 
 <body onload="init();">
 
-<div class="title"></div>
-
-<div class='column-menu' style="margin-left:0px">
-<?php displayUserInfo($_SESSION['userinfo']);?>
-    <div class='desktop'>
-        <button class="menu" onClick="window.open('index.php','_self')"><?php echo __('back'); ?></button>
-    </div>
-    <div class='mobile'>
-        <?php include "onePagePanchangMenu_mobile.php"; ?>
-    </div>
-</div>
+<?php displayUserInfo($_SESSION['userinfo']); ?>
 
 <div class='column-body'>
     <br>

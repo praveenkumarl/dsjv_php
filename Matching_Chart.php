@@ -34,19 +34,11 @@ $phone = isset($_COOKIE["phone"]) ? $_COOKIE["phone"] : 1;
 
 $_SESSION["place_girl"]=$place_girl;
 
-$cookie_name = "place_girl";
-$cookie_value = $in_place_girl;
-setcookie($cookie_name, $cookie_value, time() + (86400 * 1), "/"); // 86400 = 1 day
-
 $in_place_boy = isset($_POST["place_boy"]) ? $_POST["place_boy"] : $_POST["nPlace_boy"];
 $place_boy=strtok($in_place_boy,"|");
 $TZ_boy=strtok("|");
 
 $_SESSION["place_boy"]=$place_boy;
-
-$cookie_name = "place_boy";
-$cookie_value = $in_place_boy;
-setcookie($cookie_name, $cookie_value, time() + (86400 * 1), "/"); // 86400 = 1 day
 
 $DEBUG= (int) isset($_SESSION['debug']) ? $_SESSION['debug'] : 0;
 $conn="";
@@ -166,6 +158,7 @@ $dayofweek = date('w', strtotime($chart_date));
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/matching_chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/module-landing.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">    
 	
@@ -598,7 +591,7 @@ $dayofweek = date('w', strtotime($chart_date));
 	</script>
 </head>
 
-<body onLoad="init();">
+<body class="module-landing" onLoad="init();">
 <div class="anthramDiv" id="anthramDiv" onclick="this.style.display='none'"></div>
 <div id="loader" class="center"></div>
 

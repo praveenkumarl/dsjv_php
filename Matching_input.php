@@ -10,21 +10,11 @@ if(!isset($language)){
 // Initialize the language system
 init_language($language);
 
-$place_boy="";
-$place_girl="";
-if(isset($_COOKIE["place_boy"])) {
-  $place_boy = $_COOKIE["place_boy"];
-  
-  $_SESSION['debug']=isset($_GET['debug']) ? (int)$_GET['debug'] : 0;
-  $chart_data = isset($_SESSION['chart']) ? $_SESSION['chart'] : "";
-}
-
-if(isset($_COOKIE["place_girl"])) {
-  $place_girl = $_COOKIE["place_girl"];
-  
-  $_SESSION['debug']=isset($_GET['debug']) ? (int)$_GET['debug'] : 0;
-  $chart_data = isset($_SESSION['chart']) ? $_SESSION['chart'] : "";
-}
+$profilePlace = getUserProfilePlace();
+$place_boy = $profilePlace;
+$place_girl = $profilePlace;
+$placeBoyJs = json_encode($place_boy, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+$placeGirlJs = json_encode($place_girl, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
 
 if(isset($_GET["phone"])) {
 	$_SESSION['phone']=$_GET["phone"];
@@ -58,6 +48,7 @@ $boytime = isset($_SESSION['boytime']) ? $_SESSION['boytime'] : "";
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/matching_chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/module-landing.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	 
@@ -88,8 +79,8 @@ $boytime = isset($_SESSION['boytime']) ? $_SESSION['boytime'] : "";
 });
 
 function init(){
-	document.getElementById('place_girl').value = '<?php echo $place_girl; ?>';
-	document.getElementById('place_boy').value = '<?php echo $place_boy; ?>';
+	document.getElementById('place_girl').value = <?php echo $placeGirlJs; ?>;
+	document.getElementById('place_boy').value = <?php echo $placeBoyJs; ?>;
 	document.getElementById('girlname').value = '<?php echo $girlname; ?>';
 	document.getElementById('boyname').value = '<?php echo $boyname; ?>';
 	document.getElementById('in_date_girl').value = '<?php echo $girldate; ?>';
@@ -183,11 +174,11 @@ function placeOnBlur() {
 	let place_girl = document.getElementById("place_girl").value;
 	
 	if(place_boy==""){
-		document.getElementById('place_boy').value = '<?php echo $place_boy; ?>';
+		document.getElementById('place_boy').value = <?php echo $placeBoyJs; ?>;
 	}
 	
 	if(place_girl==""){
-		document.getElementById('place_girl').value = '<?php echo $place_girl; ?>';
+		document.getElementById('place_girl').value = <?php echo $placeGirlJs; ?>;
 	}
 }
 
@@ -247,7 +238,7 @@ function updateNow() {
     </script>
 </head>
 
-	<body onLoad="init();">
+	<body class="module-landing module-form-page" onLoad="init();">
 <div id="loader" class="center" style="display: none;"></div>
 
 <div class="title"></div>

@@ -97,22 +97,11 @@ setcookie("key", "", time() - 60);  // empty value and old timestamp
 
 <body onLoad="init();">
 <div id="loader" class="center" style='visibility:hidden'></div>
-	
-<div class="title"></div>
-
-	<div class='column-menu'>
-	<?php displayUserInfo($_SESSION['userinfo']);?>
-		<div class='desktop'>
-		<button class="menu" onClick="window.open('index.php','_self')">Home</button>
-	</div>
-	<div class='mobile'>
-		<?php include "birthChartMenu_mobile.php"; ?>
-	</div>
-	</div>
-	<div class='column-body'>
-		<BR>
+<?php displayUserInfo($_SESSION['userinfo']); ?>
+<div class='column-body'>
+		<br>
 		<div class="heading">*<?php echo $lbl_heading; ?></div>
-		<BR>
+		<br>
 <?php
 $onePageURL="onepage_birthchart_pdf.php?place=".$in_place."&name=".$in_name."&sex=".$in_sex.'&rowid='.$g_rowid.'&nDate='.$chart_date.'&nTime='.$chart_time;
 echo <<<EOL

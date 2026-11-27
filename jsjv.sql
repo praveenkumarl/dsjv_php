@@ -45,10 +45,10 @@ CREATE DEFINER=`root`@`127.0.0.1` PROCEDURE `prepareJamaChartData` (IN `in_sun_h
 	SET kavippu = "கவி";
 	SET udhayam_house=0;
 	SET aarudam_house=0;
-	SET udh_start_time="";
-	SET udh_end_time="";
-	SET aar_start_time="";
-	SET aar_end_time="";
+	SET udh_start_time=NULL;
+	SET udh_end_time=NULL;
+	SET aar_start_time=NULL;
+	SET aar_end_time=NULL;
 	SET udh_degree=0.0;
 	SET aar_degree=0.0;
 	SET kavi_degree=0.0;
@@ -59,7 +59,7 @@ CREATE DEFINER=`root`@`127.0.0.1` PROCEDURE `prepareJamaChartData` (IN `in_sun_h
 	SELECT in_sunrise, in_sunset, in_sunrise_tom, in_sunset_prev, in_chart_date, in_chart_time, in_place 
 		INTO sunrise,sunset,sunrise_tom,sunset_prev,chart_date,chart_time,place FROM input_data;
 		
-	SET chart_date = ADDTIME(chart_date,chart_time);
+	SET chart_date = ADDTIME(chart_date,TIME(chart_time));
 	SET today_midnight = ADDTIME(chart_time,"23:59:59");
 	SET prev_midnight = ADDTIME(DATE_ADD(date(chart_time),INTERVAL -1 day),"23:59:59");
 	

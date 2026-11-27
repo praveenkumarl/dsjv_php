@@ -36,7 +36,8 @@ if(!isLogged()){
 }
 
 $question="";
-$place = isset($_COOKIE["place"]) ?  $_COOKIE["place"] : "";
+$place = getUserProfilePlace();
+$placeJs = json_encode($place, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
 
 if(isset($_COOKIE['degree'])){
 	if($_COOKIE['degree']==1){
@@ -112,6 +113,7 @@ function fillTZDropdown()
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/module-landing.css?<?php echo date('ymdhis'); ?>">
     
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	
@@ -155,7 +157,7 @@ function fillTZDropdown()
 });
 
 function init(){
-	document.getElementById('place').value = '<?php echo $place; ?>';
+	document.getElementById('place').value = <?php echo $placeJs; ?>;
 	updateNow();
 	
 	/*if(document.getElementById('place').value.includes("|")==false){
@@ -221,7 +223,7 @@ function placeOnBlur() {
 	let place = document.getElementById("place").value;
 	
 	if(place==""){
-		document.getElementById('place').value = '<?php echo $place; ?>';
+		document.getElementById('place').value = <?php echo $placeJs; ?>;
 	}
 	
 /*	if(place.includes("|")==true){
@@ -291,7 +293,7 @@ function updateNow() {
     </script>
 </head>
 
-<body onLoad="init();">
+<body class="module-landing module-form-page" onLoad="init();">
 
 <div class="title"></div>
 			<div class='column-menu'>

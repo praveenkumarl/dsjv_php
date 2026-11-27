@@ -15,9 +15,11 @@
 	--chart-inner-font-weight: 600; */
 	
 	/* Theme two - blue/pink */
-	--chart-background: radial-gradient(at center, #FFFFFF, #EEFDFF);
-	--chart-outer-background:  #ffe6ff;
-	--details-background: #FFFFFF;
+	--chart-background: var(--theme-chart-background, radial-gradient(at center, #FFFFFF, #EEFDFF));
+	--chart-outer-background: var(--theme-surface-chart-center, #ffe6ff);
+	--details-background: var(--theme-surface-panel-solid, #FFFFFF);
+	--chart-border-color: var(--theme-chart-border, var(--client-accent, #660000));
+	--chart-text-color: var(--theme-chart-text, var(--client-chart-text, #660000));
 	--chart-inner-font-size: clamp(11px, 1vw, 16px);
 	--chart-outer-font-size: clamp(11px, 1vw, 15px);
 	--chart-center-font-size: clamp(8px, 1vw, 12px);
@@ -511,5 +513,42 @@ div.blueTable {
     justify-content: center;
     text-align: center;
 	font-size: 8px;*/
+}
+
+div.blueTable {
+	border-color: var(--chart-border-color);
+}
+
+.divTableOuterCell,
+.divTableDegreeCell {
+	border-color: var(--chart-border-color);
+	color: var(--chart-text-color);
+}
+
+.divTableDummyCell,
+.divTableCenterCell,
+.divTableCenterCell1,
+.divTableCenterCell2,
+.divTableCenterCell3,
+.divTableCenterCell4 {
+	background-color: var(--theme-surface-panel-solid, #FFFFFF);
+	color: var(--chart-text-color);
+}
+
+.overlay,
+.overlay1,
+.overlay2 {
+	border-color: var(--chart-border-color);
+	background-color: var(--theme-surface-panel-solid, #FFFFFF);
+	color: var(--chart-text-color);
+}
+
+.header,
+.footer {
+	color: var(--chart-text-color);
+}
+
+#section0 {
+	background-color: var(--theme-surface-panel-solid, #F2F4F4);
 }
 

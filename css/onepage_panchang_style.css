@@ -740,3 +740,173 @@ page[size="A4"] {
 	font-family: Verdana, Raavi, sans-serif;
 	line-height: 12px;
 }
+
+/* Professional A4 layout for the printable monthly Panchang report. */
+#onepage {
+	box-sizing: border-box;
+	width: 198mm !important;
+	min-width: 0 !important;
+	max-width: 198mm;
+	margin: 0 auto;
+	padding: 0;
+	background: #fff;
+	color: #263445;
+	font-family: "Noto Sans Tamil", "Latha", "Noto Sans", Arial, sans-serif;
+}
+
+.header-parent {
+	display: grid;
+	grid-template-columns: 1fr 3fr 1fr;
+	align-items: center;
+	width: 100%;
+	height: auto;
+	margin: 0 0 6mm;
+	padding: 0 0 4mm;
+	border: 0;
+	border-bottom: 2px solid var(--client-accent, #c49a3a);
+}
+
+.header-left,
+.header-center,
+.header-right {
+	float: none;
+	width: auto;
+	height: auto;
+	padding: 0;
+}
+
+.header-left img,
+.header-right img {
+	display: block;
+	max-width: 100%;
+	max-height: 28px;
+	object-fit: contain;
+}
+
+.header-center {
+	text-align: center;
+}
+
+.divTableTextOfficeName {
+	padding: 0;
+	color: #24344d;
+	font-family: "Noto Sans Tamil", "Latha", "Noto Sans", Arial, sans-serif;
+	font-size: 17px;
+	font-weight: 700;
+	line-height: 1.4;
+}
+
+#panchangContainer {
+	width: 100%;
+	margin: 0 !important;
+	padding: 0;
+}
+
+#panchangContainer > br {
+	display: none;
+}
+
+#panchangContainer > center {
+	display: block;
+	width: 100%;
+}
+
+#panchangContainer .divTable.blueTable {
+	display: table;
+	width: 100% !important;
+	height: auto !important;
+	margin: 0;
+	border: 1px solid #d6dde7;
+	border-collapse: separate;
+	border-spacing: 0;
+	table-layout: fixed;
+}
+
+#panchangContainer .divTableRow {
+	break-inside: avoid;
+	page-break-inside: avoid;
+}
+
+#panchangContainer .divTablePanchangHeading,
+#panchangContainer .divTablePanchangMedium {
+	box-sizing: border-box;
+	width: auto !important;
+	padding: 6px 5px;
+	border: 0;
+	border-right: 1px solid #d6dde7;
+	border-bottom: 1px solid #d6dde7;
+	font-family: "Noto Sans Tamil", "Latha", "Noto Sans", Arial, sans-serif;
+	line-height: 1.35;
+	overflow-wrap: anywhere;
+	vertical-align: middle;
+}
+
+#panchangContainer .divTablePanchangHeading {
+	background: var(--theme-menu-background, #24344d);
+	color: var(--theme-menu-text, #fff);
+	font-size: 8.5pt;
+	font-weight: 700;
+	text-align: center;
+}
+
+#panchangContainer .divTablePanchangMedium {
+	background: #fff;
+	color: #344054;
+	font-size: 8pt;
+	text-align: left;
+}
+
+#panchangContainer .divTableRow:nth-child(even) .divTablePanchangMedium {
+	background: #f5f7fa;
+}
+
+#panchangContainer .divTablePanchangHeading:nth-child(1),
+#panchangContainer .divTablePanchangMedium:nth-child(1) {
+	width: 10% !important;
+	text-align: center;
+}
+
+#panchangContainer .divTablePanchangHeading:nth-child(2),
+#panchangContainer .divTablePanchangMedium:nth-child(2) {
+	width: 10% !important;
+	text-align: center;
+}
+
+#panchangContainer .divTablePanchangHeading:nth-child(3),
+#panchangContainer .divTablePanchangMedium:nth-child(3),
+#panchangContainer .divTablePanchangHeading:nth-child(4),
+#panchangContainer .divTablePanchangMedium:nth-child(4) {
+	width: 18% !important;
+}
+
+#panchangContainer .divTablePanchangHeading:nth-child(5),
+#panchangContainer .divTablePanchangMedium:nth-child(5),
+#panchangContainer .divTablePanchangHeading:nth-child(6),
+#panchangContainer .divTablePanchangMedium:nth-child(6) {
+	width: 22% !important;
+}
+
+#panchangContainer .divTablePanchangMedium:nth-child(1) {
+	color: #24344d;
+	font-weight: 700;
+}
+
+.PageFooter {
+	width: 100% !important;
+	margin: 6mm 0 0;
+	padding: 3mm 0 0;
+	border: 0;
+	border-top: 1px solid #d6dde7;
+	color: #667085;
+	font-family: "Noto Sans Tamil", "Latha", "Noto Sans", Arial, sans-serif;
+	font-size: 8pt;
+	line-height: 1.4;
+	text-align: center;
+}
+
+@media print {
+	#onepage {
+		margin: 0;
+		box-shadow: none;
+	}
+}

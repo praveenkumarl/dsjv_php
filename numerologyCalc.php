@@ -1,6 +1,9 @@
 <?php session_start();
 require "lib.php";
 
+$language = isset($_COOKIE['language']) && strtolower(trim($_COOKIE['language'])) === 'english' ? 'english' : 'tamil';
+init_language($language);
+
 $devInfo = $_GET;
 //array_csv_download(); exit;
 
@@ -568,7 +571,7 @@ function printPyramid(numbers){
 		</center>
 		<table style="width:100%; text-align: left">
 			<tr>
-				<td colspan=2><p style="color:#660000;font-weight:bold; font-size:20px; text-align:center; margin: 5px;">DSJV எண் கணிதம்</p></td>
+				<td colspan=2><p style="color:#660000;font-weight:bold; font-size:20px; text-align:center; margin: 5px;">DSJV <?php echo htmlspecialchars(__('numerology'), ENT_QUOTES, 'UTF-8'); ?></p></td>
 			</tr>
 			<tr style="background-color: #FFFFFF">
 				<td colspan=2><center><H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px;">*Name/Phone#/Vehicle#:</H5></center></td>
@@ -595,80 +598,6 @@ function printPyramid(numbers){
 		<?php displayNumerologyInfo(); ?>
 	</div>	 
 	
-	<!-- <div class='column-body'>
-		<center>
-			<button class="glow-button" id='calculatorBtn' onclick="window.open('numerology.php','_self')" style="width:-webkit-fill-available;line-height: normal;">Birth Numerology</button>
-		</center>
-		<table style="width:100%; text-align: left">
-			<tr>
-				<td colspan=2>
-					<p style="color:#660000;font-weight:bold; font-size:20px; text-align:center; margin: 5px;">DSJV எண் கணிதம்</p>
-				</td>
-			</tr>
-			<tr style="background-color: #FFFFFF">
-				<td colspan=2>
-					<center>
-						<H5 style="color:#660000; font-family: 'Source Sans Pro', Helvetica, sans-serif; font-weight:bold; font-size:14px;">*Name/Phone#/Vehicle#:</H5>
-					</center>
-				</td>
-			</tr>
-			<tr style="background-color: #FFFFFF">
-				<td>
-					<div style="text-align: left;line-height: 25px;">
-						<input type='radio' id='nameRadio' name='calcType' value='name' checked style='display:none'>
-						<label for='nameRadio'>Name</label>
-					</div>
-				</td>
-				<td>
-					<div style="text-align: left;line-height: 25px;">
-						<input type='radio' id='aadharRadio' name='calcType' value='aadhar' style='display:none'>
-						<label for='aadharRadio'>Aadhaar Card Number</label>
-					</div>
-				</td>
-			</tr>
-			<tr style="background-color: #FFFFFF">
-				<td>
-					<div style="text-align: left;line-height: 25px;">
-						<input type='radio' id='vehicleRadio' name='calcType' value='vehicle' style='display:none'>
-						<label for='vehicleRadio'>Vehicle Number</label>
-					</div>
-				</td>
-				<td>
-					<div style="text-align: left;line-height: 25px;">
-						<input type='radio' id='phoneRadio' name='calcType' value='phone' style='display:none'>
-						<label for='phoneRadio'>Phone Number</label>
-					</div>
-				</td>
-			</tr>
-			<tr style="background-color: #FFFFFF">
-				<td colspan=2>
-					<center>
-						<input type='text' name='inputValue' id='inputValue' style='width:100%;height:50px;color: black;font-weight: bold; background-color:gold' placeholder='Enter name/Aadhar#/vehicle#/phone#' />
-					</center>
-				</td>
-			</tr>
-			<tr style="background-color: #FFFFFF;text-align-last: center;">
-				<td colspan=2>
-					<button class='primary wide' onClick="calculateMain();" style="background:var(--menu-background)">Calculate</button>
-				</td>
-			</tr>
-			<tr style="background-color: #FFFFFF">
-				<td colspan=2>
-					<div class='name_number' id='name_number' style='text-align: -webkit-center;'></div>
-				</td>
-			</tr>
-		</table>
-		<div style='display: flex; overflow-x: auto; white-space: nowrap; text-align: center'>
-			<div class='py' id='py'></div>
-		</div>
-		<br>
-		<div class='name_number' id='dob_result' style='text-align: -webkit-center;'></div>
-		<br>
-		<p>*Uses Chaldean method </p>
-		<?php displayNumerologyInfo(); ?>
-	</div> -->
-
-
 	
 </center>
 </body>

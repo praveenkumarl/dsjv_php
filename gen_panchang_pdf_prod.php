@@ -34,11 +34,16 @@ date_default_timezone_set($TZ);
     <link rel="canonical" href="https://html5-templates.com/" />
     <title>PK Astro Birth Chart</title>
     <meta name="description" content="One stop website for Astrology">
+	<meta name="pdf-exportable" content="true">
 	
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/onepage_panchang_style.css?<?php echo date('ymdhis'); ?>">
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
    <script src="html2pdf.bundle.min.js" type="text/javascript"></script>
+	<script>
+		var PDF_FILENAME = <?php echo json_encode('panchang_' . $month . '_' . $year . '.pdf'); ?>;
+	</script>
+	<script src="pdf_bridge.js?v=1" type="text/javascript"></script>
 	<script src="panchang.js?<?php echo date('ymdhis'); ?>"></script>
 	<script src="my_panchang.js?<?php echo date('ymdhis'); ?>"></script>
 </head>

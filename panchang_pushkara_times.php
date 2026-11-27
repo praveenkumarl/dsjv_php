@@ -442,28 +442,27 @@ if ($inPush) {
 
 // ---------------- HTML Output ----------------
 ?>
-<center>
-<div class='divTable blueTable' style='height:40px;'>
-    <div class='divTableRow' style='background-color:rgba(0,0,0,0)'>
-        <div class='divPanchangHeading' colspan='3'>
-            <H6 style='font-weight:bold;color:black'><?php echo ($language === 'english') ? 'Pushkara Navamsha' : 'புஷ்கர நவாம்சம்'; ?></H6>
-        </div>
-    </div>
+<div class="panchang-pushkara-heading">
+    <h3 id="pushkaraTableTitle"><?php echo ($language === 'english') ? 'Pushkara Navamsha' : 'புஷ்கர நவாம்சம்'; ?></h3>
 </div>
 
 <?php if (empty($results)): ?>
 <?php if ($language === 'english'): ?>
-<p>No Pushkara Navamsha periods today.</p>
+<p class="panchang-empty-state">No Pushkara Navamsha periods today.</p>
 <?php else: ?>
-<p>இன்றைய தினத்தில் புஷ்கர நவாம்சம் இல்லை.</p>
+<p class="panchang-empty-state">இன்றைய தினத்தில் புஷ்கர நவாம்சம் இல்லை.</p>
 <?php endif; ?>
 <?php else: ?>
-<div class='divTable blueTable' id='pushkaraDetails'>
-<div class='divTableRow'>
-    <div class='divPanchangHeading'><?php echo ($language === 'english') ? 'Start' : 'தொடக்கம்'; ?></div>
-    <div class='divPanchangHeading'><?php echo ($language === 'english') ? 'End' : 'முடிவு'; ?></div>
-    <div class='divPanchangHeading'><?php echo ($language === 'english') ? 'Nakshatra Pada' : 'நட்சத்திர பாதம்'; ?></div>
-</div>
+<div class="panchang-modal-table-wrap">
+<table class="panchang-modal-table panchang-pushkara-table" id="pushkaraDetails" aria-labelledby="pushkaraTableTitle">
+<thead>
+<tr>
+    <th scope="col"><?php echo ($language === 'english') ? 'Start' : 'தொடக்கம்'; ?></th>
+    <th scope="col"><?php echo ($language === 'english') ? 'End' : 'முடிவு'; ?></th>
+    <th scope="col"><?php echo ($language === 'english') ? 'Nakshatra Pada' : 'நட்சத்திர பாதம்'; ?></th>
+</tr>
+</thead>
+<tbody>
 <?php
 foreach ($results as $row) {
     // Derive times and degrees directly from minute indices to ensure alignment
@@ -473,8 +472,14 @@ foreach ($results as $row) {
     $dtStartLocal = $startIdx !== null ? minuteIndexToLocalDateTimeFlex($date, $startIdx, $utcTz, $localTz) : null;
     $dtEndLocal = $endIdx !== null ? minuteIndexToLocalDateTimeFlex($date, $endIdx, $utcTz, $localTz) : null;
 
-    $startStr = $dtStartLocal ? $dtStartLocal->format('Y-m-d H:i') : (isset($row['start']) ? $row['start'] : '-');
-    $endStr = $dtEndLocal ? $dtEndLocal->format('Y-m-d H:i') : (isset($row['end']) ? $row['end'] : '-');
+    $startFallback = isset($row['start']) ? DateTimeImmutable::createFromFormat('!Y-m-d H:i', $row['start'], $localTz) : false;
+    $endFallback = isset($row['end']) ? DateTimeImmutable::createFromFormat('!Y-m-d H:i', $row['end'], $localTz) : false;
+    $startDisplayTime = $dtStartLocal ?: ($startFallback ?: null);
+    $endDisplayTime = $dtEndLocal ?: ($endFallback ?: null);
+    $startDate = $startDisplayTime ? $startDisplayTime->format('d-m-Y') : (isset($row['start']) ? $row['start'] : '-');
+    $startTime = $startDisplayTime ? $startDisplayTime->format('H:i') : '';
+    $endDate = $endDisplayTime ? $endDisplayTime->format('d-m-Y') : (isset($row['end']) ? $row['end'] : '-');
+    $endTime = $endDisplayTime ? $endDisplayTime->format('H:i') : '';
 
     // Determine display name for nakshatra based on language and total_pada
     $displayNak = '';
@@ -495,25 +500,17 @@ foreach ($results as $row) {
     // Combine Nakshatra and Pada with a space
     $nakshatraPada = htmlspecialchars($displayNak) . ' ' . htmlspecialchars($row['pada']);
 
-    echo '<div class="divTableRow">';
-    echo '<div class="divPanchang">' . htmlspecialchars($startStr) . '</div>';
-    echo '<div class="divPanchang">' . htmlspecialchars($endStr) . '</div>';
-    echo '<div class="divPanchang">' . $nakshatraPada . '</div>';
-    echo '</div>';
+    $startDateTime = $startDisplayTime ? $startDisplayTime->format('Y-m-d\TH:i') : '';
+    $endDateTime = $endDisplayTime ? $endDisplayTime->format('Y-m-d\TH:i') : '';
+
+    echo '<tr>';
+    echo '<td><time' . ($startDateTime !== '' ? ' datetime="' . htmlspecialchars($startDateTime, ENT_QUOTES, 'UTF-8') . '"' : '') . '><span class="panchang-table-date">' . htmlspecialchars($startDate, ENT_QUOTES, 'UTF-8') . '</span><span class="panchang-table-time">' . htmlspecialchars($startTime, ENT_QUOTES, 'UTF-8') . '</span></time></td>';
+    echo '<td><time' . ($endDateTime !== '' ? ' datetime="' . htmlspecialchars($endDateTime, ENT_QUOTES, 'UTF-8') . '"' : '') . '><span class="panchang-table-date">' . htmlspecialchars($endDate, ENT_QUOTES, 'UTF-8') . '</span><span class="panchang-table-time">' . htmlspecialchars($endTime, ENT_QUOTES, 'UTF-8') . '</span></time></td>';
+    echo '<td>' . $nakshatraPada . '</td>';
+    echo '</tr>';
 }
 ?>
+</tbody>
+</table>
 </div>
 <?php endif; ?>
-</center>
-
-<style>
-#pushkaraDetails .divTableRow {
-    font-weight: bold !important;
-}
-#pushkaraDetails .divPanchang {
-    font-weight: bold !important;
-}
-#pushkaraDetails .divPanchangHeading {
-    font-weight: bold !important;
-}
-</style>

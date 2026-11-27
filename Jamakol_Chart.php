@@ -93,10 +93,6 @@ $rowid = isset($_POST["rowid"]) ? $_POST["rowid"] : -1; //rowid will be posted i
 
 $_SESSION["place"]=$place;
 
-$cookie_name = "place";
-$cookie_value = $in_place;
-setcookie($cookie_name, $cookie_value); 
-
 $DEBUG= isset($_SESSION['debug']) ? $_SESSION['debug'] : 0;
 
 $conn="";
@@ -184,6 +180,8 @@ $dayofweek = date('w', strtotime($chart_date));
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/module-landing.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/jamakol-chart.css?<?php echo date('ymdhis'); ?>">
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -408,6 +406,28 @@ $dayofweek = date('w', strtotime($chart_date));
 		
 		//for progress spinner animation
 		$(document).ready(function(){
+		showJamakolDataTab("panchang");
+		var jamakolTabs = document.querySelectorAll(".jamakol-data-tabs [role='tab']");
+		jamakolTabs.forEach(function (tab, index) {
+			tab.addEventListener("keydown", function (event) {
+				var nextIndex = index;
+				if (event.key === "ArrowRight") {
+					nextIndex = (index + 1) % jamakolTabs.length;
+				} else if (event.key === "ArrowLeft") {
+					nextIndex = (index + jamakolTabs.length - 1) % jamakolTabs.length;
+				} else if (event.key === "Home") {
+					nextIndex = 0;
+				} else if (event.key === "End") {
+					nextIndex = jamakolTabs.length - 1;
+				} else {
+					return;
+				}
+
+				event.preventDefault();
+				jamakolTabs[nextIndex].focus();
+				showJamakolDataTab(jamakolTabs[nextIndex].getAttribute("data-tab"));
+			});
+		});
 		//javascript
 		if(document.getElementById('chart')){
 			document.querySelector(
@@ -433,48 +453,44 @@ $dayofweek = date('w', strtotime($chart_date));
 			
 
 	function showStarLordTable() {
-		var z1 = document.getElementById("starlordHeadMutable");
-		var z2 = document.getElementById("starlordBodyMutable");
-		
-		var y1 = document.getElementById("starlordHeadMutable_jama");
-		var y2 = document.getElementById("starlordBodyMutable_jama");
-		
-		if (z1.style.display === "none" && z2.style.display === "none") {
-			z1.style.display = "block";
-			z2.style.display = "block";
-			
-			//hidding the jama starlord table if available
-			y1.style.display = "none";
-			y2.style.display = "none";
-		  } else {
-			z1.style.display = "none";
-			z2.style.display = "none";
-		  }
+		showJamakolDataTab("inside");
 	}
 	
 	function showStarLordTable_jama() {
-		var z1 = document.getElementById("starlordHeadMutable_jama");
-		var z2 = document.getElementById("starlordBodyMutable_jama");
-		
-		var y1 = document.getElementById("starlordHeadMutable");
-		var y2 = document.getElementById("starlordBodyMutable");
-		
-		if (z1.style.display === "none" && z2.style.display === "none") {
-			z1.style.display = "block";
-			z2.style.display = "block";
-			
-			//hidding the starlord table if available
-			y1.style.display = "none";
-			y2.style.display = "none";
-		  } else {
-			z1.style.display = "none";
-			z2.style.display = "none";
-		  }
+		showJamakolDataTab("outside");
+	}
+
+	function showJamakolDataTab(tabName) {
+		var tabPanels = {
+			inside: ["starlordHeadMutable", "starlordBodyMutable"],
+			outside: ["starlordHeadMutable_jama", "starlordBodyMutable_jama"],
+			panchang: ["panchangBody"]
+		};
+		var selectedPanels = tabPanels[tabName] || tabPanels.panchang;
+
+		Object.keys(tabPanels).forEach(function (name) {
+			tabPanels[name].forEach(function (panelId) {
+				var panel = document.getElementById(panelId);
+				if (panel) {
+					if (selectedPanels.indexOf(panelId) !== -1) {
+						panel.style.display = panelId === "panchangBody" ? "grid" : "block";
+					} else {
+						panel.style.display = "none";
+					}
+				}
+			});
+		});
+
+		document.querySelectorAll(".jamakol-data-tabs [role='tab']").forEach(function (tab) {
+			var isSelected = tab.getAttribute("data-tab") === tabName;
+			tab.setAttribute("aria-selected", isSelected ? "true" : "false");
+			tab.tabIndex = isSelected ? 0 : -1;
+		});
 	}
 	</script>
 </head>
 
-<body onLoad="init();" id="body">
+<body class="module-landing module-jamakol-chart" onLoad="init();" id="body">
 <div id="loader" class="center"></div>
 
 <?php
@@ -1513,10 +1529,6 @@ $sw_planet = sortDegree($sw_planet);
 
 
 
-//to display place in center of 2 cells
-$place_left_part = substr($place,0,strlen($place)/2);
-$place_right_part = substr($place,strlen($place)/2);
-
 $g_kathir_data = calculateKathirData($sw_planet, $outside); //calculates and returns the karthir data array
 
 updateSookumaRasi($aarudam_house);
@@ -1532,7 +1544,15 @@ $map_display_value = function($value) {
 	return map_display_text((string)$value);
 };
 $outside_disp = array_map($map_display_value, $outside);
-$sw_planet_disp = array_map($map_display_value, $sw_planet);
+$sw_planet_disp = array_map(function($value) use ($map_display_value) {
+	return preg_replace_callback(
+		'/(<span\b[^>]*>.*?<\/span>|[^<\s]+)(?:-\d+°(?:\d+\')?)?/us',
+		function($matches) {
+			return '<span class="jamakol-planet-entry">' . $matches[0] . '</span>';
+		},
+		$map_display_value($value)
+	);
+}, $sw_planet);
 $g_thithi_soonyam_arr_disp = array_map($map_display_value, $g_thithi_soonyam_arr);
 $g_kathir_data_disp = array_map($map_display_value, $g_kathir_data);
 
@@ -1543,7 +1563,7 @@ $lbl_jamakol_heading = __('jamakol_heading', 'ஜாமக்கோள் Chart'
 $lbl_question = rtrim(__('jamakol_question', 'Question:'), ':');
 $lbl_question_placeholder = __('jamakol_question_placeholder', 'Enter question here...');
 $lbl_analysis_placeholder = __('jamakol_analysis_placeholder', 'Enter analysis here...');
-$lbl_question_time = __('jamakol_question_time', 'கே.நேரம்');
+$lbl_question_time = __('jamakol_question_time', 'கே. நேரம்');
 $lbl_now = __('now', 'தற்போது');
 $lbl_star_lord_inside = __('star_lord_inside', 'சாரம் (உள்)');
 $lbl_star_lord_outside = __('star_lord_outside', 'சாரம் (வெளி)');
@@ -1592,41 +1612,33 @@ EOL;
 			include "jamaChartMenu_mobile.php";
 			$time = date('h:i A',strtotime($chart_time));
 			$date = date('d-m-Y',strtotime($chart_date));
+			$lbl_panchang_tab = __('panchang_summary');
 
 echo <<<EOL
 			</div>
 		</div>
 		<div class='column-body' id="pdf">
 					<center>
-					<P style="color:#660000;font-weight:bold; font-size:16px; text-align:center; background-color:white;width:200px;">$lbl_jamakol_heading</P>
-					<center><div class="divTable blueTable" style="height:70px;">
-								<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
-									<div class="divTableDummyCell" colspan=3 style="border-radius: 20px 20px 0 0;">
-										<DIV class='body'>$lbl_question</div>
-										<!-- <input type="text" name="question" id="question" autocomplete="off" style="background:#ffffff; font-size:12px" value="$in_question" /> -->
-										<textarea rows = "2" cols = "60" name="question" id="question" autocomplete="off" style="background:#ffffff; font-size:10px;" placeholder="$lbl_question_placeholder" />$in_question</textarea>
-										<form name='updateChart' id='updateChart' action='Jamakol_Chart.php' method='post'>
-											<input type='hidden' id='nPlace' name='nPlace' value='$in_place'>
-											<input type='hidden' id='nQuestion' name='nQuestion' value='$orig_question'>
-											<input type='hidden' id='nDegree' name='nDegree' value=$in_degree>
-											<input type='hidden' id='lang' name='lang' value=$lang>
-											<input type='hidden' id='nAnalysis' name='nAnalysis' value='$orig_analysis'>
-											<input type='hidden' id='qDate' name='qDate' value=$orig_date>
-											<input type='hidden' id='qTime' name='qTime' value=$orig_time>
-											<input type='hidden' id='qChart' name='qChart' value=0>
-											<input type='date' id='nDate' name='nDate' style="color:#660000;font-size:12px;font-weight:bold;width:110px;" value=$chart_date onChange='dateChange(this.form);'>
-											<input type='time' id='nTime' name='nTime' style="color:#660000;font-size:12px;font-weight:bold;width:110px" step='1' value=$chart_time onChange='timeChange(this.form);'>
-											<BR>
-											<input type='button' class='actionBtn' value='$lbl_question_time' Onclick="return questionChart(this.form);">
-											<input type='button' class='actionBtn' value='$lbl_now' Onclick="return updateNow(this.form);">
-	
-											<BR><BR>
-										</form>
-										
-									</div>
-								</div>
-							</div>
-				<div class="container" id="container" style="horizontal-align:center">
+					<P class="jamakol-title">$lbl_jamakol_heading</P>
+					<section class="jamakol-controls">
+						<label class="jamakol-question-label" for="question">$lbl_question</label>
+						<textarea rows="2" cols="60" name="question" id="question" class="jamakol-question-input" autocomplete="off" placeholder="$lbl_question_placeholder">$in_question</textarea>
+						<form name="updateChart" id="updateChart" action="Jamakol_Chart.php" method="post">
+							<input type="hidden" id="nPlace" name="nPlace" value="$in_place">
+							<input type="hidden" id="nQuestion" name="nQuestion" value="$orig_question">
+							<input type="hidden" id="nDegree" name="nDegree" value="$in_degree">
+							<input type="hidden" id="lang" name="lang" value="$lang">
+							<input type="hidden" id="nAnalysis" name="nAnalysis" value="$orig_analysis">
+							<input type="hidden" id="qDate" name="qDate" value="$orig_date">
+							<input type="hidden" id="qTime" name="qTime" value="$orig_time">
+							<input type="hidden" id="qChart" name="qChart" value="0">
+							<input type="date" id="nDate" name="nDate" class="jamakol-date-control" value="$chart_date" onChange="dateChange(this.form);">
+							<input type="time" id="nTime" name="nTime" class="jamakol-date-control" step="1" value="$chart_time" onChange="timeChange(this.form);">
+							<input type="button" class="actionBtn" value="$lbl_question_time" onclick="return questionChart(this.form);">
+							<input type="button" class="actionBtn" value="$lbl_now" onclick="return updateNow(this.form);">
+						</form>
+					</section>
+				<div class="container" id="container">
 					
 					<div class="divTable blueTable" id="chart">
 						
@@ -1658,8 +1670,8 @@ echo <<<EOL
 							<div class="divTableRow">
 									<div class="divTableOuterCell">$outside_disp[9]</div>
 									<div class="divTableCell">$sw_planet_disp[9]<span class='kathir'>$g_kathir_data_disp[9]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr_disp[9]</span></div>
-									<div class="divTableCenterCell3">$place_left_part</div>
-									<div class="divTableCenterCell4">$place_right_part</div>
+									<div class="divTableCenterCell3">$place</div>
+									<div class="divTableCenterCell4" aria-hidden="true"></div>
 									<div class="divTableCell">$sw_planet_disp[4]<span class='kathir'>$g_kathir_data_disp[4]</span><span class='thithi_soonyam'>$g_thithi_soonyam_arr_disp[4]</span></div>
 									<div class="divTableDummyCell"></div>
 							</div>
@@ -1681,9 +1693,11 @@ echo <<<EOL
 							</div>
 						</div>	
 					</div>
-					<BR>
-					<input type='button' class='actionBtn' id='strdtl' value='$lbl_star_lord_inside' Onclick="showStarLordTable();">
-					<input type='button' class='actionBtn' id='strdtl_jama' value='$lbl_star_lord_outside'  Onclick="showStarLordTable_jama();">
+					<nav class="jamakol-data-tabs" role="tablist" aria-label="$lbl_panchang_tab">
+						<button type="button" role="tab" data-tab="panchang" aria-controls="panchangBody" aria-selected="true" tabindex="0" onclick="showJamakolDataTab('panchang');">$lbl_panchang_tab</button>
+						<button type="button" role="tab" data-tab="inside" aria-controls="starlordBodyMutable" aria-selected="false" tabindex="-1" onclick="showStarLordTable();">$lbl_star_lord_inside</button>
+						<button type="button" role="tab" data-tab="outside" aria-controls="starlordBodyMutable_jama" aria-selected="false" tabindex="-1" onclick="showStarLordTable_jama();">$lbl_star_lord_outside</button>
+					</nav>
 EOL;
 					displayStarLord_jamakol();
 					displayStarLard_jama();
@@ -1691,21 +1705,18 @@ EOL;
 					
 					$filename = 'jamakol_'.$date.'_'.$time;
 echo <<<EOL
-					<div class="divTable blueTable" style="height:40px;">
-						<div class="divTableRow" style="background-color:rgba(0,0,0,0)">
-							<div class="divTableDummyCell" colspan=3 style="border-radius:  0 0 20px 20px;">
-							<form id='analysisData' method='post'>
-							<textarea rows = 5 cols = "60" name="analysis" id="analysis" autocomplete="off" style="background:#ffffff; font-size:10px;" placeholder="$lbl_analysis_placeholder" />$in_analysis</textarea>
-							<input type='button' class='actionBtn' id='save' value='$saveBtnTxt' OnClick="return saveChart(this.form);" />
-							<!-- <input type='button' class='actionBtn' id='saveToPdf' value='Download' OnClick="GeneratePdf('$filename');" /> -->
-							</form>
+					<section class="jamakol-analysis-panel">
+						<form id="analysisData" method="post">
+							<textarea rows="5" cols="60" name="analysis" id="analysis" class="jamakol-analysis-input" autocomplete="off" placeholder="$lbl_analysis_placeholder">$in_analysis</textarea>
+							<input type="button" class="actionBtn" id="save" value="$saveBtnTxt" onclick="return saveChart(this.form);" />
+							<!-- <input type="button" class="actionBtn" id="saveToPdf" value="Download" onclick="GeneratePdf('$filename');" /> -->
+						</form>
 EOL;
 							/*if($autoAnalysisMenu==1){
 								echo "<div class='footer'>Scroll down for Auto Analysis details &#9660;</div>";
 							}*/
 echo <<<EOL
-							</div>
-					</div>
+					</section>
 EOL;
 						
 						//displayKathirChart($g_kathir_data); //added kathir detail inside the chart itself

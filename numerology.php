@@ -19,6 +19,7 @@ $devInfo = $_GET;
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/birth_chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/module-landing.css?<?php echo date('ymdhis'); ?>">
 	<link href='https://fonts.googleapis.com/css?family=Julius Sans One' rel='stylesheet'>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -37,15 +38,14 @@ $devInfo = $_GET;
 			.iframe-container {
 				position: relative;
 				width: 100%;
-				height: 450px;
-				overflow: hidden;
+				height: auto;
+				overflow: visible;
 			}
 			.iframe-container iframe {
-				position: absolute;
-				top: -180px; /* Move the iframe content up by 102px */
-				left: 0;
+				position: static;
 				width: 100%;
-				height: -webkit-fill-available; /* Adjust height to cover the moved content */
+				height: 1px;
+				border: 0;
 			}
 
 
@@ -769,7 +769,7 @@ function printPyramid(numbers){
 			new_calculate(index);
 			// You can use g_name here
 			
-			var chartHTML = '<center><div class="divTable blueTable" id="chart">' +
+			var chartHTML = '<center><div class="numerology-chart-frame"><div class="divTable blueTable" id="chart">' +
 				'<div class="divTableBody">' +
 					'<div class="divTableRow">' +
 						'<div class="divTableOuterCellLeftTop">' + outData[11] + '</div>' +
@@ -820,13 +820,12 @@ function printPyramid(numbers){
 						'<div class="divTableOuterCellRightBottom">' + outData[5] + '</div>' +
 					'</div>' +
 				'</div>' +
-			'</div></center>';
+			'</div></div></center>';
 
 
 					document.getElementById('divContent').innerHTML = chartHTML;
+					document.body.classList.add('has-numerology-chart');
 					//document.getElementById('iframe-container').style.display = 'none';
-					
-					document.getElementById('newButton').style.display = 'block';
 					
 		}, 100); // Adjust the timeout as needed
 		
@@ -872,12 +871,28 @@ function printPyramid(numbers){
 		if (label) {
 			label.style.display = 'none';
 		}
+		resizeBirthIframe();
 	}
+
+	function resizeBirthIframe() {
+		const iframe = document.getElementById('birthIframe');
+		if (!iframe || !iframe.contentDocument) return;
+		const iframeDocument = iframe.contentDocument;
+		const contentHeight = Math.max(
+			iframeDocument.documentElement.scrollHeight,
+			iframeDocument.body ? iframeDocument.body.scrollHeight : 0
+		);
+		if (contentHeight > 0) {
+			iframe.style.height = Math.ceil(contentHeight) + 'px';
+		}
+	}
+
+	window.addEventListener('resize', resizeBirthIframe);
 
     </script>
 </head>
 
-<body onLoad="init();">
+<body class="module-landing module-numerology" onLoad="init();">
 	
 <div class="title" id='title'></div>
 <div id="loader1" class="center" style='visibility:hidden'></div>
@@ -892,34 +907,25 @@ function printPyramid(numbers){
 			
 		</div>
 	</div>
+	<div class="numerology-page-panel">
 	<div class='column-body'>
-		<center>
-			<button type="button" class="glow-button" id='newButton' onclick="window.location.href = 'numerology.php';" style="display:none; font-size:12px; width:-webkit-fill-available; line-height: normal;">New</button>
-			<button type="button" class="glow-button" id='calculatorBtn' onclick="window.open('numerologyCalc.php','_self')" style="width:-webkit-fill-available;line-height: normal;">Calculator</button>
-		</center>
-		
 		<center><BR><p id='birthTitle' style="color:#660000;font-weight:bold; font-size:20px; text-align:center; margin:0px">DSJV எண் கணிதம்</p></center>
 		
 		<center><div class='name_number' id='name_number' style='text-align: -webkit-center;'></div></center>
 		<center><div style='display: flex; overflow-x: auto; white-space: nowrap; text_align:center'><div class='py' id='py'></div></div></center>
-		<BR>
 		<center><div class='name_number' id='dob_result' style='text-align: -webkit-center;'></div></center>
 		
-		<BR><div id="divContent"></div>
+		<div id="divContent"></div>
 	</div>	 
 
-	
 	<div class="iframe-container" id="iframe-container">
-		<iframe id="birthIframe" src="Birth_input.php" name="resultFrame" frameborder="0" onload="disableCheckbox()"></iframe>
+		<iframe id="birthIframe" src="Birth_input.php?numerology_embed=1" name="resultFrame" frameborder="0" onload="disableCheckbox()"></iframe>
 	</div>
-	
-	<BR>
 	
 	<center><div id="foot" style='display:none'><p><span style='color:red;'>&#9679; பகை</span><span style='color:#32CD32;'>&#9679; வசியம்</span></p>
 	<p style='display:none'>*Uses Chaldean method </p></div></center>
 	<?php displayNumerologyInfo(); ?>
-	
-</center>
+	</div>
 </body>
 
 </html>

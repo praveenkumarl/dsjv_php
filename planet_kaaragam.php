@@ -16,6 +16,7 @@ require "lib.php";
 	<link rel="stylesheet" href="css/main.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="css/chart_style.css?<?php echo date('ymdhis'); ?>">
 	<link rel="stylesheet" href="style.css?<?php echo date('ymdhis'); ?>">
+	<link rel="stylesheet" href="css/module-landing.css?<?php echo date('ymdhis'); ?>">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	 
@@ -71,7 +72,7 @@ function init(){
     </script>
 </head>
 
-<body onLoad="init();">
+<body class="module-landing module-planet" onLoad="init();">
 
 	
 <div class="title"></div>

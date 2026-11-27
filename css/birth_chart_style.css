@@ -10,7 +10,9 @@
 
 /* Theme Two gold brown theme blue button */
 :root {
-    --chart-background: #ffe44d;
+    --chart-background: var(--theme-chart-background, #ffe44d);
+	--chart-border-color: var(--theme-chart-border, var(--client-accent, #660000));
+	--chart-text-color: var(--theme-chart-text, var(--client-chart-text, #660000));
 	--chart-font-size: 14px;
 	--chart-inner-font-size: clamp(11px, 2vw, 12px);
 	--chart-outer-font-size: clamp(10px, 2vw, 12px);
@@ -599,8 +601,8 @@ div.blueTable {
 }
 
 .actionBtnNotes{
-	background-color: gold !important;
-	color:#000000;
+	background-color: var(--theme-button-background, var(--client-primary, #D4AF37)) !important;
+	color: var(--theme-button-text, var(--client-on-accent, #000000)) !important;
 	font-weight:bold;
 	font-size:10px !important;
 	width:120px;
@@ -725,7 +727,7 @@ div.blueTable {
 }
 
 /* Responsive font size adjustment */
-@media (max-width: 600px) {
+@media (max-width: 760px) {
   .combo-line {
     font-size: 13px;
   }
@@ -861,8 +863,8 @@ div.blueTable {
     font-size: 15px;
     border: none;
     border-radius: 6px;
-    background: #fff;
-    color: #333;
+    background: var(--theme-button-background, var(--client-primary, #fff));
+    color: var(--theme-button-text, var(--client-on-accent, #333));
     width: auto;
     justify-self: right;
 }
@@ -914,4 +916,248 @@ div.blueTable {
 /* Ensure sections are not hidden by the fixed menu bar */
 #birthHead, #chart2, #chart3, #divCurrentBukthi {
     scroll-margin-top: 128px;
+}
+
+div.blueTable {
+	border-color: var(--chart-border-color);
+}
+
+.divTable {
+	background-color: var(--theme-surface-panel-solid, #FFFFFF);
+}
+
+.divTableCell,
+.divTableHead,
+.divTableDegreeCell,
+.divGirlPanchangHeading,
+.divGirlPanchang,
+.divBoyPanchangHeading,
+.divBoyPanchang {
+	border-color: var(--chart-border-color);
+	color: var(--chart-text-color);
+}
+
+.divTableOuterCell,
+.divTableOuterCellLeftTop,
+.divTableOuterCellRightTop,
+.divTableOuterCellLeftBottom,
+.divTableOuterCellRightBottom {
+	border-color: var(--chart-border-color);
+	color: var(--chart-text-color);
+}
+
+.divTableDummyCell,
+.divTableCenterCell,
+.divTableCenterCell1,
+.divTableCenterCell2,
+.divTableCenterCell3,
+.divTableCenterCell4 {
+	background-color: var(--theme-surface-panel-solid, #FFFFFF);
+	color: var(--chart-text-color);
+}
+
+.divGirlPanchang {
+	background-color: var(--theme-surface-panel-solid, #FFFFFF);
+}
+
+.divBoyPanchang {
+	background-color: var(--theme-surface-field, #F3EFE6);
+}
+
+.overlay,
+.overlay1,
+.overlay2 {
+	border-color: var(--chart-border-color);
+	background-color: var(--theme-surface-panel-solid, #FFFFFF);
+	color: var(--chart-text-color);
+}
+
+.header,
+.footer {
+	color: var(--chart-text-color);
+}
+
+#section0,
+#section1 {
+	background: var(--theme-page-background, var(--client-page, #F2F4F4));
+}
+
+@media (max-width: 600px) {
+	#starlordBodyMutable[style*="display: table"],
+	#starlordBodyMutable_boy[style*="display: table"],
+	#starlordBodyMutable_transit[style*="display: table"],
+	#kpBodyMutable[style*="display: table"] {
+		display: block !important;
+		width: min(100%, 760px) !important;
+		max-width: 100% !important;
+		height: auto !important;
+		margin: 0 auto 18px !important;
+		overflow-x: auto;
+		overscroll-behavior-x: contain;
+		box-sizing: border-box;
+		border: 1px solid var(--chart-border-color) !important;
+		border-radius: 0 0 16px 16px;
+		background: var(--theme-surface-panel-solid, #FFFFFF) !important;
+		scrollbar-width: thin;
+		scrollbar-color: var(--chart-border-color) transparent;
+	}
+
+	#starlordBodyMutable .divTableRow,
+	#starlordBodyMutable_boy .divTableRow,
+	#starlordBodyMutable_transit .divTableRow,
+	#kpBodyMutable .divTableRow {
+		display: grid !important;
+		grid-template-columns: repeat(5, minmax(110px, 1fr));
+		min-width: 570px;
+		background: var(--theme-surface-panel-solid, #FFFFFF);
+	}
+
+	#starlordBodyMutable .divTableRow:first-child,
+	#starlordBodyMutable_boy .divTableRow:first-child,
+	#starlordBodyMutable_transit .divTableRow:first-child,
+	#kpBodyMutable .divTableRow:first-child {
+		position: sticky;
+		top: 0;
+		z-index: 2;
+		background: var(--theme-accent-soft, #F3EFE6);
+	}
+
+	#starlordBodyMutable .divTableRow > div,
+	#starlordBodyMutable_boy .divTableRow > div,
+	#starlordBodyMutable_transit .divTableRow > div,
+	#kpBodyMutable .divTableRow > div {
+		display: flex;
+		width: auto !important;
+		min-width: 0;
+		min-height: 40px;
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		height: auto !important;
+		margin: 0;
+		padding: 8px 9px;
+		border: 0;
+		border-right: 1px solid var(--theme-border-subtle, var(--chart-border-color));
+		border-bottom: 1px solid var(--theme-border-subtle, var(--chart-border-color));
+		border-radius: 0;
+		background: transparent;
+		color: var(--chart-text-color);
+		font-size: 12px;
+		line-height: 1.35;
+		text-align: center;
+		overflow-wrap: anywhere;
+	}
+
+	#starlordBodyMutable .divTableRow > div:last-child,
+	#starlordBodyMutable_boy .divTableRow > div:last-child,
+	#starlordBodyMutable_transit .divTableRow > div:last-child,
+	#kpBodyMutable .divTableRow > div:last-child {
+		border-right: 0;
+	}
+
+	#starlordBodyMutable .divTableRow:first-child > .divTableCell,
+	#starlordBodyMutable_boy .divTableRow:first-child > .divTableCell,
+	#starlordBodyMutable_transit .divTableRow:first-child > .divTableCell,
+	#kpBodyMutable .divTableRow:first-child > .divTableCell {
+		min-height: 44px;
+		color: var(--theme-text-accent-strong, var(--chart-text-color));
+		font-size: 12px;
+		font-weight: 800;
+		line-height: 1.25;
+	}
+
+	#starlordBodyMutable::-webkit-scrollbar,
+	#starlordBodyMutable_boy::-webkit-scrollbar,
+	#starlordBodyMutable_transit::-webkit-scrollbar,
+	#kpBodyMutable::-webkit-scrollbar {
+		height: 7px;
+	}
+
+	#starlordBodyMutable::-webkit-scrollbar-thumb,
+	#starlordBodyMutable_boy::-webkit-scrollbar-thumb,
+	#starlordBodyMutable_transit::-webkit-scrollbar-thumb,
+	#kpBodyMutable::-webkit-scrollbar-thumb {
+		border: 2px solid transparent;
+		border-radius: 999px;
+		background: var(--chart-border-color);
+		background-clip: padding-box;
+	}
+}
+
+.numerology-info {
+	width: 100%;
+	margin: 24px auto 8px;
+}
+
+.numerology-info-table-wrap {
+	width: 100%;
+	overflow-x: auto;
+	overscroll-behavior-x: contain;
+	border: 1px solid var(--theme-border-subtle, rgba(44,36,22,.14));
+	border-radius: 16px;
+	background: var(--theme-surface-panel-solid, #fff);
+	box-shadow: 0 10px 24px var(--theme-shadow-soft, rgba(0,0,0,.12));
+	scrollbar-width: thin;
+}
+
+table.numerology-info-table {
+	width: 100%;
+	min-width: 820px;
+	border-collapse: separate !important;
+	border-spacing: 0;
+	color: var(--theme-text, var(--chart-text-color, #2c2416));
+	font-family: inherit;
+	font-size: 13px;
+	line-height: 1.45;
+	text-align: center;
+}
+
+.numerology-info-table caption {
+	padding: 0 0 12px;
+	color: var(--theme-text-heading, var(--theme-text, #2c2416));
+	font-size: clamp(17px, 2vw, 21px);
+	font-weight: 750;
+	text-align: left;
+}
+
+.numerology-info-table th,
+.numerology-info-table td {
+	padding: 11px 14px;
+	border-right: 1px solid var(--theme-border-subtle, rgba(44,36,22,.1));
+	border-bottom: 1px solid var(--theme-border-subtle, rgba(44,36,22,.1));
+	background: var(--theme-surface-panel-solid, #fff);
+	white-space: nowrap;
+}
+
+.numerology-info-table thead th {
+	background: var(--theme-surface-table, var(--theme-surface-panel-solid, #fff));
+	color: var(--theme-text-heading, var(--theme-text, #2c2416));
+	font-size: 12px;
+	font-weight: 750;
+	white-space: normal;
+}
+
+.numerology-info-table tbody tr:nth-child(even) > * {
+	background: var(--theme-surface-table-light, var(--theme-surface-field, #f3efe6));
+}
+
+.numerology-info-table tbody th[scope="row"] {
+	color: var(--theme-text-accent-strong, var(--chart-text-color, #660000));
+	font-weight: 800;
+}
+
+.numerology-info-table th:last-child,
+.numerology-info-table td:last-child {
+	border-right: 0;
+}
+
+.numerology-info-table tbody tr:last-child > * {
+	border-bottom: 0;
+}
+
+@media (max-width: 600px) {
+	.numerology-info-table th,
+	.numerology-info-table td {
+		padding: 10px 12px;
+	}
 }
